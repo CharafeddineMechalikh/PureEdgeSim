@@ -1,0 +1,125 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.cloudsimplus</groupId>
+    <artifactId>cloudsim-plus-package</artifactId>
+    <version>3.0.1</version>
+    <packaging>pom</packaging>
+
+    <name>CloudSim Plus Modules (All)</name>
+    <description>CloudSim Plus: A modern, highly extensible and easier-to-use Java 8 Framework for Modeling and Simulation of Cloud Computing Infrastructures and Services</description>
+    <url>http://cloudsimplus.org</url>
+
+    <organization>
+        <name>Systems, Security and Image Communication Lab - Instituto de Telecomunicações (IT) - Universidade da Beira Interior (UBI) - Instituto Federal de Educação Ciência e Tecnologia do Tocantins (IFTO)</name>
+        <url>http://www.it.pt/MSP-Cv http://www.it.pt http://www.ubi.pt http://www.ifto.edu.br</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GPLv3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Manoel Campos da Silva Filho</name>
+            <email>manoelcampos@gmail.com</email>
+            <organization>Instituto Federal de Educação Ciência e Tecnologia do Tocantins (IFTO)</organization>
+            <organizationUrl>http://www.ifto.edu.br</organizationUrl>
+        </developer>
+        <developer>
+            <name>Raysa Oliveira</name>
+            <email>oliveira.raysa@gmail.com</email>
+            <organization>Universidade da Beira Interior (UBI)</organization>
+            <organizationUrl>http://www.ubi.pt</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:manoelcampos/cloudsim-plus.git</connection>
+        <developerConnection>scm:git:git@github.com:manoelcampos/cloudsim-plus.git</developerConnection>
+        <url>git@github.com:manoelcampos/cloudsim-plus.git</url>
+    </scm>
+
+    <issueManagement>
+        <url>http://github.com/manoelcampos/cloudsim-plus/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <license.dir>${project.basedir}</license.dir>
+        <license-maven-plugin.version>3.0</license-maven-plugin.version>
+        <!-- License file to be used by the com.mycila.license-maven-plugin -->
+        <copyrightfile>COPYRIGHT</copyrightfile>
+    </properties>
+
+    <modules>
+        <module>cloudsim-plus</module>
+        <module>cloudsim-plus-examples</module>
+		<module>cloudsim-plus-benchmarks</module>
+		<module>cloudsim-plus-testbeds</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- The only module that can be deployed to Maven Central is the cloudsim-plus one.
+                 It's the only one that have all the configuration to execute the deploy.
+                 However, when the "mvn deploy" command is executed from the root directory,
+                 it's generated an error when trying to deploy the parent project.
+                 To avoid that, this configuration is used to ignore the deployment of the parent.
+                 All the other modules that don't have to be deployed
+                 also have the same configuration to avoid them to be deployed.
+
+                 However, executing "mvn deploy" from the cloudsim-plus directory
+                 is faster.
+                 -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <!-- Added the plugin to the parent project just to enable
+                calling "mvn license:format" from the root directory
+                and not generating an error because the parent doesn't
+                have such a plugin enabled.
+
+                The cloudsim-plus module is not inheriting form the parent,
+                despite it's included as a module, because
+                it is an independent module.
+                And to deploy it alone to maven central, it can't inherit
+                a parent pom.xml (because if the parent is not deployed, the
+                parent pom will be missing for the cloudsim-plus module).
+
+                However, the other modules would inherit from
+                the parent pom again.
+                This can be done in the future.
+                -->
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${license-maven-plugin.version}</version>
+                <configuration>
+                    <header>${copyrightfile}</header>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+
+                    <strictCheck>true</strictCheck>
+                    <failIfMissing>false</failIfMissing>
+                    <excludes>
+                        <!-- Excludes all files to enable the plugin to be executed
+                        individually as defined inside it CloudSim Plus module's pom file.-->
+                        <exclude>**/*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
