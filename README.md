@@ -3,9 +3,9 @@ A simulation toolkit for performance evaluation of edge, fog and cloud computing
 
 Full description soon
 Authors:
-Charafeddine MECHALIKH
-Hajer TAKTAK
-Faouzi MOUSSA
+Charafeddine MECHALIKH,
+Hajer TAKTAK,
+and Faouzi MOUSSA.
 
 Please cite this as: 
 
