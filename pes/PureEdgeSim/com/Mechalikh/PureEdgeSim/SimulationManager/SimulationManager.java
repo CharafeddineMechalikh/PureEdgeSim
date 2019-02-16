@@ -161,7 +161,7 @@ public class SimulationManager extends CloudSimEntity {
 			}
 			break;
 		case RESULT_RETURN_FINISHED:
-			try {   
+				try {   
 				Task task = (Task) ev.getData();
 				EdgeDataCenter edgeDevice = (EdgeDataCenter) task.getVm().getHost().getDatacenter(); // find the edge device which offloaded this task
 				if (!task.getEdgeDevice().isDead()) { // check if the device is alive   
@@ -173,14 +173,17 @@ public class SimulationManager extends CloudSimEntity {
 						task.setFailureReason(Task.Status.FAILED_DUE_TO_LATENCY);
 						task.setStatus(Cloudlet.Status.FAILED);
 					  
-						//add the energy consumption of returning task results to the device, 
-						//although it is failed due to latency, the results will be returned.  
+					}
+
+					//add the energy consumption of returning the task results to the device, 
+					//although it is failed due to latency, the results will be returned. 
 			        if(task.getEdgeDevice().getId()!= (task.getVm().getHost().getDatacenter()).getId()) { //if the task was offloaded / not executed locally
 					  task.getEdgeDevice().addConsumption(task.getOutputSize()*SimulationParameters.POWER_CONS_PER_MEGABYTE);
 					  edgeDevice.addConsumption(task.getOutputSize()*SimulationParameters.POWER_CONS_PER_MEGABYTE);
-			        }	
-					}	
-				 
+			        }							
+					boolean failed=false;
+					if(task.getStatus()== Status.FAILED)failed=true;
+					edgeOrch.taskFailed(task, failed);
 					
 				} else { // although set this tasks as failed
 					simLog.setNotGeneratedBecauseDead(simLog.getNotGeneratedBecauseDead() + 1);
