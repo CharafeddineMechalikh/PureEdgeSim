@@ -21,7 +21,7 @@ public class CustomBroker extends DatacenterBrokerSimple {
 	        switch (ev.getTag()) { 
 	            case CloudSimTags.CLOUDLET_RETURN: 
 	            	final Task task = (Task) ev.getData(); 
-	            	scheduleNow(simulationManager,SimulationManager.TRANSFER_RESULTS,task);
+	            	scheduleNow(simulationManager,SimulationManager.TRANSFER_RESULTS_TO_ORCH,task);
 	                break; 
 	        }
 	    }

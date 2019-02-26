@@ -35,11 +35,21 @@ public class EdgeDataCenter extends DatacenterSimple {
 	private List<VmTaskMapItem> vmTaskMap;
 	private SimLog simLog;
 	private int app;
+	private boolean isOrchestrator=false; 
+	private long Memory; 
+	private long AvailableMemory; 
  
+	private double Utilization=0;
+	private int Count=0; 
 	public EdgeDataCenter(Simulation simulation, List<? extends Host> hostList, VmAllocationPolicy vmAllocationPolicy) {
 		super(simulation, hostList, vmAllocationPolicy);
 		this.simulation = simulation;
 		vmTaskMap=new ArrayList<VmTaskMapItem>();
+		long memory=0;
+		for(int i=0;i<hostList.size();i++) {
+			memory+=hostList.get(i).getStorage().getAvailableResource();
+		}
+		setMemory(memory);
 	}
 	
 	@Override
@@ -52,13 +62,15 @@ public class EdgeDataCenter extends DatacenterSimple {
 	public void processEvent(final SimEvent ev) {
 		switch (ev.getTag()) {
 		case UPDATE_STATUS:
-			// update energy consumption
+			// update energy consumption 
 			consumption += idleConsumption;
 			double vmUsage = 0;
 			List<EdgeVM> vmList = this.getVmList();
-			for (int i = 0; i < vmList.size(); i++) {
+			for (int i = 0; i < vmList.size(); i++) { 
 				vmUsage = vmList.get(i).getCloudletScheduler().getRequestedCpuPercentUtilization(simulation.clock());
-				consumption += vmUsage * maxConsumption / (double) vmList.size();
+				Count++;
+				Utilization +=vmUsage; 
+				consumption += vmUsage * maxConsumption*SimulationParameters.VM_UPDATE_INTERVAL / (double) vmList.size();
 				if (isBattery() && consumption > batteryCapacity) {
 					died = true;
 					deathTime=simulation.clock();
@@ -71,7 +83,7 @@ public class EdgeDataCenter extends DatacenterSimple {
 					setLocation(locationChanges.get(0).getLocation());
 					
 					//now we need to find the vm to migrate (the vm which is executing this devices task)
-					EdgeVM vmToMigrate=findVm();	 
+				/*	EdgeVM vmToMigrate=findVm();	 
 					if(vmToMigrate!=null) {
 					if(SimulationParameters.VM_MIGRATION && vmToMigrate.getType()==SimulationParameters.TYPES.FOG) {
 					    //the fog host where the device is connected now, after location changed
@@ -95,13 +107,13 @@ public class EdgeDataCenter extends DatacenterSimple {
 						send(des.getDatacenter(),delay,CloudSimTags.VM_MIGRATE, map); 
 						
 						}
-					}  
+					}  */
 	 
 					locationChanges.remove(0); //remove the item after using it
 				}
 			}
 			if (!isDead()) {
-				schedule(this, 1, UPDATE_STATUS);
+				schedule(this, SimulationParameters.VM_UPDATE_INTERVAL, UPDATE_STATUS);
 			}
 
 			break;
@@ -246,4 +258,36 @@ public class EdgeDataCenter extends DatacenterSimple {
 	@Override
 	public void shutdownEntity() {  
 	}
+
+	public boolean isOrchestrator() {
+		return isOrchestrator;
+	}
+
+	public void setOrchestrator(boolean isOrchestrator) {
+		this.isOrchestrator = isOrchestrator;
+	}
+
+	 
+	public long getMemory() {
+		return Memory;
+	}
+
+	public void setMemory(long memory) {
+		Memory = memory;
+		setAvailableMemory(Memory);  
+	}
+
+	public long getAvailableMemory() {
+		return AvailableMemory;
+	}
+
+	public void setAvailableMemory(long availableMemory) {
+		AvailableMemory = availableMemory;
+	}
+ 
+  
+	public double getUtilization() {
+		if(Count==0) Count=1; 
+		return Utilization*100/Count;
+	} 
 }

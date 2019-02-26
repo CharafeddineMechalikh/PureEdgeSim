@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <cloud_data_centers>
 	<datacenter arch="x86" os="Linux" vmm="Xen"> 
-		<idleConsumption>0.00015</idleConsumption> 
-		<maxConsumption>0.016</maxConsumption>
+		<idleConsumption>0.00015</idleConsumption> 		
+		<maxConsumption>0.016</maxConsumption> 
+		<isOrchestrator>true</isOrchestrator>   <!-- it has a task orchestrator or not  --> 
 		<hosts>
 		    <host>
 				<core>8</core>

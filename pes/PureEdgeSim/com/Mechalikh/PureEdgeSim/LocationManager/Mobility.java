@@ -1,15 +1,12 @@
 package com.Mechalikh.PureEdgeSim.LocationManager;
  
-import java.util.List; 
-
-import org.cloudbus.cloudsim.hosts.Host;
- 
+import java.util.List;  
 
 public abstract class Mobility {
 
-protected List<Host> fogHostsList;
-	public Mobility(List<Host> fogHostsList) { 
-		this.fogHostsList= fogHostsList;
+protected Location initialLocation;
+	public Mobility(Location location) { 
+		this.initialLocation= location;
 	}
 	public abstract List<MobilityItem> generateLocationChanges();
 }

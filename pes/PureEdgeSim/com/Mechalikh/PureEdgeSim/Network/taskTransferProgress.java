@@ -5,15 +5,22 @@ import com.Mechalikh.PureEdgeSim.TasksGenerator.Task;
 public class taskTransferProgress {
 private Task task;
 private double remainingFileSize;
+public static final int TASK = 0;
+public static final int CONTAINER = 1;
+public static final int RESULTS_TO_DEV = 2;
+public static final int RESULTS_TO_ORCH = 4;
+public static final int REQUEST = 5;
 private double wanBandwidth;
 private double lanBandwidth; 
 private double WanNetworkUsage=0;
 private double LanNetworkUsage=0;
-private boolean executable;
-public taskTransferProgress(Task task, double remainingFileSize, boolean executable) {
+private int type;
+private double fileSize;
+public taskTransferProgress(Task task, double remainingFileSize, int type) {
 	this.task=task;
 	this.remainingFileSize=remainingFileSize;
-	this.executable=executable;
+	this.setFileSize(remainingFileSize);
+	this.type=type;
 }
 public double getRemainingFileSize() {
 	return remainingFileSize;
@@ -53,11 +60,18 @@ public double getLanNetworkUsage() {
 public void setLanNetworkUsage(double lanNetworkUsage) {
 	LanNetworkUsage = lanNetworkUsage;
 }
-public boolean isExecutable() {
-	return executable;
+public int getType() {
+	return type;
 }
-public void setExecutable(boolean executable) {
-	this.executable = executable;
+public void setType(int type) {
+	this.type = type;
+}
+public double getFileSize() {
+	// TODO Auto-generated method stub
+	return fileSize;
+}
+public void setFileSize(double fileSize) {
+	this.fileSize = fileSize;
 }
 
 }

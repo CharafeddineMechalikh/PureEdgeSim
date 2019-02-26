@@ -11,19 +11,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale; 
-import org.cloudbus.cloudsim.core.CloudSim;
+import org.cloudbus.cloudsim.core.CloudSim; 
 
 import com.Mechalikh.PureEdgeSim.Main;
 import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeDataCenter;
 import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeVM;
+import com.Mechalikh.PureEdgeSim.DataCentersManager.ServersManager;
 import com.Mechalikh.PureEdgeSim.Network.NetworkModel;
+import com.Mechalikh.PureEdgeSim.Network.taskTransferProgress;
 import com.Mechalikh.PureEdgeSim.ScenarioManager.SimulationParameters;
-import com.Mechalikh.PureEdgeSim.TasksGenerator.Task;
+import com.Mechalikh.PureEdgeSim.TasksGenerator.Task; 
 
-public class SimLog {
-	private List<EdgeVM> vmList = new ArrayList<EdgeVM>();
-	private List<String> ListCSV = new ArrayList<String>();
-	private List<VmLoadLogItem> vmUtilizationList;
+public class SimLog { 
+	private List<String> ListCSV = new ArrayList<String>(); 
 	private static DecimalFormat dft;
 	private CloudSim simulation;
 	public static final int NO_TIME = 0;
@@ -46,9 +46,8 @@ public class SimLog {
 	private int simulationId;
 	private String simStartTime;
 	private NetworkModel networkModel;
-	
-	public SimLog(int id, String time,boolean isFirstIteration) {
-		vmUtilizationList = new ArrayList<VmLoadLogItem>();
+	private int failedResourcesUnavailable=0;// tasks failed due to unavailability of resources
+	public SimLog(int id, String time,boolean isFirstIteration) { 
 		this.simulationId=id;
 		this.setSimStartTime(time);
 		// use this format for all numbers
@@ -138,23 +137,16 @@ public class SimLog {
 	public void printSameLine(String line) { 
 		 System.out.print(line);
 
-	}
-	public void updateVMutilizationLog(double[] usage) {
-		for (int i = 0; i < usage.length; i++)
-			vmUtilizationList.add(new VmLoadLogItem(simulation.clock(), usage[i], i));
-	}
+	} 
 
-	public void printVmLoad(List<EdgeVM> list, List<Task> finishedTasks) {
-		String datacenters = "";
-		vmList = list;
+	public void printVmLoad(ServersManager SM, List<Task> finishedTasks) { 
 		double averageLoad = 0;
 		double averageCloud = 0;
 		double averageEdge = 0;
-		double averageFog = 0;
-		double cloud = 0;
-		double fog = 0;
-		double edge = 0;
-		VmLoadLogItem vmLoad;
+		double averageFog = 0; 
+		int cloud=0;
+		int edge=0;
+		int fog=0;
 		EdgeDataCenter dc;
 		int deadEdgeDevices = 0;
 		double energyConsumption = 0; 
@@ -168,34 +160,23 @@ public class SimLog {
 		double firstDeviceDeathTime = -1; // -1 means invalid
 		List<Double> devicesDeathTime = new ArrayList<Double>(); 
 		int devicesWithBatteriesCount  = 0;
-		int devicesAliveWithBatteriesCount = 0;
-		int dcCount = 0;
-		for (int j = 0; j < vmUtilizationList.size(); j++) {
-			vmLoad = vmUtilizationList.get(j);
-			averageLoad += vmUtilizationList.get(j).getLoad();
-			dc = (EdgeDataCenter) vmList.get(vmLoad.getVmId()).getHost().getDatacenter();
-			if (vmList.get(vmLoad.getVmId()).getType()==SimulationParameters.TYPES.CLOUD) {
-				averageCloud += vmLoad.getLoad();
-				cloud++; 
-				if (!datacenters.contains("" + dc.getId())) {
-					datacenters += dc.getId() + ",";
-					cloudEnConsumption += dc.getConsumption();
-				}
+		int devicesAliveWithBatteriesCount = 0; 
+		for (int j = 0; j < SM.getDatacenterList().size(); j++) {  
+			dc = (EdgeDataCenter) SM.getDatacenterList().get(j);
+			if (dc.getType()==SimulationParameters.TYPES.CLOUD) {  
+					cloud++; 
+					cloudEnConsumption += dc.getConsumption(); 
+					averageCloud += dc.getUtilization();
 			}
 
-			else if (vmList.get(vmLoad.getVmId()).getType()==SimulationParameters.TYPES.FOG) {
-				averageFog += vmLoad.getLoad(); 
-				fog++;
-				if (!datacenters.contains("" + dc.getId())) {
-					datacenters += dc.getId() + ",";
-					fogEnConsumption += dc.getConsumption();
-				}
-			} else if (vmList.get(vmLoad.getVmId()).getType()==SimulationParameters.TYPES.EDGE) {
-				averageEdge += vmLoad.getLoad(); 
-				edge++;
-				if (!datacenters.contains("" + dc.getId())) {
-					datacenters += dc.getId() + ",";
-					edgeEnConsumption += dc.getConsumption();
+			else if (dc.getType()==SimulationParameters.TYPES.FOG) {  
+					fog++; 
+					fogEnConsumption += dc.getConsumption();  
+					averageFog+= dc.getUtilization();
+			} else if (dc.getType()==SimulationParameters.TYPES.EDGE) {  
+					edge++; 
+					edgeEnConsumption += dc.getConsumption(); 
+					averageEdge += dc.getUtilization();  
 					if (dc.isDead()) {
 						devicesDeathTime.add(dc.getDeathTime());
 						remainingPower.add(0.0);
@@ -211,12 +192,11 @@ public class SimLog {
 							remainingPower.add(dc.getBatteryLevelPercentage());
 							devicesAliveWithBatteriesCount++;
 						}
-					}
-				}
+					} 
 			}
 
-		}
-		dcCount = clouddc + fogdc + currentEdgeDevicesCount; 
+		} 
+		averageLoad=(averageCloud+averageEdge+averageFog)/SM.getDatacenterList().size();
 		devicesWithBatteriesCount= devicesAliveWithBatteriesCount+deadEdgeDevices;
 		//escape from devision by 0 
 		if(devicesAliveWithBatteriesCount==0) devicesAliveWithBatteriesCount=1;
@@ -225,16 +205,16 @@ public class SimLog {
 		averageRemainingPower = averageRemainingPower / (double) devicesAliveWithBatteriesCount;
 		averageRemainingPowerWh = averageRemainingPowerWh / (double) devicesAliveWithBatteriesCount;
 		print("SimLog, Average vm CPU utilization                                              :"
-				+ padLeftSpaces(dft.format(averageLoad / vmUtilizationList.size() * 100), 20) + " %");
+				+ padLeftSpaces(dft.format(averageLoad) , 20) + " %");
 		print("SimLog, Average vm CPU utilization per level                                    : Cloud= "
-				+ padLeftSpaces(dft.format((averageCloud* 100) / cloud ), 12) + " %");
+				+ padLeftSpaces(dft.format(averageCloud/cloud), 12) + " %");
 		print("                                                                                  Fog= "
-				+ padLeftSpaces(dft.format((averageFog* 100) / fog  ), 14) + " %");
+				+ padLeftSpaces(dft.format(averageFog/fog ), 14) + " %");
 		print("                                                                                  Edge= "
-				+ padLeftSpaces(dft.format((averageEdge * 100)/ edge ), 13) + " %");
+				+ padLeftSpaces(dft.format(averageEdge/edge), 13) + " %");
 		print("SimLog, Energy consumption                                                      :"
 				+ padLeftSpaces(dft.format(energyConsumption), 20) + " Wh (Average: "
-				+ dft.format(energyConsumption / dcCount) + " Wh/data center(or device))");
+				+ dft.format(energyConsumption / SM.getDatacenterList().size()) + " Wh/data center(or device))");
 		print("                                                                                :"
 				+ padLeftSpaces("", 20) + "    (Average: "
 				+ dft.format(energyConsumption / (double) finishedTasks.size()) + " Wh/task)");
@@ -258,27 +238,26 @@ public class SimLog {
 					+ padLeftSpaces("" + firstDeviceDeathTime, 20) + " seconds");
 
 		ListCSV.set(ListCSV.size() - 1,
-				ListCSV.get(ListCSV.size() - 1) + dft.format(averageLoad / vmUtilizationList.size() * 100) + ","
-						+ dft.format(averageCloud / cloud * 100) + "," + dft.format(averageFog / fog * 100) + ","
-						+ dft.format(averageEdge / edge * 100) + "," + dft.format(energyConsumption) + ","
-						+ dft.format(energyConsumption / dcCount) + "," + dft.format(cloudEnConsumption) + ","
+				ListCSV.get(ListCSV.size() - 1) + dft.format(averageLoad) + ","
+						+ dft.format(averageCloud) + "," + dft.format(averageFog) + ","
+						+ dft.format(averageEdge) + "," + dft.format(energyConsumption) + ","
+						+ dft.format(energyConsumption / SM.getDatacenterList().size()) + "," + dft.format(cloudEnConsumption) + ","
 						+ dft.format(cloudEnConsumption / cloud) + "," + dft.format(fogEnConsumption) + ","
 						+ dft.format(fogEnConsumption / fog) + "," + dft.format(edgeEnConsumption) + ","
 						+ dft.format(edgeEnConsumption / edge) + "," + dft.format(deadEdgeDevices) + ","
 						+ dft.format(averageRemainingPowerWh) + "," + dft.format(averageRemainingPower) + ","
 						+ firstDeviceDeathTime + "," + remainingPower.toString().replace(",", "-") + ","
 						+ devicesDeathTime.toString().replace(",", "-"));
-
-		vmUtilizationList.clear(); // clear old entries, in order to fill the list again in the next iteration
+ 
 	}
 
 	public String padLeftSpaces(String str, int n) {
 		return String.format("%1$" + n + "s", str);
 	}
 
-	public void showIterationResults(List<EdgeVM> vmlist, List<Task> finishedTasks) {
+	public void showIterationResults(ServersManager SM, List<Task> finishedTasks) {
 		printCloudletResults(finishedTasks);
-		printVmLoad(vmlist,finishedTasks);
+		printVmLoad(SM,finishedTasks);
 		String s = "\n";
 		for (int i = 0; i < Log.size(); i++) {
 			s += Log.get(i) + "\n";
@@ -290,9 +269,7 @@ public class SimLog {
 
 	}
 
-	public void setvmList(List<EdgeVM> vmList) {
-		this.vmList = vmList;
-	}
+	 
 
 	public CloudSim getSimulation() {
 		return simulation;
@@ -398,32 +375,34 @@ public class SimLog {
 		int failedDelay = 0;// tasks failed due to high delay
 		int failedPower = 0;// tasks failed due to device death (no energy ledt in battery)
 		int failedMobility = 0;// tasks failed due to devices mobility ( no vm migration)
-		double averageUploadBandwidth=0; 
+		double bandwidth=0; 
 		double networkUsage = vmMigrationNetworkUsage;//add vm migration network usage
 		double lanUsage = vmMigrationNetworkUsage;//add vm migration network usage
-		double wanUsage = 0;
+		double wanUsage = 0;  
+		double lanusageContainer=0;
+		double WanusageContainer=0;
 		
+		double average_task_size=0;
 		///
 		///
 		for (int i=0 ;i<networkModel.getTaskProgressList().size();i++) {
 			lanUsage+=networkModel.getTaskProgressList().get(i).getLanNetworkUsage();
-			wanUsage+=networkModel.getTaskProgressList().get(i).getWanNetworkUsage();
-			if(networkModel.getTaskProgressList().get(i).getLanNetworkUsage()>0)
-			averageUploadBandwidth+=(networkModel.getTaskProgressList().get(i).getTask().getFileSize()*8)/(networkModel.getTaskProgressList().get(i).getLanNetworkUsage()*1000);// *8 to convert from byte to bit and divided by 1000 in order to convert it from kbps to mbps
-				
-		}
-		///
-		/// 
-		///
-		/// 
-		///
-		///
+			wanUsage+=networkModel.getTaskProgressList().get(i).getWanNetworkUsage(); 
+			if(networkModel.getTaskProgressList().get(i).getType()==taskTransferProgress.CONTAINER) {
+				lanusageContainer+=networkModel.getTaskProgressList().get(i).getLanNetworkUsage();
+				WanusageContainer+=networkModel.getTaskProgressList().get(i).getWanNetworkUsage(); 	
+			}
+	 		if(networkModel.getTaskProgressList().get(i).getLanNetworkUsage()>0) { 
+	 		average_task_size+=networkModel.getTaskProgressList().get(i).getFileSize();
+		 	bandwidth+=(networkModel.getTaskProgressList().get(i).getTask().getFileSize()*8)/(networkModel.getTaskProgressList().get(i).getLanNetworkUsage()*1000);// *8 to convert from byte to bit and divided by 1000 in order to convert it from kbps to mbps
+			}	
+		} 
+	 	bandwidth=bandwidth/networkModel.getTaskProgressList().size(); 
 		
-		averageUploadBandwidth=averageUploadBandwidth/size; 
-		
-		 
 		for (int i = 0; i < size; i++) {
 		   task = finishedTasks.get(i); 
+		
+		   
 		   if (((EdgeVM) task.getVm()).getType()==SimulationParameters.TYPES.CLOUD) {
 				totalCloudTasks++;
 			} else if (((EdgeVM) task.getVm()).getType()==SimulationParameters.TYPES.FOG) {
@@ -433,7 +412,8 @@ public class SimLog {
 			} 
 		   
 			if (task.getStatus().name().equals("SUCCESS")) {
-				successTasks++;
+				   successTasks++;// successfully executed
+				   //calculating all the transmitted Bytes in order to get the average task size 
 				if (((EdgeVM) task.getVm()).getType()==SimulationParameters.TYPES.CLOUD) {
 					cloudTasks++;
 				} else if (((EdgeVM) task.getVm()).getType()==SimulationParameters.TYPES.FOG) {
@@ -442,7 +422,7 @@ public class SimLog {
 					edgeTasks++;
 				}
 				
-			}
+			}else failedResourcesUnavailable++;
 		
 			if (task.getFailureReason() == Task.Status.FAILED_DUE_TO_LATENCY)  
 				failedDelay++; 
@@ -450,17 +430,22 @@ public class SimLog {
 				failedPower++;
 			else if (task.getFailureReason() == Task.Status.FAILED_DUE_TO_DEVICE_MOBILITY)
 				failedMobility++;
+			else if (task.getFailureReason()== Task.Status.FAILED_NO_RESSOURCES)
+				failedResourcesUnavailable++; 
 
 		 
 			if(task.getExecStartTime()>0) averageWaitingTime += task.getExecStartTime() - task.getTime();
 			if(task.getActualCpuTime()>0) averageExecutionTime += task.getActualCpuTime();
 		} // end of "for" loop
+		//full network usage
 		networkUsage=Math.max(wanUsage, lanUsage);
+		 
 		int tasksSent= generatedTasks-  notGeneratedBecDeviceDead;
         int tasksNotExecuted=       generatedTasks-(successTasks + failedMobility + failedPower+failedDelay) ; //No resources available, as a result: long waiting time so the simulation eneded without the execution                       
-		double AverageNetworkUsage = networkUsage / tasksSent;
-
-		double execRate = ((double) successTasks * 100) / (double) tasksSent;
+		// average network usage (seconds)
+        double AverageNetworkUsage = networkUsage / tasksSent;
+        double aveBdPerTask=average_task_size/(AverageNetworkUsage*1000*tasksSent);
+      	double execRate = ((double) successTasks * 100) / (double) tasksSent;
 		double delayFailRate = ((double) failedDelay * 100) / (double) tasksSent;
 		double powerFailRate = ((double) failedPower * 100) / (double) tasksSent;
 		double mobilityFailRate = ((double) failedMobility * 100) / (double) tasksSent;
@@ -491,7 +476,7 @@ public class SimLog {
 				+ " sent tasks)");
 		
 		print("SimLog, Tasks failures");
-		print("                                      Not executed due to ressources inavailable:"
+		print("                                      Not executed due to ressources unavailable:"
 				+ padLeftSpaces(dft.format(notExecutedDueToLongWaitTime), 20) + " % (" + tasksNotExecuted
 				+ " tasks)");
 		print("                              Successfully executed but failed due to high delay:"
@@ -514,12 +499,12 @@ public class SimLog {
 				+ " (s) per task)");
 		print("                                                                                 " + " Wan="
 				+ padLeftSpaces(dft.format(wanUsage), 15) + " seconds (" + dft.format(wanUsage * 100 / networkUsage)
-				+ " % of total usage)");
+				+ " % of total usage, WAN used when downloading containers="+ dft.format(WanusageContainer * 100 / wanUsage) +" % of WAN usage )");
 		print("                                                                                 " + " Lan="
 				+ padLeftSpaces(dft.format(lanUsage), 15) + " seconds (" + dft.format(lanUsage * 100 / networkUsage)
-				+ " % of total usage)");  
-		print("                                                                         Average bandwidth="
-				+ padLeftSpaces(dft.format(averageUploadBandwidth), 10) + " Mbps ");
+				+ " % of total usage, LAN used when downloading containers="+ dft.format(lanusageContainer * 100 / lanUsage) +" % of LAN usage )");  
+		print("                                                            Average bandwidth per transfer="
+				+ padLeftSpaces(dft.format(bandwidth), 10) + " Mbps (Average: "+dft.format(aveBdPerTask)+" Mbps  per task) ");
 		
 	//	print("Virtual machines migrations attempts count                                      :" 
 		//		+ padLeftSpaces(""+vmMigrationAttempt, 20)+ " times");
@@ -529,7 +514,7 @@ public class SimLog {
 				+ "," + successTasks+ "," +tasksNotExecuted+ ","  + failedDelay + "," + failedPower + ","
 				+ failedMobility + "," + notGeneratedBecDeviceDead + "," + totalCloudTasks 
 				+ ","+ cloudTasks + "," + totalFogTasks + ","+ fogTasks + "," + totalEdgeTasks+ "," + edgeTasks
-				+ "," + networkUsage + "," + wanUsage + "," + lanUsage +  ","+averageUploadBandwidth+ ","+vmMigrationAttempt+",");
+				+ "," + networkUsage + "," + wanUsage + "," + lanUsage +  ","+bandwidth+ ","+vmMigrationAttempt+",");
 	}
 
 	public int getGeneratedTasks() {
@@ -611,6 +596,16 @@ public class SimLog {
 
 	public void incFogdc() {
 		this.fogdc++;
+	}
+
+	public int getTasksFailedRessourcesUnavailable() {
+	
+		return failedResourcesUnavailable;
+	}
+
+	public void setFailedDueToResourcesUnavailablity(int i) {
+		this.failedResourcesUnavailable=i;
+		
 	}
 	
 	 

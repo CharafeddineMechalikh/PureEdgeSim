@@ -10,12 +10,13 @@ first type, this percentage is defined here <percentage> -->
 		<batterycapacity>15.75</batterycapacity> <!-- battery capacity in Watt-Hour -->
 		<idleConsumption>0.00001</idleConsumption><!-- idle energy consumption/	second, default=0 .000010975 -->
 		<maxConsumption>0.0011</maxConsumption><!-- max energy consumption/second,  when device cpu is use at 100% , default=0 .0011 -->
+		<isOrchestrator>false</isOrchestrator> <!-- it has a task orchestrator or not  -->
 		<hosts>
 			<host>
 				<core>2</core>
 				<mips>2000</mips>
 				<ram>4000</ram>
-				<storage>50000</storage>
+				<storage>10000</storage>
 				<VMs>
 					<VM VMm="xen">
 						<core>1</core>
@@ -34,12 +35,13 @@ first type, this percentage is defined here <percentage> -->
 		<batterycapacity>0</batterycapacity>
 		<idleConsumption>0.00001</idleConsumption>
 		<maxConsumption>0.0011</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
 		<hosts>
 			<host>
 				<core>2</core>
 				<mips>2000</mips>
 				<ram>4000</ram>
-				<storage>50000</storage>
+				<storage>10000</storage>
 				<VMs>
 					<VM VMm="xen">
 						<core>1</core>
@@ -58,12 +60,13 @@ first type, this percentage is defined here <percentage> -->
 		<batterycapacity>20</batterycapacity> 
 		<idleConsumption>0.00001</idleConsumption> 
 		<maxConsumption>0.0011</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
 		<hosts>
 			<host>
 				<core>2</core>
 				<mips>2000</mips>
 				<ram>4000</ram>
-				<storage>50000</storage>
+				<storage>10000</storage>
 				<VMs>
 					<VM VMm="xen">
 						<core>1</core>
@@ -82,14 +85,15 @@ first type, this percentage is defined here <percentage> -->
 		<batterycapacity>0</batterycapacity>
 		<idleConsumption>0.00001</idleConsumption>
 		<maxConsumption>0.0011</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
 		<hosts>
 			<host>
 				<core>2</core>
 				<mips>2000</mips>
 				<ram>4000</ram>
-				<storage>50000</storage>
+				<storage>0</storage> <!--  this is a simple sensor that has no computing capacity -->
 				<VMs>
-					 
+					 <!--  this is a simple sensor that has no computing capacity -->
 				</VMs>
 			</host>
 		</hosts>

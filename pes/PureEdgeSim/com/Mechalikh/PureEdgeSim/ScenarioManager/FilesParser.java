@@ -56,13 +56,20 @@ public class FilesParser {
             SimulationParameters.PARALLEL= Boolean.parseBoolean(prop.getProperty("parallel_simulation").trim());
 			SimulationParameters.SIMULATION_TIME = (double) 60
 					* Double.parseDouble(prop.getProperty("simulation_time").trim()); // seconds 
-			SimulationParameters.INTERVAL_TO_SEND_EVENT = (double) 60
-					* Double.parseDouble(prop.getProperty("events_interval").trim()); // seconds 
+			SimulationParameters.AREA_LENGTH = Integer.parseInt(prop.getProperty("length").trim()); // seconds 
+			SimulationParameters.AREA_WIDTH = Integer.parseInt(prop.getProperty("width").trim()); // seconds  
+			SimulationParameters.VM_UPDATE_INTERVAL = (double) 60
+					* Double.parseDouble(prop.getProperty("vm_update_interval").trim()); // seconds 
 			SimulationParameters.DEEP_LOGGING = Boolean.parseBoolean(prop.getProperty("deep_log_enabled").trim());
 			SimulationParameters.SAVE_LOG = Boolean.parseBoolean(prop.getProperty("save_log_file").trim());
 			SimulationParameters.CLEAN_OUTPUT_FOLDER = Boolean.parseBoolean(prop.getProperty("clear_output_folder").trim()); 
 			SimulationParameters.WAIT_FOR_TASKS = Boolean.parseBoolean(prop.getProperty("wait_for_all_tasks").trim());
+			
 
+			SimulationParameters.ENABLE_REGISTRY = Boolean.parseBoolean(prop.getProperty("enable_registry").trim());
+
+			SimulationParameters.EDGE_RANGE = Integer.parseInt(prop.getProperty("edge_range").trim());
+			SimulationParameters.FOG_RANGE = Integer.parseInt(prop.getProperty("fog_coverage").trim());
 			SimulationParameters.PAUSE_LENGTH = Integer.parseInt(prop.getProperty("pause_length").trim());
 			SimulationParameters.MIN_NUM_OF_EDGE_DEVICES = Integer
 					.parseInt(prop.getProperty("min_number_of_edge_devices").trim());
@@ -84,6 +91,8 @@ public class FilesParser {
 			SimulationParameters.BANDWIDTH_WLAN = 1000 * Integer.parseInt(prop.getProperty("wlan_bandwidth").trim());
 			SimulationParameters.WAN_BANDWIDTH = 1000 * Integer.parseInt(prop.getProperty("wan_bandwidth").trim()); 
 			SimulationParameters.WAN_PROPAGATION_DELAY = Double.parseDouble(prop.getProperty("wan_propogation_delay").trim());
+			SimulationParameters.NETWORK_UPDATE_INTERVAL = Double.parseDouble(prop.getProperty("network_update_interval").trim());
+			SimulationParameters.NETWORK_HOTSPOTS = Boolean.parseBoolean(prop.getProperty("network_wlan_hotspots").trim());
 
 			SimulationParameters.POWER_CONS_PER_MEGABYTE= Double.parseDouble(prop.getProperty("energy_consumption_per_megabyte").trim());
 
@@ -94,6 +103,7 @@ public class FilesParser {
 			SimulationParameters.ORCHESTRATOR_POLICIES = prop.getProperty("orchestrator_policies").split(",");
 
 			SimulationParameters.ORCHESTRATOR_CRITERIA = prop.getProperty("resources_management_strategies").split(",");
+			SimulationParameters.DEPLOY_ORCHESTRATOR = prop.getProperty("deploy_orchestrator").trim(); 
   
 
 			 
@@ -318,14 +328,16 @@ public class FilesParser {
 			doc.getDocumentElement().normalize();
 
 			NodeList appList = doc.getElementsByTagName("application");
+			SimulationParameters.APPS_COUNT= appList.getLength();//  save the number of apps, this will be used later by the tasks generator
 			for (int i = 0; i < appList.getLength(); i++) {
 				Node appNode = appList.item(i);
 
 				Element appElement = (Element) appNode;
 				isAttribtuePresent(appElement, "name");
 				isElementPresent(appElement, "max_delay"); 
-				isElementPresent(appElement, "data_upload"); 
-				isElementPresent(appElement, "data_download");
+				isElementPresent(appElement, "container_size"); 
+				isElementPresent(appElement, "request_size"); 
+				isElementPresent(appElement, "results_size");
 				isElementPresent(appElement, "task_length");
 				isElementPresent(appElement, "required_core");
 
@@ -334,10 +346,12 @@ public class FilesParser {
 				// SimualtionParamters.APP_TYPES.valueOf(appName);
 				double max_delay = Double
 						.parseDouble(appElement.getElementsByTagName("max_delay").item(0).getTextContent());
-				double data_upload = Double
-						.parseDouble(appElement.getElementsByTagName("data_upload").item(0).getTextContent());
-				double data_download = Double
-						.parseDouble(appElement.getElementsByTagName("data_download").item(0).getTextContent());
+				double container_size = Double
+						.parseDouble(appElement.getElementsByTagName("container_size").item(0).getTextContent());
+				double request_size = Double
+						.parseDouble(appElement.getElementsByTagName("request_size").item(0).getTextContent());
+				double results_size = Double
+						.parseDouble(appElement.getElementsByTagName("results_size").item(0).getTextContent());
 				double task_length = Double
 						.parseDouble(appElement.getElementsByTagName("task_length").item(0).getTextContent());
 				double required_core = Double
@@ -345,10 +359,11 @@ public class FilesParser {
 				int index = getAppIndex(appName);
 				// save apps parameters
 				SimulationParameters.APPLICATIONS_TABLE[index][0] = max_delay; // max delay in seconds
-				SimulationParameters.APPLICATIONS_TABLE[index][1] = data_upload; // avg data upload (KB)
-				SimulationParameters.APPLICATIONS_TABLE[index][2] = data_download; // avg data download (KB)
+				SimulationParameters.APPLICATIONS_TABLE[index][1] = request_size; // avg request size  (KB)
+				SimulationParameters.APPLICATIONS_TABLE[index][2] = results_size; // avg downloaded results size  (KB)
 				SimulationParameters.APPLICATIONS_TABLE[index][3] = task_length; // avg task length (MI)
-				SimulationParameters.APPLICATIONS_TABLE[index][4] = required_core; // required # of core
+				SimulationParameters.APPLICATIONS_TABLE[index][4] = required_core; // required # of core 
+				SimulationParameters.APPLICATIONS_TABLE[index][5] = container_size; // the size of the container (KB)
 			}
 
 		} catch (Exception e) {

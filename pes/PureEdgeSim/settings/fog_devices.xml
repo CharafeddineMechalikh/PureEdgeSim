@@ -4,9 +4,10 @@
 		<idleConsumption>0.00015</idleConsumption><comment>idle energy consumption/second</comment>
 		<maxConsumption>0.016</maxConsumption><comment>max energy consumption/ second
 			when using 100% of cpu  </comment>
+		<isOrchestrator>false</isOrchestrator>  <comment>it has a task orchestrator or not  </comment>
 		<location>
-			<x_pos>1</x_pos>
-			<y_pos>1</y_pos>
+			<x_pos>50</x_pos> <comment>must be inferior to the map/area length  </comment>
+			<y_pos>50</y_pos><comment>must be inferior to the map/area width  </comment>
 		</location>
 		<hosts>
 			<host>
@@ -55,9 +56,10 @@
 	 <datacenter arch="x86" os="Linux" vmm="Xen">
 		<idleConsumption>0.00015</idleConsumption>
 		<maxConsumption>0.016</maxConsumption> 
+		<isOrchestrator>false</isOrchestrator>
 		<location>
-			<x_pos>2</x_pos>
-			<y_pos>2</y_pos>
+			<x_pos>100</x_pos> 
+			<y_pos>50</y_pos>
 		</location>
 		<hosts> 
 			<host>
@@ -105,9 +107,10 @@
 	<datacenter arch="x86" os="Linux" vmm="Xen">
 		<idleConsumption>0.00015</idleConsumption>
 		<maxConsumption>0.016</maxConsumption> 
+		<isOrchestrator>false</isOrchestrator>
 		<location>
-			<x_pos>3</x_pos>
-			<y_pos>3</y_pos>
+			<x_pos>150</x_pos>
+			<y_pos>50</y_pos>
 		</location>
 		<hosts> 
 			<host>
@@ -155,9 +158,10 @@
 	<datacenter arch="x86" os="Linux" vmm="Xen">
 		<idleConsumption>0.00015</idleConsumption>
 		<maxConsumption>0.016</maxConsumption> 
+		<isOrchestrator>false</isOrchestrator>
 		<location>
-			<x_pos>4</x_pos>
-			<y_pos>4</y_pos>
+			<x_pos>50</x_pos>
+			<y_pos>100</y_pos>
 		</location>
 		<hosts>
 			<host>
@@ -205,9 +209,10 @@
 	<datacenter arch="x86" os="Linux" vmm="Xen">
 		<idleConsumption>0.00015</idleConsumption>
 		<maxConsumption>0.016</maxConsumption> 
+		<isOrchestrator>false</isOrchestrator>
 		<location>
-			<x_pos>5</x_pos>
-			<y_pos>5</y_pos>
+			<x_pos>100</x_pos>
+			<y_pos>100</y_pos>
 		</location>
 		<hosts>
 			<host>
@@ -255,9 +260,10 @@
 	<datacenter arch="x86" os="Linux" vmm="Xen">
 		<idleConsumption>0.00015</idleConsumption>
 		<maxConsumption>0.016</maxConsumption> 
+		<isOrchestrator>false</isOrchestrator>
 		<location>
-			<x_pos>6</x_pos>
-			<y_pos>6</y_pos>
+			<x_pos>150</x_pos>
+			<y_pos>100</y_pos>
 		</location>
 		<hosts>
 			<host>
@@ -305,9 +311,10 @@
 	<datacenter arch="x86" os="Linux" vmm="Xen">
 		<idleConsumption>0.00015</idleConsumption>
 		<maxConsumption>0.016</maxConsumption> 
+		<isOrchestrator>false</isOrchestrator>
 		<location>
-			<x_pos>7</x_pos>
-			<y_pos>7</y_pos>
+			<x_pos>70</x_pos>
+			<y_pos>150</y_pos>
 		</location>
 		<hosts> 
 			<host>
@@ -355,9 +362,10 @@
 	<datacenter arch="x86" os="Linux" vmm="Xen">
 		<idleConsumption>0.00015</idleConsumption>
 		<maxConsumption>0.016</maxConsumption> 
+		<isOrchestrator>false</isOrchestrator>
 		<location>
-			<x_pos>8</x_pos>
-			<y_pos>8</y_pos>
+			<x_pos>140</x_pos>
+			<y_pos>150</y_pos>
 		</location>
 		<hosts>
 			<host>

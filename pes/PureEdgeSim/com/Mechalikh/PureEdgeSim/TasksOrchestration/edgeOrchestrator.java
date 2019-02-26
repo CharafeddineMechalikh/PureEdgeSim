@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Random; 
 
 import org.cloudbus.cloudsim.brokers.DatacenterBroker; 
- 
+import org.cloudbus.cloudsim.vms.Vm;
+
 import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeDataCenter;
 import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeVM;
+import com.Mechalikh.PureEdgeSim.LocationManager.Location;
 import com.Mechalikh.PureEdgeSim.ScenarioManager.Scenario;
 import com.Mechalikh.PureEdgeSim.ScenarioManager.SimulationParameters; 
 import com.Mechalikh.PureEdgeSim.SimulationManager.SimLog;
@@ -52,7 +54,7 @@ public class edgeOrchestrator extends Orchestrator {
 		} else if (scenario.getStringOrchPolicy().equals("EDGE_AND_CLOUD")) {
 			edgeAndCloud(task);
 		}
-
+    if(task.getVm()!= Vm.NULL) //send only if resources are available (i.e. the offloading distination is available) 
 		sendTask(task);// final step : send the task to execute it
 	}
 
@@ -110,7 +112,7 @@ public class edgeOrchestrator extends Orchestrator {
 
 	public void findVM(String[] policy, Task task) {
 		if (scenario.getStringOrchCriteria().equals("RANDOM")) {
-			int vm = 0;
+			int vm = -1;
 			// get best vm for this task
 			int j = 1 + new Random().nextInt(history.size() - 1);
 			while (j > 0) {
@@ -120,14 +122,14 @@ public class edgeOrchestrator extends Orchestrator {
 									&& vmList.get(i).getType() == SimulationParameters.TYPES.FOG // fog
 									// compare destination (fog host) location and origin (edge) location, if they
 									// are in same area offload to his device
-									&& ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation() == task
-											.getEdgeDevice().getLocation())
+									&& sameLocation(((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation() ,task
+											.getEdgeDevice().getLocation(),SimulationParameters.FOG_RANGE))
 							|| (ArrayContains(policy, "Edge")
 									&& vmList.get(i).getType() == SimulationParameters.TYPES.EDGE // edge
 									// compare destination (edge device) location and origin (edge) location, if
 									// they are in same area offload to his device
-									&& ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation() == task
-											.getEdgeDevice().getLocation()
+									&& sameLocation(((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation(), task
+											.getEdgeDevice().getLocation(),SimulationParameters.EDGE_RANGE)
 									&& ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).isDead() == false)) {
 						j--;
 						// affect the tasks to the vm found
@@ -141,7 +143,7 @@ public class edgeOrchestrator extends Orchestrator {
 			affectTaskToVm(vm, task);
 		}
 	 else if (scenario.getStringOrchCriteria().equals("ROUND_ROBIN")) {
-			int vm = 0;
+			int vm = -1;
 			int minTasksCount = -1; // vm with minimum affected tasks;
 			// get best vm for this task
 			for (int i = 0; i < history.size(); i++) {
@@ -149,13 +151,13 @@ public class edgeOrchestrator extends Orchestrator {
 						|| (ArrayContains(policy, "Fog") && vmList.get(i).getType() == SimulationParameters.TYPES.FOG // fog
 						// compare destination (fog host) location and origin (edge) location, if they
 						// are in same area offload to his device
-								&& ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation() == task
-										.getEdgeDevice().getLocation())
+								&& sameLocation(((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation(),task
+										.getEdgeDevice().getLocation(),SimulationParameters.FOG_RANGE))
 						|| (ArrayContains(policy, "Edge") && vmList.get(i).getType() == SimulationParameters.TYPES.EDGE // edge
 						// compare destination (edge device) location and origin (edge) location, if
 						// they are in same area offload to his device
-								&& ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation() == task
-										.getEdgeDevice().getLocation()
+								&& sameLocation(((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation(), task
+										.getEdgeDevice().getLocation(),SimulationParameters.EDGE_RANGE)
 								&& ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).isDead() == false)) {
 
 					if (minTasksCount == -1) {
@@ -166,53 +168,14 @@ public class edgeOrchestrator extends Orchestrator {
 					} else if (minTasksCount > history.get(i).size()) {
 						minTasksCount = history.get(i).size(); // new min found, so we choose it as the best VM
 						vm = i;
+						break;
 					}
 				}
 			}
 			// affect the tasks to the vm found
 			affectTaskToVm(vm, task);
-		} else if (scenario.getStringOrchCriteria().equals("STATE_OF_THE_ART")) {
-			int vm = 0;
-			double min = -1; 
-			double new_min;// vm with minimum affected tasks; 
-			// get best vm for this task
-			for (int i = 0; i < history.size(); i++) {
-				if ((ArrayContains(policy, "Cloud") && vmList.get(i).getType() == SimulationParameters.TYPES.CLOUD) // cloud
-						|| (ArrayContains(policy, "Fog") && vmList.get(i).getType() == SimulationParameters.TYPES.FOG // fog
-						// compare destination (fog host) location and origin (edge) location, if they
-						// are in same area offload to his device
-								&& ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation() == task
-										.getEdgeDevice().getLocation())
-						|| (ArrayContains(policy, "Edge") && vmList.get(i).getType() == SimulationParameters.TYPES.EDGE // edge
-						// compare destination (edge device) location and origin (edge) location, if
-						// they are in same area offload to his device
-								&& ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation() == task
-										.getEdgeDevice().getLocation()
-								&& ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).isDead() == false)) {
-					double latency=1;
-					double energy=1;
-					if(vmList.get(i).getType()== SimulationParameters.TYPES.CLOUD) {
-                    latency=1.6;
-                    energy=1.1;
-					}else if(vmList.get(i).getType()== SimulationParameters.TYPES.EDGE) {
-						energy=1.4;
-					} 
-                    new_min=(history.get(i).size() + 1) *latency*energy/ vmList.get(i).getMips();
-					if (min == -1) { // if it is the first iteration
-						min = new_min;
-						// if this is the first time, set the first vm as the
-						vm = i; // best one 
-					} else if (min > new_min) { // if this vm has more cpu mips and less  waiting tasks
-						// idle vm, no tasks are waiting
-						min = new_min;
-						vm = i;
-					}
-				}
-			}
-			// affect the tasks to the vm found
-			affectTaskToVm(vm, task);
-		} else if (scenario.getStringOrchCriteria().equals("INCEREASE_LIFETIME")) {
-			int vm = 0;
+		}  else if (scenario.getStringOrchCriteria().equals("INCEREASE_LIFETIME")) {
+			int vm = -1;
 			double minTasksCount = -1; // vm with minimum affected tasks;
 			double vmMips = 0;
 			double weight = 0;
@@ -223,13 +186,13 @@ public class edgeOrchestrator extends Orchestrator {
 						|| (ArrayContains(policy, "Fog") && vmList.get(i).getType() == SimulationParameters.TYPES.FOG // fog
 						// compare destination (fog host) location and origin (edge) location, if they
 						// are in same area offload to his device
-								&& ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation() == task
-										.getEdgeDevice().getLocation())
+								&& sameLocation(((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation() ,task
+										.getEdgeDevice().getLocation(),SimulationParameters.FOG_RANGE))
 						|| (ArrayContains(policy, "Edge") && vmList.get(i).getType() == SimulationParameters.TYPES.EDGE // edge
 						// compare destination (edge device) location and origin (edge) location, if
 						// they are in same area offload to his device
-								&& ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation() == task
-										.getEdgeDevice().getLocation()
+								&& sameLocation(((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).getLocation() , task
+										.getEdgeDevice().getLocation(),SimulationParameters.EDGE_RANGE)
 								&& ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).isDead() == false)) {
 					weight = 1;
 					if (((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).isBattery()) {
@@ -282,6 +245,16 @@ public class edgeOrchestrator extends Orchestrator {
 
 	}
 
+	private boolean sameLocation(Location location, Location location2, int RANGE) {
+		double distance=Math.abs(Math.sqrt(Math.pow((location.getXPos()-location2.getXPos()),2)+ Math.pow((location.getYPos()-location2.getYPos()),2)));
+		
+		if(distance<RANGE)
+			return true;
+		return false;
+	}
+
+ 
+
 	private boolean ArrayContains(String[] policy, String value) {
 		for (int i = 0; i < policy.length; i++) {
 			if (policy[i].equals(value))
@@ -291,13 +264,16 @@ public class edgeOrchestrator extends Orchestrator {
 	}
 
 	private void affectTaskToVm(int vmIndex, Task task) {
+		if (vmIndex==-1) {
+			simLog.setFailedDueToResourcesUnavailablity(simLog.getTasksFailedRessourcesUnavailable()+1);
+		}else {
 		task.setVm(vmList.get(vmIndex)); // send this task to this vm
 		simLog.deepLog(broker.getSimulation().clock() + " : EdgeOrchestrator, Task: " + task.getId() + " affected to "
 				+ vmList.get(vmIndex).getType() + " vm: " + vmList.get(vmIndex).getId());
 
 		// update history
 		history.get(vmIndex).add(task.getId());
-
+		}
 	}
 
 	@Override

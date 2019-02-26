@@ -5,11 +5,13 @@ import org.w3c.dom.Document;
 public class SimulationParameters {
 	public static boolean PARALLEL = false;
 	public static double SIMULATION_TIME;//seconds
-	public static double INTERVAL_TO_SEND_EVENT;
+	public static double VM_UPDATE_INTERVAL;
 	public static Document fogDevicesDoc = null;
 	public static Document edgeDevicesDoc = null;
 	public static Document cloudDevicesDoc = null;
 	public static int NUM_OF_FOG_HOSTS;
+	public static int AREA_LENGTH;
+	public static int AREA_WIDTH;
 	public static int NUM_OF_FOG_DATACENTERS;
 	public static int NUM_OF_CLOUD_DATACENTERS;
 	public static boolean DEEP_LOGGING = false;
@@ -23,7 +25,7 @@ public class SimulationParameters {
 	public static String[] ORCHESTRATOR_CRITERIA;
 	public static String[] ORCHESTRATOR_POLICIES;
 	public static String[] APPLICATIONS = { "AUGMENTED_REALITY", "E_HEALTH", "HEAVY_COMP_APP", "SMART_HOME" };
-	public static double[][] APPLICATIONS_TABLE = new double[APPLICATIONS.length][5];
+	public static double[][] APPLICATIONS_TABLE = new double[APPLICATIONS.length][6];
 	public static boolean SAVE_LOG;
 	public static boolean CLEAN_OUTPUT_FOLDER;
 	public static int MIN_TIME_FOR_CHANGING_LOCATION;
@@ -33,6 +35,13 @@ public class SimulationParameters {
 	public static boolean WAIT_FOR_TASKS;
 	public static double WAN_PROPAGATION_DELAY;  
 	public static String CPU_ALLOCATION_POLICY; 
+	public static boolean ENABLE_REGISTRY;
+	public static int APPS_COUNT;
+	public static int EDGE_RANGE;
+	public static int FOG_RANGE;
+	public static double NETWORK_UPDATE_INTERVAL;
+	public static boolean NETWORK_HOTSPOTS;
+	public static String DEPLOY_ORCHESTRATOR=""; 
  
 	public static enum TYPES {
 		CLOUD, FOG, EDGE

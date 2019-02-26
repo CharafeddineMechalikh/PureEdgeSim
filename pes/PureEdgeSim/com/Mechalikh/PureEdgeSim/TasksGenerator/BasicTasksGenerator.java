@@ -21,8 +21,8 @@ public class BasicTasksGenerator extends TaskGenerator {
 	    simulationTime = simulationTime / 60; // in minutes
 		for (int dev = 0; dev < devicesCount; dev++) { // for each device
 
-			int app = new Random().nextInt(4); // pickup a random application type for every device
-			datacentersList.get(dev).setApplication(app);
+			int app = new Random().nextInt(SimulationParameters.APPS_COUNT); // pickup a random application type for every device
+			datacentersList.get(dev).setApplication(app); // assign this application to that device
 			for (int st = 0; st < simulationTime; st++) { // for each minute
 				// generating tasks
 				int time = st * 60;
@@ -39,9 +39,10 @@ public class BasicTasksGenerator extends TaskGenerator {
 		// once
 		double maxLatency = (long) SimulationParameters.APPLICATIONS_TABLE[app][0]; // Load length from application file
 		long length = (long) SimulationParameters.APPLICATIONS_TABLE[app][3]; // Load length from application file
-		long fileSize = (long) SimulationParameters.APPLICATIONS_TABLE[app][1];
+		long requestSize = (long) SimulationParameters.APPLICATIONS_TABLE[app][1];
 		long outputSize = (long) SimulationParameters.APPLICATIONS_TABLE[app][2];
-		int pesNumber = (int) SimulationParameters.APPLICATIONS_TABLE[app][4];
+		int pesNumber = (int) SimulationParameters.APPLICATIONS_TABLE[app][4]; 
+		long containerSize = (int) SimulationParameters.APPLICATIONS_TABLE[app][5]; // the size of the container
 		Task[] task = new Task[SimulationParameters.TASKS_PER_EDGE_DEVICE_PER_MINUTES];
 		int id;
 		// generate tasks for every edge device
@@ -49,8 +50,9 @@ public class BasicTasksGenerator extends TaskGenerator {
 			id = taskList.size();
 			UtilizationModel utilizationModel = new UtilizationModelFull();
 			task[i] = new Task(id, length, pesNumber);
-			task[i].setFileSize(fileSize).setOutputSize(outputSize).setUtilizationModel(utilizationModel);
-			task[i].setTime(time);
+			task[i].setFileSize(requestSize).setOutputSize(outputSize).setUtilizationModel(utilizationModel);
+			task[i].setTime(time); 
+			task[i].setContainerSize(containerSize);
 			task[i].setMaxLatency(maxLatency);
 			task[i].setEdgeDevice(datacentersList.get(dev)); // the device that generate this task (the origin)  
 			taskList.add(task[i]);

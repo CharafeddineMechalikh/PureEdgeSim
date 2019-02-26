@@ -9,7 +9,7 @@ public class Task extends CloudletSimple {
 
 	public static enum Status {
 		FAILED_DUE_TO_LATENCY, FAILED_BECAUSE_DEVICE_DEAD, FAILED_DUE_TO_DEVICE_MOBILITY, NOT_GENERATED_BECAUSE_DEVICE_DEAD,
-		UNFINISHED_DUE_TO_MOBILITY, NULL
+		FAILED_NO_RESSOURCES, NULL
 	} 
   
 	private double time;
@@ -18,7 +18,9 @@ public class Task extends CloudletSimple {
 	private double wanDownloadNetworkUsageTime = 0;  
 	private EdgeDataCenter dev;
 	private double wanUploadNetworkUsageTime=0;
-	private double lanUploadNetworkUsageTime=0; 
+	private double lanUploadNetworkUsageTime=0;
+	private long containerSize;
+	private EdgeDataCenter orchestrator; 
 
 	public Task(int id, long cloudletLength, long pesNumber) {
 		super(id, cloudletLength, pesNumber); 
@@ -88,7 +90,21 @@ public class Task extends CloudletSimple {
 		this.dev = dev;
 	}
 
-	 
+	public void setContainerSize(long containerSize) {
+	  this.containerSize=containerSize;
+	}
+	public long getContainerSize() {
+		  return containerSize;
+		}
+
+	public void setOrchestrator(EdgeDataCenter orch) {
+		this.orchestrator=orch;
+		
+	}
+	public EdgeDataCenter getOrchestrator() {
+		return orchestrator;
+		
+	}
 
 	 
  
