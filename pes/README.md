@@ -1,17 +1,17 @@
 # PureEdgeSim: A simulation toolkit for performance evaluation of fog and pure edge computing environments.
-## New version 1.1
+## New version 1.1 (feb 26, 2019)
 ## Changelog  
 * Added support for registry and containers
 
-* Improved the network model: 
+* Improved the network model 
 
-  Adding support for containers,bugs fixing, 
+  Adding support for containers,bugs fixing 
   
-  Adding fog servers coverage, 
+  Adding fog servers coverage
   
-  Adding edge  wireless range.
+  Adding edge  wireless range
   
-  The ability to chose edge network type (fully peer to peer or sharing a same access point).
+  The ability to chose edge network type (fully peer to peer or sharing a same access point)
   
 * Improved mobility model
 
