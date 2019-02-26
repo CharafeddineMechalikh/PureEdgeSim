@@ -17,7 +17,7 @@
 
   More realistic mobility model
   
-  Added a map (heigh x width)
+  Added a map/ simulation area (height x width)
   
 * Adding support for physical depolyement of the orchestrator 
 
