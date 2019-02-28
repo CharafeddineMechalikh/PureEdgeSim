@@ -23,6 +23,7 @@ public class NetworkModel extends CloudSimEntity {
 	public static final int ADD_CONTAINER = 3;
 	public static final int SEND_REQUEST_FROM_DEVICE_TO_ORCH = 4;
 	public static final int ADD_RESULT_TO_DEV = 5;
+	public static final int SEND_UPDATE_FROM_DEVICE_TO_ORCH=6;
 	int index = 0;
 
 	public NetworkModel(Simulation simulation, SimulationManager simulationManager) {
@@ -79,7 +80,13 @@ public class NetworkModel extends CloudSimEntity {
 																													// in
 																													// kilobits
 	}
-
+	public void sendUpdate(Task task) {
+		// add the new container to the list of files being transferred (downloaded)
+		taskProgressList.add(new taskTransferProgress(task, task.getFileSize() * 8, taskTransferProgress.REQUEST)); // results
+																													// size
+																													// in
+																													// kilobits
+	}
 	@Override
 	public void processEvent(SimEvent ev) {
 		switch (ev.getTag()) {
@@ -110,12 +117,15 @@ public class NetworkModel extends CloudSimEntity {
 			updateTasksProgress();
 			schedule(this, SimulationParameters.NETWORK_UPDATE_INTERVAL, UPDATE_PROGRESS);
 			break;
+		case SEND_UPDATE_FROM_DEVICE_TO_ORCH:
+			sendUpdate((Task) ev.getData());
+				break;
 		}
 	}
 
 	private void updateTasksProgress() {
-		// if(index < taskProgressList.size() &&
-		// taskProgressList.get(index).getRemainingFileSize()==0) index++; //ignore
+		 if(index < taskProgressList.size() &&
+		  taskProgressList.get(index).getRemainingFileSize()==0) index++; //ignore
 		// finished transfers, so we will start looping from the first index of the
 		// remaining transfers
 
@@ -124,7 +134,7 @@ public class NetworkModel extends CloudSimEntity {
 			int remainingTasksCount_Wan = 0;
 			if (taskProgressList.get(i).getRemainingFileSize() > 0) {
 				for (int j = index; j < taskProgressList.size(); j++) {
-					if (taskProgressList.get(j).getRemainingFileSize() > 0) { 
+					if (taskProgressList.get(j).getRemainingFileSize() > 0 && j!= i) { 
 						if ((taskProgressList.get(j).getType() == taskTransferProgress.TASK
 								// if the offloading destination is the cloud
 								&& ((EdgeVM) taskProgressList.get(j).getTask().getVm()).getType().equals(TYPES.CLOUD)) 
@@ -135,12 +145,17 @@ public class NetworkModel extends CloudSimEntity {
 										.getType() == SimulationParameters.TYPES.CLOUD)) {
 							remainingTasksCount_Wan++; // in all these cases the WAN is used
 							remainingTasksCount_Lan++;// using the WAN includes using the LAN
-						} else if (sameLocation(taskProgressList.get(i).getTask().getEdgeDevice(),
-								taskProgressList.get(j).getTask().getEdgeDevice())) {
+						} else if ((sameLocation(taskProgressList.get(i).getTask().getEdgeDevice(),
+								taskProgressList.get(j).getTask().getEdgeDevice()) && SimulationParameters.NETWORK_HOTSPOTS)
+								||(taskProgressList.get(i).getTask().getOrchestrator()==taskProgressList.get(j).getTask().getOrchestrator() 
+								&& !SimulationParameters.NETWORK_HOTSPOTS)
+								||((taskProgressList.get(i).getTask().getVm().getHost().getDatacenter()==taskProgressList.get(j).getTask().getVm().getHost().getDatacenter()) 
+										&& !SimulationParameters.NETWORK_HOTSPOTS && taskProgressList.get(i).getTask().getLength()!=1)) {
+							// TODO Auto-generated method stub
 							// both tasks are generated from same location, which means they share same bandwidth
 							//if they are connected to the same access point
-							remainingTasksCount_Lan++;
-						}
+							remainingTasksCount_Lan++; 
+						 	}
 
 					}
 				}
@@ -198,7 +213,7 @@ public class NetworkModel extends CloudSimEntity {
 		}
 		if (progress.getRemainingFileSize() == 0) {
 			if (progress.getType() == taskTransferProgress.REQUEST) { // it is an offlaoding request (and not a result)
-
+             
 				if (progress.getTask().getOrchestrator().getType().equals(TYPES.CLOUD))
 					schedule(sm, SimulationParameters.WAN_PROPAGATION_DELAY,
 							SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, progress.getTask());
@@ -248,11 +263,11 @@ public class NetworkModel extends CloudSimEntity {
 	}
 
 	private double getLanBandwidth(double remainingTasksCount_Lan) {
-		if (SimulationParameters.NETWORK_HOTSPOTS)
+		//if (SimulationParameters.NETWORK_HOTSPOTS)
 			return (SimulationParameters.BANDWIDTH_WLAN / (remainingTasksCount_Lan)); // if edge many devices use same
 																						// wlan
-		else
-			return SimulationParameters.BANDWIDTH_WLAN; // if peer to peer
+	//	else
+		//	return SimulationParameters.BANDWIDTH_WLAN; // if peer to peer
 	}
 
 	private double getWanBandwidth(double remainingTasksCount_Wan) {
