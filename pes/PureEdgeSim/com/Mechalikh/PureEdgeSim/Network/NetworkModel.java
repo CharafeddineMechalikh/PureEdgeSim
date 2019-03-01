@@ -116,10 +116,7 @@ public class NetworkModel extends CloudSimEntity {
 			// update the tasks transfer progress and the allocated bandwidth
 			updateTasksProgress();
 			schedule(this, SimulationParameters.NETWORK_UPDATE_INTERVAL, UPDATE_PROGRESS);
-			break;
-		case SEND_UPDATE_FROM_DEVICE_TO_ORCH:
-			sendUpdate((Task) ev.getData());
-				break;
+			break; 
 		}
 	}
 
