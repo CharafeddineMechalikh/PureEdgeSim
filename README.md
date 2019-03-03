@@ -64,4 +64,4 @@ https://drive.google.com/open?id=1tc3_1UnIYO0AtAXDVf18AHj5g8MdFMNs
 ## Authors : Charafeddine MECHALIKH, Hajer TAKTAK, Faouzi MOUSSA
 
 # Please cite it as 
-Mechalikh Charafeddine, Taktak Hajer, & Moussa Faouzi. (2019, March 3). PureEdgeSim: A simulation toolkit for performance evaluation of fog and pure edge computing environments. (Version 1.1.2). Zenodo. http://doi.org/10.5281/zenodo.2582424
+Mechalikh Charafeddine, Taktak Hajer, & Moussa Faouzi. (2019, March 3). PureEdgeSim: A simulation framework for performance evaluation of cloud, fog, and pure edge computing environments. (Version 1.1.3). Zenodo. http://doi.org/10.5281/zenodo.2582480
