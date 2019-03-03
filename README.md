@@ -22,6 +22,8 @@
    
    
 More detailed description, tutorials, and use case  will be added soon....
+## New version 1.1.3 (mar 3rd 2019)
+* Fixed dependencies 
 ## New version 1.1.2 (mar 3rd 2019)
 * Improved parallel simulation 
 ## New version 1.1.1 (mar 2nd 2019) 
