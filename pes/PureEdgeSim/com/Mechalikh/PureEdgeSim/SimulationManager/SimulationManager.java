@@ -166,15 +166,7 @@ public class SimulationManager extends CloudSimEntity {
 				if (!t.getEdgeDevice().isDead()) { // check if the device is alive
 					// submit tasks to the broker
 					broker.submitCloudlet(t); // execute task 
-					if (t.getEdgeDevice().getId() != t.getVm().getHost().getDatacenter().getId()) { // if the task is
-						// offloaded
-						scheduleNow(networkModel, NetworkModel.SEND_REQUEST_FROM_ORCH_TO_DESTINATION, t);
-                        //update the enrgy consumption of the orchestrator and the device that will execute the task
-						((EdgeDataCenter)t.getVm().getHost().getDatacenter())
-								.addConsumption(t.getFileSize() * SimulationParameters.POWER_CONS_PER_MEGABYTE);
-						t.getOrchestrator()
-								.addConsumption(t.getFileSize() * SimulationParameters.POWER_CONS_PER_MEGABYTE);
-					}
+					
 					// if the container was downloaded
 					if (SimulationParameters.ENABLE_REGISTRY) {
 						((EdgeDataCenter) t.getVm().getHost().getDatacenter())

@@ -28,10 +28,9 @@ public class Main {
 	static String edgeDevicesFile;
 	static String cloudFile;
 	public static String outputFolder;
-	private CloudSim simulation;
-	private int iterationsStep;
+	private CloudSim simulation; 
 	private int fromIteration;
-	private int id; 
+	private int Cores; 
 	private static List<Scenario> Iterations=new ArrayList<Scenario>();
 
 	public static void main(String[] args) {
@@ -63,51 +62,22 @@ public class Main {
 						for (int dev = SimulationParameters.MIN_NUM_OF_EDGE_DEVICES; dev <= SimulationParameters.MAX_NUM_OF_EDGE_DEVICES; dev += SimulationParameters.EDGE_DEVICE_COUNTER_STEP) {
 							
 				Iterations.add(new Scenario(dev,orch,cri));
-			}}} 
+			}}}  
 		if (SimulationParameters.PARALLEL) {
 			// getting the number of cores on this machine
-			int cores = Runtime.getRuntime().availableProcessors();
-
-				
-
-			// Start parallel Simulation process
-			if (Iterations.size() < cores)
-				cores = Iterations.size(); // we can't divide the iterations on all cores
-									// if the cores are more then the number of
-									// policies
-									// so we set the number of cores equal to
-									// the policies
-									// which means there will be one policy on
-									// every core, in this case.
-
-			// now we will count how many policies per core will be, and store it in the
-			// array
-			int iterationPerCore[] = new int[Math.min(Iterations.size(), cores)]; // store number of policies of each core in this
-																		// array
-			int iterationsLeft = Iterations.size() % cores;
-			for (int i = 0; i < cores; i++) {
-				iterationPerCore[i] = Iterations.size() / cores;
-				if (iterationsLeft > 0) {
-					iterationPerCore[i]++;
-					iterationsLeft--;
-				}
-			}
+		int	cores = Runtime.getRuntime().availableProcessors();
+ 
 
 			// now we create a list to store parallel simulation instances
-			List<Main> simulationList = new ArrayList<>(cores);
-			int id = 0;
+			List<Main> simulationList = new ArrayList<>(cores); 
 			// and then we generate the parallel simulations
-			for (int i = 0; i < Iterations.size(); i += iterationPerCore[id]) {
+			for (int i = 0; i < cores; i ++) {
 				// parallel execution, helps in reducing execution time
 				// to do so we will divide the orchestration policies among them
 
 				// Initialize the simulation environment, each simulation instance with its
 				// specific orchestrations policies
-				simulationList.add(new Main(i, iterationPerCore[id], id + 1));
-
-				if (id == iterationPerCore.length - 1)
-					break;
-				id++; // simulation instance id;
+				simulationList.add(new Main(i,  cores )); 
 			}
 
 			// and finally then runs them
@@ -115,7 +85,7 @@ public class Main {
 			simulationList.parallelStream().forEach(Main::run);
 			// end::parallelExecution[]
 		} else
-			new Main(0, Iterations.size(), 1).run(); // Sequential execution
+			new Main(0,  1).run(); // Sequential execution
 
 		Date endDate = Calendar.getInstance().getTime();
 		SimLog.println("Main, Simulation took : " + timeDiff(startDate, endDate)); 
@@ -123,10 +93,9 @@ public class Main {
 
 	}
 
-	public Main(int fromPolicy, int policiesStep, int id) {
-		this.fromIteration = fromPolicy;
-		this.iterationsStep = policiesStep;
-		this.id = id;
+	public Main(int fromIteration,  int Cores) {
+		this.fromIteration = fromIteration; 
+		this.Cores = Cores;
 	}
 
 	public void run() {
@@ -134,8 +103,8 @@ public class Main {
 	    String startTime=new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()); //file name prefix
 		boolean isFirstIteration=true;
 		try { // Repeat the operation for different number of devices
-			 		for (int it = fromIteration; it < Math.min(fromIteration + iterationsStep, Iterations.size()); it ++) { 
-						SimLog simlog = new SimLog(id, startTime,isFirstIteration); // creating new SimLog instances for each simulation instance;
+			 		for (int it = fromIteration; it < Iterations.size(); it+=Cores) { 
+						SimLog simlog = new SimLog(fromIteration+1, startTime,isFirstIteration); // creating new SimLog instances for each simulation instance;
 					 
 						if (SimulationParameters.CLEAN_OUTPUT_FOLDER  && isFirstIteration) {
 							simlog.cleanOutputFolder(outputFolder); 
@@ -148,7 +117,7 @@ public class Main {
 						// add time stamps to the log by using simulation.clock()
 						simlog.init(Iterations.get(it).getDevicesCount(), Iterations.get(it).getOrchPolicy(), Iterations.get(it).getOrchCriteria(), simulation);
 
-						simlog.print("Main, Starting Simulation: " + id + " iteration: " + iteration);
+						simlog.print("Main, Starting Simulation: " + (fromIteration+1) + " iteration: " + iteration);
 
 					 
 						// starting simulation

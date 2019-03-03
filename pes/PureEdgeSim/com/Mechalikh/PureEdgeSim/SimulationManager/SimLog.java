@@ -242,8 +242,8 @@ public class SimLog {
 			print("SimLog, First device died at                                                    :"
 					+ padLeftSpaces("" + firstDeviceDeathTime, 20) + " seconds");
 
-		ListCSV.set(ListCSV.size() - 1, ListCSV.get(ListCSV.size() - 1) + dft.format(averageLoad) + ","
-				+ dft.format(averageCloud) + "," + dft.format(averageFog) + "," + dft.format(averageEdge) + ","
+			ListCSV.set(ListCSV.size() - 1, ListCSV.get(ListCSV.size() - 1) + dft.format(averageLoad) + ","
+				+ dft.format(averageCloud/cloud) + "," + dft.format(averageFog/fog) + "," + dft.format(averageEdge/edge) + ","
 				+ dft.format(energyConsumption) + "," + dft.format(energyConsumption / SM.getDatacenterList().size())
 				+ "," + dft.format(cloudEnConsumption) + "," + dft.format(cloudEnConsumption / cloud) + ","
 				+ dft.format(fogEnConsumption) + "," + dft.format(fogEnConsumption / fog) + ","
@@ -251,7 +251,6 @@ public class SimLog {
 				+ dft.format(deadEdgeDevices) + "," + dft.format(averageRemainingPowerWh) + ","
 				+ dft.format(averageRemainingPower) + "," + firstDeviceDeathTime + ","
 				+ remainingPower.toString().replace(",", "-") + "," + devicesDeathTime.toString().replace(",", "-"));
-
 	}
 
 	public String padLeftSpaces(String str, int n) {
