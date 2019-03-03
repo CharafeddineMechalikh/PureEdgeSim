@@ -22,11 +22,11 @@
    
    
 More detailed description, tutorials, and use case  will be added soon....
-## New version 1.1.1 (mar 2nd 2019)
-## Changelog 
+## New version 1.1.2 (mar 3rd 2019)
+* Improved parallel simulation 
+## New version 1.1.1 (mar 2nd 2019) 
 * Minor fixes
-## New version 1.1 ( feb 26th 2019)
-## Changelog  
+## New version 1.1 ( feb 26th 2019) 
 * Added support for registry and containers
 
 * Improved the network model: 
@@ -62,4 +62,4 @@ More detailed description, tutorials, and use case  will be added soon....
 ## Authors : Charafeddine MECHALIKH, Hajer TAKTAK, Faouzi MOUSSA
 
 # Please cite it as 
-Mechalikh Charafeddine, Taktak Hajer, & Moussa Faouzi. (2019, March 2). PureEdgeSim: A simulation toolkit for performance evaluation of fog and pure edge computing environments. (Version 1.1.1). Zenodo. http://doi.org/10.5281/zenodo.2581967
+Mechalikh Charafeddine, Taktak Hajer, & Moussa Faouzi. (2019, March 3). PureEdgeSim: A simulation toolkit for performance evaluation of fog and pure edge computing environments. (Version 1.1.2). Zenodo. http://doi.org/10.5281/zenodo.2582424
