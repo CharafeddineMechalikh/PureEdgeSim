@@ -388,9 +388,11 @@ public class SimLog {
 		double lantraffic = 0;
 		///
 		///
-		for (int i = 0; i < networkModel.getTaskProgressList().size(); i++) {
+			for (int i = 0; i < networkModel.getTaskProgressList().size(); i++) {
 			lanUsage += networkModel.getTaskProgressList().get(i).getLanNetworkUsage();
-			wanUsage += networkModel.getTaskProgressList().get(i).getWanNetworkUsage();
+			wanUsage += networkModel.getTaskProgressList().get(i).getWanNetworkUsage(); 
+			if(networkModel.getTaskProgressList().get(i).getLanNetworkUsage()!=0)
+			bandwidth+= networkModel.getTaskProgressList().get(i).getFileSize()/networkModel.getTaskProgressList().get(i).getLanNetworkUsage();
 			if (networkModel.getTaskProgressList().get(i).getType() == taskTransferProgress.CONTAINER) {
 				lanusageContainer += networkModel.getTaskProgressList().get(i).getLanNetworkUsage();
 				WanusageContainer += networkModel.getTaskProgressList().get(i).getWanNetworkUsage();
@@ -401,7 +403,7 @@ public class SimLog {
 		}
 	
 		lantraffic = lantraffic / 1000;	
-		bandwidth = lantraffic / lanUsage;
+		bandwidth = bandwidth /(1000* networkModel.getTaskProgressList().size());
 		for (int i = 0; i < size; i++) {
 			task = finishedTasks.get(i);
 
