@@ -130,7 +130,7 @@ public class NetworkModel extends CloudSimEntity {
 			int remainingTasksCount_Lan = 0;
 			int remainingTasksCount_Wan = 0;
 			if (taskProgressList.get(i).getRemainingFileSize() > 0) {
-				for (int j = index; j < taskProgressList.size(); j++) {
+				for (int j = i; j < taskProgressList.size(); j++) {
 					if (taskProgressList.get(j).getRemainingFileSize() > 0 && j!= i) { 
 						if ((taskProgressList.get(j).getType() == taskTransferProgress.TASK
 								// if the offloading destination is the cloud
