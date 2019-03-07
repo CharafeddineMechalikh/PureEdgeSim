@@ -261,6 +261,7 @@ public class NetworkModel extends CloudSimEntity {
 
 	private double getLanBandwidth(double remainingTasksCount_Lan) {
 		//if (SimulationParameters.NETWORK_HOTSPOTS)
+		if(remainingTasksCount_Lan==0 )remainingTasksCount_Lan=1; 
 			return (SimulationParameters.BANDWIDTH_WLAN / (remainingTasksCount_Lan)); // if edge many devices use same
 																						// wlan
 	//	else
@@ -268,6 +269,7 @@ public class NetworkModel extends CloudSimEntity {
 	}
 
 	private double getWanBandwidth(double remainingTasksCount_Wan) {
+		if(remainingTasksCount_Wan==0 )remainingTasksCount_Wan=1; 
 		return (SimulationParameters.WAN_BANDWIDTH / (remainingTasksCount_Wan));
 	}
 
