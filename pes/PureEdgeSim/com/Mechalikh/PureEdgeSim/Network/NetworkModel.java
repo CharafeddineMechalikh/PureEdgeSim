@@ -140,14 +140,26 @@ public class NetworkModel extends CloudSimEntity {
 								//or if the orchestrator is deployed in the cloud
 								|| (taskProgressList.get(j).getTask().getOrchestrator()
 										.getType() == SimulationParameters.TYPES.CLOUD)) {
-							remainingTasksCount_Wan++; // in all these cases the WAN is used
-							remainingTasksCount_Lan++;// using the WAN includes using the LAN
-						} else if ((sameLocation(taskProgressList.get(i).getTask().getEdgeDevice(),
-								taskProgressList.get(j).getTask().getEdgeDevice()) && SimulationParameters.NETWORK_HOTSPOTS)
-								||(taskProgressList.get(i).getTask().getOrchestrator()==taskProgressList.get(j).getTask().getOrchestrator() 
-								&& !SimulationParameters.NETWORK_HOTSPOTS)
-								||((taskProgressList.get(i).getTask().getVm().getHost().getDatacenter()==taskProgressList.get(j).getTask().getVm().getHost().getDatacenter()) 
-										&& !SimulationParameters.NETWORK_HOTSPOTS && taskProgressList.get(i).getTask().getLength()!=1)) {
+							remainingTasksCount_Wan++; // in all these cases the WAN is used 
+						} 
+						if ((sameLocation(taskProgressList.get(i).getTask().getEdgeDevice(),
+								taskProgressList.get(j).getTask().getEdgeDevice())
+								&& SimulationParameters.NETWORK_HOTSPOTS)
+								
+								//compare orchestrator
+								|| ((taskProgressList.get(i).getTask().getOrchestrator() == taskProgressList.get(j).getTask().getOrchestrator()) && !SimulationParameters.NETWORK_HOTSPOTS)
+								|| ((taskProgressList.get(i).getTask().getOrchestrator() == taskProgressList.get(j).getTask().getVm().getHost().getDatacenter()) && !SimulationParameters.NETWORK_HOTSPOTS)
+								|| ((taskProgressList.get(i).getTask().getOrchestrator() == taskProgressList.get(j).getTask().getEdgeDevice()) && !SimulationParameters.NETWORK_HOTSPOTS)
+				                
+								//compare origin device
+								|| ((taskProgressList.get(i).getTask().getEdgeDevice() == taskProgressList.get(j).getTask().getOrchestrator()) && !SimulationParameters.NETWORK_HOTSPOTS)
+					         	|| ((taskProgressList.get(i).getTask().getEdgeDevice() == taskProgressList.get(j).getTask().getVm().getHost().getDatacenter()) && !SimulationParameters.NETWORK_HOTSPOTS)
+					        	|| ((taskProgressList.get(i).getTask().getEdgeDevice() == taskProgressList.get(j).getTask().getEdgeDevice()) && !SimulationParameters.NETWORK_HOTSPOTS)
+		                        
+					        	// compare offloading destination
+					        	|| ((taskProgressList.get(i).getTask().getVm().getHost().getDatacenter() == taskProgressList.get(j).getTask().getOrchestrator()) && !SimulationParameters.NETWORK_HOTSPOTS)
+					         	|| ((taskProgressList.get(i).getTask().getVm().getHost().getDatacenter() == taskProgressList.get(j).getTask().getVm().getHost().getDatacenter()) && !SimulationParameters.NETWORK_HOTSPOTS)
+					        	|| ((taskProgressList.get(i).getTask().getVm().getHost().getDatacenter() == taskProgressList.get(j).getTask().getEdgeDevice()) && !SimulationParameters.NETWORK_HOTSPOTS)) {
 							// TODO Auto-generated method stub
 							// both tasks are generated from same location, which means they share same bandwidth
 							//if they are connected to the same access point
