@@ -71,7 +71,7 @@ public class Main {
 			// now we create a list to store parallel simulation instances
 			List<Main> simulationList = new ArrayList<>(cores); 
 			// and then we generate the parallel simulations
-			for (int i = 0; i < cores; i ++) {
+			for (int i = 0; i < Math.min(cores, Iterations.size()); i ++) {
 				// parallel execution, helps in reducing execution time
 				// to do so we will divide the orchestration policies among them
 
