@@ -127,8 +127,8 @@ public class NetworkModel extends CloudSimEntity {
 		// remaining transfers
 
 		for (int i = index; i < taskProgressList.size(); i++) {
-			int remainingTasksCount_Lan = 1;
-			int remainingTasksCount_Wan = 1;
+			int remainingTasksCount_Lan = 0;
+			int remainingTasksCount_Wan = 0;
 			if (taskProgressList.get(i).getRemainingFileSize() > 0) {
 				for (int j = i; j < taskProgressList.size(); j++) {
 					if (taskProgressList.get(j).getRemainingFileSize() > 0 && j!= i) { 
