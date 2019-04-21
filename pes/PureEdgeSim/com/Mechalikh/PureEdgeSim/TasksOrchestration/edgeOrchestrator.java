@@ -284,30 +284,5 @@ public class edgeOrchestrator extends Orchestrator {
 
 	
 
-	public static void replaceSelected(String replaceWith, String original) {
-		try {
-			// input the file content to the StringBuffer "input"
-			BufferedReader file = new BufferedReader(new FileReader("PureEdgeSim/tree.txt"));
-			String line;
-			StringBuffer inputBuffer = new StringBuffer();
-
-			while ((line = file.readLine()) != null) {
-				if (!line.contains(original)) {
-					inputBuffer.append(line);
-					inputBuffer.append('\n');
-				}
-			}
-			file.close();
-			String inputStr = inputBuffer.toString();
-
-			inputStr += replaceWith;
-			// write the new String with the replaced line OVER the same file
-			FileOutputStream fileOut = new FileOutputStream("PureEdgeSim/tree.txt");
-			fileOut.write(inputStr.getBytes());
-			fileOut.close();
-
-		} catch (Exception e) {
-			System.out.println("Problem reading file.");
-		}
-	}
+	
 }
