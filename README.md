@@ -77,7 +77,8 @@ More detailed description, tutorials, and use case  will be added soon....
 
 ## 5.2 The Simulation Parameter File
 The parameters file contains the following set of parameters:
-* The simulation environment parameters
+
+* The simulation environment parameters:
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
 simulation_time                       | Integer    | >= 1          | The simulation duration (in minutes)
@@ -94,7 +95,8 @@ save_log_file                         | Boolean    | true or false | Whether to 
 clear_output_folder                   | Boolean    | true or false | Delete the output folder at the beginning of each simulation
 deep_log_enabled                      | Boolean    | true or false | Enableof disable deep logging
 
-The Location Manager (mobility model) parameters
+
+* The Location Manager (mobility model) parameters:
 
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
@@ -104,12 +106,14 @@ edge_range                            | Integer    | >= 1          | The range o
 fog_coverage                          | Integer    | >= 1          | The raius of the area covered by each fog server (in meters)
 speed                                 | Double     | >= 0          | The speed of mobile devices in meters/seconds) (0= disabled)
 
+* The Server Manager settings:
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
 min_number_of_edge_devices            | Integer    | >= 1          | The number of edge devices at the beginning of the simulation
 max_number_of_edge_devices            | Integer    | >= 1          | The number of edge devices at the end of the simulation
 edge_device_counter_size              | Integer    | >= 1          | The growing rate in the number of devices in each iteration
 
+* The Network Model settings:
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
 wlan_bandwidth                        | Integer    | >= 1          | The local area network bandwidth (in Mbps) 
@@ -117,6 +121,7 @@ wan_bandwidth                         | Integer    | >= 1          | The backhau
 wan_propogation_delay                 | Double     | >= 0          | The propagation delay (when sending data/tasks to the cloud) (in seconds)  
 network_update_interval               | Double     | >= 0.01       | The network model refresh interval (in seconds)
 
+* The Tasks Orchestration settings:
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
 enable_registry                       | Boolean    | true or false | Enabling it means that before executing a task, a container will be pulled from the registry/cloud 
@@ -127,11 +132,14 @@ tasks_generation_rate                 | Integer    | >= 1          | The number 
 orchestration_architectures           | Boolean    | CLOUD_ONLY, FOG_AND_CLOUD,... | The computing paradigms that are used 
 orchestration_algorithms              | Boolean    | (any algorithm name) | The algorithm used by the orchestrator to find the offloading destination
 
+* The Energy Model parameters:
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
 consumed_energy_per_bit               | Double     | >= 0          | The enregy consumed when transferring 1 bit
 amplifier_dissipation_free_space      | Double     | >= 0          | The energy consumed by the amplifier in free space channel
 amplifier_dissipation_multipath       | Double     | >= 0          | The energy consumed by the amplifier in multipath channel
+
+## 5.3 The Edge Devices File
 
 # 6. Changelog
 ## New version 2.0.0 (oct 24th 2019)
