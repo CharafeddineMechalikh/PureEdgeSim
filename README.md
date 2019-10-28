@@ -78,8 +78,8 @@ More detailed description, tutorials, and use case  will be added soon....
 ## 5.2 The Simulation Parameter File
 The parameters file contains the following set of parameters:
 * The simulation environment parameters
-Parameter                             | Type       | Options/Range | Description                                            | 
------------------------------------------------------------------------------------------------------------------------------
+Parameter                             | Type       | Options/Range | Description                                             
+--------------------------------------|------------|---------------|---------------------------------------------------------
 simulation_time                       | Integer    | >= 1          | The simulation duration (in minutes)
 initialization_time                   | Integer    | >= 0          | The time needed to generate all resources, which means that the tasks offloading process starts affter it
 parallel_simulation                   | Boolean    | true or false | Enable or disable parallel simulations
@@ -95,29 +95,30 @@ clear_output_folder                   | Boolean    | true or false | Delete the 
 deep_log_enabled                      | Boolean    | true or false | Enableof disable deep logging
 
 The Location Manager (mobility model) parameters
-Parameter                             | Type       | Options/Range | Description                                            |  
------------------------------------------------------------------------------------------------------------------------------
+
+Parameter                             | Type       | Options/Range | Description                                             
+--------------------------------------|------------|---------------|---------------------------------------------------------
 length                                | Integer    | >= 1          | The simulation area length (in meters)
 width                                 | Integer    | >= 1          | The simulation area width (in meters)  
 edge_range                            | Integer    | >= 1          | The range of edge devices (in meters)
 fog_coverage                          | Integer    | >= 1          | The raius of the area covered by each fog server (in meters)
 speed                                 | Double     | >= 0          | The speed of mobile devices in meters/seconds) (0= disabled)
 
-Parameter                             | Type       | Options/Range | Description                                            | 
------------------------------------------------------------------------------------------------------------------------------
+Parameter                             | Type       | Options/Range | Description                                             
+--------------------------------------|------------|---------------|---------------------------------------------------------
 min_number_of_edge_devices            | Integer    | >= 1          | The number of edge devices at the beginning of the simulation
 max_number_of_edge_devices            | Integer    | >= 1          | The number of edge devices at the end of the simulation
 edge_device_counter_size              | Integer    | >= 1          | The growing rate in the number of devices in each iteration
 
-Parameter                             | Type       | Options/Range | Description                                            | 
------------------------------------------------------------------------------------------------------------------------------
+Parameter                             | Type       | Options/Range | Description                                             
+--------------------------------------|------------|---------------|---------------------------------------------------------
 wlan_bandwidth                        | Integer    | >= 1          | The local area network bandwidth (in Mbps) 
 wan_bandwidth                         | Integer    | >= 1          | The backhaul network bandwidth (in Mbps) 
 wan_propogation_delay                 | Double     | >= 0          | The propagation delay (when sending data/tasks to the cloud) (in seconds)  
 network_update_interval               | Double     | >= 0.01       | The network model refresh interval (in seconds)
 
-Parameter                             | Type       | Options/Range | Description                                            | 
------------------------------------------------------------------------------------------------------------------------------
+Parameter                             | Type       | Options/Range | Description                                             
+--------------------------------------|------------|---------------|---------------------------------------------------------
 enable_registry                       | Boolean    | true or false | Enabling it means that before executing a task, a container will be pulled from the registry/cloud 
 enable_orchestrators                  | Boolean    | true or false | Enabling this means that the task/offloading request will be sent to the specifed/ nearest orchestrator. Disabling this means that each device will orchestrate its owb tasks.  
 deploy_orchestrator                   | Boolean    | Cloud or Fog  | To deploy the orchestrator on the cloud, fog, or any custom location (e.g. cluster heads, the user in this case need to implement his clustering algorithm)
@@ -126,8 +127,8 @@ tasks_generation_rate                 | Integer    | >= 1          | The number 
 orchestration_architectures           | Boolean    | CLOUD_ONLY, FOG_AND_CLOUD,... | The computing paradigms that are used 
 orchestration_algorithms              | Boolean    | (any algorithm name) | The algorithm used by the orchestrator to find the offloading destination
 
-Parameter                             | Type       | Options/Range | Description                                            | 
------------------------------------------------------------------------------------------------------------------------------
+Parameter                             | Type       | Options/Range | Description                                             
+--------------------------------------|------------|---------------|---------------------------------------------------------
 consumed_energy_per_bit               | Double     | >= 0          | The enregy consumed when transferring 1 bit
 amplifier_dissipation_free_space      | Double     | >= 0          | The energy consumed by the amplifier in free space channel
 amplifier_dissipation_multipath       | Double     | >= 0          | The energy consumed by the amplifier in multipath channel
