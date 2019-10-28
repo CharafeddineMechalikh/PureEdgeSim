@@ -12,6 +12,7 @@
 # 2. PureEdgeSim Architecture
    PureEdgeSim enables the simulation of resource management strategies and allows to evaluate the performance of cloud, fog, and pure edge computing environments. It grantees high scalability by enabling the simulation of thousands of devices. Besides, it supports the edge devices heterogeneity (i.e. whether this device is mobile or not, whether battery-powered or not, different  applications requirements: tasks file size, tasks CPU utilization,and latency requirement, etc.) 
 ![Environment](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/scenario.JPG)
+
 *The simulated scenarios*
 
    It provides a task orchestrator module that orchestrates the tasks and enables the multi-tiers simulations scenarios where many computing paradigms can be used in conjunction with one another. Besides, it provides an even more realistic network model (as compared to state of the art simulators) that continuously changes the allocated bandwidth for each task being transferred depending on the network traffic. 
@@ -25,6 +26,7 @@
    * The Location Manager, which generates the mobility path of mobile devices.
    
 ![Architecture](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/modules.PNG)
+
 *A simple representation of PureEdgeSim architecture*
 
 # 3. What can be simulated with PureEdgeSim?
@@ -71,7 +73,13 @@
   To decrease the simultion time, the user can also enable parralelism
    
 # 5. Getting started with PureEdgeSim
-## 5.1 The Simulation Settings
+## 5.1 Running PureEdgeSim for the First Time
+ (i)  Download the zip file from github.
+ (ii) Import the project to your IDE
+ (iii) Launch the `main.java` class
+ *Running the simulation from command line will be added soon*
+ 
+## 5.2 The Simulation Settings
   PureEdgeSim provides 5 input files located under the `/settings/` folder (you can check them [here](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/pes/PureEdgeSim/settings)):
   
   (i)   The `simulation parameters` file : It groups all the simulation parameters, including the simulation environment settings  (simulation time, initialization time, update intervals, ..), the models settings (the parameters used by the mobility, energy, network, and tasks generation models..), and so on.    
@@ -81,7 +89,7 @@
   (iv)  The `Fog datacenters XML` file : This file describes the Fog datacenters that will be generated during the simulation. However, unlike the edge devices file, this file contains the fog datacenters that need to be generated instead of their types. Therefore, if the user wants to generate 4 different servers, he must include each one of them in the file. Each datacenter is characterised by its compuitng capacity, its energy consumption, its location, and its hosts. Each host has a set of Virtual machines with a specified computing capacity. These virtual machines are responsible for executing the offloading tasks.
   (v)   The `Cloud datacetners xml` file:  This file describes the cloud datacenters that will be generated during the simulation (similar to that of fog servers). 
 
-## 5.2 The Simulation Parameters File
+## 5.3 The Simulation Parameters File
 The parameters file contains the following set of parameters:
 
 * The simulation environment parameters:
@@ -150,7 +158,7 @@ Parameter                             | Type       | Options/Range | Description
 `amplifier_dissipation_free_space`    | Double     | >= 0          | The energy consumed by the amplifier in free space channel  (in wh)
 `amplifier_dissipation_multipath`     | Double     | >= 0          | The energy consumed by the amplifier in multipath channel  (in wh)
 
-## 5.3 The Edge Devices, Fog Servers, and Cloud Datacenters Files
+## 5.4 The Edge Devices, Fog Servers, and Cloud Datacenters Files
 These files contain the specification of edge devices, fog datacenters, and cloud datacenters.
 
 * Datacenters characteristics
@@ -193,13 +201,13 @@ Attribute                             | Type       | Options/Range | Description
 `batterycapacity`                      | Double     | > 0           | The battery capacity (in Wh)
 `percentage`                           | Integer    | > 0           | The percentage of devices of this type.
  
-## 5.4 The PureEdgeSim output files
+## 5.5 The PureEdgeSim output files
 PureEdgeSim output files can be found under the `/output/` directory (you can check the output files [here](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/pes/PureEdgeSim/output/2019-10-28_10-04-01)). There are two types of text files resulted from the simulation: a `.txt` file and a `.csv` file. The `.txt` file contains a brief and easy to read ouput, while the `.csv` file contains more detailed simulations results that are ready to plot. The `.csv` file can be opened using any spreadsheet software (e.g. Microsoft Excel) by which the user can generate unlimited types of charts (with more than 40 metric available).
 To ease prototyping and testing, pureEdgeSim can automatically generate more than 60 charts. It can also generate real time charts and display the simulation map. These charts and the map are then saved under the output folder in a `.png` image format. 
 
 Exmaple of real time charts :
 ![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/real%20time.gif)
-*Real time charts, with 30% mobile device*
+*Real time analysis of simulation environment*
 
 # 6. Changelog
 ## New version 2.0.0 (oct 24th 2019)
