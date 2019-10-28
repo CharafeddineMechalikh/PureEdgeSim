@@ -75,7 +75,7 @@ More detailed description, tutorials, and use case  will be added soon....
   (iv)  The Fog datacenters XML file : This file describes the Fog datacenters that will be generated during the simulation. However, unlike the edge devices file, this file contains the fog datacenters that need to be generated instead of their types. Therefore, if the user wants to generate 4 different servers, he must include each one of them in the file. Each datacenter is characterised by its compuitng capacity, its energy consumption, its location, and its hosts. Each host has a set of Virtual machines with a specified computing capacity. These virtual machines are responsible for executing the offloading tasks.
   (v)   The Cloud datacetners xml file:  This file describes the cloud datacenters that will be generated during the simulation (similar to that of fog servers). 
 
-## 5.2 The Simulation Parameter File
+## 5.2 The Simulation Parameters File
 The parameters file contains the following set of parameters:
 
 * The simulation environment parameters:
@@ -140,11 +140,56 @@ orchestration_algorithms              | Boolean    | (any algorithm name) | The 
 
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
-consumed_energy_per_bit               | Double     | >= 0          | The enregy consumed when transferring 1 bit
-amplifier_dissipation_free_space      | Double     | >= 0          | The energy consumed by the amplifier in free space channel
-amplifier_dissipation_multipath       | Double     | >= 0          | The energy consumed by the amplifier in multipath channel
+consumed_energy_per_bit               | Double     | >= 0          | The enregy consumed when transferring 1 bit (in wh)
+amplifier_dissipation_free_space      | Double     | >= 0          | The energy consumed by the amplifier in free space channel  (in wh)
+amplifier_dissipation_multipath       | Double     | >= 0          | The energy consumed by the amplifier in multipath channel  (in wh)
 
-## 5.3 The Edge Devices File
+## 5.3 The Edge Devices, Fog Servers, and Cloud Datacenters Files
+These files contain the specification of edge devices, fog datacenters, and cloud datacenters.
+
+* Datacenters characteristics
+
+Attribute                             | Type       | Options/Range | Description                                             
+--------------------------------------|------------|---------------|---------------------------------------------------------
+idleConsumption                       | Double     | >= 0          | The energy consumption rate when the datacenter is idle  (in wh/s)
+maxConsumption                        | Double     | >= 0          | The energy consumption rate when the datacenter CPU operates at 100%  (in wh/s)
+isOrchestrator                        | Boolean    | true or false | To manually select this datacenter as orchestrator
+location                              | -          | -             | The X and Y coordinates that define the location of this datacenter
+hosts                                 | -          | -             | The list of hosts  
+
+* The hosts have the following characteristics
+
+Attribute                             | Type       | Options/Range | Description                                             
+--------------------------------------|------------|---------------|---------------------------------------------------------
+core                                  | Integer    | > 0           | The number of CPU cores 
+mips                                  | Integer    | > 0           | The processing power  (in MIPS)
+ram                                   | Integer    | > 0           | RAM (in  MB)
+storage                               | Integer    | > 0           | Storage capacity (in MB)
+VMs                                   | -          | -             | The list of virtual machines  
+
+* Each virtual machine have the following characteristics
+
+Attribute                             | Type       | Options/Range | Description                                             
+--------------------------------------|------------|---------------|---------------------------------------------------------
+core                                  | Integer    | > 0           | The number of CPU cores used by this VM 
+mips                                  | Integer    | > 0           | The allocated processing power  (in MIPS)
+ram                                   | Integer    | > 0           | The allocated RAM (in  MB)
+storage                               | Integer    | > 0           | The allocated storage (in MB) 
+
+* The sum of virtual machines attributes values (e.g. CPU cores) must be inferior than those of the host
+
+* The edge devices file follows the same structure as the Fog and Cloud xml files. However as we said previously, if we want to generate 100 devices for example, we will not define all these devices in this file, instead, we will define the types of devices that will be generated, for example 25% of the generated devices will be of type 1, etc. The edge devices are considered as datacenters that contains one host with one VM (the user can add more if needed, by editing this file). The device without a virtual machine is considered a simple sensor (no computing capabilities). The following table highlights the attributes that only edge devices have : 
+
+Attribute                             | Type       | Options/Range | Description                                             
+--------------------------------------|------------|---------------|---------------------------------------------------------
+mobility                              | Boolean    | true or false | "True" means the devices of this type are mobile 
+battery                               | Boolean    | true or false | "True" means that the devices of this type are battery-powered
+batterycapacity                       | Double     | > 0           | The battery capacity (in Wh)
+percentage                            | Integer    | > 0           | The percentage of devices of this type.
+ 
+## 5.4 The PureEdgeSim output files
+PureEdgeSim output files can be found under the '"/output/"' directory. There are two types of text files resulted from the simulation: a '".txt"' file and a '".csv"' file. The '".txt"' file contains a brief and easy to read ouput, while the '".csv"' file contains more detailed simulations results that are ready to plot. The '".csv"' file can be opened using any spreadsheet software (e.g. Microsoft Excel) by which the user can generate unlimited types of graphs (with more than 40 metric available).
+To ease prototyping and testing, pureEdgeSim can automatically generate more than 60 graphs. These graphs are then saved under the output folder in a '".png"' image format.
 
 # 6. Changelog
 ## New version 2.0.0 (oct 24th 2019)
