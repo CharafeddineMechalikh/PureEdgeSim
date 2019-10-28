@@ -46,9 +46,7 @@
                 <exclude name="**/*.useq"/>
                 <exclude name="**/*.java"/>
             </fileset>
-        </copy>
-        <copy includeemptydirs="false" todir="target/test-classes"> 
-        </copy>
+        </copy> 
     </target>
     <target name="clean">
         <delete dir="target/classes"/>
