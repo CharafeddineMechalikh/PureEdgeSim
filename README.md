@@ -21,7 +21,7 @@
    * The Tasks Orchestrator, which is the decision maker, where the user can define the orchestration algorithm. 
    * The Location Manager, which generates the mobility path of mobile devices.
    
-![Architecture](/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/modules.PNG) 
+![Architecture](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/modules.PNG) 
 
 # 3. What can be simulated with PureEdgeSim?
 * Cloud, Fog, and pure Edge computing scenarios
@@ -194,7 +194,7 @@ PureEdgeSim output files can be found under the `/output/` directory (you can ch
 To ease prototyping and testing, pureEdgeSim can automatically generate more than 60 charts. It can also generate real time charts and display the simulation map. These charts and the map are then saved under the output folder in a `.png` image format. 
 
 Exmaple of real time charts :
-![Real time charts](/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Real%20time%20charts.png)
+![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Real%20time%20charts.png)
 
 # 6. Changelog
 ## New version 2.0.0 (oct 24th 2019)
