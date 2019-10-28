@@ -12,10 +12,10 @@
    PureEdgeSim enables the simulation of resource management strategies and allows to evaluate the performance of cloud, fog, and pure edge computing environments. It grantees high scalability by enabling the simulation of thousands of devices. Besides, it supports the edge devices heterogeneity (i.e. whether this device is mobile or not, whether battery-powered or not, different  applications requirements: tasks file size, tasks CPU utilization,and latency requirement, etc.) 
    It provides a task orchestrator module that orchestrates the tasks and enables the multi-tiers simulations scenarios where many computing paradigms can be used in conjunction with one another. Besides, it provides an even more realistic network model (as compared to state of the art simulators) that continuously changes the allocated bandwidth for each task being transferred depending on the network traffic. 
    It consists of the following 7 modules:
-   * Scenario Manager, that loads  the simulation parameters and the user scenario from the input files (.xml and .prop files in settings/ folder) where the user specifies. It consists of two classes, the File Parser that  checks the input files and loads the  the simulation parameters, and the Simulation Parameters class which represents a placeholder for the different parameters.
+   * Scenario Manager, that loads  the simulation parameters and the user scenario from the input files (`.xml` and `.prop` files in settings/ folder) where the user specifies. It consists of two classes, the File Parser that  checks the input files and loads the  the simulation parameters, and the Simulation Parameters class which represents a placeholder for the different parameters.
    * Simulation Manager, that initiates the simulation environment, schedules all the events and generates the output. It consists of two important classes, the Simulation Manager class which manages the simulation, schedules the tasks generation, etc. The Simulation Logger class that generates the simulation output saves it in comma-separated value (CSV) format in order to easily exploit them later using any spreadsheet editor (e.g. Microsoft Excel...).
    * Data Centers Manager: it generates and manages all the data centers and devices (i.e. cloud, fog or edge). It consists of two classes: the Edge Data Center class, that contains the specific properties of edge devices such as the location, the mobility, the energy source, and the capacity/ remaining energy if it is battery-powered. The second class is the Server Manager which generates the needed servers and edge devices, their hosts and their virtual machines.
-   * Tasks Generator which is behind the tasks generation, -currently- it assigns an application such as e-health, smart-home, and augmented-reality (that can be defined in settings/applications.xml file) to each edge device. Then, it will generates the needed tasks according to the assigned type, which guarantees the heterogeneity of applications.  
+   * Tasks Generator which is behind the tasks generation, -currently- it assigns an application such as e-health, smart-home, and augmented-reality (that can be defined in `settings/applications.xml` file) to each edge device. Then, it will generates the needed tasks according to the assigned type, which guarantees the heterogeneity of applications.  
    * The Network Module: that consists mainly of the Network Model class.which is behind the transfer of tasks/containers/ request... 
    * The Tasks Orchestrator, which is the decision maker, where the user can define the orchestration algorithm. 
    * The Location Manager, which generates the mobility path of mobile devices.
@@ -36,7 +36,7 @@ More detailed description, tutorials, and use case  will be added soon....
   The mobility model will assign a random location to each device.
   Then the mobile devices will change their location according to the model in use.
 * The support for devices heterogeneity
-  The user can define heterogenous edge device, Fog servers, and Cloud Data Centers in the corresponding XML files. 
+  The user can define heterogenous edge device, Fog servers, and Cloud Data Centers in the corresponding `.xml` files. 
   he will decide wether and edge device is mobile or not, wether it is battery-powered or not ( and the size of its battery), 
   and how much computing capacity it has.
   The devices without computing capacity are considered as simple sensors that only generate data/tasks 
@@ -68,12 +68,12 @@ More detailed description, tutorials, and use case  will be added soon....
 # 5. Getting started with PureEdgeSim
 ## 5.1 The Simulation Settings
   PureEdgeSim provides 5 input files located under the `/settings/` folder:
-  (i)   The simulation parameters file : It groups all the simulation parameters, including the simulation environment settings  (simulation time, initialization time, update intervals, ..), the models settings (the parameters used by the mobility, energy, network, and tasks generation models..), and so on.    
-  (ii)  The applications XML file: This file decribes the types of applications that will be used by the tasks generator.
+  (i)   The `simulation parameters` file : It groups all the simulation parameters, including the simulation environment settings  (simulation time, initialization time, update intervals, ..), the models settings (the parameters used by the mobility, energy, network, and tasks generation models..), and so on.    
+  (ii)  The `applications XML` file: This file decribes the types of applications that will be used by the tasks generator.
   Each of these application has different characterestics (CPU utilization, files size, latency requirements..). When the     simulation starts, the tasks generator will associate one of these applications to each edge device. Then, based on the assigned application type, it will generate the tasks of these device, which enables the support for devices heterogeneity ( the heterogeneity of their applications, in this case).
-  (iii) The edge devices XML file:  PureEdgeSim also enables the user to generate hundreds or even thousands of heterogenous devices. To do this, the user will specify the types of edge devices that will be generated and their proportions/ percentages in the `edge_device.xml` file. The server manager will then generate the desired number of edge devices based on the proposed types. For instance, if the user define two types of devices and sets the percentage of each type to 50% and sets the number of edge devices (in the simulation parameters file) to 1000 devices, the server manager will generate 500 devices of type 1, and 500 devices of type 2. Each of those types can have different computing capacity, energy consumption,  and other settings as well that enable the heterogeneity of devices ( whether the device is mobile or not, battery-powered or not, and how much is its battery capacity...).
-  (iv)  The Fog datacenters XML file : This file describes the Fog datacenters that will be generated during the simulation. However, unlike the edge devices file, this file contains the fog datacenters that need to be generated instead of their types. Therefore, if the user wants to generate 4 different servers, he must include each one of them in the file. Each datacenter is characterised by its compuitng capacity, its energy consumption, its location, and its hosts. Each host has a set of Virtual machines with a specified computing capacity. These virtual machines are responsible for executing the offloading tasks.
-  (v)   The Cloud datacetners xml file:  This file describes the cloud datacenters that will be generated during the simulation (similar to that of fog servers). 
+  (iii) The `edge devices XML` file:  PureEdgeSim also enables the user to generate hundreds or even thousands of heterogenous devices. To do this, the user will specify the types of edge devices that will be generated and their proportions/ percentages in the `edge_device.xml` file. The server manager will then generate the desired number of edge devices based on the proposed types. For instance, if the user define two types of devices and sets the percentage of each type to 50% and sets the number of edge devices (in the simulation parameters file) to 1000 devices, the server manager will generate 500 devices of type 1, and 500 devices of type 2. Each of those types can have different computing capacity, energy consumption,  and other settings as well that enable the heterogeneity of devices ( whether the device is mobile or not, battery-powered or not, and how much is its battery capacity...).
+  (iv)  The `Fog datacenters XML` file : This file describes the Fog datacenters that will be generated during the simulation. However, unlike the edge devices file, this file contains the fog datacenters that need to be generated instead of their types. Therefore, if the user wants to generate 4 different servers, he must include each one of them in the file. Each datacenter is characterised by its compuitng capacity, its energy consumption, its location, and its hosts. Each host has a set of Virtual machines with a specified computing capacity. These virtual machines are responsible for executing the offloading tasks.
+  (v)   The `Cloud datacetners xml` file:  This file describes the cloud datacenters that will be generated during the simulation (similar to that of fog servers). 
 
 ## 5.2 The Simulation Parameters File
 The parameters file contains the following set of parameters:
@@ -82,67 +82,67 @@ The parameters file contains the following set of parameters:
 
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
-simulation_time                       | Integer    | >= 1          | The simulation duration (in minutes)
-initialization_time                   | Integer    | >= 0          | The time needed to generate all resources, which means that the tasks offloading process starts affter it
-parallel_simulation                   | Boolean    | true or false | Enable or disable parallel simulations
-update_interval                       | Double     | >= 0.01       | The interval between simulation environment events (in seconds)
-pause_length                          | Integer    | >= 0          | The pause between iterations (in real seconds)
-display_real_time_charts              | Boolean    | true or false | To display or not the simulation results in real time 
-auto_close_real_time_charts           | Boolean    | true or false | Auto close real time charts after the end of iteration
-charts_update_interval                | Double     | >= 0.01       | Interval of refreshing real time charts (in seconds)
-save_charts                           | Boolean    | true or false | Whether to save charts in ".png" format or not
-wait_for_all_tasks                    | Boolean    | true or false | Wait until all tasks get executed or stop the simulation on time (when the simulation time set by the user finishes)
-save_log_file                         | Boolean    | true or false | Whether to save the log file or not
-clear_output_folder                   | Boolean    | true or false | Delete the output folder at the beginning of each simulation
-deep_log_enabled                      | Boolean    | true or false | Enableof disable deep logging
+`simulation_time`                     | Integer    | >= 1          | The simulation duration (in minutes)
+`initialization_time`                 | Integer    | >= 0          | The time needed to generate all resources, which means that the tasks offloading process starts affter it
+`parallel_simulation`                 | Boolean    | true or false | Enable or disable parallel simulations
+`update_interval`                     | Double     | >= 0.01       | The interval between simulation environment events (in seconds)
+`pause_length`                        | Integer    | >= 0          | The pause between iterations (in real seconds)
+`display_real_time_charts`            | Boolean    | true or false | To display or not the simulation results in real time 
+`auto_close_real_time_charts`         | Boolean    | true or false | Auto close real time charts after the end of iteration
+`charts_update_interval`              | Double     | >= 0.01       | Interval of refreshing real time charts (in seconds)
+`save_charts`                         | Boolean    | true or false | Whether to save charts in `.png` format or not
+`wait_for_all_tasks`                  | Boolean    | true or false | Wait until all tasks get executed or stop the simulation on time (when the simulation time set by the user finishes)
+`save_log_file`                       | Boolean    | true or false | Whether to save the log file or not
+`clear_output_folder`                 | Boolean    | true or false | Delete the output folder at the beginning of each simulation
+`deep_log_enabled`                    | Boolean    | true or false | Enableof disable deep logging
 
 
 * The Location Manager (mobility model) parameters:
 
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
-length                                | Integer    | >= 1          | The simulation area length (in meters)
-width                                 | Integer    | >= 1          | The simulation area width (in meters)  
-edge_range                            | Integer    | >= 1          | The range of edge devices (in meters)
-fog_coverage                          | Integer    | >= 1          | The raius of the area covered by each fog server (in meters)
-speed                                 | Double     | >= 0          | The speed of mobile devices in meters/seconds) (0= disabled)
+`length`                              | Integer    | >= 1          | The simulation area length (in meters)
+`width`                               | Integer    | >= 1          | The simulation area width (in meters)  
+`edge_range`                          | Integer    | >= 1          | The range of edge devices (in meters)
+`fog_coverage`                        | Integer    | >= 1          | The raius of the area covered by each fog server (in meters)
+`speed`                               | Double     | >= 0          | The speed of mobile devices in meters/seconds) (0= disabled)
 
 * The Server Manager settings:
 
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
-min_number_of_edge_devices            | Integer    | >= 1          | The number of edge devices at the beginning of the simulation
-max_number_of_edge_devices            | Integer    | >= 1          | The number of edge devices at the end of the simulation
-edge_device_counter_size              | Integer    | >= 1          | The growing rate in the number of devices in each iteration
+`min_number_of_edge_devices`          | Integer    | >= 1          | The number of edge devices at the beginning of the simulation
+`max_number_of_edge_devices`          | Integer    | >= 1          | The number of edge devices at the end of the simulation
+`edge_device_counter_size`            | Integer    | >= 1          | The growing rate in the number of devices in each iteration
 
 * The Network Model settings:
 
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
-wlan_bandwidth                        | Integer    | >= 1          | The local area network bandwidth (in Mbps) 
-wan_bandwidth                         | Integer    | >= 1          | The backhaul network bandwidth (in Mbps) 
-wan_propogation_delay                 | Double     | >= 0          | The propagation delay (when sending data/tasks to the cloud) (in seconds)  
-network_update_interval               | Double     | >= 0.01       | The network model refresh interval (in seconds)
+`wlan_bandwidth`                      | Integer    | >= 1          | The local area network bandwidth (in Mbps) 
+`wan_bandwidth`                       | Integer    | >= 1          | The backhaul network bandwidth (in Mbps) 
+`wan_propogation_delay`               | Double     | >= 0          | The propagation delay (when sending data/tasks to the cloud) (in seconds)  
+`network_update_interval`             | Double     | >= 0.01       | The network model refresh interval (in seconds)
 
 * The Tasks Orchestration settings:
 
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
-enable_registry                       | Boolean    | true or false | Enabling it means that before executing a task, a container will be pulled from the registry/cloud 
-enable_orchestrators                  | Boolean    | true or false | Enabling this means that the task/offloading request will be sent to the specifed/ nearest orchestrator. Disabling this means that each device will orchestrate its owb tasks.  
-deploy_orchestrator                   | Boolean    | Cloud or Fog  | To deploy the orchestrator on the cloud, fog, or any custom location (e.g. cluster heads, the user in this case need to implement his clustering algorithm)
-Applications_CPU_allocation_policy    | Boolean    | SPACE_SHARED or TIME_SHARED | Time shared means that the tasks can be executed in same virtual machine at simae time (however this increases the simulation duration). Space shared means that the tasks are executed one after the otherby a virtual machine
-tasks_generation_rate                 | Integer    | >= 1          | The number of tasks generated by each device every minute
-orchestration_architectures           | Boolean    | CLOUD_ONLY, FOG_AND_CLOUD,... | The computing paradigms that are used 
-orchestration_algorithms              | Boolean    | (any algorithm name) | The algorithm used by the orchestrator to find the offloading destination
+`enable_registry`                     | Boolean    | true or false | Enabling it means that before executing a task, a container will be pulled from the registry/cloud 
+`enable_orchestrators`                | Boolean    | true or false | Enabling this means that the task/offloading request will be sent to the specifed/ nearest orchestrator. Disabling this means that each device will orchestrate its owb tasks.  
+`deploy_orchestrator`                 | Boolean    | Cloud or Fog  | To deploy the orchestrator on the cloud, fog, or any custom location (e.g. cluster heads, the user in this case need to implement his clustering algorithm)
+`applications_CPU_allocation_policy`  | Boolean    | SPACE_SHARED or TIME_SHARED | Time shared means that the tasks can be executed in same virtual machine at simae time (however this increases the simulation duration). Space shared means that the tasks are executed one after the otherby a virtual machine
+`tasks_generation_rate`               | Integer    | >= 1          | The number of tasks generated by each device every minute
+`orchestration_architectures`         | Boolean    | CLOUD_ONLY, FOG_AND_CLOUD,... | The computing paradigms that are used 
+`orchestration_algorithms`            | Boolean    | (any algorithm name) | The algorithm used by the orchestrator to find the offloading destination
 
 * The Energy Model parameters:
 
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
-consumed_energy_per_bit               | Double     | >= 0          | The enregy consumed when transferring 1 bit (in wh)
-amplifier_dissipation_free_space      | Double     | >= 0          | The energy consumed by the amplifier in free space channel  (in wh)
-amplifier_dissipation_multipath       | Double     | >= 0          | The energy consumed by the amplifier in multipath channel  (in wh)
+`consumed_energy_per_bit`             | Double     | >= 0          | The enregy consumed when transferring 1 bit (in wh)
+`amplifier_dissipation_free_space`    | Double     | >= 0          | The energy consumed by the amplifier in free space channel  (in wh)
+`amplifier_dissipation_multipath`     | Double     | >= 0          | The energy consumed by the amplifier in multipath channel  (in wh)
 
 ## 5.3 The Edge Devices, Fog Servers, and Cloud Datacenters Files
 These files contain the specification of edge devices, fog datacenters, and cloud datacenters.
@@ -151,41 +151,41 @@ These files contain the specification of edge devices, fog datacenters, and clou
 
 Attribute                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
-idleConsumption                       | Double     | >= 0          | The energy consumption rate when the datacenter is idle  (in wh/s)
-maxConsumption                        | Double     | >= 0          | The energy consumption rate when the datacenter CPU operates at 100%  (in wh/s)
-isOrchestrator                        | Boolean    | true or false | To manually select this datacenter as orchestrator
-location                              | -          | -             | The X and Y coordinates that define the location of this datacenter
-hosts                                 | -          | -             | The list of hosts  
+`idleConsumption`                     | Double     | >= 0          | The energy consumption rate when the datacenter is idle  (in wh/s)
+`maxConsumption`                      | Double     | >= 0          | The energy consumption rate when the datacenter CPU operates at 100%  (in wh/s)
+`isOrchestrator`                      | Boolean    | true or false | To manually select this datacenter as orchestrator
+`location`                            | -          | -             | The X and Y coordinates that define the location of this datacenter
+`hosts`                               | -          | -             | The list of hosts  
 
 * The hosts have the following characteristics
 
 Attribute                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
-core                                  | Integer    | > 0           | The number of CPU cores 
-mips                                  | Integer    | > 0           | The processing power  (in MIPS)
-ram                                   | Integer    | > 0           | RAM (in  MB)
-storage                               | Integer    | > 0           | Storage capacity (in MB)
-VMs                                   | -          | -             | The list of virtual machines  
+`core`                                | Integer    | > 0           | The number of CPU cores 
+`mips`                                | Integer    | > 0           | The processing power  (in MIPS)
+`ram`                                 | Integer    | > 0           | RAM (in  MB)
+`storage`                             | Integer    | > 0           | Storage capacity (in MB)
+`VMs`                                 | -          | -             | The list of virtual machines  
 
 * Each virtual machine have the following characteristics
 
 Attribute                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
-core                                  | Integer    | > 0           | The number of CPU cores used by this VM 
-mips                                  | Integer    | > 0           | The allocated processing power  (in MIPS)
-ram                                   | Integer    | > 0           | The allocated RAM (in  MB)
-storage                               | Integer    | > 0           | The allocated storage (in MB) 
+`core`                                | Integer    | > 0           | The number of CPU cores used by this VM 
+`mips`                                | Integer    | > 0           | The allocated processing power  (in MIPS)
+`ram`                                 | Integer    | > 0           | The allocated RAM (in  MB)
+`storage`                             | Integer    | > 0           | The allocated storage (in MB) 
 
 * The sum of virtual machines attributes values (e.g. CPU cores) must be inferior than those of the host
 
-* The edge devices file follows the same structure as the Fog and Cloud xml files. However as we said previously, if we want to generate 100 devices for example, we will not define all these devices in this file, instead, we will define the types of devices that will be generated, for example 25% of the generated devices will be of type 1, etc. The edge devices are considered as datacenters that contains one host with one VM (the user can add more if needed, by editing this file). The device without a virtual machine is considered a simple sensor (no computing capabilities). The following table highlights the attributes that only edge devices have : 
+* The edge devices file follows the same structure as the Fog and Cloud `.xml` files. However as we said previously, if we want to generate 100 devices for example, we will not define all these devices in this file, instead, we will define the types of devices that will be generated, for example 25% of the generated devices will be of type 1, etc. The edge devices are considered as datacenters that contains one host with one VM (the user can add more if needed, by editing this file). The device without a virtual machine is considered a simple sensor (no computing capabilities). The following table highlights the attributes that only edge devices have : 
 
 Attribute                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
-mobility                              | Boolean    | true or false | "True" means the devices of this type are mobile 
-battery                               | Boolean    | true or false | "True" means that the devices of this type are battery-powered
-batterycapacity                       | Double     | > 0           | The battery capacity (in Wh)
-percentage                            | Integer    | > 0           | The percentage of devices of this type.
+`mobility`                             | Boolean    | true or false | "True" means the devices of this type are mobile 
+`battery`                              | Boolean    | true or false | "True" means that the devices of this type are battery-powered
+`batterycapacity`                      | Double     | > 0           | The battery capacity (in Wh)
+`percentage`                           | Integer    | > 0           | The percentage of devices of this type.
  
 ## 5.4 The PureEdgeSim output files
 PureEdgeSim output files can be found under the `/output/` directory. There are two types of text files resulted from the simulation: a `.txt` file and a `.csv` file. The `.txt` file contains a brief and easy to read ouput, while the `.csv` file contains more detailed simulations results that are ready to plot. The `.csv` file can be opened using any spreadsheet software (e.g. Microsoft Excel) by which the user can generate unlimited types of charts (with more than 40 metric available).
