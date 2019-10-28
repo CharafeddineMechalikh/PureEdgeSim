@@ -9,265 +9,314 @@ import org.cloudbus.cloudsim.core.events.SimEvent;
 
 import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeDataCenter;
 import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeVM;
+import com.Mechalikh.PureEdgeSim.DataCentersManager.EnergyModel;
 import com.Mechalikh.PureEdgeSim.ScenarioManager.SimulationParameters;
 import com.Mechalikh.PureEdgeSim.ScenarioManager.SimulationParameters.TYPES;
 import com.Mechalikh.PureEdgeSim.SimulationManager.SimulationManager;
 import com.Mechalikh.PureEdgeSim.TasksGenerator.Task;
 
 public class NetworkModel extends CloudSimEntity {
-	private List<taskTransferProgress> taskProgressList;
-	private SimulationManager sm;
-	public static final int SEND_REQUEST_FROM_ORCH_TO_DESTINATION = 0;
-	private static final int UPDATE_PROGRESS = 1;
-	public static final int ADD_RESULT_TO_ORCH = 2;
-	public static final int ADD_CONTAINER = 3;
-	public static final int SEND_REQUEST_FROM_DEVICE_TO_ORCH = 4;
-	public static final int ADD_RESULT_TO_DEV = 5;
-	public static final int SEND_UPDATE_FROM_DEVICE_TO_ORCH=6;
-	int index = 0;
+	public static final int base = 4000;
+	public static final int SEND_REQUEST_FROM_ORCH_TO_DESTINATION = base + 1;
+	private static final int UPDATE_PROGRESS = base + 2;
+	public static final int DOWNLOAD_CONTAINER = base + 3;
+	public static final int SEND_REQUEST_FROM_DEVICE_TO_ORCH = base + 4;
+	public static final int SEND_RESULT_FROM_ORCH_TO_DEV = base + 5;
+	public static final int SEND_UPDATE_FROM_DEVICE_TO_ORCH = base + 6;
+	public static final int SEND_RESULT_TO_ORCH = base + 7;
+
+	private List<FileTransferProgress> transferProgressList; // the list where the current (and the previous)
+																// transferred file are stored
+	private SimulationManager simulationManager;
+	int firstIndex = 0;
+	double bwUsage = 0;
 
 	public NetworkModel(Simulation simulation, SimulationManager simulationManager) {
 		super(simulation);
-		this.sm = simulationManager;
-		taskProgressList = new ArrayList<taskTransferProgress>(); // list where the tasks being transferred are stored
+		this.simulationManager = simulationManager;
+		transferProgressList = new ArrayList<FileTransferProgress>();
 	}
 
-	public List<taskTransferProgress> getTaskProgressList() {
-		return taskProgressList;
-	}
-
-	public void sendRequestFromOrchToDest(Task task) {
-		// add the new task to the list of the tasks being transferred (uploaded)
-		taskProgressList.add(new taskTransferProgress(task, task.getFileSize() * 8, taskTransferProgress.TASK)); // request
-																													// size
-																													// in
-																													// kilobits
-	}
-
-	public void sendResultFromOrchToDev(Task task) {
-		// sen the resutls from the orchestrator to the device that offloaded the task
-		// add the new task to the list of the files being transferred (downloaded)
-		taskProgressList
-				.add(new taskTransferProgress(task, task.getOutputSize() * 8, taskTransferProgress.RESULTS_TO_DEV)); // results
-		// size
-		// in
-		// kilobits
-	}
-
-	public void sendResultFromDevToOrch(Task task) {
-		// send the results from the device that executed the task to the orchestrator
-		// add the new task to the list of the files being transferred (downloaded)
-		taskProgressList
-				.add(new taskTransferProgress(task, task.getOutputSize() * 8, taskTransferProgress.RESULTS_TO_ORCH)); // results
-		// size
-		// in
-		// kilobits
-	}
-
-	public void addContainer(Task task) {
-		// add the new container to the list of files being transferred (downloaded)
-		taskProgressList
-				.add(new taskTransferProgress(task, task.getContainerSize() * 8, taskTransferProgress.CONTAINER)); // results
-																													// size
-																													// in
-																													// kilobits
-	}
-
-	public void sendRequestFromDeviceToOrch(Task task) {
-		// add the new container to the list of files being transferred (downloaded)
-		taskProgressList.add(new taskTransferProgress(task, task.getFileSize() * 8, taskTransferProgress.REQUEST)); // results
-																													// size
-																													// in
-																													// kilobits
-	}
-	public void sendUpdate(Task task) {
-		// add the new container to the list of files being transferred (downloaded)
-		taskProgressList.add(new taskTransferProgress(task, task.getFileSize() * 8, taskTransferProgress.REQUEST)); // results
-																													// size
-																													// in
-																													// kilobits
-	}
 	@Override
 	public void processEvent(SimEvent ev) {
 		switch (ev.getTag()) {
-		case SEND_REQUEST_FROM_ORCH_TO_DESTINATION:
-			// add the task to the list of tasks being transferred
-			sendRequestFromOrchToDest((Task) ev.getData());
-			break;
-		case ADD_RESULT_TO_ORCH:
-			// add the execution results transferred to the orchestrator to the list of the
-			// results being transferred
-			sendResultFromDevToOrch((Task) ev.getData());
-			break;
-		case ADD_RESULT_TO_DEV:
-			// add the execution results returned to the edge device to the list of the
-			// results being transferred
-			sendResultFromOrchToDev((Task) ev.getData());
-			break;
-		case ADD_CONTAINER:
-			// add the execution results to the list of the results being transferred
-			addContainer((Task) ev.getData());
-			break;
 		case SEND_REQUEST_FROM_DEVICE_TO_ORCH:
-			// add the execution results to the list of the results being transferred
+			// Send the offloading request to the orchestrator
 			sendRequestFromDeviceToOrch((Task) ev.getData());
 			break;
+		case SEND_REQUEST_FROM_ORCH_TO_DESTINATION:
+			// Forward the offloading request from orchestrator to offloading destination
+			sendRequestFromOrchToDest((Task) ev.getData());
+			break;
+		case DOWNLOAD_CONTAINER:
+			// Pull the container from the registry
+			addContainer((Task) ev.getData());
+			break;
+		case SEND_RESULT_TO_ORCH:
+			// Send the execution results to the orchestrator
+			sendResultFromDevToOrch((Task) ev.getData());
+			break;
+		case SEND_RESULT_FROM_ORCH_TO_DEV:
+			// Transfer the execution results from the orchestrators to the device
+			sendResultFromOrchToDev((Task) ev.getData());
+			break;
 		case UPDATE_PROGRESS:
-			// update the tasks transfer progress and the allocated bandwidth
+			// update the progress of the current transfers and their allocated bandwidth
 			updateTasksProgress();
 			schedule(this, SimulationParameters.NETWORK_UPDATE_INTERVAL, UPDATE_PROGRESS);
-			break; 
+			break;
 		}
+	}
+
+	public List<FileTransferProgress> getTransferProgressList() {
+		return transferProgressList;
+	}
+
+	public void sendRequestFromOrchToDest(Task task) {
+		transferProgressList.add(new FileTransferProgress(task, task.getFileSize() * 8, FileTransferProgress.TASK));
+	}
+
+	public void sendResultFromOrchToDev(Task task) {
+		transferProgressList
+				.add(new FileTransferProgress(task, task.getOutputSize() * 8, FileTransferProgress.RESULTS_TO_DEV));
+	}
+
+	public void sendResultFromDevToOrch(Task task) {
+		if(task.getOrchestrator()!=task.getEdgeDevice())
+		transferProgressList.add(new FileTransferProgress(task, task.getOutputSize() * 8, FileTransferProgress.RESULTS_TO_ORCH));
+		else
+			scheduleNow(this, NetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV, task);	
+	}
+
+	public void addContainer(Task task) {
+		transferProgressList
+				.add(new FileTransferProgress(task, task.getContainerSize() * 8, FileTransferProgress.CONTAINER));
+	}
+
+	public void sendRequestFromDeviceToOrch(Task task) {
+		if (task.getOrchestrator() != task.getEdgeDevice()) 
+			transferProgressList
+					.add(new FileTransferProgress(task, task.getFileSize() * 8, FileTransferProgress.REQUEST));
+		else // The device orchestrate its tasks by itself, so, send the request directly to destination 
+			scheduleNow(simulationManager, SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, task);
 	}
 
 	private void updateTasksProgress() {
-		 if(index < taskProgressList.size() &&
-		  taskProgressList.get(index).getRemainingFileSize()==0) index++; //ignore
-		// finished transfers, so we will start looping from the first index of the
-		// remaining transfers
-
-		for (int i = index; i < taskProgressList.size(); i++) {
-			int remainingTasksCount_Lan = 0;
-			int remainingTasksCount_Wan = 0;
-			if (taskProgressList.get(i).getRemainingFileSize() > 0) {
-				for (int j = index; j < taskProgressList.size(); j++) {
-					if (taskProgressList.get(j).getRemainingFileSize() > 0 && j!= i) { 
-						if ((taskProgressList.get(j).getType() == taskTransferProgress.TASK
-								// if the offloading destination is the cloud
-								&& ((EdgeVM) taskProgressList.get(j).getTask().getVm()).getType().equals(TYPES.CLOUD)) 
-								// or if containers will be downloaded from registry
-								|| taskProgressList.get(j).getType() == taskTransferProgress.CONTAINER 
-								//or if the orchestrator is deployed in the cloud
-								|| (taskProgressList.get(j).getTask().getOrchestrator()
-										.getType() == SimulationParameters.TYPES.CLOUD)) {
-							remainingTasksCount_Wan++; // in all these cases the WAN is used
-							remainingTasksCount_Lan++;// using the WAN includes using the LAN
-						} else if ((sameLocation(taskProgressList.get(i).getTask().getEdgeDevice(),
-								taskProgressList.get(j).getTask().getEdgeDevice()) && SimulationParameters.NETWORK_HOTSPOTS)
-								||(taskProgressList.get(i).getTask().getOrchestrator()==taskProgressList.get(j).getTask().getOrchestrator() 
-								&& !SimulationParameters.NETWORK_HOTSPOTS)
-								||((taskProgressList.get(i).getTask().getVm().getHost().getDatacenter()==taskProgressList.get(j).getTask().getVm().getHost().getDatacenter()) 
-										&& !SimulationParameters.NETWORK_HOTSPOTS && taskProgressList.get(i).getTask().getLength()!=1)) {
-							// TODO Auto-generated method stub
-							// both tasks are generated from same location, which means they share same bandwidth
-							//if they are connected to the same access point
-							remainingTasksCount_Lan++; 
-						 	}
+		// Ignore finished transfers, so we will start looping from the first index of
+		// the remaining transfers
+		if (firstIndex < transferProgressList.size()
+				&& transferProgressList.get(firstIndex).getRemainingFileSize() == 0)
+			firstIndex++;
+		for (int i = firstIndex; i < transferProgressList.size(); i++) {
+			int remainingTransfersCount_Lan = 0;
+			int remainingTransfersCount_Wan = 0;
+			if (transferProgressList.get(i).getRemainingFileSize() > 0) {
+				for (int j = i; j < transferProgressList.size(); j++) {
+					if (transferProgressList.get(j).getRemainingFileSize() > 0 && j != i) {
+						if (wanIsUsed(transferProgressList.get(j))) {
+							remainingTransfersCount_Wan++;
+							bwUsage += transferProgressList.get(j).getRemainingFileSize();
+						}
+						if (sameLanIsUsed(transferProgressList.get(i), transferProgressList.get(j))) {
+							// Both transfers use same Lan
+							remainingTransfersCount_Lan++;
+						}
 
 					}
 				}
-
-				// since the lan upload and download are not separated this means that tasks and
-				// results use the same bandwidth
-				// therefore we need to count the results being transferred before updating the
-				// tasks allocated bandwidth
-
 				// allocate bandwidths
-				taskProgressList.get(i).setLanBandwidth(getLanBandwidth(remainingTasksCount_Lan));
-				taskProgressList.get(i).setWanBandwidth(getWanBandwidth(remainingTasksCount_Wan));
-				update(taskProgressList.get(i));
+				transferProgressList.get(i).setLanBandwidth(getLanBandwidth(remainingTransfersCount_Lan));
+				transferProgressList.get(i).setWanBandwidth(getWanBandwidth(remainingTransfersCount_Wan));
+				updateBandwidth(transferProgressList.get(i));
+				updateTransfer(transferProgressList.get(i));
 			}
 
 		}
 	}
 
-	public void update(taskTransferProgress progress) {
+	private void updateTransfer(FileTransferProgress transfer) {
+
+		double oldRemainingSize = transfer.getRemainingFileSize();
+
+		// Update progress (remaining file size)
+		transfer.setRemainingFileSize(transfer.getRemainingFileSize()
+				- (SimulationParameters.NETWORK_UPDATE_INTERVAL * transfer.getCurrentBandwidth()));
+
+		if (transfer.getRemainingFileSize() <= 0) {// Transfer finished
+			transfer.setRemainingFileSize(0);
+			transferFinished(transfer);
+		}
+		// Update LAN network usage delay
+		transfer.setLanNetworkUsage(transfer.getLanNetworkUsage()
+				+ (oldRemainingSize - transfer.getRemainingFileSize()) / transfer.getCurrentBandwidth());
+
+		// Update WAN network usage delay
+		if (wanIsUsed(transfer))
+			transfer.setWanNetworkUsage(transfer.getWanNetworkUsage()
+					+ (oldRemainingSize - transfer.getRemainingFileSize()) / transfer.getCurrentBandwidth());
+
+	}
+
+	private void UpdateEnergyConsumption(FileTransferProgress transfer, String type) {
+		// update energy consumption
+		EdgeDataCenter origin = null;
+		EdgeDataCenter destination = null;
+		if (type.equals("Orchestrator")) {
+			origin = transfer.getTask().getEdgeDevice();
+			destination = transfer.getTask().getOrchestrator();
+		} else if (type.equals("Destination")) {
+			origin = transfer.getTask().getOrchestrator();
+			destination = ((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter());
+		} else if (type.equals("Container")) {
+			origin = simulationManager.getServersManager().getDatacenterList().get(0);//registry,  so set the first cloud datacenter as the origin
+			destination = transfer.getTask().getEdgeDevice();
+		} else if (type.equals("Result_Orchestrator")) {
+			origin = ((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter());
+			destination = transfer.getTask().getOrchestrator();
+		} else if (type.equals("Result_Origin")) {
+			origin = transfer.getTask().getOrchestrator();
+			destination = transfer.getTask().getEdgeDevice();
+		}
+		if (origin != null) {
+			origin.getEnergyModel().updatewirelessEnergyConsumption(transfer, origin, destination,
+					EnergyModel.TRANSMISSION);
+		}
+		destination.getEnergyModel().updatewirelessEnergyConsumption(transfer, origin, destination,
+				EnergyModel.RECEPTION);
+	}
+
+	private void transferFinished(FileTransferProgress transfer) {
+		// If it is an offlaoding request that is sent to the orchestrator
+		if (transfer.getTransferType() == FileTransferProgress.REQUEST) {
+			offloadingRequestRecievedByOrchestrator(transfer);
+			UpdateEnergyConsumption(transfer, "Orchestrator");
+		}
+		// If it is an task (or offloading request) that is sent to the destination
+		else if (transfer.getTransferType() == FileTransferProgress.TASK) {
+			executeTaskOrDownloadContainer(transfer);
+			UpdateEnergyConsumption(transfer, "Destination");
+		}
+		// If the container has been downloaded, then execute the task now
+		else if (transfer.getTransferType() == FileTransferProgress.CONTAINER) {
+			containerDownloadFinished(transfer);
+			UpdateEnergyConsumption(transfer, "Container");
+		}
+		// If the transfer of execution results to the orchestrator has finished
+		else if (transfer.getTransferType() == FileTransferProgress.RESULTS_TO_ORCH) {
+			returnResultToDevice(transfer);
+			UpdateEnergyConsumption(transfer, "Result_Orchestrator");
+		}
+		// Results transferred to the device
+		else {
+			resultsReturnedToDevice(transfer);
+			UpdateEnergyConsumption(transfer, "Result_Origin");
+		}
+
+	}
+
+	private void containerDownloadFinished(FileTransferProgress transfer) {
+		scheduleNow(simulationManager, SimulationManager.EXECUTE_TASK, transfer.getTask());
+	}
+
+	private void resultsReturnedToDevice(FileTransferProgress transfer) {
+		scheduleNow(simulationManager, SimulationManager.RESULT_RETURN_FINISHED, transfer.getTask());
+	}
+
+	private void returnResultToDevice(FileTransferProgress transfer) {
+		// if the results are returned from the cloud, consider the wan propagation
+		// delay
+		if (transfer.getTask().getOrchestrator().getType().equals(TYPES.CLOUD)
+				|| ((EdgeVM) transfer.getTask().getVm()).getType().equals(TYPES.CLOUD))
+			schedule(this, SimulationParameters.WAN_PROPAGATION_DELAY, NetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV,
+					transfer.getTask());
+		else
+			scheduleNow(this, NetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV, transfer.getTask());
+
+	}
+
+	private void executeTaskOrDownloadContainer(FileTransferProgress transfer) {
+		if (SimulationParameters.ENABLE_REGISTRY
+				&& !((EdgeVM) transfer.getTask().getVm()).getType().equals(TYPES.CLOUD)) {
+			// if the registry is enabled and the task is offloaded to the fog or the edge,
+			// then download the container
+			scheduleNow(this, NetworkModel.DOWNLOAD_CONTAINER, transfer.getTask());
+
+		} else {// if the registry is disabled, execute directly the request, as it represents
+				// the offloaded task in this case
+			if (((EdgeVM) transfer.getTask().getVm()).getType().equals(TYPES.CLOUD))
+				schedule(simulationManager, SimulationParameters.WAN_PROPAGATION_DELAY, SimulationManager.EXECUTE_TASK,
+						transfer.getTask());
+			else
+				scheduleNow(simulationManager, SimulationManager.EXECUTE_TASK, transfer.getTask());
+		}
+	}
+
+	private void offloadingRequestRecievedByOrchestrator(FileTransferProgress transfer) {
+		// Find the offloading destination and execute the task
+		if (transfer.getTask().getOrchestrator().getType().equals(TYPES.CLOUD))
+			schedule(simulationManager, SimulationParameters.WAN_PROPAGATION_DELAY,
+					SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, transfer.getTask());
+		else
+			scheduleNow(simulationManager, SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, transfer.getTask());
+	}
+
+	private boolean sameLanIsUsed(FileTransferProgress transfer1, FileTransferProgress transfer2) {
+		// The trasfers share same Lan of they have one device in common
+		// Compare orchestrator
+		if ((transfer1.getTask().getOrchestrator() == transfer2.getTask().getOrchestrator())
+				|| (transfer1.getTask().getOrchestrator() == transfer2.getTask().getVm().getHost().getDatacenter())
+				|| (transfer1.getTask().getOrchestrator() == transfer2.getTask().getEdgeDevice())
+
+				// Compare origin device
+				|| (transfer1.getTask().getEdgeDevice() == transfer2.getTask().getOrchestrator())
+				|| (transfer1.getTask().getEdgeDevice() == transfer2.getTask().getVm().getHost().getDatacenter())
+				|| (transfer1.getTask().getEdgeDevice() == transfer2.getTask().getEdgeDevice())
+
+				// Compare offloading destination
+				|| (transfer1.getTask().getVm().getHost().getDatacenter() == transfer2.getTask().getOrchestrator())
+				|| (transfer1.getTask().getVm().getHost().getDatacenter() == transfer2.getTask().getVm().getHost()
+						.getDatacenter())
+				|| (transfer1.getTask().getVm().getHost().getDatacenter() == transfer2.getTask().getEdgeDevice()))
+			return true;
+		return false;
+	}
+
+	private boolean wanIsUsed(FileTransferProgress fileTransferProgress) {
+		if ((fileTransferProgress.getTransferType() == FileTransferProgress.TASK
+				&& ((EdgeVM) fileTransferProgress.getTask().getVm()).getType().equals(TYPES.CLOUD))
+				// If the offloading destination is the cloud
+
+				|| fileTransferProgress.getTransferType() == FileTransferProgress.CONTAINER
+				// Or if containers will be downloaded from registry
+
+				|| (fileTransferProgress.getTask().getOrchestrator().getType() == SimulationParameters.TYPES.CLOUD))
+			// Or if the orchestrator is deployed in the cloud
+			return true;
+
+		return false;
+	}
+
+	public void updateBandwidth(FileTransferProgress transfer) {
 		double bandwidth = 0;
-		if ((progress.getType() == taskTransferProgress.TASK
-				&& ((EdgeVM) progress.getTask().getVm()).getType().equals(TYPES.CLOUD))
-				|| progress.getType() == taskTransferProgress.CONTAINER
-				|| progress.getTask().getOrchestrator().getType() == SimulationParameters.TYPES.CLOUD) {
-			// the bandwidth will be limited by the minimum value
-			// if the lan bandwidth is 1 mbps and the wan bandwidth is 4 mbps
-			// it will be limited by the lan, so we will choose the minimum
-			bandwidth = Math.min(progress.getLanBandwidth(), progress.getWanBandwidth());
+		if (wanIsUsed(transfer)) {
+			// The bandwidth will be limited by the minimum value
+			// If the lan bandwidth is 1 mbps and the wan bandwidth is 4 mbps
+			// It will be limited by the lan, so we will choose the minimum
+			bandwidth = Math.min(transfer.getLanBandwidth(), transfer.getWanBandwidth());
 		} else
-			bandwidth = progress.getLanBandwidth(); // no wan usage
-		double oldRemainingSize = progress.getRemainingFileSize();
-		
-		// update progress (remaining file size) 
-		progress.setRemainingFileSize(progress.getRemainingFileSize()
-				-(SimulationParameters.NETWORK_UPDATE_INTERVAL * bandwidth)); 
-		
-		if (progress.getRemainingFileSize() < 0) {// task upload finished
-			progress.setRemainingFileSize(0);
-
-			
-		}
-		// update  lan  network  usage delay
-		progress.setLanNetworkUsage(
-				progress.getLanNetworkUsage() + (oldRemainingSize - progress.getRemainingFileSize()) / bandwidth); 
-		if ((progress.getType() == taskTransferProgress.TASK
-				&& ((EdgeVM) progress.getTask().getVm()).getType().equals(TYPES.CLOUD))
-				|| progress.getType() == taskTransferProgress.CONTAINER
-				|| progress.getTask().getOrchestrator().getType() == SimulationParameters.TYPES.CLOUD) {
-			progress.setWanNetworkUsage(
-					progress.getWanNetworkUsage() + (oldRemainingSize - progress.getRemainingFileSize()) / bandwidth); // update
-																														// wan
-																														// network
-																														// usage
-																														// delay
-		}
-		if (progress.getRemainingFileSize() == 0) {
-			if (progress.getType() == taskTransferProgress.REQUEST) { // it is an offlaoding request (and not a result)
-             
-				if (progress.getTask().getOrchestrator().getType().equals(TYPES.CLOUD))
-					schedule(sm, SimulationParameters.WAN_PROPAGATION_DELAY,
-							SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, progress.getTask());
-				else
-					scheduleNow(sm, SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, progress.getTask());
-			} else if (progress.getType() == taskTransferProgress.TASK) { // it is an offlaoding request (and not a
-																			// result)
-				if (SimulationParameters.ENABLE_REGISTRY
-						&& !((EdgeVM) progress.getTask().getVm()).getType().equals(TYPES.CLOUD)) {
-					// if the registry is enabled and the task is offloaded to the fog or the edge
-					// ,then download the container after receiving the request
-					scheduleNow(this, NetworkModel.ADD_CONTAINER, progress.getTask()); // begin downloading the
-																						// container
-
-				} else {// if the registry is disabled, execute directly the request, as it represents
-						// the offloaded task in this case
-
-					if (((EdgeVM) progress.getTask().getVm()).getType().equals(TYPES.CLOUD))
-						schedule(sm, SimulationParameters.WAN_PROPAGATION_DELAY, SimulationManager.EXECUTE_TASK,
-								progress.getTask());
-					else
-						scheduleNow(sm, SimulationManager.EXECUTE_TASK, progress.getTask());
-				}
-			} else if (progress.getType() == taskTransferProgress.CONTAINER) { // the container has been
-																				// downloaded,execute the task now
-
-				scheduleNow(sm, SimulationManager.EXECUTE_TASK, progress.getTask());
-
-			} else if (progress.getType() == taskTransferProgress.RESULTS_TO_ORCH) {// if the transfer of results to the
-																					// orchestrator finished
-				if (progress.getTask().getOrchestrator().getType().equals(TYPES.CLOUD)
-						|| ((EdgeVM) progress.getTask().getVm()).getType().equals(TYPES.CLOUD))
-					schedule(this, SimulationParameters.WAN_PROPAGATION_DELAY, NetworkModel.ADD_RESULT_TO_DEV,
-							progress.getTask());
-				else
-					scheduleNow(this, NetworkModel.ADD_RESULT_TO_DEV, progress.getTask());
-			} else {// return results to the edge device
-				if (progress.getTask().getOrchestrator().getType().equals(TYPES.CLOUD)
-						|| ((EdgeVM) progress.getTask().getVm()).getType().equals(TYPES.CLOUD))
-					schedule(sm, SimulationParameters.WAN_PROPAGATION_DELAY, SimulationManager.RESULT_RETURN_FINISHED,
-							progress.getTask());
-				else
-					scheduleNow(sm, SimulationManager.RESULT_RETURN_FINISHED, progress.getTask());
-			}
-		}
-
+			bandwidth = transfer.getLanBandwidth();
+		transfer.setCurrentBandwidth(bandwidth);
 	}
 
 	private double getLanBandwidth(double remainingTasksCount_Lan) {
-		//if (SimulationParameters.NETWORK_HOTSPOTS)
-			return (SimulationParameters.BANDWIDTH_WLAN / (remainingTasksCount_Lan)); // if edge many devices use same
-																						// wlan
-	//	else
-		//	return SimulationParameters.BANDWIDTH_WLAN; // if peer to peer
+		if (remainingTasksCount_Lan == 0)
+			remainingTasksCount_Lan = 1;
+		return (SimulationParameters.BANDWIDTH_WLAN / (remainingTasksCount_Lan));
 	}
 
 	private double getWanBandwidth(double remainingTasksCount_Wan) {
+		if (remainingTasksCount_Wan == 0)
+			remainingTasksCount_Wan = 1;
 		return (SimulationParameters.WAN_BANDWIDTH / (remainingTasksCount_Wan));
 	}
 
@@ -276,18 +325,27 @@ public class NetworkModel extends CloudSimEntity {
 		schedule(this, 1, UPDATE_PROGRESS);
 	}
 
-	private boolean sameLocation(EdgeDataCenter Dev1, EdgeDataCenter Dev2) {
-		double distance = Math.abs(Math.sqrt(Math.pow((Dev1.getLocation().getXPos() - Dev2.getLocation().getXPos()), 2)
-				+ Math.pow((Dev1.getLocation().getYPos() - Dev2.getLocation().getYPos()), 2)));
-		int RANGE = SimulationParameters.EDGE_RANGE;
-		if (Dev1.getType() != Dev2.getType())// one of them is fog and the other is edge
-			RANGE = SimulationParameters.FOG_RANGE;
-		if (distance < RANGE)
-			return true;
-		return false;
-	}
-
 	@Override
 	public void shutdownEntity() {
 	}
+
+	public double getWanUtilization() {
+		int wanTasks = 0;
+		for (int j = 0; j < transferProgressList.size(); j++) {
+			if (transferProgressList.get(j).getRemainingFileSize() > 0) {
+				if (wanIsUsed(transferProgressList.get(j))) {
+					wanTasks++;
+					bwUsage += transferProgressList.get(j).getRemainingFileSize();
+				}
+			}
+		}
+		if (wanTasks != 0)
+			bwUsage = bwUsage / wanTasks;
+		else
+			bwUsage = 0;
+		bwUsage = bwUsage / 1000;
+		double utilization = Math.min(bwUsage, 300);
+		return utilization;
+	}
+
 }

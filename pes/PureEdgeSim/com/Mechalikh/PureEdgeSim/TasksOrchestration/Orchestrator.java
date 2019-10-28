@@ -1,22 +1,13 @@
 package com.Mechalikh.PureEdgeSim.TasksOrchestration;
-
-import java.util.List;
-
-import org.cloudbus.cloudsim.brokers.DatacenterBroker;
-
-import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeVM;
-import com.Mechalikh.PureEdgeSim.ScenarioManager.Scenario;
+ 
+import com.Mechalikh.PureEdgeSim.SimulationManager.SimulationManager;
 import com.Mechalikh.PureEdgeSim.TasksGenerator.Task;
 
-public abstract class Orchestrator {
-	protected List<EdgeVM> vmList;
-	protected DatacenterBroker broker;
-	protected Scenario scenario;
+public abstract class Orchestrator { 
+	private SimulationManager simulationManager;
 
-	public Orchestrator(DatacenterBroker broker2, List<EdgeVM> list, Scenario scenario) {
-		this.broker = broker2;
-		this.vmList = list;
-		this.scenario=scenario;
+	public Orchestrator(SimulationManager simulationManager) {
+		this.setSimulationManager(simulationManager);
 	}
  
 
@@ -25,6 +16,16 @@ public abstract class Orchestrator {
 	}
 
 
-	public abstract void sendTask(Task task); 
+	public abstract void sendTask(Task task);
+
+
+	public SimulationManager getSimulationManager() {
+		return simulationManager;
+	}
+
+
+	public void setSimulationManager(SimulationManager simulationManager) {
+		this.simulationManager = simulationManager;
+	} 
  
 }

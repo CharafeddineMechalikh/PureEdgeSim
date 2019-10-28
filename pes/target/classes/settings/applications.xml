@@ -19,8 +19,8 @@
 	<application name="HEAVY_COMP_APP">  
 		<max_delay>200</max_delay> <!-- a great number represents no latency- sensitivity  -->
 		<container_size>3000</container_size>
-		<request_size>100</request_size>
-		<results_size>100</results_size>
+		<request_size>2000</request_size>
+		<results_size>1000</results_size>
 		<task_length>6000</task_length>
 		<required_core>1</required_core> 
 	</application>

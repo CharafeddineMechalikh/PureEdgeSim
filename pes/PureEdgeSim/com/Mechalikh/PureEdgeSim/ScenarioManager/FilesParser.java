@@ -19,16 +19,13 @@ import org.xml.sax.SAXException;
 import com.Mechalikh.PureEdgeSim.SimulationManager.SimLog;
 
 public class FilesParser {
- 
 
-	public FilesParser() { 
+	public FilesParser() {
 	}
 
-//scan files
+	// Scan files
 	public boolean checkFiles(String simProp, String edgeFile, String fogFile, String appFile, String cloudFile)
-			throws SAXException, IOException, ParserConfigurationException {
-		SimulationParameters.NUM_OF_FOG_HOSTS = 0;
-		SimulationParameters.NUM_OF_FOG_DATACENTERS = 0;
+			throws SAXException, IOException, ParserConfigurationException { 
 		SimulationParameters.fogDevicesDoc = loadDocument(fogFile);
 		SimulationParameters.edgeDevicesDoc = loadDocument(edgeFile);
 		return (checkSimulationProperties(simProp) && checkEdgeDevicesFile(edgeFile) && checkFogDataCentersFile(fogFile)
@@ -44,7 +41,7 @@ public class FilesParser {
 	}
 
 	private boolean checkSimulationProperties(String simProp) {
-		SimLog.println("FilesParser, Checking simulation properties file");
+		SimLog.println("FilesParser- Checking simulation properties file");
 		boolean result = false;
 		InputStream input = null;
 		try {
@@ -53,60 +50,55 @@ public class FilesParser {
 			// loading properties file
 			Properties prop = new Properties();
 			prop.load(input);
-            SimulationParameters.PARALLEL= Boolean.parseBoolean(prop.getProperty("parallel_simulation").trim());
-			SimulationParameters.SIMULATION_TIME = (double) 60
-					* Double.parseDouble(prop.getProperty("simulation_time").trim()); // seconds 
-			SimulationParameters.AREA_LENGTH = Integer.parseInt(prop.getProperty("length").trim()); // seconds 
-			SimulationParameters.AREA_WIDTH = Integer.parseInt(prop.getProperty("width").trim()); // seconds  
-			SimulationParameters.VM_UPDATE_INTERVAL = (double) 60
-					* Double.parseDouble(prop.getProperty("vm_update_interval").trim()); // seconds 
+			SimulationParameters.PARALLEL = Boolean.parseBoolean(prop.getProperty("parallel_simulation").trim());
+
+			SimulationParameters.INITIALIZATION_TIME = Double
+					.parseDouble(prop.getProperty("initialization_time").trim()); // seconds
+			SimulationParameters.SIMULATION_TIME = SimulationParameters.INITIALIZATION_TIME
+					+ (double) 60 * Double.parseDouble(prop.getProperty("simulation_time").trim()); // seconds
+
+			SimulationParameters.DISPLAY_REAL_TIME_CHARTS = Boolean.parseBoolean(prop.getProperty("display_real_time_charts").trim());  
+			SimulationParameters.AUTO_CLOSE_REAL_TIME_CHARTS = Boolean.parseBoolean(prop.getProperty("auto_close_real_time_charts").trim());  
+			SimulationParameters.CHARTS_UPDATE_INTERVAL = Double.parseDouble(prop.getProperty("charts_update_interval").trim());  
+			SimulationParameters.SAVE_CHARTS = Boolean.parseBoolean(prop.getProperty("save_charts").trim());  
+			
+			SimulationParameters.AREA_LENGTH = Integer.parseInt(prop.getProperty("length").trim()); // seconds
+			SimulationParameters.AREA_WIDTH = Integer.parseInt(prop.getProperty("width").trim()); // seconds
+			SimulationParameters.UPDATE_INTERVAL = Double.parseDouble(prop.getProperty("update_interval").trim()); // seconds
 			SimulationParameters.DEEP_LOGGING = Boolean.parseBoolean(prop.getProperty("deep_log_enabled").trim());
 			SimulationParameters.SAVE_LOG = Boolean.parseBoolean(prop.getProperty("save_log_file").trim());
-			SimulationParameters.CLEAN_OUTPUT_FOLDER = Boolean.parseBoolean(prop.getProperty("clear_output_folder").trim()); 
+			SimulationParameters.CLEAN_OUTPUT_FOLDER = Boolean.parseBoolean(prop.getProperty("clear_output_folder").trim());
 			SimulationParameters.WAIT_FOR_TASKS = Boolean.parseBoolean(prop.getProperty("wait_for_all_tasks").trim());
-			
-
 			SimulationParameters.ENABLE_REGISTRY = Boolean.parseBoolean(prop.getProperty("enable_registry").trim());
-
-			SimulationParameters.EDGE_RANGE = Integer.parseInt(prop.getProperty("edge_range").trim());
-			SimulationParameters.FOG_RANGE = Integer.parseInt(prop.getProperty("fog_coverage").trim());
-			SimulationParameters.PAUSE_LENGTH = Integer.parseInt(prop.getProperty("pause_length").trim());
-			SimulationParameters.MIN_NUM_OF_EDGE_DEVICES = Integer
-					.parseInt(prop.getProperty("min_number_of_edge_devices").trim());
-			SimulationParameters.MAX_NUM_OF_EDGE_DEVICES = Integer
-					.parseInt(prop.getProperty("max_number_of_edge_devices").trim());
+			SimulationParameters.ENABLE_ORCHESTRATORS = Boolean.parseBoolean(prop.getProperty("enable_orchestrators").trim());
+			
+			SimulationParameters.EDGE_RANGE = Integer.parseInt(prop.getProperty("edge_range").trim()); //meters
+			SimulationParameters.FOG_RANGE = Integer.parseInt(prop.getProperty("fog_coverage").trim()); //meters
+			SimulationParameters.PAUSE_LENGTH = Integer.parseInt(prop.getProperty("pause_length").trim());//seconds
+			SimulationParameters.MIN_NUM_OF_EDGE_DEVICES = Integer.parseInt(prop.getProperty("min_number_of_edge_devices").trim());
+			SimulationParameters.MAX_NUM_OF_EDGE_DEVICES = Integer.parseInt(prop.getProperty("max_number_of_edge_devices").trim());
 			if (SimulationParameters.MIN_NUM_OF_EDGE_DEVICES > SimulationParameters.MAX_NUM_OF_EDGE_DEVICES) {
 				SimLog.println(
 						"FilelParser, Error,  the entered min number of edge devices is superior than the max number, check the 'simulation.properties' file.");
 				System.exit(0);
 			}
-			SimulationParameters.EDGE_DEVICE_COUNTER_STEP = Integer
-					.parseInt(prop.getProperty("edge_device_counter_size").trim());
-			SimulationParameters.MIN_TIME_FOR_CHANGING_LOCATION = Integer
-					.parseInt(prop.getProperty("min_time_for_changing_location").trim());
-            if(prop.getProperty("vm_migration")!=null)
-			SimulationParameters.VM_MIGRATION = Boolean.parseBoolean(prop.getProperty("vm_migration").trim());
-			SimulationParameters.MAX_TIME_FOR_CHANGING_LOCATION = Integer
-					.parseInt(prop.getProperty("max_time_for_changing_location").trim());  
-			SimulationParameters.BANDWIDTH_WLAN = 1000 * Integer.parseInt(prop.getProperty("wlan_bandwidth").trim());
-			SimulationParameters.WAN_BANDWIDTH = 1000 * Integer.parseInt(prop.getProperty("wan_bandwidth").trim()); 
-			SimulationParameters.WAN_PROPAGATION_DELAY = Double.parseDouble(prop.getProperty("wan_propogation_delay").trim());
-			SimulationParameters.NETWORK_UPDATE_INTERVAL = Double.parseDouble(prop.getProperty("network_update_interval").trim());
-			SimulationParameters.NETWORK_HOTSPOTS = Boolean.parseBoolean(prop.getProperty("network_wlan_hotspots").trim());
+			SimulationParameters.EDGE_DEVICE_COUNTER_STEP = Integer.parseInt(prop.getProperty("edge_device_counter_size").trim());
+			SimulationParameters.SPEED = Double.parseDouble(prop.getProperty("speed").trim()); //meters per second m/s
+			SimulationParameters.BANDWIDTH_WLAN = 1000 * Integer.parseInt(prop.getProperty("wlan_bandwidth").trim()); // Mbits/s to Kbits/s 
+			SimulationParameters.WAN_BANDWIDTH = 1000 * Integer.parseInt(prop.getProperty("wan_bandwidth").trim());// Mbits/s to Kbits/s 
+			SimulationParameters.WAN_PROPAGATION_DELAY = Double.parseDouble(prop.getProperty("wan_propogation_delay").trim()); //seconds
+			SimulationParameters.NETWORK_UPDATE_INTERVAL = Double.parseDouble(prop.getProperty("network_update_interval").trim()); // seconds
+			SimulationParameters.CPU_ALLOCATION_POLICY = prop.getProperty("Applications_CPU_allocation_policy").trim();
+			SimulationParameters.TASKS_PER_EDGE_DEVICE_PER_MINUTES = Integer.parseInt(prop.getProperty("tasks_generation_rate").trim());
+			SimulationParameters.ORCHESTRATION_ARCHITECTURES = prop.getProperty("orchestration_architectures").split(",");
+			SimulationParameters.ORCHESTRATION_AlGORITHMS = prop.getProperty("orchestration_algorithms").split(",");
+			SimulationParameters.DEPLOY_ORCHESTRATOR = prop.getProperty("deploy_orchestrator").trim();
+			
+			SimulationParameters.CONSUMED_ENERGY_PER_BIT = Double.parseDouble(prop.getProperty("consumed_energy_per_bit").trim()); // J/bit
+			SimulationParameters.AMPLIFIER_DISSIPATION_FREE_SPACE = Double.parseDouble(prop.getProperty("amplifier_dissipation_free_space").trim()); // J/bit/m^2
+			SimulationParameters.AMPLIFIER_DISSIPATION_MULTIPATH = Double.parseDouble(prop.getProperty("amplifier_dissipation_multipath").trim()); // J/bit/m^4
+					
 
-			SimulationParameters.POWER_CONS_PER_MEGABYTE= Double.parseDouble(prop.getProperty("energy_consumption_per_megabyte").trim());
-
-			SimulationParameters.CPU_ALLOCATION_POLICY= prop.getProperty("Applications_CPU_allocation_policy").trim();  
-			SimulationParameters.TASKS_PER_EDGE_DEVICE_PER_MINUTES = Integer
-					.parseInt(prop.getProperty("tasks_generation_rate").trim());
-
-			SimulationParameters.ORCHESTRATOR_POLICIES = prop.getProperty("orchestrator_policies").split(",");
-
-			SimulationParameters.ORCHESTRATOR_CRITERIA = prop.getProperty("resources_management_strategies").split(",");
-			SimulationParameters.DEPLOY_ORCHESTRATOR = prop.getProperty("deploy_orchestrator").trim(); 
-  
-
-			 
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
@@ -114,12 +106,12 @@ public class FilesParser {
 				try {
 					input.close();
 					result = true;
-					SimLog.println("FilesParser, Properties file successfully Loaded propoerties file!");
+					SimLog.println("FilesParser- Properties file successfully Loaded propoerties file!");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			} else {
-				SimLog.println("FilesParser, Failed to load properties file!");
+				SimLog.println("FilesParser- Failed to load properties file!");
 				result = false;
 			}
 		}
@@ -129,7 +121,7 @@ public class FilesParser {
 	}
 
 	private boolean checkEdgeDevicesFile(String edgeFile) {
-		SimLog.println("FilesParser, Checking edge devices file");
+		SimLog.println("FilesParser- Checking edge devices file");
 
 		try {
 			File devicesFile = new File(edgeFile);
@@ -152,8 +144,8 @@ public class FilesParser {
 				isElementPresent(datacenterElement, "percentage");
 				isElementPresent(datacenterElement, "batterycapacity");
 				isElementPresent(datacenterElement, "idleConsumption");
-				isElementPresent(datacenterElement, "maxConsumption"); 
-				
+				isElementPresent(datacenterElement, "maxConsumption");
+
 				NodeList hostList = datacenterElement.getElementsByTagName("host");
 				for (int j = 0; j < hostList.getLength(); j++) {
 					Node hostNode = hostList.item(j);
@@ -165,8 +157,7 @@ public class FilesParser {
 					isElementPresent(hostElement, "storage");
 
 					NodeList vmList = hostElement.getElementsByTagName("VM");
-					for (int k = 0; k < vmList.getLength(); k++) {
-						// NUM_OF_FOG_VMS++;
+					for (int k = 0; k < vmList.getLength(); k++) { 
 						Node vmNode = vmList.item(k);
 
 						Element vmElement = (Element) vmNode;
@@ -181,15 +172,15 @@ public class FilesParser {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			SimLog.println("FilesParser, Failed to load edge devices file!");
+			SimLog.println("FilesParser- Failed to load edge devices file!");
 			return false;
 		}
-		SimLog.println("FilesParser, Edge devices XML file successfully Loaded!");
+		SimLog.println("FilesParser- Edge devices XML file successfully Loaded!");
 		return true;
 	}
 
 	private boolean checkCloudDataCentersFile(String cloudFile) {
-		SimLog.println("FilesParser, Checking cloud devices file");
+		SimLog.println("FilesParser- Checking cloud devices file");
 		try {
 			File devicesFile = new File(cloudFile);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -206,14 +197,13 @@ public class FilesParser {
 				Element datacenterElement = (Element) datacenterNode;
 				isAttribtuePresent(datacenterElement, "arch");
 				isAttribtuePresent(datacenterElement, "os");
-				isAttribtuePresent(datacenterElement, "vmm"); 
+				isAttribtuePresent(datacenterElement, "vmm");
 				isElementPresent(datacenterElement, "idleConsumption");
-				isElementPresent(datacenterElement, "maxConsumption"); 
+				isElementPresent(datacenterElement, "maxConsumption");
 
 				NodeList hostList = datacenterElement.getElementsByTagName("host");
 				for (int j = 0; j < hostList.getLength(); j++) {
 
-					SimulationParameters.NUM_OF_FOG_HOSTS++;
 					Node hostNode = hostList.item(j);
 
 					Element hostElement = (Element) hostNode;
@@ -223,8 +213,7 @@ public class FilesParser {
 					isElementPresent(hostElement, "storage");
 
 					NodeList vmList = hostElement.getElementsByTagName("VM");
-					for (int k = 0; k < vmList.getLength(); k++) {
-						// NUM_OF_FOG_VMS++;
+					for (int k = 0; k < vmList.getLength(); k++) { 
 						Node vmNode = vmList.item(k);
 
 						Element vmElement = (Element) vmNode;
@@ -239,15 +228,15 @@ public class FilesParser {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			SimLog.println("FilesParser, Failed to load cloud datacenters XML file!");
+			SimLog.println("FilesParser- Failed to load cloud datacenters XML file!");
 			return false;
 		}
-		SimLog.println("FilesParser, Cloud datacenters XML file successfully loaded!");
+		SimLog.println("FilesParser- Cloud datacenters XML file successfully loaded!");
 		return true;
 	}
 
 	private boolean checkFogDataCentersFile(String fogFile) {
-		SimLog.println("FilesParser, Checking fog devices file");
+		SimLog.println("FilesParser- Checking fog devices file");
 		try {
 			File devicesFile = new File(fogFile);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -266,7 +255,7 @@ public class FilesParser {
 				isAttribtuePresent(datacenterElement, "os");
 				isAttribtuePresent(datacenterElement, "vmm");
 				isElementPresent(datacenterElement, "idleConsumption");
-				isElementPresent(datacenterElement, "maxConsumption"); 
+				isElementPresent(datacenterElement, "maxConsumption");
 
 				Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
 				isElementPresent(location, "x_pos");
@@ -275,7 +264,6 @@ public class FilesParser {
 				NodeList hostList = datacenterElement.getElementsByTagName("host");
 				for (int j = 0; j < hostList.getLength(); j++) {
 
-					SimulationParameters.NUM_OF_FOG_HOSTS++;
 					Node hostNode = hostList.item(j);
 
 					Element hostElement = (Element) hostNode;
@@ -285,8 +273,7 @@ public class FilesParser {
 					isElementPresent(hostElement, "storage");
 
 					NodeList vmList = hostElement.getElementsByTagName("VM");
-					for (int k = 0; k < vmList.getLength(); k++) {
-						// NUM_OF_FOG_VMS++;
+					for (int k = 0; k < vmList.getLength(); k++) { 
 						Node vmNode = vmList.item(k);
 
 						Element vmElement = (Element) vmNode;
@@ -301,24 +288,27 @@ public class FilesParser {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			SimLog.println("FilesParser, Failed to load fog datacenters XML file!");
+			SimLog.println("FilesParser- Failed to load fog datacenters XML file!");
 			return false;
 		}
-		NodeList datacenterList = SimulationParameters.fogDevicesDoc.getElementsByTagName("datacenter"); 
-		if (datacenterList.getLength()==0) {
-			SimLog.println("FilesParser, Error, Please keep at least one fog data center in the XML file even if you will not use it !");
+		NodeList datacenterList = SimulationParameters.fogDevicesDoc.getElementsByTagName("datacenter");
+		if (datacenterList.getLength() == 0) {
+			SimLog.println(
+					"FilesParser- Error, Please keep at least one fog data center in the XML file even if you will not use it !");
 			SimLog.println("             PureEdgeSim uses Fog nodes as access points too !");
-			SimLog.println("             Thus, if you want to put all edge devices in the same location  you must create one fog data center. ");
-			SimLog.println("             Otherwise, you have to add more fog data centers in order to distrubute the edge devices on  multiple locations !");
+			SimLog.println(
+					"             Thus, if you want to put all edge devices in the same location  you must create one fog data center. ");
+			SimLog.println(
+					"             Otherwise, you have to add more fog data centers in order to distrubute the edge devices on  multiple locations !");
 			SimLog.println("             The simulation is  aborted!.");
 			return false;
 		}
-		SimLog.println("FilesParser, Fog datacenters XML file successfully loaded!");
+		SimLog.println("FilesParser- Fog datacenters XML file successfully loaded!");
 		return true;
 	}
 
 	private boolean checkAppFile(String appFile) {
-		SimLog.println("FilesParser, Checking applications file");
+		SimLog.println("FilesParser- Checking applications file");
 		Document doc = null;
 		try {
 			File devicesFile = new File(appFile);
@@ -328,15 +318,16 @@ public class FilesParser {
 			doc.getDocumentElement().normalize();
 
 			NodeList appList = doc.getElementsByTagName("application");
-			SimulationParameters.APPS_COUNT= appList.getLength();//  save the number of apps, this will be used later by the tasks generator
+			SimulationParameters.APPS_COUNT = appList.getLength();// save the number of apps, this will be used later by
+																	// the tasks generator
 			for (int i = 0; i < appList.getLength(); i++) {
 				Node appNode = appList.item(i);
 
 				Element appElement = (Element) appNode;
 				isAttribtuePresent(appElement, "name");
-				isElementPresent(appElement, "max_delay"); 
-				isElementPresent(appElement, "container_size"); 
-				isElementPresent(appElement, "request_size"); 
+				isElementPresent(appElement, "max_delay");
+				isElementPresent(appElement, "container_size");
+				isElementPresent(appElement, "request_size");
 				isElementPresent(appElement, "results_size");
 				isElementPresent(appElement, "task_length");
 				isElementPresent(appElement, "required_core");
@@ -359,19 +350,19 @@ public class FilesParser {
 				int index = getAppIndex(appName);
 				// save apps parameters
 				SimulationParameters.APPLICATIONS_TABLE[index][0] = max_delay; // max delay in seconds
-				SimulationParameters.APPLICATIONS_TABLE[index][1] = request_size; // avg request size  (KB)
-				SimulationParameters.APPLICATIONS_TABLE[index][2] = results_size; // avg downloaded results size  (KB)
+				SimulationParameters.APPLICATIONS_TABLE[index][1] = request_size; // avg request size (KB)
+				SimulationParameters.APPLICATIONS_TABLE[index][2] = results_size; // avg downloaded results size (KB)
 				SimulationParameters.APPLICATIONS_TABLE[index][3] = task_length; // avg task length (MI)
-				SimulationParameters.APPLICATIONS_TABLE[index][4] = required_core; // required # of core 
+				SimulationParameters.APPLICATIONS_TABLE[index][4] = required_core; // required # of core
 				SimulationParameters.APPLICATIONS_TABLE[index][5] = container_size; // the size of the container (KB)
 			}
 
 		} catch (Exception e) {
-			SimLog.println("FilesParser, Applications XML file cannot be parsed!");
+			SimLog.println("FilesParser- Applications XML file cannot be parsed!");
 			e.printStackTrace();
 			return false;
 		}
-		SimLog.println("FilesParser, Applications XML file successfully loaded!");
+		SimLog.println("FilesParser- Applications XML file successfully loaded!");
 		return true;
 	}
 
@@ -395,11 +386,12 @@ public class FilesParser {
 		}
 	}
 
-	public int getAppIndex(String appname){
-		for (int i=0; i<SimulationParameters.APPLICATIONS.length;i++){
-			if(appname.equals(SimulationParameters.APPLICATIONS[i])) return i; 
+	public int getAppIndex(String appname) {
+		for (int i = 0; i < SimulationParameters.APPLICATIONS.length; i++) {
+			if (appname.equals(SimulationParameters.APPLICATIONS[i]))
+				return i;
 		}
-		SimLog.println("Invalid application scenario "+appname+" check Applications.xml file");
+		SimLog.println("Invalid application scenario " + appname + " check Applications.xml file");
 		System.exit(0);
 		return -1;
 	}

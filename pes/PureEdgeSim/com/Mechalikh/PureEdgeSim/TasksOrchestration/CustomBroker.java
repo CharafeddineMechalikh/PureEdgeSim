@@ -19,7 +19,8 @@ public class CustomBroker extends DatacenterBrokerSimple {
 	    public void processEvent(final SimEvent ev) { 
 		   super.processEvent(ev);
 	        switch (ev.getTag()) { 
-	            case CloudSimTags.CLOUDLET_RETURN: 
+	          
+	            case CloudSimTags.CLOUDLET_RETURN:   // the task execution finished
 	            	final Task task = (Task) ev.getData(); 
 	            	scheduleNow(simulationManager,SimulationManager.TRANSFER_RESULTS_TO_ORCH,task);
 	                break; 
@@ -29,7 +30,7 @@ public class CustomBroker extends DatacenterBrokerSimple {
 	public void setSimulationManager(SimulationManager simulationManager) {
 	this.simulationManager=simulationManager;
 		
-	}
+	} 
 	   
 		 
 }
