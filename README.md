@@ -81,7 +81,7 @@
  (iii) Launch the `main.java` class
  *Running the simulation from command line will be added soon*
     
-![Architecture](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Files/importing project.gif)
+![importation](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Files/importing%20project.gif)
 
 *Importing PureEdgeSim and launching the simulation*
  
