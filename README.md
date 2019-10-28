@@ -8,6 +8,7 @@
    Although fog and edge computing are usually referred to as the same paradigm, the main difference between them is their locations. In the pure edge computing (which this simulator is named after), edge nodes are deployed in the edge devices themselves following peer-to-peer architecture [1]. Therefore, it provides even lower latency than fog computing, while in fog computing, the fog nodes are deployed on servers, mini-clouds, etc. following a client-server architecture. That is why the PureEdgeSim is named so.
    
    *[1] D’Angelo, M., & Caporuscio, M. (2016, July). Pure Edge Computing Platform for the Future Internet. In Federation of International Conferences on Software Technologies: Applications and Foundations (pp. 458-469). Springer, Cham.* 
+   
 # 2. PureEdgeSim Architecture
    PureEdgeSim enables the simulation of resource management strategies and allows to evaluate the performance of cloud, fog, and pure edge computing environments. It grantees high scalability by enabling the simulation of thousands of devices. Besides, it supports the edge devices heterogeneity (i.e. whether this device is mobile or not, whether battery-powered or not, different  applications requirements: tasks file size, tasks CPU utilization,and latency requirement, etc.) 
    It provides a task orchestrator module that orchestrates the tasks and enables the multi-tiers simulations scenarios where many computing paradigms can be used in conjunction with one another. Besides, it provides an even more realistic network model (as compared to state of the art simulators) that continuously changes the allocated bandwidth for each task being transferred depending on the network traffic. 
@@ -20,7 +21,7 @@
    * The Tasks Orchestrator, which is the decision maker, where the user can define the orchestration algorithm. 
    * The Location Manager, which generates the mobility path of mobile devices.
    
-More detailed description, tutorials, and use case  will be added soon....
+![Architecture](/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/modules.PNG) 
 
 # 3. What can be simulated with PureEdgeSim?
 * Cloud, Fog, and pure Edge computing scenarios
@@ -193,7 +194,7 @@ PureEdgeSim output files can be found under the `/output/` directory (you can ch
 To ease prototyping and testing, pureEdgeSim can automatically generate more than 60 charts. It can also generate real time charts and display the simulation map. These charts and the map are then saved under the output folder in a `.png` image format. 
 
 Exmaple of real time charts :
-![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Real%20time%20charts.png)
+![Real time charts](/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Real%20time%20charts.png)
 
 # 6. Changelog
 ## New version 2.0.0 (oct 24th 2019)
