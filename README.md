@@ -271,4 +271,4 @@ Example of real time charts :
 # Please cite it as 
 Mechalikh Charafeddine, Taktak Hajer, & Moussa Faouzi. (2019, April 21). PureEdgeSim: A simulation framework for performance evaluation of cloud, fog, and pure edge computing environments. (Version 1.1.5). Zenodo. http://doi.org/10.5281/zenodo.2648161
 
-# For any questions, contact me at charafeddine.mechalikh@gmail.com 
+*For any questions, contact me at charafeddine.mechalikh@gmail.com* 
