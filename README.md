@@ -11,6 +11,10 @@
    
 # 2. PureEdgeSim Architecture
    PureEdgeSim enables the simulation of resource management strategies and allows to evaluate the performance of cloud, fog, and pure edge computing environments. It grantees high scalability by enabling the simulation of thousands of devices. Besides, it supports the edge devices heterogeneity (i.e. whether this device is mobile or not, whether battery-powered or not, different  applications requirements: tasks file size, tasks CPU utilization,and latency requirement, etc.) 
+![Environment](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/scenario.JPG)
+
+*The simulateed scenarios*
+
    It provides a task orchestrator module that orchestrates the tasks and enables the multi-tiers simulations scenarios where many computing paradigms can be used in conjunction with one another. Besides, it provides an even more realistic network model (as compared to state of the art simulators) that continuously changes the allocated bandwidth for each task being transferred depending on the network traffic. 
    It consists of the following 7 modules:
    * Scenario Manager, that loads  the simulation parameters and the user scenario from the input files (`.xml` and `.prop` files in settings/ folder) where the user specifies. It consists of two classes, the File Parser that  checks the input files and loads the  the simulation parameters, and the Simulation Parameters class which represents a placeholder for the different parameters.
@@ -21,13 +25,14 @@
    * The Tasks Orchestrator, which is the decision maker, where the user can define the orchestration algorithm. 
    * The Location Manager, which generates the mobility path of mobile devices.
    
-![Architecture](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/modules.PNG) 
-A simple representation of PureEdgeSim architecture
+![Architecture](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/modules.PNG)
+
+*A simple representation of PureEdgeSim architecture*
 
 # 3. What can be simulated with PureEdgeSim?
 * Cloud, Fog, and pure Edge computing scenarios
-* And basicly, any scenario that involves computing on distributed nodes, for example:
-  VANETs/MANET networks, IoT applications, Mobile Devices Clouds, Mobile Edge Computing,...
+* And basicly, any scenario that involves computing on distributed nodes or mobility, for example:
+  VANETs/MANET networks, IoT applications, Mobile Devices Clouds, Mobile Edge Computing,... 
   
 # 4. PureEdgeSim features?
 * Realistic network and energy model as compared to other simulators
@@ -196,6 +201,7 @@ To ease prototyping and testing, pureEdgeSim can automatically generate more tha
 
 Exmaple of real time charts :
 ![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Real%20time%20charts.png)
+*Real time charts, with 30% mobile device*
 
 # 6. Changelog
 ## New version 2.0.0 (oct 24th 2019)
