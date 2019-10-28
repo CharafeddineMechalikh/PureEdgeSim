@@ -27,7 +27,7 @@
    
 ![Architecture](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/modules.PNG)
 
-*A simple representation of PureEdgeSim architecture*
+*PureEdgeSim architecture*
 
 # 3. What can be simulated with PureEdgeSim?
 * Cloud, Fog, and pure Edge computing scenarios
