@@ -79,6 +79,7 @@ More detailed description, tutorials, and use case  will be added soon....
 The parameters file contains the following set of parameters:
 
 * The simulation environment parameters:
+
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
 simulation_time                       | Integer    | >= 1          | The simulation duration (in minutes)
@@ -107,6 +108,7 @@ fog_coverage                          | Integer    | >= 1          | The raius o
 speed                                 | Double     | >= 0          | The speed of mobile devices in meters/seconds) (0= disabled)
 
 * The Server Manager settings:
+
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
 min_number_of_edge_devices            | Integer    | >= 1          | The number of edge devices at the beginning of the simulation
@@ -114,6 +116,7 @@ max_number_of_edge_devices            | Integer    | >= 1          | The number 
 edge_device_counter_size              | Integer    | >= 1          | The growing rate in the number of devices in each iteration
 
 * The Network Model settings:
+
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
 wlan_bandwidth                        | Integer    | >= 1          | The local area network bandwidth (in Mbps) 
@@ -122,6 +125,7 @@ wan_propogation_delay                 | Double     | >= 0          | The propaga
 network_update_interval               | Double     | >= 0.01       | The network model refresh interval (in seconds)
 
 * The Tasks Orchestration settings:
+
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
 enable_registry                       | Boolean    | true or false | Enabling it means that before executing a task, a container will be pulled from the registry/cloud 
@@ -133,6 +137,7 @@ orchestration_architectures           | Boolean    | CLOUD_ONLY, FOG_AND_CLOUD,.
 orchestration_algorithms              | Boolean    | (any algorithm name) | The algorithm used by the orchestrator to find the offloading destination
 
 * The Energy Model parameters:
+
 Parameter                             | Type       | Options/Range | Description                                             
 --------------------------------------|------------|---------------|---------------------------------------------------------
 consumed_energy_per_bit               | Double     | >= 0          | The enregy consumed when transferring 1 bit
