@@ -68,6 +68,7 @@ More detailed description, tutorials, and use case  will be added soon....
 # 5. Getting started with PureEdgeSim
 ## 5.1 The Simulation Settings
   PureEdgeSim provides 5 input files located under the `/settings/` folder (you can check them [here](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/pes/PureEdgeSim/settings)):
+  
   (i)   The `simulation parameters` file : It groups all the simulation parameters, including the simulation environment settings  (simulation time, initialization time, update intervals, ..), the models settings (the parameters used by the mobility, energy, network, and tasks generation models..), and so on.    
   (ii)  The `applications XML` file: This file decribes the types of applications that will be used by the tasks generator.
   Each of these application has different characterestics (CPU utilization, files size, latency requirements..). When the     simulation starts, the tasks generator will associate one of these applications to each edge device. Then, based on the assigned application type, it will generate the tasks of these device, which enables the support for devices heterogeneity ( the heterogeneity of their applications, in this case).
