@@ -68,7 +68,6 @@ public class Main {
 			}
 		}
 		if (SimulationParameters.PARALLEL) {
-<<<<<<< HEAD
 			cpuCores = Runtime.getRuntime().availableProcessors();
 			List<Main> simulationList = new ArrayList<>(cpuCores);
 
@@ -78,22 +77,6 @@ public class Main {
 				// between cpu cores and number of iterations
 				step=cpuCores;
 				simulationList.add(new Main(fromIteration, step));
-=======
-			// getting the number of cores on this machine
-		int	cores = Runtime.getRuntime().availableProcessors();
- 
-
-			// now we create a list to store parallel simulation instances
-			List<Main> simulationList = new ArrayList<>(cores); 
-			// and then we generate the parallel simulations
-			for (int i = 0; i < Math.min(cores, Iterations.size()); i ++) {
-				// parallel execution, helps in reducing execution time
-				// to do so we will divide the orchestration policies among them
-
-				// Initialize the simulation environment, each simulation instance with its
-				// specific orchestrations policies
-				simulationList.add(new Main(i,  cores )); 
->>>>>>> 147e16d424d30d2a6ee0d9fc0eedace37a168b7d
 			}
 
 			// Finally then runs them

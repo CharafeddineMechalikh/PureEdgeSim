@@ -494,7 +494,6 @@ public class SimLog {
 		return outputFilesName + extension;
 	}
 
-<<<<<<< HEAD
 	public void print(String line, int flag) {
 		if (getSimulationManager() == null) {
 			System.out.println("    0.0" + " : " + line);
@@ -517,53 +516,6 @@ public class SimLog {
 			}
 		}
 	}
-=======
-	public void printCloudletResults(List<Task> finishedTasks) {
-
-		double size = finishedTasks.size();
-		Task task;
-		print("");
-		print("======================================================= OUTPUT =======================================================");
-		float averageExecutionTime = 0;
-		float averageWaitingTime = 0;
-		int successTasks = 0;
-		int cloudTasks = 0;
-		int totalCloudTasks = 0;
-		int fogTasks = 0;
-		int totalFogTasks = 0;
-		int edgeTasks = 0;
-		int totalEdgeTasks = 0;
-		int failedDelay = 0;// tasks failed due to high delay
-		int failedPower = 0;// tasks failed due to device death (no energy ledt in battery)
-		int failedMobility = 0;// tasks failed due to devices mobility ( no vm migration)
-		double bandwidth = 0;
-		double networkUsage = vmMigrationNetworkUsage;// add vm migration network usage
-		double lanUsage = vmMigrationNetworkUsage;// add vm migration network usage
-		double wanUsage = 0;
-		double lanusageContainer = 0;
-		double WanusageContainer = 0;
-		double lantraffic = 0;
-		///
-		///
-			for (int i = 0; i < networkModel.getTaskProgressList().size(); i++) {
-			lanUsage += networkModel.getTaskProgressList().get(i).getLanNetworkUsage();
-			wanUsage += networkModel.getTaskProgressList().get(i).getWanNetworkUsage(); 
-			if(networkModel.getTaskProgressList().get(i).getLanNetworkUsage()!=0)
-			bandwidth+= networkModel.getTaskProgressList().get(i).getFileSize()/networkModel.getTaskProgressList().get(i).getLanNetworkUsage();
-			if (networkModel.getTaskProgressList().get(i).getType() == taskTransferProgress.CONTAINER) {
-				lanusageContainer += networkModel.getTaskProgressList().get(i).getLanNetworkUsage();
-				WanusageContainer += networkModel.getTaskProgressList().get(i).getWanNetworkUsage();
-			}
-			if (networkModel.getTaskProgressList().get(i).getLanNetworkUsage() > 0) {
-				lantraffic += networkModel.getTaskProgressList().get(i).getFileSize(); 
-			}
-		}
-	
-		lantraffic = lantraffic / 1000;	
-		bandwidth = bandwidth /(1000* networkModel.getTaskProgressList().size());
-		for (int i = 0; i < size; i++) {
-			task = finishedTasks.get(i);
->>>>>>> 147e16d424d30d2a6ee0d9fc0eedace37a168b7d
 
 	public void print(String line) {
 		print(line, DEFAULT);

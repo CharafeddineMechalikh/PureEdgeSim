@@ -306,10 +306,4 @@ public class EdgeOrchestrator extends Orchestrator {
 
 	}
 
-<<<<<<< HEAD
-=======
-	
-
-	
->>>>>>> 147e16d424d30d2a6ee0d9fc0eedace37a168b7d
 }
