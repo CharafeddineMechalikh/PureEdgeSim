@@ -11,7 +11,7 @@
    
 # 2. PureEdgeSim Architecture
    PureEdgeSim enables the simulation of resource management strategies and allows to evaluate the performance of cloud, fog, and pure edge computing environments. It grantees high scalability by enabling the simulation of thousands of devices. Besides, it supports the edge devices heterogeneity (i.e. whether this device is mobile or not, whether battery-powered or not, different  applications requirements: tasks file size, tasks CPU utilization,and latency requirement, etc.) 
-![Environment](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/scenario.JPG)
+![Environment](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Files/scenario.JPG)
 
 *A simple representation of the simulation scenarios*
 
@@ -25,7 +25,7 @@
    * The Tasks Orchestrator, which is the decision maker, where the user can define the orchestration algorithm. 
    * The Location Manager, which generates the mobility path of mobile devices.
    
-![Architecture](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/modules.PNG)
+![Architecture](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Files/modules.PNG)
 
 *PureEdgeSim architecture*
 
@@ -80,7 +80,10 @@
  (ii) Import the project to your IDE
  (iii) Launch the `main.java` class
  *Running the simulation from command line will be added soon*
- 
+    
+![Architecture](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Files/importing project.gif)
+
+*Importing PureEdgeSim and launching the simulation*
  
  
 ## 5.2 The Simulation Settings
@@ -230,7 +233,7 @@ PureEdgeSim output files can be found under the `/output/` directory (you can ch
 To ease prototyping and testing, pureEdgeSim can automatically generate more than 60 charts. It can also generate real time charts and display the simulation map. These charts and the map are then saved under the output folder in a `.png` image format. 
 
 Example of real time charts :
-![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/real%20time.gif)
+![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Files/real%20time.gif)
 *Real time analysis of simulation environment*
 
 
