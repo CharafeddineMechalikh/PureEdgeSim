@@ -17,7 +17,7 @@
 
    It provides a task orchestrator module that orchestrates the tasks and enables the multi-tiers simulations scenarios where many computing paradigms can be used in conjunction with one another. Besides, it provides an even more realistic network model (as compared to state of the art simulators) that continuously changes the allocated bandwidth for each task being transferred depending on the network traffic. 
    It consists of the following 7 modules:
-   * Scenario Manager, that loads  the simulation parameters and the user scenario from the input files (`.xml` and `.prop` files in settings/ folder) where the user specifies. It consists of two classes, the File Parser that  checks the input files and loads the  the simulation parameters, and the Simulation Parameters class which represents a placeholder for the different parameters.
+   * Scenario Manager, that loads  the simulation parameters and the user scenario from the input files (`.xml` and `.prop` files in `/settings/` folder) where the user specifies. It consists of two classes, the File Parser that  checks the input files and loads the  the simulation parameters, and the Simulation Parameters class which represents a placeholder for the different parameters.
    * Simulation Manager, that initiates the simulation environment, schedules all the events and generates the output. It consists of two important classes, the Simulation Manager class which manages the simulation, schedules the tasks generation, etc. The Simulation Logger class that generates the simulation output saves it in comma-separated value (CSV) format in order to easily exploit them later using any spreadsheet editor (e.g. Microsoft Excel...).
    * Data Centers Manager: it generates and manages all the data centers and devices (i.e. cloud, fog or edge). It consists of two classes: the Edge Data Center class, that contains the specific properties of edge devices such as the location, the mobility, the energy source, and the capacity/ remaining energy if it is battery-powered. The second class is the Server Manager which generates the needed servers and edge devices, their hosts and their virtual machines.
    * Tasks Generator which is behind the tasks generation, -currently- it assigns an application such as e-health, smart-home, and augmented-reality (that can be defined in `settings/applications.xml` file) to each edge device. Then, it will generates the needed tasks according to the assigned type, which guarantees the heterogeneity of applications.  
@@ -50,7 +50,7 @@
   The user can also define the applications that are in use, their cpu utilization, their files sizes and their latency. requirements. 
 * The scalability, generate handreds of devices, with a single click. 
 * A rich collection of metrics:
-  The simulation output  (the csv file) includes + 40 metrics ready to be plotted.
+  The simulation output  (the `.csv` file) includes + 40 metrics ready to be plotted.
   Also, new metrics can be derived from those.
 * Ease of use:
   More than 60 charts can be generated automatically.
@@ -233,7 +233,7 @@ Attribute                             | Type       | Options/Range | Description
  
 ## 5.5 The PureEdgeSim output files
 PureEdgeSim output files can be found under the `/output/` directory (you can check the output files [here](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/pes/PureEdgeSim/output/2019-10-28_10-04-01)). There are two types of text files resulted from the simulation: a `.txt` file and a `.csv` file. The `.txt` file contains a brief and easy to read ouput, while the `.csv` file contains more detailed simulations results that are ready to plot. The `.csv` file can be opened using any spreadsheet software (e.g. Microsoft Excel) by which the user can generate unlimited types of charts (with more than 40 metric available).
-To ease prototyping and testing, pureEdgeSim can automatically generate more than 60 charts. It can also generate real time charts and display the simulation map. These charts and the map are then saved under the output folder in a `.png` image format. 
+To ease prototyping and testing, pureEdgeSim can automatically generate more than 60 charts. It can also generate real time charts and display the simulation map. These charts and the map are then saved under the `/output/` folder in a `.png` image format. 
 
 Example of real time charts :
 ![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Files/real%20time.gif)
@@ -257,13 +257,13 @@ Example of real time charts :
   Showing the CPU utilization of Cloud, Fog and Edge resources, the WAN utilization, and the tasks success rate
 * Adding the possibility to generate charts at the end of the simulation and to save them in a *.PNG format 
   More than 64 high resolution charts can be generated with one click, in order to make it easier for the user to check his simlation results
-  The user can always generate other charts using the generated CSV file.
+  The user can always generate other charts using the generated `.csv` file.
 * Adding new simulation parameters regarding charts (displaying them, the refresh delay, saving them..)
 * The ability to enable or desable orchestrators
   If disabled, the device will orchestrate its tasks by itself. 
   If enabled, the user can select any devices/datacenters to be the orchestrators, 
   Then, the tasks will be sent to the nearest orchestrator in order to find the best offloading destination
-* Now the containers network usage can be found in the CSV file.
+* Now the containers network usage can be found in the `.csv` file.
   A quick chart is also generated by the simulator to show the network used by containers if the registry is enabled.  
      
 ## Authors : Charafeddine MECHALIKH, Hajer TAKTAK, Faouzi MOUSSA
