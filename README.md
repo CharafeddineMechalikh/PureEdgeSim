@@ -78,9 +78,9 @@
 ## 5.1 Running PureEdgeSim for the First Time
  (i)  Download the zip file from github.
  
- (ii) Import the project to your IDE
+ (ii) Import the project to your IDE.
  
- (iii) Launch the `main.java` class
+ (iii) Launch the `main.java` class.
  
  *Running the simulation from command line will be added soon*
     
@@ -270,3 +270,5 @@ Example of real time charts :
 
 # Please cite it as 
 Mechalikh Charafeddine, Taktak Hajer, & Moussa Faouzi. (2019, April 21). PureEdgeSim: A simulation framework for performance evaluation of cloud, fog, and pure edge computing environments. (Version 1.1.5). Zenodo. http://doi.org/10.5281/zenodo.2648161
+
+# For any questions, contact me at charafeddine.mechalikh@gmail.com 
