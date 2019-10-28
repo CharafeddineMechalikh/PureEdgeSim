@@ -77,8 +77,11 @@
 # 5. Getting started with PureEdgeSim
 ## 5.1 Running PureEdgeSim for the First Time
  (i)  Download the zip file from github.
+ 
  (ii) Import the project to your IDE
+ 
  (iii) Launch the `main.java` class
+ 
  *Running the simulation from command line will be added soon*
     
 ![importation](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Files/importing%20project.gif)
