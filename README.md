@@ -192,6 +192,9 @@ Attribute                             | Type       | Options/Range | Description
 PureEdgeSim output files can be found under the `/output/` directory (you can check the output files [here](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/pes/PureEdgeSim/output/2019-10-28_10-04-01)). There are two types of text files resulted from the simulation: a `.txt` file and a `.csv` file. The `.txt` file contains a brief and easy to read ouput, while the `.csv` file contains more detailed simulations results that are ready to plot. The `.csv` file can be opened using any spreadsheet software (e.g. Microsoft Excel) by which the user can generate unlimited types of charts (with more than 40 metric available).
 To ease prototyping and testing, pureEdgeSim can automatically generate more than 60 charts. It can also generate real time charts and display the simulation map. These charts and the map are then saved under the output folder in a `.png` image format. 
 
+Exmaple of real time charts :
+![Real time charts](/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Real%20time%20charts.png?raw=true)
+
 # 6. Changelog
 ## New version 2.0.0 (oct 24th 2019)
 * The code has been revisited and cleaned, now it is more readable  
