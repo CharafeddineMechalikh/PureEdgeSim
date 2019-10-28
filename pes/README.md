@@ -93,6 +93,15 @@ More detailed description, tutorials, and use case  will be added soon....
    
 ## Tutorials are coming soon..    
   
+<<<<<<< HEAD
+=======
+* Improved simulation time
+
+## Required libraries (.jar) in case you had trouble with maven
+* The libraries required to execute PureEdgeSim can be obtained from this link
+https://drive.google.com/open?id=1tc3_1UnIYO0AtAXDVf18AHj5g8MdFMNs
+
+>>>>>>> 147e16d424d30d2a6ee0d9fc0eedace37a168b7d
 ## Authors : Charafeddine MECHALIKH, Hajer TAKTAK, Faouzi MOUSSA
 
 # Please cite it as 

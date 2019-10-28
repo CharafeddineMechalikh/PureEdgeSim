@@ -3,7 +3,7 @@
 ## Background
    Fog and edge computing, two emerging computing paradigms that aim to overcome the cloud computing limitations by bringing its applications at the edge of the network. Thus, reducing both the latency and the cloud workload and leading to a more scalable network. Nevertheless, in these distributed environments where many devices need to offload their tasks to one another (either to increase their lifetime or to minimize the task completion delay) many issues such as resources management strategies has to be solved. Instead of testing them on a real distributed system, the simulation makes it possible to evaluate the proposed strategies and algorithms in a repeatable, controllable and cost-effective way before their actual deployment. However, when it comes to simulation tools, edge and fog computing still did not get the attention they deserve (with only few simulators for fog computing such as iFogSim, edgeCloudSim. Meanwhile, no simulator for pure edge computing).
 
-   We introduce PureEdgeSim (Based on CoudSim Plus), a new simulator that is designed to simulate cloud, fog, and edge computing environments. It allows to evaluate the performance of resources management strategies in terms of network usage, latency, resources utilization, energy consumption, etc. and enables the simulation of several scenarios such as the Internet of Things (IoT), connected vehicles/ VANETs/MANET, pure edge computing environments (peer-to peer networks such as mobile devices cloud), and mobile edge computing. 
+   We introduce PureEdgeSim, a new simulator based on [CloudSim Plus](http://cloudsimplus.org) that is designed to simulate cloud, fog, and edge computing environments. It allows to evaluate the performance of resources management strategies in terms of network usage, latency, resources utilization, energy consumption, etc. and enables the simulation of several scenarios such as the Internet of Things (IoT), connected vehicles/ VANETs/MANET, pure edge computing environments (peer-to peer networks such as mobile devices cloud), and mobile edge computing. 
 ## Why it is named "Pure"EdgeSim  (Pure Edge Computing Simulator)
    Although fog and edge computing are usually referred to as the same paradigm, the main difference between them is their locations. In the pure edge computing (which this simulator is named after), edge nodes are deployed in the edge devices themselves following peer-to-peer architecture [1]. Therefore, it provides even lower latency than fog computing, while in fog computing, the fog nodes are deployed on servers, mini-clouds, etc. following a client-server architecture. That is why the PureEdgeSim is named so.
    
@@ -22,11 +22,19 @@
    
    
 More detailed description, tutorials, and use case  will be added soon....
-## New version 1.1.2 (mar 3rd 2019)
-* Improved parallel simulation 
-## New version 1.1.1 (mar 2nd 2019) 
+## Changelog
+## New version 1.1.5 (apr 21th 2019)
 * Minor fixes
-## New version 1.1 ( feb 26th 2019) 
+## New version 1.1.4 (mar 11th 2019)
+* Improved parallel simulations
+* Improved network model
+## Version 1.1.3 (mar 3rd 2019)
+* Fixed dependencies 
+## Version 1.1.2 (mar 3rd 2019)
+* Improved parallel simulation 
+## Version 1.1.1 (mar 2nd 2019) 
+* Minor fixes
+## Version 1.1 (feb 26th 2019) 
 * Added support for registry and containers
 
 * Improved the network model: 
@@ -57,11 +65,8 @@ More detailed description, tutorials, and use case  will be added soon....
   
 * Improved simulation time
 
-## Required libraries (.jar)
-* The libraries required to execute PureEdgeSim can be obtained from this link
-https://drive.google.com/open?id=1tc3_1UnIYO0AtAXDVf18AHj5g8MdFMNs
 
 ## Authors : Charafeddine MECHALIKH, Hajer TAKTAK, Faouzi MOUSSA
 
 # Please cite it as 
-Mechalikh Charafeddine, Taktak Hajer, & Moussa Faouzi. (2019, March 3). PureEdgeSim: A simulation toolkit for performance evaluation of fog and pure edge computing environments. (Version 1.1.2). Zenodo. http://doi.org/10.5281/zenodo.2582424
+Mechalikh Charafeddine, Taktak Hajer, & Moussa Faouzi. (2019, April 21). PureEdgeSim: A simulation framework for performance evaluation of cloud, fog, and pure edge computing environments. (Version 1.1.5). Zenodo. http://doi.org/10.5281/zenodo.2648161
