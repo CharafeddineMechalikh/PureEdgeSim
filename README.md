@@ -12,8 +12,7 @@
 # 2. PureEdgeSim Architecture
    PureEdgeSim enables the simulation of resource management strategies and allows to evaluate the performance of cloud, fog, and pure edge computing environments. It grantees high scalability by enabling the simulation of thousands of devices. Besides, it supports the edge devices heterogeneity (i.e. whether this device is mobile or not, whether battery-powered or not, different  applications requirements: tasks file size, tasks CPU utilization,and latency requirement, etc.) 
 ![Environment](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/scenario.JPG)
-
-*The simulateed scenarios*
+*The simulated scenarios*
 
    It provides a task orchestrator module that orchestrates the tasks and enables the multi-tiers simulations scenarios where many computing paradigms can be used in conjunction with one another. Besides, it provides an even more realistic network model (as compared to state of the art simulators) that continuously changes the allocated bandwidth for each task being transferred depending on the network traffic. 
    It consists of the following 7 modules:
@@ -26,7 +25,6 @@
    * The Location Manager, which generates the mobility path of mobile devices.
    
 ![Architecture](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/modules.PNG)
-
 *A simple representation of PureEdgeSim architecture*
 
 # 3. What can be simulated with PureEdgeSim?
@@ -200,7 +198,7 @@ PureEdgeSim output files can be found under the `/output/` directory (you can ch
 To ease prototyping and testing, pureEdgeSim can automatically generate more than 60 charts. It can also generate real time charts and display the simulation map. These charts and the map are then saved under the output folder in a `.png` image format. 
 
 Exmaple of real time charts :
-![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Real%20time%20charts.png)
+![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/real%20time.gif)
 *Real time charts, with 30% mobile device*
 
 # 6. Changelog
