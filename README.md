@@ -67,7 +67,7 @@ More detailed description, tutorials, and use case  will be added soon....
    
 # 5. Getting started with PureEdgeSim
 ## 5.1 The Simulation Settings
-  PureEdgeSim provides 5 input files located under the `/settings/` folder:
+  PureEdgeSim provides 5 input files located under the `/settings/` folder (you can check them [here](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/pes/PureEdgeSim/settings)):
   (i)   The `simulation parameters` file : It groups all the simulation parameters, including the simulation environment settings  (simulation time, initialization time, update intervals, ..), the models settings (the parameters used by the mobility, energy, network, and tasks generation models..), and so on.    
   (ii)  The `applications XML` file: This file decribes the types of applications that will be used by the tasks generator.
   Each of these application has different characterestics (CPU utilization, files size, latency requirements..). When the     simulation starts, the tasks generator will associate one of these applications to each edge device. Then, based on the assigned application type, it will generate the tasks of these device, which enables the support for devices heterogeneity ( the heterogeneity of their applications, in this case).
@@ -188,7 +188,7 @@ Attribute                             | Type       | Options/Range | Description
 `percentage`                           | Integer    | > 0           | The percentage of devices of this type.
  
 ## 5.4 The PureEdgeSim output files
-PureEdgeSim output files can be found under the `/output/` directory ( you can check the output files [Here](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/pes/PureEdgeSim/output/2019-10-28_10-04-01)). There are two types of text files resulted from the simulation: a `.txt` file and a `.csv` file. The `.txt` file contains a brief and easy to read ouput, while the `.csv` file contains more detailed simulations results that are ready to plot. The `.csv` file can be opened using any spreadsheet software (e.g. Microsoft Excel) by which the user can generate unlimited types of charts (with more than 40 metric available).
+PureEdgeSim output files can be found under the `/output/` directory (you can check the output files [here](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/pes/PureEdgeSim/output/2019-10-28_10-04-01)). There are two types of text files resulted from the simulation: a `.txt` file and a `.csv` file. The `.txt` file contains a brief and easy to read ouput, while the `.csv` file contains more detailed simulations results that are ready to plot. The `.csv` file can be opened using any spreadsheet software (e.g. Microsoft Excel) by which the user can generate unlimited types of charts (with more than 40 metric available).
 To ease prototyping and testing, pureEdgeSim can automatically generate more than 60 charts. It can also generate real time charts and display the simulation map. These charts and the map are then saved under the output folder in a `.png` image format. 
 
 # 6. Changelog
