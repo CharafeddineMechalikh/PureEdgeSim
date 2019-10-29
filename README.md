@@ -10,7 +10,7 @@ We introduce PureEdgeSim, a new simulator based on [CloudSim Plus](http://clouds
 
 ## Why it is named "Pure"EdgeSim  (Pure Edge Computing Simulator)
 
-Although fog and edge computing are usually referred to as the same paradigm, the main difference between them is their locations. In the pure edge computing (which this simulator is named after), edge nodes are deployed in the edge devices themselves following peer-to-peer architecture [1]. Therefore, it provides even lower latency than fog computing, while in fog computing, the fog nodes are deployed on servers, mini-clouds, etc. following a client-server architecture (D’Angelo, M. 2016). That is why the PureEdgeSim is named so.
+Although fog and edge computing are usually referred to as the same paradigm, the main difference between them is their locations. In the pure edge computing (which this simulator is named after), edge nodes are deployed in the edge devices themselves following peer-to-peer architecture. Therefore, it provides even lower latency than fog computing, while in fog computing, the fog nodes are deployed on servers, mini-clouds, etc. following a client-server architecture (D’Angelo, M. 2016). That is why the PureEdgeSim is named so.
    
 ## 2. PureEdgeSim Architecture
 
@@ -57,7 +57,6 @@ PureEdgeSim architecture
 
 VANETs/MANET networks, IoT applications, Mobile Devices Clouds, Mobile Edge Computing,... 
   
-
 ## 4. PureEdgeSim features
 
 *   Realistic network and energy models as compared to other simulators.
@@ -73,7 +72,6 @@ The user can specify the dimentions of the simulated area and the speed of mobil
 The mobility model will assign a random location to each device.
 
 Then the mobile devices will change their location according to the model in use.
-
 *   The support for devices heterogeneity:
 
 The user can define heterogenous edge device, Fog servers, and Cloud Data Centers in the corresponding `.xml` files. 
@@ -85,7 +83,6 @@ and how much computing capacity it has.
 The devices without computing capacity are considered as simple sensors that only generate data/tasks. 
 
 The user can also define the applications that are in use, their cpu utilization, their files sizes and their latency. requirements. 
-
 *   The scalability, generate handreds of devices, with a single click. 
 
 *   A rich collection of metrics:
