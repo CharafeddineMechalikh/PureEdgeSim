@@ -183,10 +183,6 @@ The parameters file contains the following set of parameters:
 |`clear_output_folder`        |Boolean|true or false|Delete the output folder at the beginning of each simulation                                                        |
 |`deep_log_enabled`           |Boolean|true or false|Enable or disable deep logging                                                                                      |     
 
-
-
-
-
 *   The Location Manager (mobility model) parameters:
 
 |Parameter     |Type   |Options/Range|Description                                                 | 
@@ -197,57 +193,42 @@ The parameters file contains the following set of parameters:
 |`fog_coverage`|Integer|>= 1         |The raius of the area covered by each fog server (in meters)|
 |`speed`       |Double |>= 0         |The speed of mobile devices in meters/seconds) (0= disabled)|
 
-
-
-
 *   The Server Manager settings:
 
-|Parameter                             | Type       | Options/Range | Description                                             
-|--------------------------------------|------------|---------------|---------------------------------------------------------
-|`min_number_of_edge_devices`          | Integer    | >= 1          | The number of edge devices at the beginning of the simulation
-|`max_number_of_edge_devices`          | Integer    | >= 1          | The number of edge devices at the end of the simulation
-|`edge_device_counter_size`            | Integer    | >= 1          | The growing rate in the number of devices in each iteration
-
-
-
+|Parameter                   |Type   |Options/Range|Description                                                  | 
+|----------------------------|-------|-------------|-------------------------------------------------------------|
+|`min_number_of_edge_devices`|Integer|>= 1         |The number of edge devices at the beginning of the simulation|
+|`max_number_of_edge_devices`|Integer|>= 1         |The number of edge devices at the end of the simulation      |
+|`edge_device_counter_size`  |Integer|>= 1         |The growing rate in the number of devices in each iteration  |
 
 *   The Network Model settings:
 
-|Parameter                             | Type       | Options/Range | Description                                             
-|--------------------------------------|------------|---------------|---------------------------------------------------------
-|`wlan_bandwidth`                      | Integer    | >= 1          | The local area network bandwidth (in Mbps) 
-|`wan_bandwidth`                       | Integer    | >= 1          | The backhaul network bandwidth (in Mbps) 
-|`wan_propogation_delay`               | Double     | >= 0          | The propagation delay (when sending data/tasks to the cloud) (in seconds)  
-|`network_update_interval`             | Double     | >= 0.01       | The network model refresh interval (in seconds)
-
-
-
+|Parameter                |Type   |Options/Range|Description                                                              |
+|-------------------------|-------|-------------|-------------------------------------------------------------------------|
+|`wlan_bandwidth`         |Integer|>= 1         |The local area network bandwidth (in Mbps)                               |
+|`wan_bandwidth`          |Integer|>= 1         |The backhaul network bandwidth (in Mbps)                                 |
+|`wan_propogation_delay`  |Double |>= 0         |The propagation delay (when sending data/tasks to the cloud) (in seconds)|  
+|`network_update_interval`|Double |>= 0.01      |The network model refresh interval (in seconds)                          |
 
 *   The Tasks Orchestration settings:
 
-|Parameter                             | Type       | Options/Range | Description                                             
-|--------------------------------------|------------|---------------|---------------------------------------------------------
-|`enable_registry`                     | Boolean    | true or false | Enabling it means that before executing a task, a container will be pulled from the registry/cloud 
-|`enable_orchestrators`                | Boolean    | true or false | Enabling this means that the task/offloading request will be sent to the specifed/ nearest orchestrator. Disabling this means that each device will orchestrate its owb tasks.  
-|`deploy_orchestrator`                 | Boolean    | Cloud or Fog  | To deploy the orchestrator on the cloud, fog, or any custom location (e.g. cluster heads, the user in this case need to implement his clustering algorithm)
-|`applications_CPU_allocation_policy`  | Boolean    | SPACE_SHARED or TIME_SHARED | Time shared means that the tasks can be executed in same virtual machine at simae time (however this increases the simulation duration). Space shared means that the tasks are executed one after the otherby a virtual machine
-|`tasks_generation_rate`               | Integer    | >= 1          | The number of tasks generated by each device every minute
-|`orchestration_architectures`         | Boolean    | CLOUD_ONLY, FOG_AND_CLOUD,... | The computing paradigms that are used 
-|`orchestration_algorithms`            | Boolean    | (any algorithm name) | The algorithm used by the orchestrator to find the offloading destination
-
-
-
+|Parameter                           |Type   |Options/Range                 |Description                                                                                                                                                                                                                    |
+|------------------------------------|-------|------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|`enable_registry`                   |Boolean|true or false                 |Enabling it means that before executing a task, a container will be pulled from the registry/cloud                                                                                                                             |
+|`enable_orchestrators`              |Boolean|true or false                 |Enabling this means that the task/offloading request will be sent to the specifed/ nearest orchestrator. Disabling this means that each device will orchestrate its owb tasks.                                                 |
+|`deploy_orchestrator`               |Boolean|Cloud or Fog                  |To deploy the orchestrator on the cloud, fog, or any custom location (e.g. cluster heads, the user in this case need to implement his clustering algorithm)                                                                    |
+|`applications_CPU_allocation_policy`|Boolean|SPACE_SHARED or TIME_SHARED   |Time shared means that the tasks can be executed in same virtual machine at simae time (however this increases the simulation duration). Space shared means that the tasks are executed one after the otherby a virtual machine|
+|`tasks_generation_rate`             |Integer|>= 1                          |The number of tasks generated by each device every minute                                                                                                                                                                      |
+|`orchestration_architectures`       |Boolean|CLOUD_ONLY, FOG_AND_CLOUD,... |The computing paradigms that are used                                                                                                                                                                                          |
+|`orchestration_algorithms`          |Boolean|(any algorithm name)          |The algorithm used by the orchestrator to find the offloading destination                                                                                                                                                      |
 
 *   The Energy Model parameters:
 
-|Parameter                             | Type       | Options/Range | Description                                             
-|--------------------------------------|------------|---------------|---------------------------------------------------------
-|`consumed_energy_per_bit`             | Double     | >= 0          | The enregy consumed when transferring 1 bit (in wh)
-|`amplifier_dissipation_free_space`    | Double     | >= 0          | The energy consumed by the amplifier in free space channel  (in wh)
-|`amplifier_dissipation_multipath`     | Double     | >= 0          | The energy consumed by the amplifier in multipath channel  (in wh)
-
-
-
+|Parameter                         |Type  |Options/Range|Description                                                        |
+|----------------------------------|------|-------------|-------------------------------------------------------------------|
+|`consumed_energy_per_bit`         |Double|>= 0         |The enregy consumed when transferring 1 bit (in wh)                |
+|`amplifier_dissipation_free_space`|Double|>= 0         |The energy consumed by the amplifier in free space channel  (in wh)|
+|`amplifier_dissipation_multipath` |Double|>= 0         |The energy consumed by the amplifier in multipath channel  (in wh) |
 
 ### 5.4 The Edge Devices, Fog Servers, and Cloud Datacenters Files
 
@@ -255,45 +236,43 @@ These files contain the specification of edge devices, fog datacenters, and clou
 
 *   Datacenters characteristics
 
-|Attribute                             | Type       | Options/Range | Description                                             
-|--------------------------------------|------------|---------------|---------------------------------------------------------
-|`idleConsumption`                     | Double     | >= 0          | The energy consumption rate when the datacenter is idle  (in wh/s)
-|`maxConsumption`                      | Double     | >= 0          | The energy consumption rate when the datacenter CPU operates at 100%  (in wh/s)
-|`isOrchestrator`                      | Boolean    | true or false | To manually select this datacenter as orchestrator
-|`location`                            | -          | -             | The X and Y coordinates that define the location of this datacenter
-|`hosts`                               | -          | -             | The list of hosts  
+|Attribute        |Type   |Options/Range|Description                                                                    |
+|-----------------|-------|-------------|-------------------------------------------------------------------------------|
+|`idleConsumption`|Double |>= 0         |The energy consumption rate when the datacenter is idle  (in wh/s)             |
+|`maxConsumption` |Double |>= 0         |The energy consumption rate when the datacenter CPU operates at 100%  (in wh/s)|
+|`isOrchestrator` |Boolean|true or false|To manually select this datacenter as orchestrator                             |
+|`location`       |-      |-            |The X and Y coordinates that define the location of this datacenter            |
+|`hosts`          |-      |-            |The list of hosts                                                              |
 
 *   The hosts have the following characteristics
 
-|Attribute                             | Type       | Options/Range | Description                                             
-|--------------------------------------|------------|---------------|---------------------------------------------------------
-|`core`                                | Integer    | > 0           | The number of CPU cores 
-|`mips`                                | Integer    | > 0           | The processing power  (in MIPS)
-|`ram`                                 | Integer    | > 0           | RAM (in  MB)
-|`storage`                             | Integer    | > 0           | Storage capacity (in MB)
-|`VMs`                                 | -          | -             | The list of virtual machines  
+|Attribute|Type   |Options/Range|Description                    |
+|---------|-------|-------------|-------------------------------|
+|`core`   |Integer|> 0          |The number of CPU cores        |
+|`mips`   |Integer|> 0          |The processing power  (in MIPS)|
+|`ram`    |Integer|> 0          |RAM (in  MB)                   |
+|`storage`|Integer|> 0          |Storage capacity (in MB)       |
+|`VMs`    |-      |-            |The list of virtual machines   |
 
 *   Each virtual machine have the following characteristics
 
-|Attribute                             | Type       | Options/Range | Description                                             
-|--------------------------------------|------------|---------------|---------------------------------------------------------
-|`core`                                | Integer    | > 0           | The number of CPU cores used by this VM 
-|`mips`                                | Integer    | > 0           | The allocated processing power  (in MIPS)
-|`ram`                                 | Integer    | > 0           | The allocated RAM (in  MB)
-|`storage`                             | Integer    | > 0           | The allocated storage (in MB) 
-
+|Attribute|Type   |Options/Range|Description                              |
+|---------|-------|-------------|-----------------------------------------|
+|`core`   |Integer|> 0          |The number of CPU cores used by this VM  |
+|`mips`   |Integer|> 0          |The allocated processing power  (in MIPS)|
+|`ram`    |Integer|> 0          |The allocated RAM (in  MB)               |
+|`storage`|Integer|> 0          |The allocated storage (in MB)            |
 
  *The sum of virtual machines attributes values (e.g. CPU cores) must be inferior than those of the host*
 
 *   The edge devices file follows the same structure as the Fog and Cloud `.xml` files. However as we said previously, if we want to generate 100 devices for example, we will not define all these devices in this file, instead, we will define the types of devices that will be generated, for example 25% of the generated devices will be of type 1, etc. The edge devices are considered as datacenters that contains one host with one VM (the user can add more if needed, by editing this file). The device without a virtual machine is considered a simple sensor (no computing capabilities). The following table highlights the attributes that only edge devices have : 
 
-|Attribute                             | Type       | Options/Range | Description                                             
-|--------------------------------------|------------|---------------|---------------------------------------------------------
-|`mobility`                            | Boolean    | true or false | "True" means the devices of this type are mobile 
-|`battery`                             | Boolean    | true or false | "True" means that the devices of this type are battery-powered
-|`batterycapacity`                     | Double     | > 0           | The battery capacity (in Wh)
-|`percentage`                          | Integer    | > 0           | The percentage of devices of this type.
- 
+|Attribute        |Type   |Options/Range|Description                                                  |
+|-----------------|-------|-------------|-------------------------------------------------------------|
+|`mobility`       |Boolean|true or false|"True" means the devices of this type are mobile             |
+|`battery`        |Boolean|true or false|True" means that the devices of this type are battery-powered|
+|`batterycapacity`|Double |> 0          |The battery capacity (in Wh)                                 |
+|`percentage`     |Integer|> 0          |The percentage of devices of this type.                      |
 
 ### 5.5 The PureEdgeSim output files
 
@@ -306,7 +285,6 @@ Example of real time charts :
 ![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/PureEdgeSim/files/real%20time.gif)
 
 Real time analysis of simulation environment
-
 
 ## 6. Change log of the latest version
 
@@ -355,12 +333,8 @@ Then, the tasks will be sent to the nearest orchestrator in order to find the be
 *   Now the containers network usage can be found in the `.csv` file.
 
 A quick chart is also generated by the simulator to show the network used by containers if the registry is enabled.  
-
     
 ## Authors : Charafeddine MECHALIKH, Hajer TAKTAK, Faouzi MOUSSA
-
-
-
 
 ## Please cite it as 
 
