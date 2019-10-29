@@ -167,21 +167,21 @@ The parameters file contains the following set of parameters:
 
 *   The simulation environment parameters:
 
-|Parameter                             | Type       | Options/Range | Description                                             |
-|--------------------------------------|------------|---------------|---------------------------------------------------------|
-|`simulation_time`                     | Integer    | >= 1          | The simulation duration (in minutes)                    |
-|`initialization_time`                 | Integer    | >= 0          | The time needed to generate all resources, which means that the tasks offloading process starts affter it|
-|`parallel_simulation`                 | Boolean    | true or false | Enable or disable parallel simulations                  |
-|`update_interval`                     | Double     | >= 0.01       | The interval between simulation environment events (in seconds)|
-|`pause_length`                        | Integer    | >= 0          | The pause between iterations (in real seconds)          |  
-|`display_real_time_charts`            | Boolean    | true or false | To display or not the simulation results in real time   | 
-|`auto_close_real_time_charts`         | Boolean    | true or false | Auto close real time charts after the end of iteration  |
-|`charts_update_interval`              | Double     | >= 0.01       | Interval of refreshing real time charts (in seconds)    |
-|`save_charts`                         | Boolean    | true or false | Whether to save charts in `.png` format or not          |
-|`wait_for_all_tasks`                  | Boolean    | true or false | Wait until all tasks get executed or stop the simulation on time (when the simulation time set by the user finishes)|
-|`save_log_file`                       | Boolean    | true or false | Whether to save the log file or not                     |
-|`clear_output_folder`                 | Boolean    | true or false | Delete the output folder at the beginning of each simulation|
-|`deep_log_enabled`                    | Boolean    | true or false | Enable or disable deep logging                          |     
+|Parameter                    |Type   |Options/Range|Description                                             |
+|-----------------------------|-------|-------------|--------------------------------------------------------|
+|`simulation_time`            |Integer|>= 1         |The simulation duration (in minutes)                    |
+|`initialization_time`        |Integer|>= 0         |The time needed to generate all resources, which means that the tasks offloading process starts affter it|
+|`parallel_simulation`        |Boolean|true or false|Enable or disable parallel simulations                  |
+|`update_interval`            |Double |>= 0.01      |The interval between simulation environment events (in seconds)|
+|`pause_length`               |Integer|>= 0         |The pause between iterations (in real seconds)          |  
+|`display_real_time_charts`   |Boolean|true or false|To display or not the simulation results in real time   | 
+|`auto_close_real_time_charts`|Boolean|true or false|Auto close real time charts after the end of iteration  |
+|`charts_update_interval`     |Double |>= 0.01      |Interval of refreshing real time charts (in seconds)    |
+|`save_charts`                |Boolean|true or false|Whether to save charts in `.png` format or not          |
+|`wait_for_all_tasks`         |Boolean|true or false|Wait until all tasks get executed or stop the simulation on time (when the simulation time set by the user finishes)|
+|`save_log_file`              |Boolean|true or false|Whether to save the log file or not                     |
+|`clear_output_folder`        |Boolean|true or false|Delete the output folder at the beginning of each simulation|
+|`deep_log_enabled`           |Boolean|true or false|Enable or disable deep logging                          |     
 
 
 
