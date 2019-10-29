@@ -1,6 +1,6 @@
-package com.Mechalikh.PureEdgeSim.Network;
+package com.mechalikh.pureedgesim.Network;
 
-import com.Mechalikh.PureEdgeSim.TasksGenerator.Task;
+import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public class FileTransferProgress {
 	public static final int Base = 3000;

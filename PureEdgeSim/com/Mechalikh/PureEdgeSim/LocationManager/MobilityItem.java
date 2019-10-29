@@ -1,4 +1,4 @@
-package com.Mechalikh.PureEdgeSim.LocationManager;
+package com.mechalikh.pureedgesim.LocationManager;
 
 public class MobilityItem {
 	private Location location;

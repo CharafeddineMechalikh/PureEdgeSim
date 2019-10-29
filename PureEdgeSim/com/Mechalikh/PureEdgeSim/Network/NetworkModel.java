@@ -1,4 +1,4 @@
-package com.Mechalikh.PureEdgeSim.Network;
+package com.mechalikh.pureedgesim.Network;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,13 +7,13 @@ import org.cloudbus.cloudsim.core.CloudSimEntity;
 import org.cloudbus.cloudsim.core.Simulation;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 
-import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeDataCenter;
-import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeVM;
-import com.Mechalikh.PureEdgeSim.DataCentersManager.EnergyModel;
-import com.Mechalikh.PureEdgeSim.ScenarioManager.SimulationParameters;
-import com.Mechalikh.PureEdgeSim.ScenarioManager.SimulationParameters.TYPES;
-import com.Mechalikh.PureEdgeSim.SimulationManager.SimulationManager;
-import com.Mechalikh.PureEdgeSim.TasksGenerator.Task;
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
+import com.mechalikh.pureedgesim.DataCentersManager.EnergyModel;
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
+import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public class NetworkModel extends CloudSimEntity {
 	public static final int base = 4000;
@@ -28,13 +28,17 @@ public class NetworkModel extends CloudSimEntity {
 	private List<FileTransferProgress> transferProgressList; // the list where the current (and the previous)
 																// transferred file are stored
 	private SimulationManager simulationManager;
-	int firstIndex = 0;
-	double bwUsage = 0;
+	private int firstIndex = 0;
+	private double bwUsage = 0;
 
 	public NetworkModel(Simulation simulation, SimulationManager simulationManager) {
 		super(simulation);
-		this.simulationManager = simulationManager;
+		setSimulationManager(simulationManager);
 		transferProgressList = new ArrayList<FileTransferProgress>();
+	}
+
+	private void setSimulationManager(SimulationManager simulationManager) {
+		this.simulationManager = simulationManager;
 	}
 
 	@Override
@@ -63,7 +67,9 @@ public class NetworkModel extends CloudSimEntity {
 		case UPDATE_PROGRESS:
 			// update the progress of the current transfers and their allocated bandwidth
 			updateTasksProgress();
-			schedule(this, SimulationParameters.NETWORK_UPDATE_INTERVAL, UPDATE_PROGRESS);
+			schedule(this, simulationParameters.NETWORK_UPDATE_INTERVAL, UPDATE_PROGRESS);
+			break;
+		default:
 			break;
 		}
 	}
@@ -82,10 +88,11 @@ public class NetworkModel extends CloudSimEntity {
 	}
 
 	public void sendResultFromDevToOrch(Task task) {
-		if(task.getOrchestrator()!=task.getEdgeDevice())
-		transferProgressList.add(new FileTransferProgress(task, task.getOutputSize() * 8, FileTransferProgress.RESULTS_TO_ORCH));
+		if (task.getOrchestrator() != task.getEdgeDevice())
+			transferProgressList.add(
+					new FileTransferProgress(task, task.getOutputSize() * 8, FileTransferProgress.RESULTS_TO_ORCH));
 		else
-			scheduleNow(this, NetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV, task);	
+			scheduleNow(this, NetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV, task);
 	}
 
 	public void addContainer(Task task) {
@@ -94,10 +101,11 @@ public class NetworkModel extends CloudSimEntity {
 	}
 
 	public void sendRequestFromDeviceToOrch(Task task) {
-		if (task.getOrchestrator() != task.getEdgeDevice()) 
+		if (task.getOrchestrator() != task.getEdgeDevice())
 			transferProgressList
 					.add(new FileTransferProgress(task, task.getFileSize() * 8, FileTransferProgress.REQUEST));
-		else // The device orchestrate its tasks by itself, so, send the request directly to destination 
+		else // The device orchestrate its tasks by itself, so, send the request directly to
+				// destination
 			scheduleNow(simulationManager, SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, task);
 	}
 
@@ -140,7 +148,7 @@ public class NetworkModel extends CloudSimEntity {
 
 		// Update progress (remaining file size)
 		transfer.setRemainingFileSize(transfer.getRemainingFileSize()
-				- (SimulationParameters.NETWORK_UPDATE_INTERVAL * transfer.getCurrentBandwidth()));
+				- (simulationParameters.NETWORK_UPDATE_INTERVAL * transfer.getCurrentBandwidth()));
 
 		if (transfer.getRemainingFileSize() <= 0) {// Transfer finished
 			transfer.setRemainingFileSize(0);
@@ -157,23 +165,25 @@ public class NetworkModel extends CloudSimEntity {
 
 	}
 
-	private void UpdateEnergyConsumption(FileTransferProgress transfer, String type) {
+	private void updateEnergyConsumption(FileTransferProgress transfer, String type) {
 		// update energy consumption
 		EdgeDataCenter origin = null;
 		EdgeDataCenter destination = null;
-		if (type.equals("Orchestrator")) {
+		if ("Orchestrator".equals(type)) {
 			origin = transfer.getTask().getEdgeDevice();
 			destination = transfer.getTask().getOrchestrator();
-		} else if (type.equals("Destination")) {
+		} else if ("Destination".equals(type)) {
 			origin = transfer.getTask().getOrchestrator();
 			destination = ((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter());
-		} else if (type.equals("Container")) {
-			origin = simulationManager.getServersManager().getDatacenterList().get(0);//registry,  so set the first cloud datacenter as the origin
+		} else if ("Container".equals(type)) {
+			origin = simulationManager.getServersManager().getDatacenterList().get(0);// registry, so set the first
+																						// cloud datacenter as the
+																						// origin
 			destination = transfer.getTask().getEdgeDevice();
-		} else if (type.equals("Result_Orchestrator")) {
+		} else if ("Result_Orchestrator".equals(type)) {
 			origin = ((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter());
 			destination = transfer.getTask().getOrchestrator();
-		} else if (type.equals("Result_Origin")) {
+		} else if ("Result_Origin".equals(type)) {
 			origin = transfer.getTask().getOrchestrator();
 			destination = transfer.getTask().getEdgeDevice();
 		}
@@ -189,27 +199,27 @@ public class NetworkModel extends CloudSimEntity {
 		// If it is an offlaoding request that is sent to the orchestrator
 		if (transfer.getTransferType() == FileTransferProgress.REQUEST) {
 			offloadingRequestRecievedByOrchestrator(transfer);
-			UpdateEnergyConsumption(transfer, "Orchestrator");
+			updateEnergyConsumption(transfer, "Orchestrator");
 		}
 		// If it is an task (or offloading request) that is sent to the destination
 		else if (transfer.getTransferType() == FileTransferProgress.TASK) {
 			executeTaskOrDownloadContainer(transfer);
-			UpdateEnergyConsumption(transfer, "Destination");
+			updateEnergyConsumption(transfer, "Destination");
 		}
 		// If the container has been downloaded, then execute the task now
 		else if (transfer.getTransferType() == FileTransferProgress.CONTAINER) {
 			containerDownloadFinished(transfer);
-			UpdateEnergyConsumption(transfer, "Container");
+			updateEnergyConsumption(transfer, "Container");
 		}
 		// If the transfer of execution results to the orchestrator has finished
 		else if (transfer.getTransferType() == FileTransferProgress.RESULTS_TO_ORCH) {
 			returnResultToDevice(transfer);
-			UpdateEnergyConsumption(transfer, "Result_Orchestrator");
+			updateEnergyConsumption(transfer, "Result_Orchestrator");
 		}
 		// Results transferred to the device
 		else {
 			resultsReturnedToDevice(transfer);
-			UpdateEnergyConsumption(transfer, "Result_Origin");
+			updateEnergyConsumption(transfer, "Result_Origin");
 		}
 
 	}
@@ -227,7 +237,7 @@ public class NetworkModel extends CloudSimEntity {
 		// delay
 		if (transfer.getTask().getOrchestrator().getType().equals(TYPES.CLOUD)
 				|| ((EdgeVM) transfer.getTask().getVm()).getType().equals(TYPES.CLOUD))
-			schedule(this, SimulationParameters.WAN_PROPAGATION_DELAY, NetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV,
+			schedule(this, simulationParameters.WAN_PROPAGATION_DELAY, NetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV,
 					transfer.getTask());
 		else
 			scheduleNow(this, NetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV, transfer.getTask());
@@ -235,7 +245,7 @@ public class NetworkModel extends CloudSimEntity {
 	}
 
 	private void executeTaskOrDownloadContainer(FileTransferProgress transfer) {
-		if (SimulationParameters.ENABLE_REGISTRY
+		if (simulationParameters.ENABLE_REGISTRY
 				&& !((EdgeVM) transfer.getTask().getVm()).getType().equals(TYPES.CLOUD)) {
 			// if the registry is enabled and the task is offloaded to the fog or the edge,
 			// then download the container
@@ -244,7 +254,7 @@ public class NetworkModel extends CloudSimEntity {
 		} else {// if the registry is disabled, execute directly the request, as it represents
 				// the offloaded task in this case
 			if (((EdgeVM) transfer.getTask().getVm()).getType().equals(TYPES.CLOUD))
-				schedule(simulationManager, SimulationParameters.WAN_PROPAGATION_DELAY, SimulationManager.EXECUTE_TASK,
+				schedule(simulationManager, simulationParameters.WAN_PROPAGATION_DELAY, SimulationManager.EXECUTE_TASK,
 						transfer.getTask());
 			else
 				scheduleNow(simulationManager, SimulationManager.EXECUTE_TASK, transfer.getTask());
@@ -254,7 +264,7 @@ public class NetworkModel extends CloudSimEntity {
 	private void offloadingRequestRecievedByOrchestrator(FileTransferProgress transfer) {
 		// Find the offloading destination and execute the task
 		if (transfer.getTask().getOrchestrator().getType().equals(TYPES.CLOUD))
-			schedule(simulationManager, SimulationParameters.WAN_PROPAGATION_DELAY,
+			schedule(simulationManager, simulationParameters.WAN_PROPAGATION_DELAY,
 					SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, transfer.getTask());
 		else
 			scheduleNow(simulationManager, SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, transfer.getTask());
@@ -263,7 +273,7 @@ public class NetworkModel extends CloudSimEntity {
 	private boolean sameLanIsUsed(FileTransferProgress transfer1, FileTransferProgress transfer2) {
 		// The trasfers share same Lan of they have one device in common
 		// Compare orchestrator
-		if ((transfer1.getTask().getOrchestrator() == transfer2.getTask().getOrchestrator())
+		return ((transfer1.getTask().getOrchestrator() == transfer2.getTask().getOrchestrator())
 				|| (transfer1.getTask().getOrchestrator() == transfer2.getTask().getVm().getHost().getDatacenter())
 				|| (transfer1.getTask().getOrchestrator() == transfer2.getTask().getEdgeDevice())
 
@@ -276,24 +286,20 @@ public class NetworkModel extends CloudSimEntity {
 				|| (transfer1.getTask().getVm().getHost().getDatacenter() == transfer2.getTask().getOrchestrator())
 				|| (transfer1.getTask().getVm().getHost().getDatacenter() == transfer2.getTask().getVm().getHost()
 						.getDatacenter())
-				|| (transfer1.getTask().getVm().getHost().getDatacenter() == transfer2.getTask().getEdgeDevice()))
-			return true;
-		return false;
+				|| (transfer1.getTask().getVm().getHost().getDatacenter() == transfer2.getTask().getEdgeDevice()));
 	}
 
 	private boolean wanIsUsed(FileTransferProgress fileTransferProgress) {
-		if ((fileTransferProgress.getTransferType() == FileTransferProgress.TASK
+		return ((fileTransferProgress.getTransferType() == FileTransferProgress.TASK
 				&& ((EdgeVM) fileTransferProgress.getTask().getVm()).getType().equals(TYPES.CLOUD))
 				// If the offloading destination is the cloud
 
 				|| fileTransferProgress.getTransferType() == FileTransferProgress.CONTAINER
 				// Or if containers will be downloaded from registry
 
-				|| (fileTransferProgress.getTask().getOrchestrator().getType() == SimulationParameters.TYPES.CLOUD))
-			// Or if the orchestrator is deployed in the cloud
-			return true;
+				|| (fileTransferProgress.getTask().getOrchestrator().getType() == simulationParameters.TYPES.CLOUD));
+		// Or if the orchestrator is deployed in the cloud
 
-		return false;
 	}
 
 	public void updateBandwidth(FileTransferProgress transfer) {
@@ -309,24 +315,16 @@ public class NetworkModel extends CloudSimEntity {
 	}
 
 	private double getLanBandwidth(double remainingTasksCount_Lan) {
-		if (remainingTasksCount_Lan == 0)
-			remainingTasksCount_Lan = 1;
-		return (SimulationParameters.BANDWIDTH_WLAN / (remainingTasksCount_Lan));
+		return (simulationParameters.BANDWIDTH_WLAN / (remainingTasksCount_Lan > 0 ? remainingTasksCount_Lan : 1));
 	}
 
 	private double getWanBandwidth(double remainingTasksCount_Wan) {
-		if (remainingTasksCount_Wan == 0)
-			remainingTasksCount_Wan = 1;
-		return (SimulationParameters.WAN_BANDWIDTH / (remainingTasksCount_Wan));
+		return (simulationParameters.WAN_BANDWIDTH / (remainingTasksCount_Wan > 0 ? remainingTasksCount_Wan : 1));
 	}
 
 	@Override
 	protected void startEntity() {
 		schedule(this, 1, UPDATE_PROGRESS);
-	}
-
-	@Override
-	public void shutdownEntity() {
 	}
 
 	public double getWanUtilization() {
@@ -339,11 +337,7 @@ public class NetworkModel extends CloudSimEntity {
 				}
 			}
 		}
-		if (wanTasks != 0)
-			bwUsage = bwUsage / wanTasks;
-		else
-			bwUsage = 0;
-		bwUsage = bwUsage / 1000;
+		bwUsage = (wanTasks > 0 ? bwUsage / wanTasks : 0) / 1000;
 		double utilization = Math.min(bwUsage, 300);
 		return utilization;
 	}

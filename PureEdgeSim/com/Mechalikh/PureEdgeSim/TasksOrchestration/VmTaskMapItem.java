@@ -1,7 +1,7 @@
-package com.Mechalikh.PureEdgeSim.TasksOrchestration;
+package com.mechalikh.pureedgesim.TasksOrchestration;
 
-import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeVM;
-import com.Mechalikh.PureEdgeSim.TasksGenerator.Task;
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
+import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public class VmTaskMapItem {
 

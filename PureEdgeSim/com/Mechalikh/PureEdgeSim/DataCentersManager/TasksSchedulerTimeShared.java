@@ -1,24 +1,18 @@
-package com.Mechalikh.PureEdgeSim.DataCentersManager;
+package com.mechalikh.pureedgesim.DataCentersManager;
 
 import org.cloudbus.cloudsim.cloudlets.CloudletExecution;
 import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerTimeShared;
 
-import com.Mechalikh.PureEdgeSim.ScenarioManager.SimulationParameters;
-import com.Mechalikh.PureEdgeSim.TasksGenerator.Task;
-import com.Mechalikh.PureEdgeSim.TasksGenerator.Task.Status;
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.TasksGenerator.Task;
+import com.mechalikh.pureedgesim.TasksGenerator.Task.Status;
 
 public class TasksSchedulerTimeShared extends CloudletSchedulerTimeShared {
 
-	/**
-	 * 
-	 */
+ 
 	private static final long serialVersionUID = 1L;
-
-	public TasksSchedulerTimeShared() {
-		// TODO Auto-generated constructor stub
-	}
-
+ 
 	@Override
 	public void cloudletFinish(final CloudletExecution ce) {
 		Task task = ((Task) ce.getCloudlet());
@@ -37,7 +31,7 @@ public class TasksSchedulerTimeShared extends CloudletSchedulerTimeShared {
 		// A simple representation of task failure due to
 		// device mobility, if the vm location doesn't match
 		// the edge device location (that generated this task)
-		if (edc.getType() != SimulationParameters.TYPES.CLOUD && !sameLocation(edc, task.getEdgeDevice())) {
+		if (edc.getType() != simulationParameters.TYPES.CLOUD && !sameLocation(edc, task.getEdgeDevice())) {
 			task.setFailureReason(Task.Status.FAILED_DUE_TO_DEVICE_MOBILITY);
 			ce.setCloudletStatus(Cloudlet.Status.FAILED);
 		} else {
@@ -50,12 +44,10 @@ public class TasksSchedulerTimeShared extends CloudletSchedulerTimeShared {
 	private boolean sameLocation(EdgeDataCenter Dev1, EdgeDataCenter Dev2) {
 		double distance = Math.abs(Math.sqrt(Math.pow((Dev1.getLocation().getXPos() - Dev2.getLocation().getXPos()), 2)
 				+ Math.pow((Dev1.getLocation().getYPos() - Dev2.getLocation().getYPos()), 2)));
-		int RANGE = SimulationParameters.EDGE_RANGE;
+		int RANGE = simulationParameters.EDGE_RANGE;
 		if (Dev1.getType() != Dev2.getType())// One of them is fog and the other is edge
-			RANGE = SimulationParameters.FOG_RANGE;
-		if (distance < RANGE)
-			return true;
-		return false;
+			RANGE = simulationParameters.FOG_RANGE;
+		return (distance < RANGE);
 	}
 
 }

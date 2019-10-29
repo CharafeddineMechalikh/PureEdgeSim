@@ -1,4 +1,4 @@
-package com.Mechalikh.PureEdgeSim.SimulationManager;
+package com.mechalikh.pureedgesim.SimulationManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,16 +9,15 @@ import org.cloudbus.cloudsim.core.CloudSimEntity;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeDataCenter;
-import com.Mechalikh.PureEdgeSim.DataCentersManager.ServersManager;
-import com.Mechalikh.PureEdgeSim.Network.NetworkModel;
-import com.Mechalikh.PureEdgeSim.ScenarioManager.Scenario;
-import com.Mechalikh.PureEdgeSim.ScenarioManager.SimulationParameters;
-import com.Mechalikh.PureEdgeSim.TasksGenerator.BasicTasksGenerator;
-import com.Mechalikh.PureEdgeSim.TasksGenerator.Task;
-import com.Mechalikh.PureEdgeSim.TasksGenerator.TaskGenerator;
-import com.Mechalikh.PureEdgeSim.TasksOrchestration.CustomBroker;
-import com.Mechalikh.PureEdgeSim.TasksOrchestration.EdgeOrchestrator;
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
+import com.mechalikh.pureedgesim.Network.NetworkModel;
+import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.TasksGenerator.BasicTasksGenerator;
+import com.mechalikh.pureedgesim.TasksGenerator.Task;
+import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker;
+import com.mechalikh.pureedgesim.TasksOrchestration.EdgeOrchestrator;
 
 public class SimulationManager extends CloudSimEntity {
 	public static final int Base = 1000; // avoid conflict with CloudSim Plus tags
@@ -34,12 +33,11 @@ public class SimulationManager extends CloudSimEntity {
 	private List<Task> tasksList;
 	private EdgeOrchestrator edgeOrchestrator;
 	private ServersManager serversManager;
-	SimulationVisualizer simulationVisualizer;
+	private SimulationVisualizer simulationVisualizer;
 	private CloudSim simulation;
 	private int simulationId;
 	private int iteration;
 	private SimLog simLog;
-	private int progress = 1;
 	private int lastWrittenNumber = 0;
 	private int oldProgress = -1;
 	private Scenario scenario;
@@ -71,7 +69,7 @@ public class SimulationManager extends CloudSimEntity {
 		broker.submitVmList(serversManager.getVmList());
 
 		// Generate tasks list
-		TaskGenerator TG = new BasicTasksGenerator(this);
+		BasicTasksGenerator TG = new BasicTasksGenerator(this);
 		TG.generate();
 		tasksList = TG.getTaskList();
 
@@ -86,7 +84,7 @@ public class SimulationManager extends CloudSimEntity {
 		networkModel = new NetworkModel(simulation, this);
 
 		// Show real time results during the simulation
-		if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL)
+		if (simulationParameters.DISPLAY_REAL_TIME_CHARTS && !simulationParameters.PARALLEL)
 			simulationVisualizer = new SimulationVisualizer(this);
 	}
 
@@ -104,20 +102,20 @@ public class SimulationManager extends CloudSimEntity {
 
 		// Tasks scheduling
 		for (int i = 0; i < tasksList.size(); i++) {
-			if (!SimulationParameters.ENABLE_ORCHESTRATORS)
+			if (!simulationParameters.ENABLE_ORCHESTRATORS)
 				tasksList.get(i).setOrchestrator(tasksList.get(i).getEdgeDevice());
 			schedule(this, tasksList.get(i).getTime(), SEND_TO_ORCH, tasksList.get(i));
 		}
 
 		// Scheduling the end of the simulation
-		schedule(this, SimulationParameters.SIMULATION_TIME, PRINT_LOG);
+		schedule(this, simulationParameters.SIMULATION_TIME, PRINT_LOG);
 
 		// Updating real time charts
-		if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL)
-			schedule(this, SimulationParameters.INITIALIZATION_TIME, UPDATE_REAL_TIME_CHARTS);
+		if (simulationParameters.DISPLAY_REAL_TIME_CHARTS && !simulationParameters.PARALLEL)
+			schedule(this, simulationParameters.INITIALIZATION_TIME, UPDATE_REAL_TIME_CHARTS);
 
 		// Show simulation progress
-		schedule(this, SimulationParameters.INITIALIZATION_TIME, SHOW_PROGRESS);
+		schedule(this, simulationParameters.INITIALIZATION_TIME, SHOW_PROGRESS);
 		simLog.printSameLine("Simulation progress :", "red");
 		simLog.printSameLine("[", "red");
 	}
@@ -153,7 +151,7 @@ public class SimulationManager extends CloudSimEntity {
 
 		case SHOW_PROGRESS:
 			// Calculate the simulation progress
-			progress = 100 * broker.getCloudletFinishedList().size() / simLog.getGeneratedTasks();
+			int progress = 100 * broker.getCloudletFinishedList().size() / simLog.getGeneratedTasks();
 			if (oldProgress != progress) {
 				oldProgress = progress;
 				if (progress % 10 == 0 || (progress % 10 < 5) && lastWrittenNumber + 10 < progress) {
@@ -163,15 +161,15 @@ public class SimulationManager extends CloudSimEntity {
 				} else
 					simLog.printSameLine("#", "red");
 			}
-			schedule(this, SimulationParameters.SIMULATION_TIME / 100, SHOW_PROGRESS);
+			schedule(this, simulationParameters.SIMULATION_TIME / 100, SHOW_PROGRESS);
 			break;
 
 		case UPDATE_REAL_TIME_CHARTS:
 			// Update simulation Map
-			simulationVisualizer.UpdateCharts();
+			simulationVisualizer.updateCharts();
 
 			// Schedule the next update
-			schedule(this, SimulationParameters.CHARTS_UPDATE_INTERVAL, UPDATE_REAL_TIME_CHARTS);
+			schedule(this, simulationParameters.CHARTS_UPDATE_INTERVAL, UPDATE_REAL_TIME_CHARTS);
 			break;
 
 		case PRINT_LOG:
@@ -179,7 +177,7 @@ public class SimulationManager extends CloudSimEntity {
 			List<Task> finishedTasks = broker.getCloudletFinishedList();
 
 			// If some tasks have not been executed
-			if (SimulationParameters.WAIT_FOR_TASKS
+			if (simulationParameters.WAIT_FOR_TASKS
 					&& (double) finishedTasks.size() / (double) (simLog.getGeneratedTasks()
 							- simLog.getNotGeneratedBecauseDead() - simLog.getTasksFailedRessourcesUnavailable()) < 1) {
 				// 1 = 100% , 0,9= 90%
@@ -195,13 +193,13 @@ public class SimulationManager extends CloudSimEntity {
 
 			simLog.printSameLine(" 100% ]", "red");
 
-			if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL) {
+			if (simulationParameters.DISPLAY_REAL_TIME_CHARTS && !simulationParameters.PARALLEL) {
 				// Close real time charts after the end of the simulation
-				if (SimulationParameters.AUTO_CLOSE_REAL_TIME_CHARTS)
+				if (simulationParameters.AUTO_CLOSE_REAL_TIME_CHARTS)
 					simulationVisualizer.close();
 				try {
 					// Save those charts in bitmap and vector formats
-					if (SimulationParameters.SAVE_CHARTS)
+					if (simulationParameters.SAVE_CHARTS)
 						simulationVisualizer.saveCharts();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -240,7 +238,7 @@ public class SimulationManager extends CloudSimEntity {
 				failedTasksCount++;
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.exit(0);
+			Runtime.getRuntime().exit(0);
 		}
 	}
 
@@ -262,7 +260,7 @@ public class SimulationManager extends CloudSimEntity {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.exit(0);
+			Runtime.getRuntime().exit(0);
 		}
 	}
 
@@ -278,7 +276,7 @@ public class SimulationManager extends CloudSimEntity {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.exit(0);
+			Runtime.getRuntime().exit(0);
 		}
 	}
 
@@ -305,7 +303,7 @@ public class SimulationManager extends CloudSimEntity {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.exit(0);
+			Runtime.getRuntime().exit(0);
 		}
 	}
 
@@ -315,7 +313,7 @@ public class SimulationManager extends CloudSimEntity {
 		int selected = 0;
 		double distance;
 		for (int i = 0; i < orchestratorsList.size(); i++) {
-			if (orchestratorsList.get(i).getType() != SimulationParameters.TYPES.CLOUD) {
+			if (orchestratorsList.get(i).getType() != simulationParameters.TYPES.CLOUD) {
 				distance = Math.abs(Math.sqrt(Math
 						.pow((task.getEdgeDevice().getLocation().getXPos()
 								- orchestratorsList.get(i).getLocation().getXPos()), 2)
@@ -327,24 +325,19 @@ public class SimulationManager extends CloudSimEntity {
 				}
 			}
 		}
-		if (SimulationParameters.ENABLE_ORCHESTRATORS) {
+		if (simulationParameters.ENABLE_ORCHESTRATORS) {
 			if (orchestratorsList.size() == 0) {
 				simLog.printSameLine("SimulationManager- Error no orchestrator found", "red");
 				return;
-			} 
+			}
 			task.setOrchestrator(orchestratorsList.get(selected));
 		}
-		
+
 		if (!task.getEdgeDevice().isDead()) { // check if the device is still alive
 			scheduleNow(networkModel, NetworkModel.SEND_REQUEST_FROM_DEVICE_TO_ORCH, task);
 		} else { // otherwise set this tasks as failed
 			simLog.setNotGeneratedBecauseDead(simLog.getNotGeneratedBecauseDead() + 1);
 		}
-	}
-
-	@Override
-	public void shutdownEntity() {
-
 	}
 
 	private CustomBroker createBroker() {

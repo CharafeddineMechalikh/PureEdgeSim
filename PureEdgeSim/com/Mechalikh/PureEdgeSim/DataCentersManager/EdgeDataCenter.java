@@ -1,29 +1,28 @@
-package com.Mechalikh.PureEdgeSim.DataCentersManager;
+package com.mechalikh.pureedgesim.DataCentersManager;
 
 import java.util.ArrayList;
-import java.util.List;  
+import java.util.List;
 import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicy;
 import org.cloudbus.cloudsim.core.Simulation;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
-import com.Mechalikh.PureEdgeSim.LocationManager.Location;
-import com.Mechalikh.PureEdgeSim.LocationManager.MobilityItem;
-import com.Mechalikh.PureEdgeSim.LocationManager.MobilityManager;
-import com.Mechalikh.PureEdgeSim.ScenarioManager.SimulationParameters; 
-import com.Mechalikh.PureEdgeSim.TasksOrchestration.VmTaskMapItem;
+
+import com.mechalikh.pureedgesim.LocationManager.Location;
+import com.mechalikh.pureedgesim.LocationManager.MobilityManager;
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.TasksOrchestration.VmTaskMapItem;
 
 public class EdgeDataCenter extends DatacenterSimple {
 	private static final int UPDATE_STATUS = 2000; // Avoid conflicting with CloudSim Plus Tags
 	private Simulation simulation;
-	private SimulationParameters.TYPES deviceType; 
+	private simulationParameters.TYPES deviceType;
 	private boolean isMobile = false;
 	private boolean isBatteryPowered = false;
-	private double batteryCapacity;  
-	EnergyModel energyModel;
+	private double batteryCapacity;
+	private EnergyModel energyModel;
 	private boolean isDead = false;
 	private double deathTime;
-	private List<MobilityItem> mobilityPath;
 	private List<VmTaskMapItem> vmTaskMap;
 	private int applicationType;
 	private boolean isOrchestrator = false;
@@ -33,10 +32,9 @@ public class EdgeDataCenter extends DatacenterSimple {
 	private int utilizationFrequency = 0;
 	private boolean isIdle = true;
 	private long ramMemory;
-    private MobilityManager mobilityManager;
-	private int currentCpuUtilization;
-	private EdgeDataCenter orchestrator; 
-     
+	private MobilityManager mobilityManager;
+	private EdgeDataCenter orchestrator;
+
 	public EdgeDataCenter(Simulation simulation, List<? extends Host> hostList, VmAllocationPolicy vmAllocationPolicy) {
 		super(simulation, hostList, vmAllocationPolicy);
 		this.simulation = simulation;
@@ -55,7 +53,7 @@ public class EdgeDataCenter extends DatacenterSimple {
 	@Override
 	protected void startEntity() {
 		super.startEntity();
-		schedule(this, SimulationParameters.INITIALIZATION_TIME, UPDATE_STATUS);
+		schedule(this, simulationParameters.INITIALIZATION_TIME, UPDATE_STATUS);
 
 	}
 
@@ -65,13 +63,13 @@ public class EdgeDataCenter extends DatacenterSimple {
 		case UPDATE_STATUS:
 			// Update energy consumption
 			updateEnergyConsumption();
- 
+
 			// Update location
 			if (isMobile())
-			getMobilityManager().getNextLocation();
-			
+				getMobilityManager().getNextLocation();
+
 			if (!isDead()) {
-				schedule(this, SimulationParameters.UPDATE_INTERVAL, UPDATE_STATUS);
+				schedule(this, simulationParameters.UPDATE_INTERVAL, UPDATE_STATUS);
 			}
 
 			break;
@@ -82,47 +80,48 @@ public class EdgeDataCenter extends DatacenterSimple {
 	}
 
 	private void updateEnergyConsumption() {
-		setIdle(true); 
-		double vmUsage = 0;  
-		currentCpuUtilization=0;
-		
-		//get the cpu usage of all vms
+		setIdle(true);
+		double vmUsage = 0;
+		double currentCpuUtilization = 0;
+
+		// get the cpu usage of all vms
 		for (int i = 0; i < this.getVmList().size(); i++) {
-			vmUsage = this.getVmList().get(i).getCloudletScheduler().getRequestedCpuPercentUtilization(simulation.clock());
-			currentCpuUtilization+=vmUsage; // the current utilization 
-			totalCpuUtilization += vmUsage; 
+			vmUsage = this.getVmList().get(i).getCloudletScheduler()
+					.getRequestedCpuPercentUtilization(simulation.clock());
+			currentCpuUtilization += vmUsage; // the current utilization
+			totalCpuUtilization += vmUsage;
 			utilizationFrequency++; // in order to get the average usage from the total usage
 			if (vmUsage != 0)
-				setIdle(false); // set as active (not idle) if at least one vm is used 
+				setIdle(false); // set as active (not idle) if at least one vm is used
 		}
-		
-		if(this.getVmList().size()>0)
-		currentCpuUtilization=currentCpuUtilization/this.getVmList().size();
-		
-		//update the energy consumption
+
+		if (this.getVmList().size() > 0)
+			currentCpuUtilization = currentCpuUtilization / this.getVmList().size();
+
+		// update the energy consumption
 		this.getEnergyModel().updateCpuEnergyConsumption(currentCpuUtilization);
-		
+
 		if (isBattery() && this.getEnergyModel().getTotalEnergyConsumption() > batteryCapacity) {
 			isDead = true;
 			deathTime = simulation.clock();
 		}
 	}
- 
-	public EnergyModel getEnergyModel() { 
+
+	public EnergyModel getEnergyModel() {
 		return energyModel;
 	}
 
-	public SimulationParameters.TYPES getType() {
+	public simulationParameters.TYPES getType() {
 		return deviceType;
 	}
 
-	public void setType(SimulationParameters.TYPES type) {
+	public void setType(simulationParameters.TYPES type) {
 		this.deviceType = type;
 	}
 
 	public Location getLocation() {
 		return getMobilityManager().getCurrentLocation();
-	} 
+	}
 
 	public boolean isMobile() {
 		return isMobile;
@@ -151,27 +150,17 @@ public class EdgeDataCenter extends DatacenterSimple {
 	public double getBatteryLevel() {
 		if (!isBattery())
 			return 0;
-		if (batteryCapacity < this.getEnergyModel().getTotalEnergyConsumption() )
+		if (batteryCapacity < this.getEnergyModel().getTotalEnergyConsumption())
 			return 0;
-		return batteryCapacity - this.getEnergyModel().getTotalEnergyConsumption() ;
+		return batteryCapacity - this.getEnergyModel().getTotalEnergyConsumption();
 	}
 
-	public double getBatteryLevelPercentage() { 
-		 return getBatteryLevel()* 100 / batteryCapacity;
+	public double getBatteryLevelPercentage() {
+		return getBatteryLevel() * 100 / batteryCapacity;
 	}
- 
+
 	public boolean isDead() {
 		return isDead;
-	}
-
-	public void setMobilityPath(List<MobilityItem> MobilityPath) {
-		this.mobilityPath = MobilityPath;
-
-	}
-
-	public List<MobilityItem> getMobilityPath() {
-		return mobilityPath;
-
 	}
 
 	public double getDeathTime() {
@@ -191,10 +180,6 @@ public class EdgeDataCenter extends DatacenterSimple {
 	public int getApplication() {
 		return applicationType;
 
-	}
-
-	@Override
-	public void shutdownEntity() {
 	}
 
 	public boolean isOrchestrator() {
@@ -235,12 +220,13 @@ public class EdgeDataCenter extends DatacenterSimple {
 			utilizationFrequency = 1;
 		return totalCpuUtilization * 100 / utilizationFrequency;
 	}
-	
+
 	public double getCurrentCpuUtilization() {
 		if (utilizationFrequency == 0)
 			utilizationFrequency = 1;
 		return totalCpuUtilization * 100 / utilizationFrequency;
 	}
+
 	public boolean isIdle() {
 		return isIdle;
 	}
@@ -258,11 +244,11 @@ public class EdgeDataCenter extends DatacenterSimple {
 	}
 
 	public void setEnergyModel(EnergyModel energyModel) {
-		 this.energyModel=energyModel;
-		
+		this.energyModel = energyModel;
+
 	}
 
-	public EdgeDataCenter getOrchestrator() { 
+	public EdgeDataCenter getOrchestrator() {
 		return this.orchestrator;
 	}
 }

@@ -1,8 +1,11 @@
-package com.Mechalikh.PureEdgeSim.ScenarioManager;
+package com.mechalikh.pureedgesim.ScenarioManager;
+ 
 
-import org.w3c.dom.Document;
+public class simulationParameters { 
 
-public class SimulationParameters { 
+	public static String EDGE_DEVICES_FILE="";     // Edge devices xml file path
+	public static String FOG_SERVERS_FILE="";      // Fog servers xml file path
+	public static String CLOUD_DATACENTERS_FILE="";// Cloud datacenters xml file path
 
 	public static boolean PARALLEL = false;       // Enable parallelism
 	public static double SIMULATION_TIME;         // Simulation time (in seconds) 
@@ -14,12 +17,7 @@ public class SimulationParameters {
 	public static boolean DISPLAY_REAL_TIME_CHARTS;   // Show real time charts
 	public static boolean AUTO_CLOSE_REAL_TIME_CHARTS;// Close real time charts when simlation finishes 
 	public static double CHARTS_UPDATE_INTERVAL;	  // Charts refresh interval in seconds
-	public static boolean SAVE_CHARTS;                // Save charts to bitmap format (*.png files) 
-	
-	// Configuration files
-	public static Document fogDevicesDoc = null;  // Fog servers xml file
-	public static Document edgeDevicesDoc = null; // Edge devices xml file
-	public static Document cloudDevicesDoc = null;// Cloud atacenters xml file 
+	public static boolean SAVE_CHARTS;                // Save charts to bitmap format (*.png files)  
 	
 	// Simulation area
 	public static int AREA_LENGTH;                         

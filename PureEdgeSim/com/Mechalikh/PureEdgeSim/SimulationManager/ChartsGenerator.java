@@ -1,4 +1,4 @@
-package com.Mechalikh.PureEdgeSim.SimulationManager;
+package com.mechalikh.pureedgesim.SimulationManager;
 
 import java.awt.BasicStroke;
 import java.io.BufferedReader;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.knowm.xchart.BitmapEncoder; 
+import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.XYSeries;
@@ -16,7 +16,7 @@ import org.knowm.xchart.BitmapEncoder.BitmapFormat;
 import org.knowm.xchart.style.Styler.ChartTheme;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
-import com.Mechalikh.PureEdgeSim.ScenarioManager.SimulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 
 public class ChartsGenerator {
 
@@ -32,11 +32,11 @@ public class ChartsGenerator {
 	private void loadFile() {
 		try {
 			BufferedReader file = new BufferedReader(new FileReader(fileName));
-			String line; 
+			String line;
 			while ((line = file.readLine()) != null) {
 				records.add(line.split(","));
 			}
-			file.close(); 
+			file.close();
 		} catch (Exception e) {
 			SimLog.println("Problem reading file.");
 		}
@@ -52,9 +52,8 @@ public class ChartsGenerator {
 	}
 
 	private int getColumnIndex(String name) {
-		name= name.trim();
 		for (int j = 0; j < records.get(0).length; j++) {
-			if (records.get(0)[j].trim().equals(name)) {
+			if (records.get(0)[j].trim().equals(name.trim())) {
 				return j;
 			}
 		}
@@ -62,59 +61,61 @@ public class ChartsGenerator {
 	}
 
 	public void displayChart(String x_series, String y_series, String y_series_label, String folder) {
-		byAlgorithms(x_series, y_series,y_series_label,folder);
-		byArchitectures(x_series, y_series,y_series_label,folder);
+		byAlgorithms(x_series, y_series, y_series_label, folder);
+		byArchitectures(x_series, y_series, y_series_label, folder);
 	}
 
 	private void byAlgorithms(String x_series, String y_series, String y_series_label, String folder) {
-		for (int orch = 0; orch < SimulationParameters.ORCHESTRATION_ARCHITECTURES.length; orch++) {
+		for (int orch = 0; orch < simulationParameters.ORCHESTRATION_ARCHITECTURES.length; orch++) {
 			XYChart algorithmsChart = new XYChartBuilder().height(400).width(600).theme(ChartTheme.Matlab)
 					.xAxisTitle(x_series).yAxisTitle(y_series_label).build();
-			algorithmsChart.setTitle(y_series + " (" + SimulationParameters.ORCHESTRATION_ARCHITECTURES[orch] + ")");
+			algorithmsChart.setTitle(y_series + " (" + simulationParameters.ORCHESTRATION_ARCHITECTURES[orch] + ")");
 			algorithmsChart.getStyler().setLegendVisible(true);
-			for (int alg = 0; alg < SimulationParameters.ORCHESTRATION_AlGORITHMS.length; alg++) {
-				double[] xData = getColumn(x_series, SimulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
-						SimulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
-				double[] yData = getColumn(y_series, SimulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
-						SimulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
-				XYSeries series = algorithmsChart.addSeries(SimulationParameters.ORCHESTRATION_AlGORITHMS[alg], xData,
+			for (int alg = 0; alg < simulationParameters.ORCHESTRATION_AlGORITHMS.length; alg++) {
+				double[] xData = getColumn(x_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
+						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
+				double[] yData = getColumn(y_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
+						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
+				XYSeries series = algorithmsChart.addSeries(simulationParameters.ORCHESTRATION_AlGORITHMS[alg], xData,
 						yData);
 				series.setMarker(SeriesMarkers.CIRCLE); // Marker type :circle,rectangle, diamond..
 				series.setLineStyle(new BasicStroke());
 			}
 			// Save the chart
-			saveBitmap(algorithmsChart, "Algorithms"+folder+"/",y_series+"__"+SimulationParameters.ORCHESTRATION_ARCHITECTURES[orch]);
-			
+			saveBitmap(algorithmsChart, "Algorithms" + folder + "/",
+					y_series + "__" + simulationParameters.ORCHESTRATION_ARCHITECTURES[orch]);
+
 		}
 	}
 
 	public void byArchitectures(String x_series, String y_series, String y_series_label, String folder) {
-		for (int alg = 0; alg < SimulationParameters.ORCHESTRATION_AlGORITHMS.length; alg++) {
+		for (int alg = 0; alg < simulationParameters.ORCHESTRATION_AlGORITHMS.length; alg++) {
 			XYChart architecturesChart = new XYChartBuilder().height(400).width(600).theme(ChartTheme.Matlab)
 					.xAxisTitle(x_series).yAxisTitle(y_series_label).build();
-			architecturesChart.setTitle(y_series + " (" + SimulationParameters.ORCHESTRATION_AlGORITHMS[alg] + ")");
+			architecturesChart.setTitle(y_series + " (" + simulationParameters.ORCHESTRATION_AlGORITHMS[alg] + ")");
 			architecturesChart.getStyler().setLegendVisible(true);
-			for (int orch = 0; orch < SimulationParameters.ORCHESTRATION_ARCHITECTURES.length; orch++) {
-				double[] xData = getColumn(x_series, SimulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
-						SimulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
-				double[] yData = getColumn(y_series, SimulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
-						SimulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
-				XYSeries series = architecturesChart.addSeries(SimulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
+			for (int orch = 0; orch < simulationParameters.ORCHESTRATION_ARCHITECTURES.length; orch++) {
+				double[] xData = getColumn(x_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
+						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
+				double[] yData = getColumn(y_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
+						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
+				XYSeries series = architecturesChart.addSeries(simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
 						xData, yData);
 				series.setMarker(SeriesMarkers.CIRCLE); // Marker type :circle,rectangle, diamond..
 				series.setLineStyle(new BasicStroke());
 			}
 			// Save the chart
-			saveBitmap(architecturesChart,  "Architectures"+folder+"/",y_series+"__"+SimulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
+			saveBitmap(architecturesChart, "Architectures" + folder + "/",
+					y_series + "__" + simulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
 		}
 	}
 
-	private void saveBitmap(XYChart chart, String folder,String name) {
-		name= name.replace("/", " per ");
+	private void saveBitmap(XYChart chart, String folder, String name) {
 		try {
-			File file = new File(new File(fileName).getParent() + "/Final results/"+ folder);
+			File file = new File(new File(fileName).getParent() + "/Final results/" + folder);
 			file.mkdirs();
-			BitmapEncoder.saveBitmapWithDPI(chart, file.getPath()+"/"+name , BitmapFormat.PNG, 300);
+			BitmapEncoder.saveBitmapWithDPI(chart, file.getPath() + "/" + name.replace("/", " per "), BitmapFormat.PNG,
+					300);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -135,5 +136,4 @@ public class ChartsGenerator {
 		return results;
 	}
 
-	 
 }

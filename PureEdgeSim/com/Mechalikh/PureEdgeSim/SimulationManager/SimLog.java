@@ -1,4 +1,4 @@
-package com.Mechalikh.PureEdgeSim.SimulationManager;
+package com.mechalikh.pureedgesim.SimulationManager;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,28 +15,26 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import com.Mechalikh.PureEdgeSim.Main;
-import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeDataCenter;
-import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeVM;
-import com.Mechalikh.PureEdgeSim.Network.FileTransferProgress;
-import com.Mechalikh.PureEdgeSim.ScenarioManager.SimulationParameters;
-import com.Mechalikh.PureEdgeSim.TasksGenerator.Task;
+
+import com.mechalikh.pureedgesim.Main;
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
+import com.mechalikh.pureedgesim.Network.FileTransferProgress;
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public class SimLog {
 	public static final int NO_TIME = 0;
 	public static final int SAME_LINE = 1;
 	public static final int DEFAULT = 2;
 	private List<String> resultsList = new ArrayList<String>();
-	private static DecimalFormat decimalFormat;
+	private DecimalFormat decimalFormat;
 	private List<String> log = new ArrayList<String>();
-	private BufferedWriter bufferedWriter;
-	private String outputFolder;
 	private int generatedTasksCount;
 	private String currentOrchArchitecture;
 	private String currentOrchAlgorithm;
 	private int currentEdgeDevicesCount;
 	private int notGeneratedBecDeviceDead = 0;
-	private String outputFilesName = "";
 	private String simStartTime;
 	private int failedResourcesUnavailable = 0;// tasks failed due to unavailability of resources
 	private SimulationManager simulationManager;
@@ -109,22 +107,22 @@ public class SimLog {
 		for (int i = 0; i < tasksCount; i++) {
 			task = finishedTasks.get(i);
 
-			if (((EdgeVM) task.getVm()).getType() == SimulationParameters.TYPES.CLOUD) {
+			if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.CLOUD) {
 				totalCloudTasks++;
-			} else if (((EdgeVM) task.getVm()).getType() == SimulationParameters.TYPES.FOG) {
+			} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.FOG) {
 				totalFogTasks++;
-			} else if (((EdgeVM) task.getVm()).getType() == SimulationParameters.TYPES.EDGE) {
+			} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.EDGE) {
 				totalEdgeTasks++;
 			}
 
 			if (task.getStatus().name().equals("SUCCESS")) {
 				successfulTasksCount++;// successfully executed
 				// calculating all the transmitted Bytes in order to get the average task size
-				if (((EdgeVM) task.getVm()).getType() == SimulationParameters.TYPES.CLOUD) {
+				if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.CLOUD) {
 					tasksExecutedOnCloud++;
-				} else if (((EdgeVM) task.getVm()).getType() == SimulationParameters.TYPES.FOG) {
+				} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.FOG) {
 					tasksExecutedOnFog++;
-				} else if (((EdgeVM) task.getVm()).getType() == SimulationParameters.TYPES.EDGE) {
+				} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.EDGE) {
 					tasksExecutedOnEdge++;
 				}
 
@@ -265,8 +263,8 @@ public class SimLog {
 		print("                                                                                 " + " Lan="
 				+ padLeftSpaces(decimalFormat.format(lanUsage), 15) + " seconds ("
 				+ decimalFormat.format(lanUsage * 100 / networkUsage)
-				+ " % of total usage, LAN used when downloading containers="
-				+ decimalFormat.format(lanUsedByContainers) + " % of LAN usage )");
+				+ " % of total usage, LAN used when downloading containers=" + decimalFormat.format(lanUsedByContainers)
+				+ " % of LAN usage )");
 		print("                                                            Average bandwidth per transfer="
 				+ padLeftSpaces(decimalFormat.format(bandwidth), 10) + " Mbps  ");
 		// Add these values to the las item of the results list
@@ -297,15 +295,15 @@ public class SimLog {
 
 		for (int j = 0; j < datacentersList.size(); j++) {
 			dc = (EdgeDataCenter) datacentersList.get(j);
-			if (dc.getType() == SimulationParameters.TYPES.CLOUD) {
+			if (dc.getType() == simulationParameters.TYPES.CLOUD) {
 				cloudEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
 				averageCloudCpuUtilization += dc.getTotalCpuUtilization();
 			}
 
-			else if (dc.getType() == SimulationParameters.TYPES.FOG) {
+			else if (dc.getType() == simulationParameters.TYPES.FOG) {
 				fogEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
 				averageFogCpuUtilization += dc.getTotalCpuUtilization();
-			} else if (dc.getType() == SimulationParameters.TYPES.EDGE) {
+			} else if (dc.getType() == simulationParameters.TYPES.EDGE) {
 				edgeEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
 				if (dc.getVmList().size() > 0) {
 					// only devices with computing capability
@@ -334,21 +332,21 @@ public class SimLog {
 
 		}
 		averageCpuUtilization = (averageCloudCpuUtilization + averageEdgeCpuUtilization + averageFogCpuUtilization)
-				/ (edgeDevicesCount + SimulationParameters.NUM_OF_FOG_DATACENTERS
-						+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS);
+				/ (edgeDevicesCount + simulationParameters.NUM_OF_FOG_DATACENTERS
+						+ simulationParameters.NUM_OF_CLOUD_DATACENTERS);
 		batteryPoweredDevicesCount = aliveBatteryPoweredDevicesCount + deadEdgeDevicesCount;
 		// escape from devision by 0
 		if (aliveBatteryPoweredDevicesCount == 0)
 			aliveBatteryPoweredDevicesCount = 1;
-		averageCloudCpuUtilization = averageCloudCpuUtilization / SimulationParameters.NUM_OF_CLOUD_DATACENTERS;
-		averageFogCpuUtilization = averageFogCpuUtilization / SimulationParameters.NUM_OF_FOG_DATACENTERS;
+		averageCloudCpuUtilization = averageCloudCpuUtilization / simulationParameters.NUM_OF_CLOUD_DATACENTERS;
+		averageFogCpuUtilization = averageFogCpuUtilization / simulationParameters.NUM_OF_FOG_DATACENTERS;
 		averageEdgeCpuUtilization = averageEdgeCpuUtilization / edgeDevicesCount;
 
 		energyConsumption = cloudEnConsumption + fogEnConsumption + edgeEnConsumption;
 		averageRemainingPower = averageRemainingPower / (double) aliveBatteryPoweredDevicesCount;
 		averageRemainingPowerWh = averageRemainingPowerWh / (double) aliveBatteryPoweredDevicesCount;
-		double averageCloudEnConsumption = cloudEnConsumption / SimulationParameters.NUM_OF_CLOUD_DATACENTERS;
-		double averageFogEnConsumption = fogEnConsumption / SimulationParameters.NUM_OF_FOG_DATACENTERS;
+		double averageCloudEnConsumption = cloudEnConsumption / simulationParameters.NUM_OF_CLOUD_DATACENTERS;
+		double averageFogEnConsumption = fogEnConsumption / simulationParameters.NUM_OF_FOG_DATACENTERS;
 		double averageEdgeEnConsumption = edgeEnConsumption / getSimulationManager().getScenario().getDevicesCount();
 
 		print("SimLog- Average vm CPU utilization                                              :"
@@ -367,11 +365,11 @@ public class SimLog {
 				+ decimalFormat.format(energyConsumption / (double) finishedTasks.size()) + " Wh/task)");
 		print("SimLog- Energy Consumption per level                                            : Cloud="
 				+ padLeftSpaces(decimalFormat.format(cloudEnConsumption), 13) + " Wh (Average: "
-				+ decimalFormat.format(cloudEnConsumption / SimulationParameters.NUM_OF_CLOUD_DATACENTERS)
+				+ decimalFormat.format(cloudEnConsumption / simulationParameters.NUM_OF_CLOUD_DATACENTERS)
 				+ " Wh/data center)");
 		print("                                                                                  Fog="
 				+ padLeftSpaces(decimalFormat.format(fogEnConsumption), 15) + " Wh (Average: "
-				+ decimalFormat.format(fogEnConsumption / SimulationParameters.NUM_OF_FOG_DATACENTERS)
+				+ decimalFormat.format(fogEnConsumption / simulationParameters.NUM_OF_FOG_DATACENTERS)
 				+ " Wh/data center)");
 		print("                                                                                  Edge="
 				+ padLeftSpaces(decimalFormat.format(edgeEnConsumption), 14) + " Wh (Average: "
@@ -457,20 +455,24 @@ public class SimLog {
 
 	public void saveLog() {
 		// writing results in csv file
-		writeFile(getFileName(".csv"), resultsList);
+		writeFile(getFileName(".csv"), getResultsList());
 
-		if (SimulationParameters.SAVE_LOG == false) {
+		if (!simulationParameters.SAVE_LOG) {
 			print("SimLog- no log saving");
-			System.exit(0);
+			Runtime.getRuntime().exit(0);
 		}
 
 		writeFile(getFileName(".txt"), log);
 
 	}
 
+	private List<String> getResultsList() {
+		return this.resultsList;
+	}
+
 	public void writeFile(String fileName, List<String> Lines) {
 		try {
-			bufferedWriter = new BufferedWriter(new FileWriter(fileName, true));
+			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName, true));
 			for (String str : Lines) {
 				bufferedWriter.append(str);
 				bufferedWriter.newLine();
@@ -483,10 +485,9 @@ public class SimLog {
 	}
 
 	public String getFileName(String extension) {
-		outputFolder = Main.outputFolder;
-		outputFilesName = outputFolder + "/" + simStartTime;
+		String outputFilesName = Main.getOutputFolder() + "/" + simStartTime;
 		new File(outputFilesName).mkdirs();
-		if (SimulationParameters.PARALLEL)
+		if (simulationParameters.PARALLEL)
 			outputFilesName += "/Parallel_simulation_" + getSimulationManager().getSimulationId();
 		else
 			outputFilesName += "/Sequential_simulation";
@@ -495,24 +496,30 @@ public class SimLog {
 	}
 
 	public void print(String line, int flag) {
+		String newLine = line;
 		if (getSimulationManager() == null) {
-			System.out.println("    0.0" + " : " + line);
+			System.out.println("    0.0" + " : " + newLine);
 		} else {
 			switch (flag) {
 			case DEFAULT:
-				if (getSimulationManager().getSimulation().clock() < SimulationParameters.INITIALIZATION_TIME)
-					line = padLeftSpaces("0", 7) + " (s) : " + line;
+				if (getSimulationManager().getSimulation().clock() < simulationParameters.INITIALIZATION_TIME)
+					newLine = padLeftSpaces("0", 7) + " (s) : " + newLine;
 				else
-					line = padLeftSpaces(decimalFormat.format(
-							getSimulationManager().getSimulation().clock() - SimulationParameters.INITIALIZATION_TIME),
-							7) + " (s) : " + line;
-				log.add(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + " - simulation time " + line);
+					newLine = padLeftSpaces(decimalFormat.format(
+							getSimulationManager().getSimulation().clock() - simulationParameters.INITIALIZATION_TIME),
+							7) + " (s) : " + newLine;
+				log.add(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + " - simulation time "
+						+ newLine);
 				break;
 			case NO_TIME:
-				log.add(line);
+				log.add(newLine);
 				break;
 			case SAME_LINE:
-				log.set(log.size() - 1, log.get(log.size() - 1) + line);
+				log.set(log.size() - 1, log.get(log.size() - 1) + newLine);
+				break;
+			default:
+				break;
+
 			}
 		}
 	}
@@ -526,16 +533,16 @@ public class SimLog {
 	}
 
 	public boolean isEnabled() {
-		return SimulationParameters.DEEP_LOGGING;
+		return simulationParameters.DEEP_LOGGING;
 	}
 
 	public void deepLog(String line) {
-		if (SimulationParameters.DEEP_LOGGING)
+		if (simulationParameters.DEEP_LOGGING)
 			print(line, DEFAULT);
 	}
 
 	public void deepLog(String line, int flag) {
-		if (SimulationParameters.DEEP_LOGGING) {
+		if (simulationParameters.DEEP_LOGGING) {
 			print(line, flag);
 		}
 	}
@@ -545,7 +552,7 @@ public class SimLog {
 	}
 
 	public void printSameLine(String line, String color) {
-		if (color.toLowerCase().equals("red"))
+		if ("red".equalsIgnoreCase(color))
 			System.err.print(line);
 		else
 			System.out.print(line);
@@ -574,8 +581,8 @@ public class SimLog {
 
 	public void initialize(SimulationManager simulationManager, int dev, int alg, int arch) {
 		this.currentEdgeDevicesCount = dev;
-		this.currentOrchAlgorithm = SimulationParameters.ORCHESTRATION_AlGORITHMS[alg];
-		this.currentOrchArchitecture = SimulationParameters.ORCHESTRATION_ARCHITECTURES[arch];
+		this.currentOrchAlgorithm = simulationParameters.ORCHESTRATION_AlGORITHMS[alg];
+		this.currentOrchArchitecture = simulationParameters.ORCHESTRATION_ARCHITECTURES[arch];
 		this.setSimulationManager(simulationManager);
 	}
 

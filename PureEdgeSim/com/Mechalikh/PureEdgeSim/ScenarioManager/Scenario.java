@@ -1,4 +1,4 @@
-package com.Mechalikh.PureEdgeSim.ScenarioManager;
+package com.mechalikh.pureedgesim.ScenarioManager;
 
 public class Scenario {
 	private int devicesCount; // The number of edge devices in this scenario
@@ -37,12 +37,12 @@ public class Scenario {
 
 	public String getStringOrchArchitecture() {
 
-		return SimulationParameters.ORCHESTRATION_ARCHITECTURES[orchArchitecture].trim();
+		return simulationParameters.ORCHESTRATION_ARCHITECTURES[orchArchitecture].trim();
 	}
 
 	public String getStringOrchAlgorithm() {
 
-		return SimulationParameters.ORCHESTRATION_AlGORITHMS[orchAlgorithm].trim();
+		return simulationParameters.ORCHESTRATION_AlGORITHMS[orchAlgorithm].trim();
 	}
 	
 	public String toString() {

@@ -1,15 +1,16 @@
-package com.Mechalikh.PureEdgeSim.LocationManager;
+package com.mechalikh.pureedgesim.LocationManager;
 
 import java.util.Random;
-import com.Mechalikh.PureEdgeSim.ScenarioManager.SimulationParameters;
+
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 
 public class MobilityManager extends Mobility {
 	private boolean pause = false;
 	private double pauseDuration = -1;
-	double mobilityDuration = new Random().nextInt(100);
-	double Speed = SimulationParameters.SPEED; // The speed of this device in meter/seconds
-	private double timeStep = SimulationParameters.UPDATE_INTERVAL;
-	int orientationAngle = new Random().nextInt(359);
+	private double mobilityDuration = new Random().nextInt(100);
+	private double Speed = simulationParameters.SPEED; // The speed of this device in meter/seconds
+	private double timeStep = simulationParameters.UPDATE_INTERVAL;
+	private int orientationAngle = new Random().nextInt(359);
 
 	public MobilityManager(Location currentLocation) {
 		super(currentLocation);
@@ -29,11 +30,11 @@ public class MobilityManager extends Mobility {
 		if (Speed > 0) { // The speed must be > 0 in order to move/change the location
 
 			// Make sure that the device stay in the simulation area
-			if (X_position >= SimulationParameters.AREA_LENGTH)
+			if (X_position >= simulationParameters.AREA_LENGTH)
 				orientationAngle = -90 - new Random().nextInt(180);
 			else if (X_position <= 0)
 				orientationAngle = -90 + new Random().nextInt(180);
-			if (Y_position >= SimulationParameters.AREA_WIDTH)
+			if (Y_position >= simulationParameters.AREA_WIDTH)
 				orientationAngle = -new Random().nextInt(180);
 			else if (Y_position <= 0)
 				orientationAngle = new Random().nextInt(180);

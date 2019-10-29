@@ -1,7 +1,7 @@
-package com.Mechalikh.PureEdgeSim.TasksOrchestration;
+package com.mechalikh.pureedgesim.TasksOrchestration;
  
-import com.Mechalikh.PureEdgeSim.SimulationManager.SimulationManager;
-import com.Mechalikh.PureEdgeSim.TasksGenerator.Task;
+import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public abstract class Orchestrator { 
 	private SimulationManager simulationManager;

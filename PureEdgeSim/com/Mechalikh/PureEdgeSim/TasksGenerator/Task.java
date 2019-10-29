@@ -1,8 +1,8 @@
-package com.Mechalikh.PureEdgeSim.TasksGenerator;
+package com.mechalikh.pureedgesim.TasksGenerator;
 
 import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
 
-import com.Mechalikh.PureEdgeSim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 
 public class Task extends CloudletSimple {
 	private Status failureReason = Status.NULL;

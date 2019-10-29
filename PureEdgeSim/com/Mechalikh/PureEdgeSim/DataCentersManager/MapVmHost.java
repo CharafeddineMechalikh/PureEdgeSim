@@ -1,4 +1,4 @@
-package com.Mechalikh.PureEdgeSim.DataCentersManager;
+package com.mechalikh.pureedgesim.DataCentersManager;
 
 import java.util.Map;
 
