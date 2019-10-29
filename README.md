@@ -12,7 +12,6 @@ We introduce PureEdgeSim, a new simulator based on [CloudSim Plus](http://clouds
 
 Although fog and edge computing are usually referred to as the same paradigm, the main difference between them is their locations. In the pure edge computing (which this simulator is named after), edge nodes are deployed in the edge devices themselves following peer-to-peer architecture [1]. Therefore, it provides even lower latency than fog computing, while in fog computing, the fog nodes are deployed on servers, mini-clouds, etc. following a client-server architecture (D’Angelo, M. 2016). That is why the PureEdgeSim is named so.
    
-    
 ## 2. PureEdgeSim Architecture
 
 PureEdgeSim enables the simulation of resource management strategies and allows to evaluate the performance of cloud, fog, and pure edge computing environments. It grantees high scalability by enabling the simulation of thousands of devices. Besides, it supports the edge devices heterogeneity (i.e. whether this device is mobile or not, whether battery-powered or not, different  applications requirements: tasks file size, tasks CPU utilization,and latency requirement, etc.) 
@@ -27,15 +26,21 @@ It consists of the following 7 modules:
 
 * Scenario Manager, that loads  the simulation parameters and the user scenario from the input files (`.xml` and `.prop` files in `/settings/` folder) where the user specifies. It consists of two classes, the File Parser that  checks the input files and loads the  the simulation parameters, and the Simulation Parameters class which represents a placeholder for the different parameters.
 
+
 * Simulation Manager, that initiates the simulation environment, schedules all the events and generates the output. It consists of two important classes, the Simulation Manager class which manages the simulation, schedules the tasks generation, etc. The Simulation Logger class that generates the simulation output saves it in comma-separated value (CSV) format in order to easily exploit them later using any spreadsheet editor (e.g. Microsoft Excel...).
+
 
 * Data Centers Manager: it generates and manages all the data centers and devices (i.e. cloud, fog or edge). It consists of two classes: the Edge Data Center class, that contains the specific properties of edge devices such as the location, the mobility, the energy source, and the capacity/ remaining energy if it is battery-powered. The second class is the Server Manager which generates the needed servers and edge devices, their hosts and their virtual machines.
 
+
 * Tasks Generator which is behind the tasks generation, -currently- it assigns an application such as e-health, smart-home, and augmented-reality (that can be defined in `settings/applications.xml` file) to each edge device. Then, it will generates the needed tasks according to the assigned type, which guarantees the heterogeneity of applications.  
+
 
 * The Network Module: that consists mainly of the Network Model class.which is behind the transfer of tasks/containers/ request... 
 
+
 * The Tasks Orchestrator, which is the decision maker, where the user can define the orchestration algorithm. 
+
 
 * The Location Manager, which generates the mobility path of mobile devices.
    
@@ -47,13 +52,16 @@ PureEdgeSim architecture
 
 * Cloud, Fog, and pure Edge computing scenarios
 
+
 * And basicly, any scenario that involves computing on distributed nodes or mobility, for example:
 
 VANETs/MANET networks, IoT applications, Mobile Devices Clouds, Mobile Edge Computing,... 
   
+
 ## 4. PureEdgeSim features
 
 * Realistic network and energy models as compared to other simulators.
+
 
 * Mobility support which is ignored by most simulators: 
 
@@ -67,6 +75,7 @@ The mobility model will assign a random location to each device.
 
 Then the mobile devices will change their location according to the model in use.
 
+
 * The support for devices heterogeneity:
 
 The user can define heterogenous edge device, Fog servers, and Cloud Data Centers in the corresponding `.xml` files. 
@@ -79,13 +88,16 @@ The devices without computing capacity are considered as simple sensors that onl
 
 The user can also define the applications that are in use, their cpu utilization, their files sizes and their latency. requirements. 
 
+
 * The scalability, generate handreds of devices, with a single click. 
+
 
 * A rich collection of metrics:
 
 The simulation output  (the `.csv` file) includes + 40 metrics ready to be plotted.
 
 Also, new metrics can be derived from those.
+
 
 * Ease of use:
 
@@ -94,6 +106,7 @@ More than 60 charts can be generated automatically.
 Other charts can be easily generated from the csv file using any spreadsheet software (e.g. Microsoft Excel).
 
 Readable code and an architecture that is easy to understand.
+
 
 * Wide applicability and extensibility:
 
@@ -119,13 +132,13 @@ and so on...
 
 Basically any scenario that involves data centers, servers, or geo-distributed devices.
 
+
 * Full control of the simulation environment:
 
 The user can trade-off between simulation duration and its accuracy. 
 
 To decrease the simultion time, the user can also enable parralelism.
 
-   
 ## 5. Getting started with PureEdgeSim
 
 ## 5.1 Running PureEdgeSim for the First Time
@@ -141,25 +154,27 @@ To decrease the simultion time, the user can also enable parralelism.
 ![importation](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Files/importing%20project.gif)
 
 Importing PureEdgeSim and launching the simulation
- 
- 
+  
 ## 5.2 The Simulation Settings
 
 PureEdgeSim provides 5 input files located under the `/settings/` folder (you can check them [here](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/pes/PureEdgeSim/settings)):
   
-* The `simulation parameters` file : It groups all the simulation parameters, including the simulation environment settings  (simulation time, initialization time, update intervals, ..), the models settings (the parameters used by the mobility, energy, network, and tasks generation models..), and so on.    
+
+  * The `simulation parameters` file : It groups all the simulation parameters, including the simulation environment settings  (simulation time, initialization time, update intervals, ..), the models settings (the parameters used by the mobility, energy, network, and tasks generation models..), and so on.    
+
 
 * The `applications XML` file: This file decribes the types of applications that will be used by the tasks generator.
 
 Each of these application has different characterestics (CPU utilization, files size, latency requirements..). When the     simulation starts, the tasks generator will associate one of these applications to each edge device. Then, based on the assigned application type, it will generate the tasks of these device, which enables the support for devices heterogeneity ( the heterogeneity of their applications, in this case).
 
+
 * The `edge devices XML` file:  PureEdgeSim also enables the user to generate hundreds or even thousands of heterogenous devices. To do this, the user will specify the types of edge devices that will be generated and their proportions/ percentages in the `edge_device.xml` file. The server manager will then generate the desired number of edge devices based on the proposed types. For instance, if the user define two types of devices and sets the percentage of each type to 50% and sets the number of edge devices (in the simulation parameters file) to 1000 devices, the server manager will generate 500 devices of type 1, and 500 devices of type 2. Each of those types can have different computing capacity, energy consumption,  and other settings as well that enable the heterogeneity of devices ( whether the device is mobile or not, battery-powered or not, and how much is its battery capacity...).
+
 
 * The `Fog datacenters XML` file : This file describes the Fog datacenters that will be generated during the simulation. However, unlike the edge devices file, this file contains the fog datacenters that need to be generated instead of their types. Therefore, if the user wants to generate 4 different servers, he must include each one of them in the file. Each datacenter is characterised by its compuitng capacity, its energy consumption, its location, and its hosts. Each host has a set of Virtual machines with a specified computing capacity. These virtual machines are responsible for executing the offloading tasks.
 
+
 * The `Cloud datacetners xml` file:  This file describes the cloud datacenters that will be generated during the simulation (similar to that of fog servers). 
-
-
 
 ## 5.3 The Simulation Parameters File
 
@@ -306,7 +321,6 @@ Example of real time charts :
 ![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/pes/PureEdgeSim/Files/real%20time.gif)
 
 Real time analysis of simulation environment
-
 
 
 ## 6. Change log of the latest version
