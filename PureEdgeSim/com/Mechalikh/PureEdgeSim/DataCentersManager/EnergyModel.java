@@ -16,7 +16,6 @@ public class EnergyModel {
 	private double idleConsumption;
 	private double cpuEnergyConsumption = 0;
 	private double wirelessEnergyConsumption = 0;
-
 	// The power consumption for each transferred bit (in joul per bit : J/bit)
 	private double E_elec = simulationParameters.CONSUMED_ENERGY_PER_BIT;
 
@@ -27,9 +26,6 @@ public class EnergyModel {
 	// Energy consumption of the transmit amplifier in multipath fading channel
 	// model ( in joul per bit per meter^4 : J/bit/m^4)
 	private double E_mp = simulationParameters.AMPLIFIER_DISSIPATION_MULTIPATH;
-
-	// distance threshold that determines the multipath and free space choices.
-	private double D_0 = Math.sqrt(E_fs / E_fs);
 
 	public EnergyModel(double maxActiveConsumption, double idleConsumption) {
 		this.setMaxActiveConsumption(maxActiveConsumption);
@@ -44,6 +40,7 @@ public class EnergyModel {
 
 	public void updatewirelessEnergyConsumption(FileTransferProgress file, EdgeDataCenter device1,
 			EdgeDataCenter device2, int flag) {
+
 		double distance = 0;
 		if (device1.getType() == TYPES.CLOUD || device2.getType() == TYPES.CLOUD || device1.getType() == TYPES.FOG
 				|| device2.getType() == TYPES.FOG)
@@ -52,7 +49,9 @@ public class EnergyModel {
 			distance = Math
 					.abs(Math.sqrt(Math.pow((device1.getLocation().getXPos() - device2.getLocation().getXPos()), 2)
 							+ Math.pow((device1.getLocation().getYPos() - device2.getLocation().getYPos()), 2)));
+
 		int sizeInBits = (int) (file.getFileSize() * 1000);
+
 		if (flag == RECEPTION)
 			receptionEnergyConsumption(sizeInBits);
 		else
@@ -61,6 +60,10 @@ public class EnergyModel {
 
 	private void transmissionEnergyConsumption(int sizeInBits, double distance) {
 		double consumption = 0;
+
+		// distance threshold that determines the multipath and free space choices.
+		double D_0 = Math.sqrt(E_fs / E_mp);
+
 		if (distance <= D_0)
 			consumption = (E_elec * sizeInBits) + (E_fs * Math.pow(distance, 2) * sizeInBits);
 		else if (distance > D_0)

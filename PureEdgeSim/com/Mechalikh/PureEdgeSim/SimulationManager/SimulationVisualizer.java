@@ -1,7 +1,7 @@
 package com.mechalikh.pureedgesim.SimulationManager;
 
 import java.awt.BasicStroke;
-import java.awt.Color; 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,10 +48,6 @@ public class SimulationVisualizer {
 	private boolean firstTime = true;
 
 	public SimulationVisualizer(SimulationManager simulationManager) {
-		setSimulationManager(simulationManager);
-	}
-
-	private void setSimulationManager(SimulationManager simulationManager) {
 		this.simulationManager = simulationManager;
 	}
 
@@ -84,33 +80,31 @@ public class SimulationVisualizer {
 
 		mapChart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Scatter);
 		mapChart.getStyler().setMarkerSize(4);
-		updateStyle(mapChart, 0.0, (double) simulationParameters.AREA_WIDTH, 0.0,
-				(double) simulationParameters.AREA_LENGTH);
+		updateStyle(mapChart, new Double[] { 0.0, (double) simulationParameters.AREA_WIDTH, 0.0,
+				(double) simulationParameters.AREA_LENGTH });
 
 		tasksSuccessChart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
-		updateStyle(tasksSuccessChart, 0.0, null, null, 100.0);
+		updateStyle(tasksSuccessChart, new Double[] { 0.0, null, null, 100.0 });
 
 		cpuUtilizationChart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
-		updateStyle(cpuUtilizationChart, simulationParameters.INITIALIZATION_TIME, null, 0.0, null);
+		updateStyle(cpuUtilizationChart, new Double[] { simulationParameters.INITIALIZATION_TIME, null, 0.0, null });
 
 		networkUtilizationChart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
-		updateStyle(networkUtilizationChart, 0.0, getSimulationManager().getSimulation().clock(), 0.0,
-				simulationParameters.WAN_BANDWIDTH / 1000.0);
-
+		updateStyle(networkUtilizationChart, new Double[] { 0.0, simulationManager.getSimulation().clock(), 0.0,
+				simulationParameters.WAN_BANDWIDTH / 1000.0 }); 
 	}
 
 	void mapChart() {
 		// Add edge devices to map
 		addEdgeDevicesToMap();
 		// Add Fog servers to the map
-		addFogServersToMap();
-
+		addFogServersToMap(); 
 	}
 
 	private void tasksSucessRateChart() {
-		if (((int) getSimulationManager().getSimulation().clockInMinutes()) != clock) {
-			clock = (int) getSimulationManager().getSimulation().clockInMinutes();
-			double tasksFailed = 100 - getSimulationManager().getFailureRate();
+		if (((int) simulationManager.getSimulation().clockInMinutes()) != clock) {
+			clock = (int) simulationManager.getSimulation().clockInMinutes();
+			double tasksFailed = 100 - simulationManager.getFailureRate();
 			getTasksFailedList().add(tasksFailed);
 		} else {
 			return;
@@ -129,7 +123,7 @@ public class SimulationVisualizer {
 		double fgUsage = 0;
 		double edgecount = 0;
 		double fogcount = 0;
-		List<EdgeDataCenter> datacenterList = getSimulationManager().getServersManager().getDatacenterList();
+		List<EdgeDataCenter> datacenterList = simulationManager.getServersManager().getDatacenterList();
 		for (int i = 0; i < datacenterList.size(); i++) {
 			if (datacenterList.get(i).getType() == TYPES.CLOUD) {
 				cpuUsage = datacenterList.get(i).getTotalCpuUtilization();
@@ -148,7 +142,7 @@ public class SimulationVisualizer {
 		cloudUsage.add(cpuUsage);
 		edgeUsage.add(edUsage);
 		fogUsage.add(fgUsage);
-		getCcurrentTime().add(getSimulationManager().getSimulation().clock());
+		currentTime.add(simulationManager.getSimulation().clock());
 
 		updateSeries(cpuUtilizationChart, "Cloud", toArray(currentTime), toArray(cloudUsage), SeriesMarkers.NONE,
 				Color.BLACK);
@@ -158,34 +152,26 @@ public class SimulationVisualizer {
 				Color.BLACK);
 
 	}
-
-	private List<Double> getCcurrentTime() {
-		return this.currentTime;
-	}
-
+ 
 	void networkUtilizationChart() {
-		double wan = getSimulationManager().getNetworkModel().getWanUtilization();
+		double wan = simulationManager.getNetworkModel().getWanUtilization();
 
-		getWanUsage().add(wan);
+		wanUsage.add(wan);
 
-		while (getWanUsage().size() > 300 / simulationParameters.UPDATE_INTERVAL) {
-			getWanUsage().remove(0);
+		while (wanUsage.size() > 300 / simulationParameters.UPDATE_INTERVAL) {
+			wanUsage.remove(0);
 		}
-		double[] time = new double[getWanUsage().size()];
-		double currentTime = getSimulationManager().getSimulation().clock() - simulationParameters.INITIALIZATION_TIME;
-		for (int i = getWanUsage().size() - 1; i > 0; i--)
-			time[i] = currentTime - ((getWanUsage().size() - i) * simulationParameters.UPDATE_INTERVAL);
+		double[] time = new double[wanUsage.size()];
+		double currentTime = simulationManager.getSimulation().clock() - simulationParameters.INITIALIZATION_TIME;
+		for (int i = wanUsage.size() - 1; i > 0; i--)
+			time[i] = currentTime - ((wanUsage.size() - i) * simulationParameters.UPDATE_INTERVAL);
 
-		updateStyle(networkUtilizationChart, currentTime - 200, currentTime, 0.0,
-				simulationParameters.WAN_BANDWIDTH / 1000.0);
+		updateStyle(networkUtilizationChart,
+				new Double[] { currentTime - 200, currentTime, 0.0, simulationParameters.WAN_BANDWIDTH / 1000.0 });
 		updateSeries(networkUtilizationChart, "WAN", time, toArray(wanUsage), SeriesMarkers.NONE, Color.BLACK);
 
 	}
-
-	private List<Double> getWanUsage() {
-		return this.wanUsage;
-	}
-
+ 
 	private void addEdgeDevicesToMap() {
 		// Initialize the X and Y series that will be used to draw the map
 		// Dead devices series
@@ -201,28 +187,28 @@ public class SimulationVisualizer {
 		// Browse all devices and create the series
 		// Skip the first items (cloud data centers + fog servers)
 		for (int i = simulationParameters.NUM_OF_FOG_DATACENTERS
-				+ simulationParameters.NUM_OF_CLOUD_DATACENTERS; i < getSimulationManager().getServersManager()
+				+ simulationParameters.NUM_OF_CLOUD_DATACENTERS; i < simulationManager.getServersManager()
 						.getDatacenterList().size(); i++) {
 			// If it is an edge device
-			if (getSimulationManager().getServersManager().getDatacenterList().get(i)
+			if (simulationManager.getServersManager().getDatacenterList().get(i)
 					.getType() == simulationParameters.TYPES.EDGE) {
 
-				if (getSimulationManager().getServersManager().getDatacenterList().get(i).isDead()) {
-					x_deadEdgeDevicesList.add(getSimulationManager().getServersManager().getDatacenterList().get(i)
+				if (simulationManager.getServersManager().getDatacenterList().get(i).isDead()) {
+					x_deadEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
 							.getLocation().getXPos());
-					y_deadEdgeDevicesList.add(getSimulationManager().getServersManager().getDatacenterList().get(i)
+					y_deadEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
 							.getLocation().getYPos());
 
-				} else if (getSimulationManager().getServersManager().getDatacenterList().get(i).isIdle()) {
-					x_idleEdgeDevicesList.add(getSimulationManager().getServersManager().getDatacenterList().get(i)
+				} else if (simulationManager.getServersManager().getDatacenterList().get(i).isIdle()) {
+					x_idleEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
 							.getLocation().getXPos());
-					y_idleEdgeDevicesList.add(getSimulationManager().getServersManager().getDatacenterList().get(i)
+					y_idleEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
 							.getLocation().getYPos());
 
 				} else { // If the device is busy
-					x_activeEdgeDevicesList.add(getSimulationManager().getServersManager().getDatacenterList().get(i)
+					x_activeEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
 							.getLocation().getXPos());
-					y_activeEdgeDevicesList.add(getSimulationManager().getServersManager().getDatacenterList().get(i)
+					y_activeEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
 							.getLocation().getYPos());
 				}
 			}
@@ -239,8 +225,8 @@ public class SimulationVisualizer {
 
 	private void addFogServersToMap() {
 		// Only if Fog computing is used
-		if (getSimulationManager().getScenario().getStringOrchArchitecture().contains("FOG")
-				|| getSimulationManager().getScenario().getStringOrchArchitecture().equals("ALL")) {
+		if (simulationManager.getScenario().getStringOrchArchitecture().contains("FOG")
+				|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL")) {
 			// List of idle servers
 			List<Double> x_idleFogServersList = new ArrayList<Double>();
 			List<Double> y_idleFogServersList = new ArrayList<Double>();
@@ -251,22 +237,22 @@ public class SimulationVisualizer {
 			for (int j = simulationParameters.NUM_OF_CLOUD_DATACENTERS; j < simulationParameters.NUM_OF_FOG_DATACENTERS
 					+ simulationParameters.NUM_OF_CLOUD_DATACENTERS; j++) {
 				// If it is a Fog server
-				if ((getSimulationManager().getScenario().getStringOrchArchitecture().contains("FOG")
-						|| getSimulationManager().getScenario().getStringOrchArchitecture().equals("ALL"))
-						&& getSimulationManager().getServersManager().getDatacenterList().get(j)
+				if ((simulationManager.getScenario().getStringOrchArchitecture().contains("FOG")
+						|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL"))
+						&& simulationManager.getServersManager().getDatacenterList().get(j)
 								.getType() == simulationParameters.TYPES.FOG
 						&& simulationParameters.NUM_OF_FOG_DATACENTERS != 0) {
 
-					if (getSimulationManager().getServersManager().getDatacenterList().get(j).isIdle()) {
-						x_idleFogServersList.add(getSimulationManager().getServersManager().getDatacenterList().get(j)
+					if (simulationManager.getServersManager().getDatacenterList().get(j).isIdle()) {
+						x_idleFogServersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getLocation().getXPos());
-						y_idleFogServersList.add(getSimulationManager().getServersManager().getDatacenterList().get(j)
+						y_idleFogServersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getLocation().getYPos());
 
 					} else {
-						x_activeFogServersList.add(getSimulationManager().getServersManager().getDatacenterList().get(j)
+						x_activeFogServersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getLocation().getXPos());
-						y_activeFogServersList.add(getSimulationManager().getServersManager().getDatacenterList().get(j)
+						y_activeFogServersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getLocation().getYPos());
 
 					}
@@ -295,28 +281,20 @@ public class SimulationVisualizer {
 		// Display simulation time
 		double time = this.simulationManager.getSimulation().clock() - simulationParameters.INITIALIZATION_TIME;
 		simulationResultsFrame.setTitle("Simulation time = " + ((int) time / 60) + " min : " + ((int) time % 60)
-				+ " seconds  -  number of edge devices = " + getSimulationManager().getScenario().getDevicesCount()
-				+ " -  Architecture = " + getSimulationManager().getScenario().getStringOrchArchitecture()
-				+ " -  Algorithm = " + getSimulationManager().getScenario().getStringOrchAlgorithm());
+				+ " seconds  -  number of edge devices = " + simulationManager.getScenario().getDevicesCount()
+				+ " -  Architecture = " + simulationManager.getScenario().getStringOrchArchitecture()
+				+ " -  Algorithm = " + simulationManager.getScenario().getStringOrchAlgorithm());
 	}
 
-	private void updateStyle(XYChart chart, Double xMin, Double xMax, Double yMin, Double yMax) {
-		if (xMin != null)
-			chart.getStyler().setXAxisMin(xMin);
-		if (xMax != null)
-			chart.getStyler().setXAxisMax(xMax);
-		if (yMin != null)
-			chart.getStyler().setYAxisMin(yMin);
-		if (yMax != null)
-			chart.getStyler().setYAxisMax(yMax);
+	private void updateStyle(XYChart chart, Double[] array) {
+		chart.getStyler().setXAxisMin(array[0]);
+		chart.getStyler().setXAxisMax(array[1]);
+		chart.getStyler().setYAxisMin(array[2]);
+		chart.getStyler().setYAxisMax(array[3]);
 		chart.getStyler().setLegendPosition(LegendPosition.OutsideE);
 		chart.getStyler().setLegendVisible(true);
 
-	}
-
-	private SimulationManager getSimulationManager() {
-		return this.simulationManager;
-	}
+	} 
 
 	private double[] toArray(List<Double> list) {
 		int size = Math.max(list.size(), 1); // To prevent returning empty arrays
@@ -342,22 +320,13 @@ public class SimulationVisualizer {
 
 	public void close() {
 		simulationResultsFrame.dispose();
-	}
+	} 
 
-	public SwingWrapper<XYChart> getSwingWrapper() {
-		return swingWrapper;
-	}
-
-	public void setSwingWrapper(SwingWrapper<XYChart> swingWrapper) {
-		this.swingWrapper = swingWrapper;
-	}
-
-	public void saveCharts() throws IOException {
-
+	public void saveCharts() throws IOException { 
 		String folderName = Main.getOutputFolder() + "/"
-				+ getSimulationManager().getSimulationLogger().getSimStartTime() + "/simulation_"
-				+ getSimulationManager().getSimulationId() + "/iteration_" + getSimulationManager().getIterationId()
-				+ "__" + getSimulationManager().getScenario().toString();
+				+ simulationManager.getSimulationLogger().getSimStartTime() + "/simulation_"
+				+ simulationManager.getSimulationId() + "/iteration_" + simulationManager.getIterationId()
+				+ "__" + simulationManager.getScenario().toString();
 		new File(folderName).mkdirs();
 		BitmapEncoder.saveBitmapWithDPI(mapChart, folderName + "/map_chart", BitmapFormat.PNG, 600);
 		BitmapEncoder.saveBitmapWithDPI(networkUtilizationChart, folderName + "/network_usage", BitmapFormat.PNG, 600);

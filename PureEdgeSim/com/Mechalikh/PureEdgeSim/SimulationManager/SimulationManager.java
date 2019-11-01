@@ -118,8 +118,8 @@ public class SimulationManager extends CloudSimEntity {
 
 		// Show simulation progress
 		schedule(this, simulationParameters.INITIALIZATION_TIME, SHOW_PROGRESS);
-		simLog.printSameLine("Simulation progress :", "red");
-		simLog.printSameLine("[", "red");
+		
+		simLog.printSameLine("Simulation progress : [", "red"); 
 	}
 
 	@Override
@@ -138,7 +138,9 @@ public class SimulationManager extends CloudSimEntity {
 
 		case EXECUTE_TASK:
 			// Execute the task
-			executeTask(task);
+			if (taskFailed(task, 2))
+				return;
+			broker.submitCloudlet(task);
 			break;
 
 		case TRANSFER_RESULTS_TO_ORCH:
@@ -148,7 +150,9 @@ public class SimulationManager extends CloudSimEntity {
 
 		case RESULT_RETURN_FINISHED:
 			// Result returned to edge device
-			resultsReturned(task);
+			if (taskFailed(task, 0))
+				return;
+			tasksCount++;
 			break;
 
 		case SHOW_PROGRESS:
@@ -186,7 +190,7 @@ public class SimulationManager extends CloudSimEntity {
 				// least, to end the simulation. that's why we set it to " < 0.99"
 				// especially when 1% doesn't affect the simulation results that much, change
 				// this value to lower ( 95% or 90%) in order to make simulation faster. however
-				// this may affect the results 
+				// this may affect the results
 				schedule(this, 10, PRINT_LOG);
 				break;
 			}
@@ -219,12 +223,6 @@ public class SimulationManager extends CloudSimEntity {
 
 	}
 
-	private void resultsReturned(Task task) {
-		if (taskFailed(task, 0))
-			return;
-		tasksCount++;
-	}
-
 	private void sendResultsToOchestrator(Task task) {
 		if (taskFailed(task, 2))
 			return;
@@ -239,40 +237,28 @@ public class SimulationManager extends CloudSimEntity {
 		simLog.getTasksExecutionInfos(task);
 	}
 
-	private void executeTask(Task task) {
-		if (taskFailed(task, 2))
-			return;
-		broker.submitCloudlet(task);
-	}
-
 	private void sendFromOrchToDestination(Task task) {
 		if (taskFailed(task, 1))
 			return;
-		try {
-			// Find the best VM for executing the task
-			edgeOrchestrator.initialize(task);
+		// Find the best VM for executing the task
+		edgeOrchestrator.initialize(task);
 
-			// Stop in case no resource was available for this task, the offloading is
-			// failed
-			if (task.getVm() == Vm.NULL) {
-				simLog.incrementTasksFailedLackOfRessources(task);
-				tasksCount++;
-				return;
-			}
-			// If the task is offloaded
-			// and the orchestrator is not the offloading destination
-			if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()
-					&& task.getOrchestrator() != ((EdgeDataCenter) task.getVm().getHost().getDatacenter())) {
-				scheduleNow(networkModel, NetworkModel.SEND_REQUEST_FROM_ORCH_TO_DESTINATION, task);
+		// Stop in case no resource was available for this task, the offloading is
+		// failed
+		if (task.getVm() == Vm.NULL) {
+			simLog.incrementTasksFailedLackOfRessources(task);
+			tasksCount++;
+			return;
+		}
+		// If the task is offloaded
+		// and the orchestrator is not the offloading destination
+		if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()
+				&& task.getOrchestrator() != ((EdgeDataCenter) task.getVm().getHost().getDatacenter())) {
+			scheduleNow(networkModel, NetworkModel.SEND_REQUEST_FROM_ORCH_TO_DESTINATION, task);
 
-			} else { // The task will be executed locally / no offloading or will be executed where
-						// the orchestrator is deployed (no network usage)
-				scheduleNow(this, EXECUTE_TASK, task);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			Runtime.getRuntime().exit(0);
+		} else { // The task will be executed locally / no offloading or will be executed where
+					// the orchestrator is deployed (no network usage)
+			scheduleNow(this, EXECUTE_TASK, task);
 		}
 	}
 
