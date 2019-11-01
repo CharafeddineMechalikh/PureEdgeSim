@@ -135,7 +135,7 @@ To decrease the simultion time, the user can also enable parralelism.
 
  (i)  Download the zip file from github.
  
- (ii) Import the project to your IDE.
+ (ii) Import the project to your IDE (New -> Java Project -> Use default location -> and then chose the PureEdgeSim folder)  .
  
  (iii) Launch the `main.java` class.
  
@@ -267,12 +267,12 @@ These files contain the specification of edge devices, fog datacenters, and clou
 
 *   The edge devices file follows the same structure as the Fog and Cloud `.xml` files. However as we said previously, if we want to generate 100 devices for example, we will not define all these devices in this file, instead, we will define the types of devices that will be generated, for example 25% of the generated devices will be of type 1, etc. The edge devices are considered as datacenters that contains one host with one VM (the user can add more if needed, by editing this file). The device without a virtual machine is considered a simple sensor (no computing capabilities). The following table highlights the attributes that only edge devices have : 
 
-|Attribute        |Type   |Options/Range|Description                                                  |
-|-----------------|-------|-------------|-------------------------------------------------------------|
-|`mobility`       |Boolean|true or false|"True" means the devices of this type are mobile             |
-|`battery`        |Boolean|true or false|True" means that the devices of this type are battery-powered|
-|`batterycapacity`|Double |> 0          |The battery capacity (in Wh)                                 |
-|`percentage`     |Integer|> 0          |The percentage of devices of this type.                      |
+|Attribute        |Type   |Options/Range|Description                                                   |
+|-----------------|-------|-------------|--------------------------------------------------------------|
+|`mobility`       |Boolean|true or false|"True" means the devices of this type are mobile              |
+|`battery`        |Boolean|true or false|"True" means that the devices of this type are battery-powered|
+|`batterycapacity`|Double |> 0          |The battery capacity (in Wh)                                  |
+|`percentage`     |Integer|> 0          |The percentage of devices of this type.                       |
 
 ### 5.5 The PureEdgeSim output files
 
