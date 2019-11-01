@@ -2,23 +2,30 @@ package com.mechalikh.pureedgesim.TasksOrchestration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import org.cloudbus.cloudsim.vms.Vm;
-
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public class EdgeOrchestrator extends Orchestrator {
 	private List<List<Integer>> orchestrationHistory;
+	private List<EdgeVM> vmList;
+	private SimLog simLog;
+	private String algorithm;
+	private String architecture;
 
 	public EdgeOrchestrator(SimulationManager simulationManager) {
 		super(simulationManager);
-		this.setSimulationManager(simulationManager);
+		this.simulationManager = simulationManager;
+		simLog = simulationManager.getSimulationLogger();
 		orchestrationHistory = new ArrayList<List<Integer>>();
-		initHistoryList(this.getSimulationManager().getServersManager().getVmList().size());
+		vmList = simulationManager.getServersManager().getVmList();
+		algorithm = simulationManager.getScenario().getStringOrchAlgorithm();
+		architecture = simulationManager.getScenario().getStringOrchArchitecture();
+		initHistoryList(vmList.size());
 	}
 
 	private void initHistoryList(int size) {
@@ -31,17 +38,17 @@ public class EdgeOrchestrator extends Orchestrator {
 
 	@Override
 	public void initialize(Task task) {
-		if (this.getSimulationManager().getScenario().getStringOrchArchitecture().equals("CLOUD_ONLY")) {
+		if ("CLOUD_ONLY".equals(architecture)) {
 			cloudOnly(task);
-		} else if (this.getSimulationManager().getScenario().getStringOrchArchitecture().equals("EDGE_ONLY")) {
+		} else if ("EDGE_ONLY".equals(architecture)) {
 			edgeOnly(task);
-		} else if (this.getSimulationManager().getScenario().getStringOrchArchitecture().equals("FOG_AND_CLOUD")) {
+		} else if ("FOG_AND_CLOUD".equals(architecture)) {
 			fogAndCloud(task);
-		} else if (this.getSimulationManager().getScenario().getStringOrchArchitecture().equals("ALL")) {
+		} else if ("ALL".equals(architecture)) {
 			all(task);
-		} else if (this.getSimulationManager().getScenario().getStringOrchArchitecture().equals("FOG_ONLY")) {
+		} else if ("FOG_ONLY".equals(architecture)) {
 			fogOnly(task);
-		} else if (this.getSimulationManager().getScenario().getStringOrchArchitecture().equals("EDGE_AND_CLOUD")) {
+		} else if ("EDGE_AND_CLOUD".equals(architecture)) {
 			edgeAndCloud(task);
 		}
 		// Offload it only if resources are available (i.e. the offloading distination
@@ -98,23 +105,19 @@ public class EdgeOrchestrator extends Orchestrator {
 	}
 
 	public void findVM(String[] architecture, Task task) {
-		if (this.getSimulationManager().getScenario().getStringOrchAlgorithm().equals("RANDOM")) {
-			random(architecture, task);
-		} else if (this.getSimulationManager().getScenario().getStringOrchAlgorithm().equals("ROUND_ROBIN")) {
+		if ("ROUND_ROBIN".equals(algorithm)) {
 			roundRobin(architecture, task);
-		} else if (this.getSimulationManager().getScenario().getStringOrchAlgorithm().equals("INCEREASE_LIFETIME")) {
+		} else if ("INCEREASE_LIFETIME".equals(algorithm)) {
 			increseLifetime(architecture, task);
-		} else if (this.getSimulationManager().getScenario().getStringOrchAlgorithm().equals("TRADE_OFF")) {
+		} else if ("TRADE_OFF".equals(algorithm)) {
 			tradeOff(architecture, task);
 		}
-
 	}
 
 	private void tradeOff(String[] architecture, Task task) {
 		int vm = -1;
 		double min = -1;
 		double new_min;// vm with minimum assigned tasks;
-		List<EdgeVM> vmList = this.getSimulationManager().getServersManager().getVmList();
 
 		// get best vm for this task
 		for (int i = 0; i < orchestrationHistory.size(); i++) {
@@ -149,7 +152,6 @@ public class EdgeOrchestrator extends Orchestrator {
 		double vmMips = 0;
 		double weight = 0;
 		double minWeight = 20;
-		List<EdgeVM> vmList = this.getSimulationManager().getServersManager().getVmList();
 		// get best vm for this task
 		for (int i = 0; i < orchestrationHistory.size(); i++) {
 			if (offloadingIsPossible(task, vmList.get(i), architecture)) {
@@ -196,11 +198,11 @@ public class EdgeOrchestrator extends Orchestrator {
 	}
 
 	private void roundRobin(String[] architecture, Task task) {
-		List<EdgeVM> vmList = this.getSimulationManager().getServersManager().getVmList();
+		List<EdgeVM> vmList = simulationManager.getServersManager().getVmList();
 		int vm = -1;
 		int minTasksCount = -1; // vm with minimum assigned tasks;
 		// get best vm for this task
-		for (int i = 0; i < orchestrationHistory.size(); i++) { 
+		for (int i = 0; i < orchestrationHistory.size(); i++) {
 			if (offloadingIsPossible(task, vmList.get(i), architecture)) {
 				if (minTasksCount == -1) {
 					minTasksCount = orchestrationHistory.get(i).size();
@@ -217,26 +219,6 @@ public class EdgeOrchestrator extends Orchestrator {
 		// assign the tasks to the vm found
 		assignTaskToVm(vm, task);
 
-	}
-
-	private void random(String[] architecture, Task task) {
-		List<EdgeVM> vmList = this.getSimulationManager().getServersManager().getVmList();
-		int vm = -1;
-		// get best vm for this task
-		int j = 1 + new Random().nextInt(orchestrationHistory.size() - 1);
-		while (j > 0) {
-			for (int i = 0; i < orchestrationHistory.size(); i++) {
-				if (offloadingIsPossible(task, vmList.get(i), architecture)) {
-					j--;
-					// assign the tasks to the vm found
-					if (j == 0) {
-						vm = i;
-					}
-				}
-			}
-
-		}
-		assignTaskToVm(vm, task);
 	}
 
 	private boolean sameLocation(EdgeDataCenter device1, EdgeDataCenter device2, int RANGE) {
@@ -256,15 +238,12 @@ public class EdgeOrchestrator extends Orchestrator {
 	}
 
 	private void assignTaskToVm(int vmIndex, Task task) {
-		List<EdgeVM> vmList = this.getSimulationManager().getServersManager().getVmList();
 		if (vmIndex == -1) {
-			this.getSimulationManager().getSimulationLogger().incrementTasksFailedLackOfRessources(task);
+			simLog.incrementTasksFailedLackOfRessources(task);
 		} else {
 			task.setVm(vmList.get(vmIndex)); // send this task to this vm
-			this.getSimulationManager().getSimulationLogger()
-					.deepLog(this.getSimulationManager().getSimulation().clock() + " : EdgeOrchestrator, Task: "
-							+ task.getId() + " assigned to " + vmList.get(vmIndex).getType() + " vm: "
-							+ vmList.get(vmIndex).getId());
+			simLog.deepLog(simulationManager.getSimulation().clock() + " : EdgeOrchestrator, Task: " + task.getId()
+					+ " assigned to " + vmList.get(vmIndex).getType() + " vm: " + vmList.get(vmIndex).getId());
 
 			// update history
 			orchestrationHistory.get(vmIndex).add((int) task.getId());
@@ -272,8 +251,9 @@ public class EdgeOrchestrator extends Orchestrator {
 	}
 
 	private boolean offloadingIsPossible(Task task, EdgeVM edgeVM, String[] architecture) {
-		return ((arrayContains(architecture, "Cloud") && edgeVM.getType() == simulationParameters.TYPES.CLOUD) // cloud
-				|| (arrayContains(architecture, "Fog") && edgeVM.getType() == simulationParameters.TYPES.FOG // fog
+		simulationParameters.TYPES vmType = edgeVM.getType();
+		return ((arrayContains(architecture, "Cloud") && vmType == simulationParameters.TYPES.CLOUD) // cloud
+				|| (arrayContains(architecture, "Fog") && vmType == simulationParameters.TYPES.FOG // fog
 				// compare destination (fog host) location and origin (edge) location, if they
 				// are in same area offload to his device
 						&& (sameLocation(((EdgeDataCenter) edgeVM.getHost().getDatacenter()), task.getEdgeDevice(),
@@ -283,7 +263,7 @@ public class EdgeOrchestrator extends Orchestrator {
 										&& sameLocation(((EdgeDataCenter) edgeVM.getHost().getDatacenter()),
 												task.getOrchestrator(), simulationParameters.FOG_RANGE))))
 
-				|| (arrayContains(architecture, "Edge") && edgeVM.getType() == simulationParameters.TYPES.EDGE // edge
+				|| (arrayContains(architecture, "Edge") && vmType == simulationParameters.TYPES.EDGE // edge
 				// compare destination (edge device) location and origin (edge) location, if
 				// they are in same area offload to his device
 						&& (sameLocation(((EdgeDataCenter) edgeVM.getHost().getDatacenter()), task.getEdgeDevice(),

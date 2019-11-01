@@ -23,7 +23,7 @@ public class FileTransferProgress {
 	public FileTransferProgress(Task task, double remainingFileSize, int transferType) {
 		this.task = task;
 		this.remainingFileSize = remainingFileSize;
-		this.setFileSize(remainingFileSize);
+		this.fileSize= remainingFileSize;
 		this.transferType = transferType;
 	}
 
@@ -37,11 +37,7 @@ public class FileTransferProgress {
 
 	public Task getTask() {
 		return task;
-	}
-
-	public void setTask(Task task) {
-		this.task = task;
-	}
+	} 
 
 	public double getWanBandwidth() {
 		return wanBandwidth;
@@ -56,8 +52,7 @@ public class FileTransferProgress {
 	}
 
 	public void setLanBandwidth(double lanBandwidth) {
-		this.lanBandwidth = lanBandwidth;
-
+		this.lanBandwidth = lanBandwidth; 
 	}
 
 	public double getWanNetworkUsage() {
@@ -79,27 +74,17 @@ public class FileTransferProgress {
 	public int getTransferType() {
 		return transferType;
 	}
-
-	public void setTransferType(int type) {
-		this.transferType = type;
-	}
-
+ 
 	public double getFileSize() {
 		return fileSize;
 	}
-
-	public void setFileSize(double fileSize) {
-		this.fileSize = fileSize;
-	}
-
+ 
 	public void setCurrentBandwidth(double bandwidth) {
-		this.currentBandwidth = bandwidth;
-
+		this.currentBandwidth = bandwidth; 
 	}
 
 	public double getCurrentBandwidth() {
-		return this.currentBandwidth;
-
+		return this.currentBandwidth; 
 	}
 
 }

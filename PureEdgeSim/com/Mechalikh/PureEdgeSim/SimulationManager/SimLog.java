@@ -32,7 +32,6 @@ public class SimLog {
 	private List<String> resultsList = new ArrayList<String>();
 	private DecimalFormat decimalFormat;
 	private List<String> log = new ArrayList<String>();
-	private int generatedTasksCount;
 	private String currentOrchArchitecture;
 	private String currentOrchAlgorithm;
 	private int currentEdgeDevicesCount;
@@ -41,13 +40,14 @@ public class SimLog {
 	private boolean isFirstIteration;
 
 	// Tasks execution results
-	private int tasksSent = 0;
-	private int tasksFailed = 0;
-	private int tasksFailedLatency = 0;
-	private int tasksFailedMobility = 0;
-	private int tasksFailedRessourcesUnavailable = 0;
-	private int tasksFailedBeacauseDeviceDead = 0;
-	private int notGeneratedBecDeviceDead = 0;
+	private int generatedTasksCount = 0;
+	public int tasksSent = 0;
+	public int tasksFailed = 0;
+	public int tasksFailedLatency = 0;
+	public int tasksFailedMobility = 0;
+	public int tasksFailedRessourcesUnavailable = 0;
+	public int tasksFailedBeacauseDeviceDead = 0;
+	public int notGeneratedBecDeviceDead = 0;
 	private double totalExecutionTime = 0;
 	private double totalWaitingTime = 0;
 	private int executedTasksCount = 0;
@@ -106,14 +106,14 @@ public class SimLog {
 		}
 		System.out.print(s);
 		// update the log
-		saveLog(); 
+		saveLog();
 	}
 
 	public void printTasksRelatedResults() {
 		print("");
 		print("------------------------------------------------------- OUTPUT -------------------------------------------------------");
 		print("");
-		print("SimLog- Tasks not sent because device was dead                                  :"
+		print("SimLog- Tasks not sent because device died (low energy)                         :"
 				+ padLeftSpaces(decimalFormat.format(notGeneratedBecDeviceDead / generatedTasksCount), 20) + " % ("
 				+ notGeneratedBecDeviceDead + " tasks)");
 		print("SimLog- Tasks sent from edge devices                                            :"
@@ -249,7 +249,7 @@ public class SimLog {
 						aliveBatteryPoweredDevicesCount++;
 					}
 				}
-			} 
+			}
 		}
 		averageCpuUtilization = (averageCloudCpuUtilization + averageEdgeCpuUtilization + averageFogCpuUtilization)
 				/ (edgeDevicesCount + simulationParameters.NUM_OF_FOG_DATACENTERS
@@ -415,7 +415,6 @@ public class SimLog {
 				break;
 			default:
 				break;
-
 			}
 		}
 	}

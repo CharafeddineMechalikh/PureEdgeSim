@@ -150,86 +150,15 @@ public class Main {
 		} catch (Exception e) {
 			e.printStackTrace();
 			SimLog.println("Main- The simulation has been terminated due to an unexpected error");
-		}
-
+		} 
 	}
 
-	private void generateCharts(SimLog simLog) {
-
+	private void generateCharts(SimLog simLog) { 
 		if (simulationParameters.SAVE_CHARTS && !simulationParameters.PARALLEL && simLog != null) {
 			SimLog.println("Main- Saving charts...");
 			ChartsGenerator chartsGenerator = new ChartsGenerator(simLog.getFileName(".csv"));
-
-			chartsGenerator.displayChart("Edge devices count", "Average wainting time (s)", "Time (s)", "/Delays");
-			chartsGenerator.displayChart("Edge devices count", "Average execution delay (s)", "Time (s)", "/Delays");
-
-			chartsGenerator.displayChart("Edge devices count", "Tasks successfully executed", "Number of tasks",
-					"/Tasks");
-			chartsGenerator.displayChart("Edge devices count", "Tasks failed (delay)", "Number of tasks", "/Tasks");
-			chartsGenerator.displayChart("Edge devices count", "Tasks failed (device dead)", "Number of tasks",
-					"/Tasks");
-			chartsGenerator.displayChart("Edge devices count", "Tasks failed (mobility)", "Number of tasks", "/Tasks");
-			chartsGenerator.displayChart("Edge devices count", "Tasks not generated due to the death of devices",
-					"Number of tasks", "/Tasks");
-
-			chartsGenerator.displayChart("Edge devices count", "Total tasks executed (Cloud)", "Number of tasks",
-					"/Tasks");
-			chartsGenerator.displayChart("Edge devices count", "Tasks successfully executed (Cloud)", "Number of tasks",
-					"/Tasks");
-			chartsGenerator.displayChart("Edge devices count", "Total tasks executed (Fog)", "Number of tasks",
-					"/Tasks");
-			chartsGenerator.displayChart("Edge devices count", "Tasks successfully executed (Fog)", "Number of tasks",
-					"/Tasks");
-			chartsGenerator.displayChart("Edge devices count", "Total tasks executed (Edge)", "Number of tasks",
-					"/Tasks");
-			chartsGenerator.displayChart("Edge devices count", "Tasks successfully executed (Edge)", "Number of tasks",
-					"/Tasks");
-
-			chartsGenerator.displayChart("Edge devices count", "Network usage (s)", "Time (s)", "/Network");
-			chartsGenerator.displayChart("Edge devices count", "Wan usage (s)", "Time (s)", "/Network");
-			chartsGenerator.displayChart("Edge devices count", "Average bandwidth per task (Mbps)", "Bandwidth (Mbps)",
-					"/Network");
-			if (simulationParameters.ENABLE_REGISTRY) {
-				chartsGenerator.displayChart("Edge devices count", "Containers wan usage (s)", "Time (s)", "/Network");
-				chartsGenerator.displayChart("Edge devices count", "Containers lan usage (s)", "Time (s)", "/Network");
-			}
-
-			chartsGenerator.displayChart("Edge devices count", "Average VM CPU usage (%)", "CPU utilization (%)",
-					"/CPU Utilization");
-			chartsGenerator.displayChart("Edge devices count", "Average VM CPU usage (Cloud) (%)",
-					"CPU utilization (%)", "/CPU Utilization");
-			chartsGenerator.displayChart("Edge devices count", "Average VM CPU usage (Fog) (%)", "CPU utilization (%)",
-					"/CPU Utilization");
-			chartsGenerator.displayChart("Edge devices count", "Average VM CPU usage (Edge) (%)", "CPU utilization (%)",
-					"/CPU Utilization");
-
-			chartsGenerator.displayChart("Edge devices count", "Energy consumption (Wh)", "Consumed energy (Wh)",
-					"/Energy");
-			chartsGenerator.displayChart("Edge devices count", "Average energy consumption (Wh/Data center)",
-					"Consumed energy (Wh)", "/Energy");
-			chartsGenerator.displayChart("Edge devices count", "Cloud energy consumption (Wh)", "Consumed energy (Wh)",
-					"/Energy");
-			chartsGenerator.displayChart("Edge devices count", "Average Cloud energy consumption (Wh/Data center)",
-					"Consumed energy (Wh)", "/Energy");
-			chartsGenerator.displayChart("Edge devices count", "Fog energy consumption (Wh)", "Consumed energy (Wh)",
-					"/Energy");
-			chartsGenerator.displayChart("Edge devices count", "Average Fog energy consumption (Wh/Data center)",
-					"Consumed energy (Wh)", "/Energy");
-			chartsGenerator.displayChart("Edge devices count", "Edge energy consumption (Wh)", "Consumed energy (Wh)",
-					"/Energy");
-			chartsGenerator.displayChart("Edge devices count", "Average Edge energy consumption (Wh/Device)",
-					"Consumed energy (Wh)", "/Energy");
-
-			chartsGenerator.displayChart("Edge devices count", "Dead devices count", "Count", "/Edge Devices");
-			chartsGenerator.displayChart("Edge devices count", "Average remaining power (Wh)", "Remaining energy (Wh)",
-					"/Edge Devices");
-			chartsGenerator.displayChart("Edge devices count", "Average remaining power (%)", "Remaining energy (%)",
-					"/Edge Devices");
-			chartsGenerator.displayChart("Edge devices count", "First edge device death time (s)", "Time (s)",
-					"/Edge Devices");
-
-		}
-
+			chartsGenerator.generate();
+		} 
 	}
 
 	private static String simulationTime(Date startDate, Date endDate) {

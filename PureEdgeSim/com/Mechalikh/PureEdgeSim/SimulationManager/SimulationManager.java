@@ -118,8 +118,8 @@ public class SimulationManager extends CloudSimEntity {
 
 		// Show simulation progress
 		schedule(this, simulationParameters.INITIALIZATION_TIME, SHOW_PROGRESS);
-		
-		simLog.printSameLine("Simulation progress : [", "red"); 
+
+		simLog.printSameLine("Simulation progress : [", "red");
 	}
 
 	@Override
@@ -343,7 +343,6 @@ public class SimulationManager extends CloudSimEntity {
 	}
 
 	public boolean taskFailed(Task task, int phase) {
-
 		// task not generated because device died
 		if (phase == 0 && task.getEdgeDevice().isDead()) {
 			simLog.incrementNotGeneratedBeacuseDeviceDead();

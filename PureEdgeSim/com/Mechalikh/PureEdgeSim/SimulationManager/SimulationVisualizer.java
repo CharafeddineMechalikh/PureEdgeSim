@@ -91,14 +91,14 @@ public class SimulationVisualizer {
 
 		networkUtilizationChart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
 		updateStyle(networkUtilizationChart, new Double[] { 0.0, simulationManager.getSimulation().clock(), 0.0,
-				simulationParameters.WAN_BANDWIDTH / 1000.0 }); 
+				simulationParameters.WAN_BANDWIDTH / 1000.0 });
 	}
 
 	void mapChart() {
 		// Add edge devices to map
 		addEdgeDevicesToMap();
 		// Add Fog servers to the map
-		addFogServersToMap(); 
+		addFogServersToMap();
 	}
 
 	private void tasksSucessRateChart() {
@@ -152,7 +152,7 @@ public class SimulationVisualizer {
 				Color.BLACK);
 
 	}
- 
+
 	void networkUtilizationChart() {
 		double wan = simulationManager.getNetworkModel().getWanUtilization();
 
@@ -171,7 +171,7 @@ public class SimulationVisualizer {
 		updateSeries(networkUtilizationChart, "WAN", time, toArray(wanUsage), SeriesMarkers.NONE, Color.BLACK);
 
 	}
- 
+
 	private void addEdgeDevicesToMap() {
 		// Initialize the X and Y series that will be used to draw the map
 		// Dead devices series
@@ -194,22 +194,22 @@ public class SimulationVisualizer {
 					.getType() == simulationParameters.TYPES.EDGE) {
 
 				if (simulationManager.getServersManager().getDatacenterList().get(i).isDead()) {
-					x_deadEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
-							.getLocation().getXPos());
-					y_deadEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
-							.getLocation().getYPos());
+					x_deadEdgeDevicesList.add(
+							simulationManager.getServersManager().getDatacenterList().get(i).getLocation().getXPos());
+					y_deadEdgeDevicesList.add(
+							simulationManager.getServersManager().getDatacenterList().get(i).getLocation().getYPos());
 
 				} else if (simulationManager.getServersManager().getDatacenterList().get(i).isIdle()) {
-					x_idleEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
-							.getLocation().getXPos());
-					y_idleEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
-							.getLocation().getYPos());
+					x_idleEdgeDevicesList.add(
+							simulationManager.getServersManager().getDatacenterList().get(i).getLocation().getXPos());
+					y_idleEdgeDevicesList.add(
+							simulationManager.getServersManager().getDatacenterList().get(i).getLocation().getYPos());
 
 				} else { // If the device is busy
-					x_activeEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
-							.getLocation().getXPos());
-					y_activeEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
-							.getLocation().getYPos());
+					x_activeEdgeDevicesList.add(
+							simulationManager.getServersManager().getDatacenterList().get(i).getLocation().getXPos());
+					y_activeEdgeDevicesList.add(
+							simulationManager.getServersManager().getDatacenterList().get(i).getLocation().getYPos());
 				}
 			}
 		}
@@ -294,7 +294,7 @@ public class SimulationVisualizer {
 		chart.getStyler().setLegendPosition(LegendPosition.OutsideE);
 		chart.getStyler().setLegendVisible(true);
 
-	} 
+	}
 
 	private double[] toArray(List<Double> list) {
 		int size = Math.max(list.size(), 1); // To prevent returning empty arrays
@@ -320,13 +320,12 @@ public class SimulationVisualizer {
 
 	public void close() {
 		simulationResultsFrame.dispose();
-	} 
+	}
 
-	public void saveCharts() throws IOException { 
-		String folderName = Main.getOutputFolder() + "/"
-				+ simulationManager.getSimulationLogger().getSimStartTime() + "/simulation_"
-				+ simulationManager.getSimulationId() + "/iteration_" + simulationManager.getIterationId()
-				+ "__" + simulationManager.getScenario().toString();
+	public void saveCharts() throws IOException {
+		String folderName = Main.getOutputFolder() + "/" + simulationManager.getSimulationLogger().getSimStartTime()
+				+ "/simulation_" + simulationManager.getSimulationId() + "/iteration_"
+				+ simulationManager.getIterationId() + "__" + simulationManager.getScenario().toString();
 		new File(folderName).mkdirs();
 		BitmapEncoder.saveBitmapWithDPI(mapChart, folderName + "/map_chart", BitmapFormat.PNG, 600);
 		BitmapEncoder.saveBitmapWithDPI(networkUtilizationChart, folderName + "/network_usage", BitmapFormat.PNG, 600);
