@@ -2,13 +2,10 @@ package com.mechalikh.pureedgesim.SimulationManager;
 
 import java.io.IOException;
 import java.util.List;
-
-import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimEntity;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.vms.Vm;
-
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
@@ -44,6 +41,7 @@ public class SimulationManager extends CloudSimEntity {
 	private NetworkModel networkModel;
 	private List<EdgeDataCenter> orchestratorsList;
 	private double failedTasksCount = 0;
+	private int tasksCount = 0;
 
 	public SimulationManager(SimLog simLog, CloudSim simulation, int simulationId, int iteration, Scenario scenario)
 			throws Exception {
@@ -102,9 +100,13 @@ public class SimulationManager extends CloudSimEntity {
 
 		// Tasks scheduling
 		for (int i = 0; i < tasksList.size(); i++) {
+
 			if (!simulationParameters.ENABLE_ORCHESTRATORS)
 				tasksList.get(i).setOrchestrator(tasksList.get(i).getEdgeDevice());
+
+			// Schedule the tasks offloading
 			schedule(this, tasksList.get(i).getTime(), SEND_TO_ORCH, tasksList.get(i));
+
 		}
 
 		// Scheduling the end of the simulation
@@ -169,7 +171,7 @@ public class SimulationManager extends CloudSimEntity {
 			simulationVisualizer.updateCharts();
 
 			// Schedule the next update
-			schedule(this, simulationParameters.CHARTS_UPDATE_INTERVAL, UPDATE_REAL_TIME_CHARTS);
+			schedule(this, simulationParameters.UPDATE_INTERVAL, UPDATE_REAL_TIME_CHARTS);
 			break;
 
 		case PRINT_LOG:
@@ -177,16 +179,14 @@ public class SimulationManager extends CloudSimEntity {
 			List<Task> finishedTasks = broker.getCloudletFinishedList();
 
 			// If some tasks have not been executed
-			if (simulationParameters.WAIT_FOR_TASKS
-					&& (double) finishedTasks.size() / (double) (simLog.getGeneratedTasks()
-							- simLog.getNotGeneratedBecauseDead() - simLog.getTasksFailedRessourcesUnavailable()) < 1) {
+			if (simulationParameters.WAIT_FOR_TASKS && (tasksCount / simLog.getGeneratedTasks()) < 1) {
 				// 1 = 100% , 0,9= 90%
 				// Some tasks may take hours to be executed that's why we don't wait until
 				// all of them get executed, but we only wait for 99% of tasks to be executed at
 				// least, to end the simulation. that's why we set it to " < 0.99"
 				// especially when 1% doesn't affect the simulation results that much, change
 				// this value to lower ( 95% or 90%) in order to make simulation faster. however
-				// this may affect the results
+				// this may affect the results 
 				schedule(this, 10, PRINT_LOG);
 				break;
 			}
@@ -220,76 +220,45 @@ public class SimulationManager extends CloudSimEntity {
 	}
 
 	private void resultsReturned(Task task) {
-		try {
-			// Check if the device is alive
-			if (!task.getEdgeDevice().isDead()) {
-				// If the tasks is faled because of high delays
-				if ((task.getSimulation().clock() - task.getTime()) > task.getMaxLatency()
-						&& task.getFailureReason() != Task.Status.FAILED_DUE_TO_DEVICE_MOBILITY) {
-					task.setFailureReason(Task.Status.FAILED_DUE_TO_LATENCY);
-					task.setStatus(Cloudlet.Status.FAILED);
-
-				}
-
-			} else { // Set this tasks as failed
-				simLog.setNotGeneratedBecauseDead(simLog.getNotGeneratedBecauseDead() + 1);
-			}
-			if (task.getStatus() == Cloudlet.Status.FAILED)
-				failedTasksCount++;
-		} catch (Exception e) {
-			e.printStackTrace();
-			Runtime.getRuntime().exit(0);
-		}
+		if (taskFailed(task, 0))
+			return;
+		tasksCount++;
 	}
 
 	private void sendResultsToOchestrator(Task task) {
-		try {
-			// Check if the device is alive
-			if (!task.getEdgeDevice().isDead()) {
+		if (taskFailed(task, 2))
+			return;
+		// If the task was offloaded
+		if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()) {
+			scheduleNow(networkModel, NetworkModel.SEND_RESULT_TO_ORCH, task);
 
-				// If the task was offloaded
-				if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()) {
-					scheduleNow(networkModel, NetworkModel.SEND_RESULT_TO_ORCH, task);
-
-				} else { // The task has been executed locally / no offloading
-					scheduleNow(this, RESULT_RETURN_FINISHED, task);
-				}
-
-			} else { // Otherwise, set this tasks as failed
-				simLog.setNotGeneratedBecauseDead(simLog.getNotGeneratedBecauseDead() + 1);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			Runtime.getRuntime().exit(0);
+		} else { // The task has been executed locally / no offloading
+			scheduleNow(this, RESULT_RETURN_FINISHED, task);
 		}
+		// update tasks execution and waiting delays
+		simLog.getTasksExecutionInfos(task);
 	}
 
 	private void executeTask(Task task) {
-		try {
-			// Check if the device is alive
-			if (!task.getEdgeDevice().isDead()) {
-				// Submit tasks to the broker for execution
-				broker.submitCloudlet(task);
-
-			} else { // Otherwise set this tasks as failed
-				simLog.setNotGeneratedBecauseDead(simLog.getNotGeneratedBecauseDead() + 1);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			Runtime.getRuntime().exit(0);
-		}
+		if (taskFailed(task, 2))
+			return;
+		broker.submitCloudlet(task);
 	}
 
 	private void sendFromOrchToDestination(Task task) {
+		if (taskFailed(task, 1))
+			return;
 		try {
 			// Find the best VM for executing the task
 			edgeOrchestrator.initialize(task);
 
 			// Stop in case no resource was available for this task, the offloading is
 			// failed
-			if (task.getVm() == Vm.NULL)
+			if (task.getVm() == Vm.NULL) {
+				simLog.incrementTasksFailedLackOfRessources(task);
+				tasksCount++;
 				return;
-
+			}
 			// If the task is offloaded
 			// and the orchestrator is not the offloading destination
 			if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()
@@ -308,6 +277,11 @@ public class SimulationManager extends CloudSimEntity {
 	}
 
 	private void sendTaskToOrchestrator(Task task) {
+		if (taskFailed(task, 0))
+			return;
+
+		simLog.incrementTasksSent();
+
 		// Send the offloading request to the closest orchestrator
 		double min = -1;
 		int selected = 0;
@@ -333,11 +307,7 @@ public class SimulationManager extends CloudSimEntity {
 			task.setOrchestrator(orchestratorsList.get(selected));
 		}
 
-		if (!task.getEdgeDevice().isDead()) { // check if the device is still alive
-			scheduleNow(networkModel, NetworkModel.SEND_REQUEST_FROM_DEVICE_TO_ORCH, task);
-		} else { // otherwise set this tasks as failed
-			simLog.setNotGeneratedBecauseDead(simLog.getNotGeneratedBecauseDead() + 1);
-		}
+		scheduleNow(networkModel, NetworkModel.SEND_REQUEST_FROM_DEVICE_TO_ORCH, task);
 	}
 
 	private CustomBroker createBroker() {
@@ -386,4 +356,71 @@ public class SimulationManager extends CloudSimEntity {
 		return this.iteration;
 	}
 
+	public boolean taskFailed(Task task, int phase) {
+
+		// task not generated because device died
+		if (phase == 0 && task.getEdgeDevice().isDead()) {
+			simLog.incrementNotGeneratedBeacuseDeviceDead();
+			failedTasksCount++;
+			tasksCount++;
+			return true;
+		} // Set the task as failed if the device is dead
+		if (phase != 0 && task.getEdgeDevice().isDead()) {
+			simLog.incrementFailedBeacauseDeviceDead(task);
+			failedTasksCount++;
+			tasksCount++;
+			return true;
+		}
+		// or if the orchestrator died
+		if (phase == 1 && task.getOrchestrator() != null && task.getOrchestrator().isDead()) {
+			simLog.incrementFailedBeacauseDeviceDead(task);
+			failedTasksCount++;
+			tasksCount++;
+			return true;
+		}
+		// or the destination device is dead
+		if (phase == 2 && ((EdgeDataCenter) task.getVm().getHost().getDatacenter()).isDead()) {
+			simLog.incrementFailedBeacauseDeviceDead(task);
+			failedTasksCount++;
+			tasksCount++;
+			return true;
+		}
+		// The task is failed due to long delay
+		if ((task.getSimulation().clock() - task.getTime()) > task.getMaxLatency()) {
+			simLog.incrementTasksFailedLatency(task);
+			failedTasksCount++;
+			tasksCount++;
+			return true;
+		}
+		// A simple representation of task failure due to
+		// device mobility, if the vm location doesn't match
+		// the edge device location (that generated this task)
+		if (phase == 1 && task.getOrchestrator() != null
+				&& task.getOrchestrator().getType() != simulationParameters.TYPES.CLOUD
+				&& !sameLocation(task.getEdgeDevice(), task.getOrchestrator())) {
+			simLog.incrementTasksFailedMobility(task);
+			failedTasksCount++;
+			tasksCount++;
+			return true;
+		}
+		if (phase == 2 && ((EdgeDataCenter) task.getVm().getHost().getDatacenter()) != null
+				&& ((EdgeDataCenter) task.getVm().getHost().getDatacenter())
+						.getType() != simulationParameters.TYPES.CLOUD
+				&& !sameLocation(task.getEdgeDevice(), ((EdgeDataCenter) task.getVm().getHost().getDatacenter()))) {
+			simLog.incrementTasksFailedMobility(task);
+			failedTasksCount++;
+			tasksCount++;
+			return true;
+		}
+		return false;
+	}
+
+	private boolean sameLocation(EdgeDataCenter Dev1, EdgeDataCenter Dev2) {
+		double distance = Math.abs(Math.sqrt(Math.pow((Dev1.getLocation().getXPos() - Dev2.getLocation().getXPos()), 2)
+				+ Math.pow((Dev1.getLocation().getYPos() - Dev2.getLocation().getYPos()), 2)));
+		int RANGE = simulationParameters.EDGE_RANGE;
+		if (Dev1.getType() != Dev2.getType()) // One of them is fog and the other is edge
+			RANGE = simulationParameters.FOG_RANGE;
+		return (distance < RANGE);
+	}
 }

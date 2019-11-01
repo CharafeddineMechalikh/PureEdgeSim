@@ -1,6 +1,7 @@
 ## Changelog
-## New version 2.1.0 (oct 24th 2019)
-* Improved code  quality
+## New version 2.1.0 (oct 31th 2019)
+* The code has been improved  
+* Fixed some minor bugs 
 
 ## New version 2.0.0 (oct 24th 2019)
 * The code has been revisited and cleaned, now it is more readable  
@@ -19,6 +20,7 @@
   More than 64 high resolution charts can be generated with one click, in order to make it easier for the user to check his simlation results
   The user can always generate other charts using the generated CSV file.
 * Adding new simulation parameters regarding charts (displaying them, the refresh delay, saving them..)  
+
 ## New version 1.1.5 (apr 21st 2019)
 * Minor fixes
 ## New version 1.1.4 (mar 11th 2019)

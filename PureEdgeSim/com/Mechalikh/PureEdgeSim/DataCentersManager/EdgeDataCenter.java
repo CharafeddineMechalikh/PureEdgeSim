@@ -34,6 +34,7 @@ public class EdgeDataCenter extends DatacenterSimple {
 	private long ramMemory;
 	private MobilityManager mobilityManager;
 	private EdgeDataCenter orchestrator;
+	private double currentCpuUtilization = 0;
 
 	public EdgeDataCenter(Simulation simulation, List<? extends Host> hostList, VmAllocationPolicy vmAllocationPolicy) {
 		super(simulation, hostList, vmAllocationPolicy);
@@ -82,7 +83,7 @@ public class EdgeDataCenter extends DatacenterSimple {
 	private void updateEnergyConsumption() {
 		setIdle(true);
 		double vmUsage = 0;
-		double currentCpuUtilization = 0;
+		currentCpuUtilization = 0;
 
 		// get the cpu usage of all vms
 		for (int i = 0; i < this.getVmList().size(); i++) {
@@ -167,19 +168,16 @@ public class EdgeDataCenter extends DatacenterSimple {
 		return deathTime;
 	}
 
-	public List<VmTaskMapItem> getVmTaskMap() {
-
+	public List<VmTaskMapItem> getVmTaskMap() { 
 		return vmTaskMap;
 	}
 
 	public void setApplication(int app) {
-		this.applicationType = app;
-
+		this.applicationType = app; 
 	}
 
 	public int getApplication() {
-		return applicationType;
-
+		return applicationType; 
 	}
 
 	public boolean isOrchestrator() {
@@ -221,10 +219,8 @@ public class EdgeDataCenter extends DatacenterSimple {
 		return totalCpuUtilization * 100 / utilizationFrequency;
 	}
 
-	public double getCurrentCpuUtilization() {
-		if (utilizationFrequency == 0)
-			utilizationFrequency = 1;
-		return totalCpuUtilization * 100 / utilizationFrequency;
+	public double getCurrentCpuUtilization() { 
+		return currentCpuUtilization* 100 ;
 	}
 
 	public boolean isIdle() {

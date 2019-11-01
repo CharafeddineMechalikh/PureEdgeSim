@@ -23,7 +23,7 @@ public class FilesParser {
 			throws SAXException, IOException, ParserConfigurationException {
 		simulationParameters.EDGE_DEVICES_FILE = edgeFile;
 		simulationParameters.FOG_SERVERS_FILE = fogFile;
-		simulationParameters.CLOUD_DATACENTERS_FILE = appFile;
+		simulationParameters.CLOUD_DATACENTERS_FILE = cloudFile;
 		return (checkSimulationProperties(simProp) && checkXmlFiles(edgeFile, TYPES.EDGE)
 				&& checkXmlFiles(fogFile, TYPES.FOG) && checkXmlFiles(cloudFile, TYPES.CLOUD) && checkAppFile(appFile));
 	}

@@ -150,10 +150,6 @@ public class NetworkModel extends CloudSimEntity {
 		transfer.setRemainingFileSize(transfer.getRemainingFileSize()
 				- (simulationParameters.NETWORK_UPDATE_INTERVAL * transfer.getCurrentBandwidth()));
 
-		if (transfer.getRemainingFileSize() <= 0) {// Transfer finished
-			transfer.setRemainingFileSize(0);
-			transferFinished(transfer);
-		}
 		// Update LAN network usage delay
 		transfer.setLanNetworkUsage(transfer.getLanNetworkUsage()
 				+ (oldRemainingSize - transfer.getRemainingFileSize()) / transfer.getCurrentBandwidth());
@@ -162,7 +158,10 @@ public class NetworkModel extends CloudSimEntity {
 		if (wanIsUsed(transfer))
 			transfer.setWanNetworkUsage(transfer.getWanNetworkUsage()
 					+ (oldRemainingSize - transfer.getRemainingFileSize()) / transfer.getCurrentBandwidth());
-
+		if (transfer.getRemainingFileSize() <= 0) {// Transfer finished
+			transfer.setRemainingFileSize(0);
+			transferFinished(transfer);
+		}
 	}
 
 	private void updateEnergyConsumption(FileTransferProgress transfer, String type) {
@@ -196,6 +195,8 @@ public class NetworkModel extends CloudSimEntity {
 	}
 
 	private void transferFinished(FileTransferProgress transfer) {
+		// update logger parameters
+		simulationManager.getSimulationLogger().updateNetworkUsage(transfer);
 		// If it is an offlaoding request that is sent to the orchestrator
 		if (transfer.getTransferType() == FileTransferProgress.REQUEST) {
 			offloadingRequestRecievedByOrchestrator(transfer);

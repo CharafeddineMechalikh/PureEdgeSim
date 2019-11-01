@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.cloudbus.cloudsim.vms.Vm;
+
 import com.mechalikh.pureedgesim.Main;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
@@ -34,11 +36,36 @@ public class SimLog {
 	private String currentOrchArchitecture;
 	private String currentOrchAlgorithm;
 	private int currentEdgeDevicesCount;
-	private int notGeneratedBecDeviceDead = 0;
 	private String simStartTime;
-	private int failedResourcesUnavailable = 0;// tasks failed due to unavailability of resources
 	private SimulationManager simulationManager;
 	private boolean isFirstIteration;
+
+	// Tasks execution results
+	private int tasksSent = 0;
+	private int tasksFailed = 0;
+	private int tasksFailedLatency = 0;
+	private int tasksFailedMobility = 0;
+	private int tasksFailedRessourcesUnavailable = 0;
+	private int tasksFailedBeacauseDeviceDead = 0;
+	private int notGeneratedBecDeviceDead = 0;
+	private double totalExecutionTime = 0;
+	private double totalWaitingTime = 0;
+	private int executedTasksCount = 0;
+	private int tasksExecutedOnCloud = 0;
+	private int tasksExecutedOnFog = 0;
+	private int tasksExecutedOnEdge = 0;
+	private int tasksFailedCloud = 0;
+	private int tasksFailedFog = 0;
+	private int tasksFailedEdge = 0;
+
+	// Network utilization
+	private double totalLanUsage = 0;
+	private double totalWanUsage = 0;
+	private double totalBandwidth = 0;
+	private int transfersCount = 0;
+	private double containersLanUsage = 0;
+	private double containersWanUsage = 0;
+	private double totalTraffic = 0;
 
 	public SimLog(String time, boolean isFirstIteration) {
 		this.setSimStartTime(time);
@@ -52,29 +79,25 @@ public class SimLog {
 
 		if (isFirstIteration) {
 			// Add the CSV file header
-			addCsvHeader();
+			resultsList.add("Orchestration architecture,Orchestration algorithm,Edge devices count,"
+					+ "Tasks execution delay (s),Average execution delay (s),Tasks waiting time (s),"
+					+ "Average wainting time (s),Generated tasks,Tasks successfully executed,"
+					+ "Task not executed (No resources available or long waiting time),Tasks failed (delay),Tasks failed (device dead),"
+					+ "Tasks failed (mobility),Tasks not generated due to the death of devices,Total tasks executed (Cloud),"
+					+ "Tasks successfully executed (Cloud),Total tasks executed (Fog),Tasks successfully executed (Fog),"
+					+ "Total tasks executed (Edge),Tasks successfully executed (Edge),"
+					+ "Network usage (s),Wan usage (s),Lan usage (s), Total network traffic (MBytes), Containers wan usage (s), Containers lan usage (s),Average bandwidth per task (Mbps),Average VM CPU usage (%),"
+					+ "Average VM CPU usage (Cloud) (%),Average VM CPU usage (Fog) (%),Average VM CPU usage (Edge) (%),"
+					+ "Energy consumption (Wh),Average energy consumption (Wh/Data center),Cloud energy consumption (Wh),"
+					+ "Average Cloud energy consumption (Wh/Data center),Fog energy consumption (Wh),Average Fog energy consumption (Wh/Data center),"
+					+ "Edge energy consumption (Wh),Average Edge energy consumption (Wh/Device),Dead devices count,"
+					+ "Average remaining power (Wh),Average remaining power (%), First edge device death time (s),"
+					+ "List of remaining power (%) (only battery powered devices / 0 = dead),List of the time when each device died (s)");
 		}
 	}
 
-	private void addCsvHeader() {
-		resultsList.add("Orchestration architecture,Orchestration algorithm,Edge devices count,"
-				+ "Tasks execution delay (s),Average execution delay (s),Tasks waiting time (s),"
-				+ "Average wainting time (s),Generated tasks,Tasks successfully executed,"
-				+ "Task not executed (No resources available or long waiting time),Tasks failed (delay),Tasks failed (device dead),"
-				+ "Tasks failed (mobility),Tasks not generated due to the death of devices,Total tasks executed (Cloud),"
-				+ "Tasks successfully executed (Cloud),Total tasks executed (Fog),Tasks successfully executed (Fog),"
-				+ "Total tasks executed (Edge),Tasks successfully executed (Edge),"
-				+ "Network usage (s),Wan usage (s),Lan usage (s), Containers wan usage (s), Containers lan usage (s),Average bandwidth per task (Mbps),Average VM CPU usage (%),"
-				+ "Average VM CPU usage (Cloud) (%),Average VM CPU usage (Fog) (%),Average VM CPU usage (Edge) (%),"
-				+ "Energy consumption (Wh),Average energy consumption (Wh/Data center),Cloud energy consumption (Wh),"
-				+ "Average Cloud energy consumption (Wh/Data center),Fog energy consumption (Wh),Average Fog energy consumption (Wh/Data center),"
-				+ "Edge energy consumption (Wh),Average Edge energy consumption (Wh/Device),Dead devices count,"
-				+ "Average remaining power (Wh),Average remaining power (%), First edge device death time (s),"
-				+ "List of remaining power (%) (only battery powered devices / 0 = dead),List of the time when each device died (s)");
-	}
-
 	public void showIterationResults(List<Task> finishedTasks) {
-		printTasksRelatedResults(finishedTasks);
+		printTasksRelatedResults();
 		printNetworkRelatedResults();
 		printResourcesUtilizationResults(finishedTasks);
 		String s = "\n";
@@ -83,89 +106,16 @@ public class SimLog {
 		}
 		System.out.print(s);
 		// update the log
-		saveLog();
-
+		saveLog(); 
 	}
 
-	public void printTasksRelatedResults(List<Task> finishedTasks) {
-
-		double tasksCount = finishedTasks.size();
-		Task task;
-		float averageExecutionTime = 0;
-		float averageWaitingTime = 0;
-		int successfulTasksCount = 0;
-		int tasksExecutedOnCloud = 0;
-		int totalCloudTasks = 0;
-		int tasksExecutedOnFog = 0;
-		int totalFogTasks = 0;
-		int tasksExecutedOnEdge = 0;
-		int totalEdgeTasks = 0;
-		int tasksFailedDelay = 0;// tasks failed due to high delay
-		int tasksFailedPower = 0;// tasks failed due to device death (no energy ledt in battery)
-		int tasksFailedMobility = 0;// tasks failed due to devices mobility ( no vm migration)
-
-		for (int i = 0; i < tasksCount; i++) {
-			task = finishedTasks.get(i);
-
-			if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.CLOUD) {
-				totalCloudTasks++;
-			} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.FOG) {
-				totalFogTasks++;
-			} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.EDGE) {
-				totalEdgeTasks++;
-			}
-
-			if (task.getStatus().name().equals("SUCCESS")) {
-				successfulTasksCount++;// successfully executed
-				// calculating all the transmitted Bytes in order to get the average task size
-				if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.CLOUD) {
-					tasksExecutedOnCloud++;
-				} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.FOG) {
-					tasksExecutedOnFog++;
-				} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.EDGE) {
-					tasksExecutedOnEdge++;
-				}
-
-			} else
-				failedResourcesUnavailable++;
-
-			if (task.getFailureReason() == Task.Status.FAILED_DUE_TO_LATENCY)
-				tasksFailedDelay++;
-			else if (task.getFailureReason() == Task.Status.FAILED_BECAUSE_DEVICE_DEAD)
-				tasksFailedPower++;
-			else if (task.getFailureReason() == Task.Status.FAILED_DUE_TO_DEVICE_MOBILITY)
-				tasksFailedMobility++;
-			else if (task.getFailureReason() == Task.Status.FAILED_NO_RESOURCES)
-				failedResourcesUnavailable++;
-
-			if (task.getExecStartTime() > 0)
-				averageWaitingTime += task.getExecStartTime() - task.getTime();
-			if (task.getActualCpuTime() > 0)
-				averageExecutionTime += task.getActualCpuTime();
-		} // end of "for" loop
-
-		int tasksSent = generatedTasksCount - notGeneratedBecDeviceDead;
-
-		// No resources were available, as result:long waiting time, so the simulation
-		// ended without the execution of these tasks
-		int tasksNotExecuted = generatedTasksCount
-				- (successfulTasksCount + tasksFailedMobility + tasksFailedPower + tasksFailedDelay);
-
-		// average network usage (seconds)
-		double execRate = ((double) successfulTasksCount * 100) / (double) tasksSent;
-		double delayFailRate = ((double) tasksFailedDelay * 100) / (double) tasksSent;
-		double powerFailRate = ((double) tasksFailedPower * 100) / (double) tasksSent;
-		double mobilityFailRate = ((double) tasksFailedMobility * 100) / (double) tasksSent;
-		double notSentDueToDeath = ((double) notGeneratedBecDeviceDead * 100) / (double) generatedTasksCount;
-		double notExecutedDueToLongWaitTime = ((double) tasksNotExecuted * 100) / (double) generatedTasksCount;
-
-		// printing results
+	public void printTasksRelatedResults() {
 		print("");
 		print("------------------------------------------------------- OUTPUT -------------------------------------------------------");
 		print("");
 		print("SimLog- Tasks not sent because device was dead                                  :"
-				+ padLeftSpaces(decimalFormat.format(notSentDueToDeath), 20) + " % (" + notGeneratedBecDeviceDead
-				+ " tasks)");
+				+ padLeftSpaces(decimalFormat.format(notGeneratedBecDeviceDead / generatedTasksCount), 20) + " % ("
+				+ notGeneratedBecDeviceDead + " tasks)");
 		print("SimLog- Tasks sent from edge devices                                            :"
 				+ padLeftSpaces("" + decimalFormat.format(((double) tasksSent * 100) / ((double) generatedTasksCount)),
 						20)
@@ -173,103 +123,74 @@ public class SimLog {
 
 		print("-------------------------------------All values below are based on the sent tasks-------------------------------------");
 		print("SimLog- Tasks execution delay                                                   :"
-				+ padLeftSpaces(decimalFormat.format(averageExecutionTime), 20) + " seconds");
-		print("SimLog- Average tasks execution delay                                           :" + padLeftSpaces(
-				decimalFormat.format(averageExecutionTime / (double) (tasksSent - tasksFailedPower)), 20) + " seconds");
+				+ padLeftSpaces(decimalFormat.format(totalExecutionTime), 20) + " seconds");
+		print("SimLog- Average tasks execution delay                                           :"
+				+ padLeftSpaces(decimalFormat.format(totalExecutionTime / executedTasksCount), 20) + " seconds");
 		print("SimLog- Tasks waiting time (from task submiting to the execution start)         :"
-				+ padLeftSpaces(decimalFormat.format(averageWaitingTime), 20) + " seconds");
+				+ padLeftSpaces(decimalFormat.format(totalWaitingTime), 20) + " seconds");
 		print("SimLog- Average tasks waiting time (from task submiting to the execution start) :"
-				+ padLeftSpaces(decimalFormat.format(averageWaitingTime / (double) (tasksSent - tasksFailedPower)), 20)
-				+ " seconds");
+				+ padLeftSpaces(decimalFormat.format(totalWaitingTime / executedTasksCount), 20) + " seconds");
 		print("SimLog- Tasks successfully executed                                             :"
-				+ padLeftSpaces("" + decimalFormat.format(execRate), 20) + " % (" + successfulTasksCount + " among "
-				+ tasksSent + " sent tasks)");
+				+ padLeftSpaces("" + decimalFormat.format((double) (tasksSent - tasksFailed) * 100 / tasksSent), 20)
+				+ " % (" + (tasksSent - tasksFailed) + " among " + tasksSent + " sent tasks)");
 
 		print("SimLog- Tasks failures");
 		print("                                       Not executed due to resources unavailable:"
-				+ padLeftSpaces(decimalFormat.format(notExecutedDueToLongWaitTime), 20) + " % (" + tasksNotExecuted
-				+ " tasks)");
+				+ padLeftSpaces(decimalFormat.format((double) tasksFailedRessourcesUnavailable * 100 / tasksSent), 20)
+				+ " % (" + tasksFailedRessourcesUnavailable + " tasks)");
 		print("                              Successfully executed but failed due to high delay:"
-				+ padLeftSpaces(decimalFormat.format(delayFailRate), 20) + " % (" + tasksFailedDelay + " tasks from "
-				+ tasksSent + " successfully sent tasks)");
+				+ padLeftSpaces(decimalFormat.format((double) tasksFailedLatency * 100 / tasksSent), 20) + " % ("
+				+ tasksFailedLatency + " tasks from " + tasksSent + " successfully sent tasks)");
 		print("                 Tasks execution results not returned because the device is dead:"
-				+ padLeftSpaces(decimalFormat.format(powerFailRate), 20) + " % (" + tasksFailedPower + " tasks)");
+				+ padLeftSpaces(decimalFormat.format((double) tasksFailedBeacauseDeviceDead * 100 / tasksSent), 20)
+				+ " % (" + tasksFailedBeacauseDeviceDead + " tasks)");
 		print("                     Tasks execution results not returned due to device mobility:"
-				+ padLeftSpaces(decimalFormat.format(mobilityFailRate), 20) + " % (" + tasksFailedMobility + " tasks)");
+				+ padLeftSpaces(decimalFormat.format((double) tasksFailedMobility * 100 / tasksSent), 20) + " % ("
+				+ tasksFailedMobility + " tasks)");
 
 		print("SimLog- Tasks executed on each level                                            :" + " Cloud="
-				+ padLeftSpaces("" + totalCloudTasks, 13) + " tasks (where " + tasksExecutedOnCloud
-				+ " were successfully executed )");
+				+ padLeftSpaces("" + tasksExecutedOnCloud, 13) + " tasks (where "
+				+ (tasksExecutedOnCloud - tasksFailedCloud) + " were successfully executed )");
 		print("                                                                                 " + " Fog="
-				+ padLeftSpaces("" + totalFogTasks, 15) + " tasks (where " + tasksExecutedOnFog
+				+ padLeftSpaces("" + tasksExecutedOnFog, 15) + " tasks (where " + (tasksExecutedOnFog - tasksFailedFog)
 				+ " were successfully executed )");
 		print("                                                                                 " + " Edge="
-				+ padLeftSpaces("" + totalEdgeTasks, 14) + " tasks (where " + tasksExecutedOnEdge
-				+ " were successfully executed )");
+				+ padLeftSpaces("" + tasksExecutedOnEdge, 14) + " tasks (where "
+				+ (tasksExecutedOnEdge - tasksFailedEdge) + " were successfully executed )");
 
 		resultsList.add(currentOrchArchitecture + "," + currentOrchAlgorithm + "," + currentEdgeDevicesCount + ","
-				+ decimalFormat.format(averageExecutionTime) + ","
-				+ decimalFormat.format(averageExecutionTime / (double) (tasksSent - tasksFailedPower)) + ","
-				+ decimalFormat.format(averageWaitingTime) + ","
-				+ decimalFormat.format(averageWaitingTime / (double) (tasksSent - tasksFailedPower)) + ","
-				+ generatedTasksCount + "," + successfulTasksCount + "," + tasksNotExecuted + "," + tasksFailedDelay
-				+ "," + tasksFailedPower + "," + tasksFailedMobility + "," + notGeneratedBecDeviceDead + ","
-				+ totalCloudTasks + "," + tasksExecutedOnCloud + "," + totalFogTasks + "," + tasksExecutedOnFog + ","
-				+ totalEdgeTasks + "," + tasksExecutedOnEdge + ",");
+				+ decimalFormat.format(totalExecutionTime) + ","
+				+ decimalFormat.format(totalExecutionTime / executedTasksCount) + ","
+				+ decimalFormat.format(totalWaitingTime) + ","
+				+ decimalFormat.format(totalWaitingTime / executedTasksCount) + "," + generatedTasksCount + ","
+				+ (tasksSent - tasksFailed) + "," + tasksFailed + "," + tasksFailedLatency + ","
+				+ tasksFailedBeacauseDeviceDead + "," + tasksFailedMobility + "," + notGeneratedBecDeviceDead + ","
+				+ tasksExecutedOnCloud + "," + (tasksExecutedOnCloud - tasksFailedCloud) + "," + tasksExecutedOnFog
+				+ "," + (tasksExecutedOnFog - tasksFailedFog) + "," + tasksExecutedOnEdge + ","
+				+ (tasksExecutedOnEdge - tasksFailedEdge) + ",");
 	}
 
 	public void printNetworkRelatedResults() {
-		double bandwidth = 0;
-		double networkUsage = 0;
-		double lanUsage = 0;
-		double wanUsage = 0;
-		double lanUsedByContainers = 0;
-		double wanUsedByContainers = 0;
-		double networkTraffic = 0;
-
-		List<FileTransferProgress> transferProgressList = getSimulationManager().getNetworkModel()
-				.getTransferProgressList();
-		for (int i = 0; i < transferProgressList.size(); i++) {
-			lanUsage += transferProgressList.get(i).getLanNetworkUsage();
-			wanUsage += transferProgressList.get(i).getWanNetworkUsage();
-			networkTraffic += transferProgressList.get(i).getFileSize();
-			if (transferProgressList.get(i).getLanNetworkUsage() > 0) {
-				bandwidth += transferProgressList.get(i).getFileSize()
-						/ transferProgressList.get(i).getLanNetworkUsage();
-			}
-			if (transferProgressList.get(i).getTransferType() == FileTransferProgress.CONTAINER) {
-				lanUsedByContainers += transferProgressList.get(i).getLanNetworkUsage();
-				wanUsedByContainers += transferProgressList.get(i).getWanNetworkUsage();
-			}
-		}
-
-		networkTraffic = networkTraffic / 1000;
-		bandwidth = bandwidth / (1000 * transferProgressList.size());
-		networkUsage = lanUsage; // WAN cannot be be used unless the LAN is used, therefore the total usage in
-									// this case will be equivalant to lan usage
-
-		if (wanUsage > 0)
-			wanUsedByContainers = wanUsedByContainers * 100 / wanUsage;
-		if (lanUsage > 0)
-			lanUsedByContainers = lanUsedByContainers * 100 / lanUsage;
 		print("SimLog- Network usage                                                           :"
-				+ padLeftSpaces(decimalFormat.format(networkUsage), 20) + " seconds (The total traffic: "
-				+ networkTraffic + " (MB) )");
+				+ padLeftSpaces(decimalFormat.format(totalLanUsage), 20) + " seconds (The total traffic: "
+				+ decimalFormat.format(totalTraffic) + " (MBytes) )");
 		print("                                                                                 " + " Wan="
-				+ padLeftSpaces(decimalFormat.format(wanUsage), 15) + " seconds ("
-				+ decimalFormat.format(wanUsage * 100 / networkUsage)
-				+ " % of total usage, WAN used when downloading containers=" + decimalFormat.format(wanUsedByContainers)
-				+ " % of WAN usage )");
+				+ padLeftSpaces(decimalFormat.format(totalWanUsage), 15) + " seconds ("
+				+ decimalFormat.format(totalWanUsage * 100 / totalLanUsage)
+				+ " % of total usage, WAN used when downloading containers="
+				+ decimalFormat.format(containersWanUsage * 100 / totalWanUsage) + " % of WAN usage )");
 		print("                                                                                 " + " Lan="
-				+ padLeftSpaces(decimalFormat.format(lanUsage), 15) + " seconds ("
-				+ decimalFormat.format(lanUsage * 100 / networkUsage)
-				+ " % of total usage, LAN used when downloading containers=" + decimalFormat.format(lanUsedByContainers)
-				+ " % of LAN usage )");
+				+ padLeftSpaces(decimalFormat.format(totalLanUsage), 15) + " seconds ("
+				+ decimalFormat.format(totalLanUsage * 100 / totalLanUsage)
+				+ " % of total usage, LAN used when downloading containers="
+				+ decimalFormat.format(containersLanUsage * 100 / totalLanUsage) + " % of LAN usage )");
 		print("                                                            Average bandwidth per transfer="
-				+ padLeftSpaces(decimalFormat.format(bandwidth), 10) + " Mbps  ");
+				+ padLeftSpaces(decimalFormat.format(totalBandwidth / transfersCount), 10) + " Mbps  ");
 		// Add these values to the las item of the results list
-		resultsList.set(resultsList.size() - 1, resultsList.get(resultsList.size() - 1) + networkUsage + "," + wanUsage
-				+ "," + lanUsage + "," + wanUsedByContainers + "," + lanUsedByContainers + "," + bandwidth + ",");
+		resultsList.set(resultsList.size() - 1,
+				resultsList.get(resultsList.size() - 1) + totalLanUsage + "," + totalWanUsage + "," + totalLanUsage
+						+ "," + totalTraffic + "," + containersWanUsage + "," + containersLanUsage + ","
+						+ (totalBandwidth / transfersCount) + ",");
 	}
 
 	public void printResourcesUtilizationResults(List<Task> finishedTasks) {
@@ -291,7 +212,7 @@ public class SimLog {
 		List<Double> devicesDeathTime = new ArrayList<Double>();
 		int batteryPoweredDevicesCount = 0;
 		int aliveBatteryPoweredDevicesCount = 0;
-		List<EdgeDataCenter> datacentersList = getSimulationManager().getServersManager().getDatacenterList();
+		List<EdgeDataCenter> datacentersList = simulationManager.getServersManager().getDatacenterList();
 
 		for (int j = 0; j < datacentersList.size(); j++) {
 			dc = (EdgeDataCenter) datacentersList.get(j);
@@ -328,8 +249,7 @@ public class SimLog {
 						aliveBatteryPoweredDevicesCount++;
 					}
 				}
-			}
-
+			} 
 		}
 		averageCpuUtilization = (averageCloudCpuUtilization + averageEdgeCpuUtilization + averageFogCpuUtilization)
 				/ (edgeDevicesCount + simulationParameters.NUM_OF_FOG_DATACENTERS
@@ -347,7 +267,7 @@ public class SimLog {
 		averageRemainingPowerWh = averageRemainingPowerWh / (double) aliveBatteryPoweredDevicesCount;
 		double averageCloudEnConsumption = cloudEnConsumption / simulationParameters.NUM_OF_CLOUD_DATACENTERS;
 		double averageFogEnConsumption = fogEnConsumption / simulationParameters.NUM_OF_FOG_DATACENTERS;
-		double averageEdgeEnConsumption = edgeEnConsumption / getSimulationManager().getScenario().getDevicesCount();
+		double averageEdgeEnConsumption = edgeEnConsumption / simulationManager.getScenario().getDevicesCount();
 
 		print("SimLog- Average vm CPU utilization                                              :"
 				+ padLeftSpaces(decimalFormat.format(averageCpuUtilization), 20) + " %");
@@ -404,30 +324,6 @@ public class SimLog {
 		return String.format("%1$" + n + "s", str);
 	}
 
-	class VmLoadLogItem {
-		private double time;
-		private double vmLoad;
-		private int vmId;
-
-		VmLoadLogItem(double time, double vmLoad, int vmId) {
-			this.time = time;
-			this.vmLoad = vmLoad;
-			this.vmId = vmId;
-		}
-
-		public double getLoad() {
-			return vmLoad;
-		}
-
-		public int getVmId() {
-			return vmId;
-		}
-
-		public String toString() {
-			return time + " is " + vmLoad;
-		}
-	}
-
 	public void cleanOutputFolder(String outputFolder) throws IOException {
 		// Clean the folder where the results files will be saved
 		if (isFirstIteration) {
@@ -438,7 +334,7 @@ public class SimLog {
 		}
 	}
 
-	void deleteDirectoryRecursion(Path path) throws IOException {
+	private void deleteDirectoryRecursion(Path path) throws IOException {
 		if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
 			try (DirectoryStream<Path> entries = Files.newDirectoryStream(path)) {
 				for (Path entry : entries) {
@@ -488,7 +384,7 @@ public class SimLog {
 		String outputFilesName = Main.getOutputFolder() + "/" + simStartTime;
 		new File(outputFilesName).mkdirs();
 		if (simulationParameters.PARALLEL)
-			outputFilesName += "/Parallel_simulation_" + getSimulationManager().getSimulationId();
+			outputFilesName += "/Parallel_simulation_" + simulationManager.getSimulationId();
 		else
 			outputFilesName += "/Sequential_simulation";
 
@@ -497,17 +393,17 @@ public class SimLog {
 
 	public void print(String line, int flag) {
 		String newLine = line;
-		if (getSimulationManager() == null) {
+		if (simulationManager == null) {
 			System.out.println("    0.0" + " : " + newLine);
 		} else {
 			switch (flag) {
 			case DEFAULT:
-				if (getSimulationManager().getSimulation().clock() < simulationParameters.INITIALIZATION_TIME)
+				if (simulationManager.getSimulation().clock() < simulationParameters.INITIALIZATION_TIME)
 					newLine = padLeftSpaces("0", 7) + " (s) : " + newLine;
 				else
 					newLine = padLeftSpaces(decimalFormat.format(
-							getSimulationManager().getSimulation().clock() - simulationParameters.INITIALIZATION_TIME),
-							7) + " (s) : " + newLine;
+							simulationManager.getSimulation().clock() - simulationParameters.INITIALIZATION_TIME), 7)
+							+ " (s) : " + newLine;
 				log.add(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + " - simulation time "
 						+ newLine);
 				break;
@@ -530,10 +426,6 @@ public class SimLog {
 
 	public static void println(String line) {
 		System.out.println(line);
-	}
-
-	public boolean isEnabled() {
-		return simulationParameters.DEEP_LOGGING;
 	}
 
 	public void deepLog(String line) {
@@ -560,7 +452,6 @@ public class SimLog {
 
 	public void printSameLine(String line) {
 		System.out.print(line);
-
 	}
 
 	public int getGeneratedTasks() {
@@ -571,10 +462,6 @@ public class SimLog {
 		this.generatedTasksCount = generatedTasks;
 	}
 
-	public String getCurrentOrchPolicy() {
-		return currentOrchArchitecture;
-	}
-
 	public void setCurrentOrchPolicy(String currentOrchPolicy) {
 		this.currentOrchArchitecture = currentOrchPolicy;
 	}
@@ -583,20 +470,7 @@ public class SimLog {
 		this.currentEdgeDevicesCount = dev;
 		this.currentOrchAlgorithm = simulationParameters.ORCHESTRATION_AlGORITHMS[alg];
 		this.currentOrchArchitecture = simulationParameters.ORCHESTRATION_ARCHITECTURES[arch];
-		this.setSimulationManager(simulationManager);
-	}
-
-	public int getNotGeneratedBecauseDead() {
-		// the number of tasks that aren't generated because the device was turned off
-		// (no remaining energy)
-		return notGeneratedBecDeviceDead;
-	}
-
-	public void setNotGeneratedBecauseDead(int i) {
-		// the number of tasks that were not generated because the device was turned off
-		// (no remaining energy)
-		this.notGeneratedBecDeviceDead = i;
-
+		this.simulationManager = simulationManager;
 	}
 
 	public String getSimStartTime() {
@@ -607,20 +481,72 @@ public class SimLog {
 		this.simStartTime = simStartTime;
 	}
 
-	public int getTasksFailedRessourcesUnavailable() {
-		return failedResourcesUnavailable;
+	public void incrementTasksSent() {
+		this.tasksSent++;
 	}
 
-	public void setFailedDueToResourcesUnavailablity(int i) {
-		this.failedResourcesUnavailable = i;
+	public void incrementTasksFailed(Task task) {
+		this.tasksFailed++;
+		if (task.getVm() == Vm.NULL)
+			return;
+		if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.CLOUD) {
+			this.tasksFailedCloud++;
+		} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.FOG) {
+			this.tasksFailedFog++;
+		} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.EDGE) {
+			this.tasksFailedEdge++;
+		}
 	}
 
-	public SimulationManager getSimulationManager() {
-		return simulationManager;
+	public void incrementFailedBeacauseDeviceDead(Task task) {
+		this.tasksFailedBeacauseDeviceDead++;
+		incrementTasksFailed(task);
 	}
 
-	public void setSimulationManager(SimulationManager simulationManager) {
-		this.simulationManager = simulationManager;
+	public void incrementNotGeneratedBeacuseDeviceDead() {
+		this.notGeneratedBecDeviceDead++;
+	}
+
+	public void incrementTasksFailedLatency(Task task) {
+		this.tasksFailedLatency++;
+		incrementTasksFailed(task);
+	}
+
+	public void incrementTasksFailedMobility(Task task) {
+		this.tasksFailedMobility++;
+		incrementTasksFailed(task);
+	}
+
+	public void incrementTasksFailedLackOfRessources(Task task) {
+		this.tasksFailedRessourcesUnavailable++;
+		incrementTasksFailed(task);
+	}
+
+	public void getTasksExecutionInfos(Task task) {
+		this.totalExecutionTime += task.getActualCpuTime();
+		this.totalWaitingTime += task.getExecStartTime() - task.getTime();
+		this.executedTasksCount++;
+		if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.CLOUD) {
+			this.tasksExecutedOnCloud++;
+		} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.FOG) {
+			this.tasksExecutedOnFog++;
+		} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.EDGE) {
+			this.tasksExecutedOnEdge++;
+		}
+	}
+
+	public void updateNetworkUsage(FileTransferProgress transfer) {
+		this.totalLanUsage += transfer.getLanNetworkUsage();
+		this.totalWanUsage += transfer.getWanNetworkUsage();
+		this.totalBandwidth += transfer.getFileSize() / (transfer.getLanNetworkUsage() * 1000); // Kbits/s to Mbits/s
+		this.totalTraffic += transfer.getFileSize() / 8000; // Kbits to Mbytes
+
+		if (transfer.getTransferType() == FileTransferProgress.CONTAINER) {
+			this.containersLanUsage += transfer.getLanNetworkUsage();
+			this.containersWanUsage += transfer.getWanNetworkUsage();
+		}
+		this.transfersCount++;
+
 	}
 
 }

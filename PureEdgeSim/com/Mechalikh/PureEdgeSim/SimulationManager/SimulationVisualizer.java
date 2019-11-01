@@ -132,15 +132,15 @@ public class SimulationVisualizer {
 		List<EdgeDataCenter> datacenterList = getSimulationManager().getServersManager().getDatacenterList();
 		for (int i = 0; i < datacenterList.size(); i++) {
 			if (datacenterList.get(i).getType() == TYPES.CLOUD) {
-				cpuUsage = datacenterList.get(i).getCurrentCpuUtilization();
+				cpuUsage = datacenterList.get(i).getTotalCpuUtilization();
 
 			} else if (datacenterList.get(i).getType() == TYPES.EDGE && datacenterList.get(i).getVmList().size() > 0) {
-				edUsage += datacenterList.get(i).getCurrentCpuUtilization();
+				edUsage += datacenterList.get(i).getTotalCpuUtilization();
 				edgecount++;
 
 			} else if (datacenterList.get(i).getType() == TYPES.FOG) {
 				fogcount++;
-				fgUsage += datacenterList.get(i).getCurrentCpuUtilization();
+				fgUsage += datacenterList.get(i).getTotalCpuUtilization();
 			}
 		}
 		edUsage = edUsage / edgecount;
@@ -168,13 +168,13 @@ public class SimulationVisualizer {
 
 		getWanUsage().add(wan);
 
-		while (getWanUsage().size() > 300 / simulationParameters.CHARTS_UPDATE_INTERVAL) {
+		while (getWanUsage().size() > 300 / simulationParameters.UPDATE_INTERVAL) {
 			getWanUsage().remove(0);
 		}
 		double[] time = new double[getWanUsage().size()];
 		double currentTime = getSimulationManager().getSimulation().clock() - simulationParameters.INITIALIZATION_TIME;
 		for (int i = getWanUsage().size() - 1; i > 0; i--)
-			time[i] = currentTime - ((getWanUsage().size() - i) * simulationParameters.CHARTS_UPDATE_INTERVAL);
+			time[i] = currentTime - ((getWanUsage().size() - i) * simulationParameters.UPDATE_INTERVAL);
 
 		updateStyle(networkUtilizationChart, currentTime - 200, currentTime, 0.0,
 				simulationParameters.WAN_BANDWIDTH / 1000.0);

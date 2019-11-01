@@ -17,6 +17,8 @@ import org.cloudbus.cloudsim.provisioners.ResourceProvisionerSimple;
 import org.cloudbus.cloudsim.resources.Pe;
 import org.cloudbus.cloudsim.resources.PeSimple;
 import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletScheduler;
+import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerSpaceShared;
+import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerTimeShared;
 import org.cloudbus.cloudsim.schedulers.vm.VmScheduler;
 import org.cloudbus.cloudsim.schedulers.vm.VmSchedulerSpaceShared;
 import org.w3c.dom.Document;
@@ -178,12 +180,12 @@ public class ServersManager {
 				.parseDouble(datacenterElement.getElementsByTagName("idleConsumption").item(0).getTextContent());
 		double maxConsumption = Double
 				.parseDouble(datacenterElement.getElementsByTagName("maxConsumption").item(0).getTextContent());
-		EnergyModel energyModel = new EnergyModel(maxConsumption, idleConsumption);
-		datacenter.setEnergyModel(energyModel);
 		datacenter.setOrchestrator(Boolean
 				.parseBoolean(datacenterElement.getElementsByTagName("isOrchestrator").item(0).getTextContent()));
 		datacenter.setType(level);
 		datacenter.setMobilityManager(new MobilityManager(datacenterLocation));
+		EnergyModel energyModel = new EnergyModel(maxConsumption, idleConsumption);
+		datacenter.setEnergyModel(energyModel);
 		return datacenter;
 	}
 
@@ -247,9 +249,9 @@ public class ServersManager {
 				CloudletScheduler tasksScheduler;
 
 				if ("SPACE_SHARED".equals(simulationParameters.CPU_ALLOCATION_POLICY))
-					tasksScheduler = new TasksSchedulerSpaceShared();
+					tasksScheduler = new CloudletSchedulerSpaceShared();
 				else
-					tasksScheduler = new TasksSchedulerTimeShared();
+					tasksScheduler = new CloudletSchedulerTimeShared();
 
 				EdgeVM vm = new EdgeVM(vmList.size(), vmMips, vmNumOfCores);
 				vm.setRam(vmRam).setBw(vmBandwidth).setSize(vmStorage).setCloudletScheduler(tasksScheduler);

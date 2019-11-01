@@ -24,7 +24,7 @@
 		<task_length>6000</task_length>
 		<required_core>1</required_core> 
 	</application>
-	<application name="SMART_HOME">  
+	<application name="SMART_HOME">  u
 		<max_delay>200</max_delay> 
 		<container_size>3000</container_size>
 		<request_size>50</request_size>

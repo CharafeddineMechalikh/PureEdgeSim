@@ -2,28 +2,20 @@
 <fog_datacenters>
 	<datacenter arch="x86" os="Linux" vmm="Xen">
 		<idleConsumption>0.00015</idleConsumption>
-		<comment>idle energy consumption/second</comment>
-		<maxConsumption>0.016</maxConsumption>
-		<comment>max energy consumption/ second
-			when using 100% of cpu
-		</comment>
-		<isOrchestrator>false</isOrchestrator>
-		<comment>it has a task orchestrator or not  </comment>
+		<!--idle energy consumption/second -->
+		<maxConsumption>0.016</maxConsumption> 		<!--max energy consumption/ second when using 100% of cpu -->
+		<isOrchestrator>false</isOrchestrator>		<!--it has a task orchestrator or not -->
 		<location>
-			<x_pos>50</x_pos>
-			<comment>must be inferior to the map/area length  </comment>
-			<y_pos>100</y_pos>
-			<comment>must be inferior to the map/area width  </comment>
+			<x_pos>50</x_pos>			<!--must be inferior to the map/area length -->
+			<y_pos>100</y_pos>			<!--must be inferior to the map/area width -->
 		</location>
 		<hosts>
 			<host>
+				<!-- let these resources values be more than the sum of the VMs values 
+					this will allow virtual machines to migrate -->
 				<core>32</core>
 				<mips>64000</mips>
-				<ram>64000</ram>
-				<comment> let these resources values be more than the sum of the VMs
-					values
-					this will allow virtual machines to migrate
-				</comment>
+				<ram>64000</ram> 
 				<storage>800000</storage>
 				<VMs>
 					<VM vmm="Xen">

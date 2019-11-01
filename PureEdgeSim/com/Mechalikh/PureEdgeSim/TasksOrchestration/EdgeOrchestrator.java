@@ -200,7 +200,7 @@ public class EdgeOrchestrator extends Orchestrator {
 		int vm = -1;
 		int minTasksCount = -1; // vm with minimum assigned tasks;
 		// get best vm for this task
-		for (int i = 0; i < orchestrationHistory.size(); i++) {
+		for (int i = 0; i < orchestrationHistory.size(); i++) { 
 			if (offloadingIsPossible(task, vmList.get(i), architecture)) {
 				if (minTasksCount == -1) {
 					minTasksCount = orchestrationHistory.get(i).size();
@@ -258,8 +258,7 @@ public class EdgeOrchestrator extends Orchestrator {
 	private void assignTaskToVm(int vmIndex, Task task) {
 		List<EdgeVM> vmList = this.getSimulationManager().getServersManager().getVmList();
 		if (vmIndex == -1) {
-			this.getSimulationManager().getSimulationLogger().setFailedDueToResourcesUnavailablity(
-					this.getSimulationManager().getSimulationLogger().getTasksFailedRessourcesUnavailable() + 1);
+			this.getSimulationManager().getSimulationLogger().incrementTasksFailedLackOfRessources(task);
 		} else {
 			task.setVm(vmList.get(vmIndex)); // send this task to this vm
 			this.getSimulationManager().getSimulationLogger()
@@ -268,7 +267,7 @@ public class EdgeOrchestrator extends Orchestrator {
 							+ vmList.get(vmIndex).getId());
 
 			// update history
-			orchestrationHistory.get(vmIndex).add(task.getId());
+			orchestrationHistory.get(vmIndex).add((int) task.getId());
 		}
 	}
 
