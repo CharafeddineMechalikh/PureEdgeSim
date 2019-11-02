@@ -1,0 +1,28 @@
+package examples;
+ 
+import com.mechalikh.pureedgesim.MainApplication; 
+
+public class example3 extends MainApplication {
+ /*
+  * This is a simple example showing how to launch simulation suing a custom energy model.
+  * by removing it, pureEdgeSim will use the default models provided by ¨PureEdgeSim.
+  * As you can see, this class extends the Main class provided by PureEdgeSim, which is required  for this example to work
+  */
+	public example3(int fromIteration, int step_) {
+		super(fromIteration, step_);
+	}
+
+	public static void main(String[] args) { 
+		// To use your custom Energy model, do this:
+		// The custom energy model class can be found in the examples folder as well.
+		// by removing this line, pureEdgeSim will use the default energy model.  
+		setCustomEnergyModel(CustomEnergyModel.class);  
+
+		// To use the PureEdgeSim default Energy Model you can also uncomment this: 
+		// setCustomEnergyModel(DefaultEnergyModel.class);  
+		
+		// Start the simulation
+		launchSimulation();
+	} 
+ 
+}

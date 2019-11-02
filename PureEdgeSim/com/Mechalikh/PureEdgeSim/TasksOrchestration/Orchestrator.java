@@ -14,8 +14,7 @@ public abstract class Orchestrator {
 	public  void initialize(Task task) {
 		sendTask(task);
 	}
-
-
+ 
 	public abstract void sendTask(Task task);
 
   

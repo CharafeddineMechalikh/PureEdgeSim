@@ -20,7 +20,7 @@ import org.knowm.xchart.style.Styler.LegendPosition;
 import org.knowm.xchart.style.markers.Marker;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
-import com.mechalikh.pureedgesim.Main;
+import com.mechalikh.pureedgesim.MainApplication;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
@@ -323,7 +323,7 @@ public class SimulationVisualizer {
 	}
 
 	public void saveCharts() throws IOException {
-		String folderName = Main.getOutputFolder() + "/" + simulationManager.getSimulationLogger().getSimStartTime()
+		String folderName = MainApplication.getOutputFolder() + "/" + simulationManager.getSimulationLogger().getSimStartTime()
 				+ "/simulation_" + simulationManager.getSimulationId() + "/iteration_"
 				+ simulationManager.getIterationId() + "__" + simulationManager.getScenario().toString();
 		new File(folderName).mkdirs();

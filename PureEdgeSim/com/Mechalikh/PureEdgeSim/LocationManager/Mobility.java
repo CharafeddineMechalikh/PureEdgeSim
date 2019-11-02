@@ -1,5 +1,5 @@
 package com.mechalikh.pureedgesim.LocationManager;
- 
+
 public abstract class Mobility {
 
 	protected Location currentLocation;
@@ -7,10 +7,13 @@ public abstract class Mobility {
 	public Mobility(Location location) {
 		this.currentLocation = location;
 	}
- 
 
-	public Location getNextLocation() {
-		// TODO Auto-generated method stub
-		return null;
+	public Mobility() { 
+	}
+
+	public abstract Location getNextLocation();
+
+	public Location getCurrentLocation() {
+		return currentLocation;
 	}
 }

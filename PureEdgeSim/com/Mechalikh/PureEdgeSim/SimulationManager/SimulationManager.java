@@ -10,11 +10,10 @@ import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
-import com.mechalikh.pureedgesim.TasksGenerator.BasicTasksGenerator;
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
-import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker;
-import com.mechalikh.pureedgesim.TasksOrchestration.EdgeOrchestrator;
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters; 
+import com.mechalikh.pureedgesim.TasksGenerator.Task; 
+import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker; 
+import com.mechalikh.pureedgesim.TasksOrchestration.Orchestrator;
 
 public class SimulationManager extends CloudSimEntity {
 	public static final int Base = 1000; // avoid conflict with CloudSim Plus tags
@@ -28,8 +27,8 @@ public class SimulationManager extends CloudSimEntity {
 	public static final int UPDATE_REAL_TIME_CHARTS = Base + 7;
 	private CustomBroker broker;
 	private List<Task> tasksList;
-	private EdgeOrchestrator edgeOrchestrator;
-	private ServersManager serversManager;
+	private Orchestrator edgeOrchestrator;
+	private ServersManager serversManager; 
 	private SimulationVisualizer simulationVisualizer;
 	private CloudSim simulation;
 	private int simulationId;
@@ -55,32 +54,6 @@ public class SimulationManager extends CloudSimEntity {
 		// Create Broker
 		broker = createBroker();
 
-		// Generate all data centers, servers, an devices
-		serversManager = new ServersManager(this);
-		serversManager.generateDatacentersAndDevices();
-
-		// Get orchestrators list from the server manager
-		orchestratorsList = serversManager.getOrchestratorsList();
-
-		// Submit vm list to the broker
-		simLog.deepLog("SimulationManager- Submitting VM list to the broker");
-		broker.submitVmList(serversManager.getVmList());
-
-		// Generate tasks list
-		BasicTasksGenerator TG = new BasicTasksGenerator(this);
-		TG.generate();
-		tasksList = TG.getTaskList();
-
-		// Initialize logger variables
-		simLog.setGeneratedTasks(tasksList.size());
-		simLog.setCurrentOrchPolicy(scenario.getStringOrchArchitecture());
-
-		// Initiate the orchestrator : send tasks and VMs lists to the orchestrator
-		edgeOrchestrator = new EdgeOrchestrator(this);
-
-		// Initialize the network model
-		networkModel = new NetworkModel(simulation, this);
-
 		// Show real time results during the simulation
 		if (simulationParameters.DISPLAY_REAL_TIME_CHARTS && !simulationParameters.PARALLEL)
 			simulationVisualizer = new SimulationVisualizer(this);
@@ -96,6 +69,11 @@ public class SimulationManager extends CloudSimEntity {
 
 	@Override
 	public void startEntity() {
+
+		// Initialize logger variables
+		simLog.setGeneratedTasks(tasksList.size());
+		simLog.setCurrentOrchPolicy(scenario.getStringOrchArchitecture());
+
 		simLog.print("SimulationManager- Simulation: " + this.simulationId + "  , iteration: " + this.iteration);
 
 		// Tasks scheduling
@@ -407,5 +385,28 @@ public class SimulationManager extends CloudSimEntity {
 		if (Dev1.getType() != Dev2.getType()) // One of them is fog and the other is edge
 			RANGE = simulationParameters.FOG_RANGE;
 		return (distance < RANGE);
+	}
+
+	public void setServersManager(ServersManager serversManager) {
+		// Get orchestrators list from the server manager
+		orchestratorsList = serversManager.getOrchestratorsList();
+		this.serversManager = serversManager;
+		
+		// Submit vm list to the broker
+		simLog.deepLog("SimulationManager- Submitting VM list to the broker");
+		broker.submitVmList(serversManager.getVmList());
+	}
+
+	public void setTasksList(List<Task> tasksList) {
+		this.tasksList = tasksList;
+	}
+
+	public void setOrchestrator(Orchestrator edgeOrchestrator) {
+		this.edgeOrchestrator = edgeOrchestrator;
+
+	}
+
+	public void setNetworkModel(NetworkModel networkModel) {
+		this.networkModel = networkModel;
 	}
 }

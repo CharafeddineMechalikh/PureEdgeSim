@@ -1,21 +1,20 @@
 package com.mechalikh.pureedgesim.DataCentersManager;
 
 import java.util.ArrayList;
-import java.util.List;
-import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicy;
-import org.cloudbus.cloudsim.core.Simulation;
+import java.util.List; 
+import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 
 import com.mechalikh.pureedgesim.LocationManager.Location;
-import com.mechalikh.pureedgesim.LocationManager.MobilityManager;
+import com.mechalikh.pureedgesim.LocationManager.Mobility;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksOrchestration.VmTaskMapItem;
 
 public class EdgeDataCenter extends DatacenterSimple {
 	private static final int UPDATE_STATUS = 2000; // Avoid conflicting with CloudSim Plus Tags
-	private Simulation simulation;
 	private simulationParameters.TYPES deviceType;
 	private boolean isMobile = false;
 	private boolean isBatteryPowered = false;
@@ -32,13 +31,14 @@ public class EdgeDataCenter extends DatacenterSimple {
 	private int utilizationFrequency = 0;
 	private boolean isIdle = true;
 	private long ramMemory;
-	private MobilityManager mobilityManager;
+	private Mobility mobilityManager;
 	private EdgeDataCenter orchestrator;
 	private double currentCpuUtilization = 0;
+	private SimulationManager simulationManager;
 
-	public EdgeDataCenter(Simulation simulation, List<? extends Host> hostList, VmAllocationPolicy vmAllocationPolicy) {
-		super(simulation, hostList, vmAllocationPolicy);
-		this.simulation = simulation;
+	public EdgeDataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
+		super(simulationManager.getSimulation(), hostList,new VmAllocationPolicySimple());
+		this.simulationManager = simulationManager;
 		vmTaskMap = new ArrayList<VmTaskMapItem>();
 
 		long memory = 0;
@@ -88,7 +88,7 @@ public class EdgeDataCenter extends DatacenterSimple {
 		// get the cpu usage of all vms
 		for (int i = 0; i < this.getVmList().size(); i++) {
 			vmUsage = this.getVmList().get(i).getCloudletScheduler()
-					.getRequestedCpuPercentUtilization(simulation.clock());
+					.getRequestedCpuPercentUtilization(simulationManager.getSimulation().clock());
 			currentCpuUtilization += vmUsage; // the current utilization
 			totalCpuUtilization += vmUsage;
 			utilizationFrequency++; // in order to get the average usage from the total usage
@@ -104,7 +104,7 @@ public class EdgeDataCenter extends DatacenterSimple {
 
 		if (isBattery() && this.getEnergyModel().getTotalEnergyConsumption() > batteryCapacity) {
 			isDead = true;
-			deathTime = simulation.clock();
+			deathTime = simulationManager.getSimulation().clock();
 		}
 	}
 
@@ -168,16 +168,16 @@ public class EdgeDataCenter extends DatacenterSimple {
 		return deathTime;
 	}
 
-	public List<VmTaskMapItem> getVmTaskMap() { 
+	public List<VmTaskMapItem> getVmTaskMap() {
 		return vmTaskMap;
 	}
 
 	public void setApplication(int app) {
-		this.applicationType = app; 
+		this.applicationType = app;
 	}
 
 	public int getApplication() {
-		return applicationType; 
+		return applicationType;
 	}
 
 	public boolean isOrchestrator() {
@@ -219,8 +219,8 @@ public class EdgeDataCenter extends DatacenterSimple {
 		return totalCpuUtilization * 100 / utilizationFrequency;
 	}
 
-	public double getCurrentCpuUtilization() { 
-		return currentCpuUtilization* 100 ;
+	public double getCurrentCpuUtilization() {
+		return currentCpuUtilization * 100;
 	}
 
 	public boolean isIdle() {
@@ -231,16 +231,16 @@ public class EdgeDataCenter extends DatacenterSimple {
 		this.isIdle = isIdle;
 	}
 
-	public MobilityManager getMobilityManager() {
+	public Mobility getMobilityManager() {
 		return mobilityManager;
 	}
 
-	public void setMobilityManager(MobilityManager mobilityManager) {
-		this.mobilityManager = mobilityManager;
+	public void setMobilityManager(Object mobilityManager) {
+		this.mobilityManager = (Mobility) mobilityManager;
 	}
 
-	public void setEnergyModel(EnergyModel energyModel) {
-		this.energyModel = energyModel;
+	public void setEnergyModel(Object energyModel) {
+		this.energyModel = (EnergyModel) energyModel;
 
 	}
 

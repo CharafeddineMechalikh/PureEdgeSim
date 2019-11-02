@@ -14,6 +14,10 @@ public class MobilityManager extends Mobility {
 		super(currentLocation);
 	}
 
+	public MobilityManager() { 
+		super();
+	}
+
 	@Override
 	public Location getNextLocation() {
 

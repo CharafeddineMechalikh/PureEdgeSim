@@ -1,5 +1,6 @@
 package com.mechalikh.pureedgesim.TasksGenerator;
 
+import java.util.List;
 import java.util.Random;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModel;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
@@ -7,12 +8,12 @@ import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
-public class BasicTasksGenerator extends TasksGenerator {
-	public BasicTasksGenerator(SimulationManager simulationManager) {
+public class DefaultTasksGenerator extends TasksGenerator {
+	public DefaultTasksGenerator(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
 
-	public void generate() {
+	public List<Task> generate() {
 		datacentersList = datacentersList.subList(
 				datacentersList.size() - getSimulationManager().getScenario().getDevicesCount(),
 				datacentersList.size());
@@ -33,6 +34,7 @@ public class BasicTasksGenerator extends TasksGenerator {
 				insert(time, app, dev);
 			}
 		}
+		return this.getTaskList();
 	}
 
 	private void insert(int time, int app, int dev) {

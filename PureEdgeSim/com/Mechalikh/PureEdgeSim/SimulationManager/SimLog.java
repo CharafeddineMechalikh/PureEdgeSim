@@ -18,7 +18,7 @@ import java.util.Locale;
 
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.Main;
+import com.mechalikh.pureedgesim.MainApplication;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
 import com.mechalikh.pureedgesim.Network.FileTransferProgress;
@@ -41,13 +41,13 @@ public class SimLog {
 
 	// Tasks execution results
 	private int generatedTasksCount = 0;
-	public int tasksSent = 0;
-	public int tasksFailed = 0;
-	public int tasksFailedLatency = 0;
-	public int tasksFailedMobility = 0;
-	public int tasksFailedRessourcesUnavailable = 0;
-	public int tasksFailedBeacauseDeviceDead = 0;
-	public int notGeneratedBecDeviceDead = 0;
+	private int tasksSent = 0;
+	private int tasksFailed = 0;
+	private int tasksFailedLatency = 0;
+	private int tasksFailedMobility = 0;
+	private int tasksFailedRessourcesUnavailable = 0;
+	private int tasksFailedBeacauseDeviceDead = 0;
+	private int notGeneratedBecDeviceDead = 0;
 	private double totalExecutionTime = 0;
 	private double totalWaitingTime = 0;
 	private int executedTasksCount = 0;
@@ -381,7 +381,7 @@ public class SimLog {
 	}
 
 	public String getFileName(String extension) {
-		String outputFilesName = Main.getOutputFolder() + "/" + simStartTime;
+		String outputFilesName = MainApplication.getOutputFolder() + "/" + simStartTime;
 		new File(outputFilesName).mkdirs();
 		if (simulationParameters.PARALLEL)
 			outputFilesName += "/Parallel_simulation_" + simulationManager.getSimulationId();

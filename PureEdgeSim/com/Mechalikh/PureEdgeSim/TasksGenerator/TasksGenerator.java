@@ -28,4 +28,6 @@ public abstract class TasksGenerator {
 	public void setSimulationManager(SimulationManager simulationManager) {
 		this.simulationManager = simulationManager;
 	}
+
+	public abstract List<Task> generate() ;
 }

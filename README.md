@@ -286,7 +286,15 @@ Example of real time charts :
 
 Real time analysis of simulation environment
 
-## 6. Change log of the latest version
+## 6. Change log of the latest versions
+
+## New version 2.2.0 (nov 2nd 2019)
+*   The code has been improved  
+
+*   Fixed some minor bugs 
+
+*   Added some tutorials and exapmles (more to be added soon) 
+
 
 ## New version 2.0.0 (oct 24th 2019)
 

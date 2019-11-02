@@ -9,7 +9,7 @@ import org.cloudbus.cloudsim.core.events.SimEvent;
 
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
-import com.mechalikh.pureedgesim.DataCentersManager.EnergyModel;
+import com.mechalikh.pureedgesim.DataCentersManager.DefaultEnergyModel;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
@@ -188,10 +188,10 @@ public class NetworkModel extends CloudSimEntity {
 		}
 		if (origin != null) {
 			origin.getEnergyModel().updatewirelessEnergyConsumption(transfer, origin, destination,
-					EnergyModel.TRANSMISSION);
+					DefaultEnergyModel.TRANSMISSION);
 		}
 		destination.getEnergyModel().updatewirelessEnergyConsumption(transfer, origin, destination,
-				EnergyModel.RECEPTION);
+				DefaultEnergyModel.RECEPTION);
 	}
 
 	private void transferFinished(FileTransferProgress transfer) {
