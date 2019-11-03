@@ -1,20 +1,20 @@
-# PureEdgeSim: A simulation toolkit for performance evaluation of fog and pure edge computing environments
+# PureEdgeSim: A simulation toolkit for performance evaluation of Fog and pure Edge computing environments
 
-[![DOI](https://zenodo.org/badge/163447483.svg)](https://zenodo.org/badge/latestdoi/163447483)  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  [![Build Status](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim.svg?branch=master)](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim)  [![Codacy Badge](https://api.codacy.com/project/badge/Grade/25ee278611014a9bb242297480703cf9)](https://www.codacy.com/manual/CharafeddineMechalikh/PureEdgeSim?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CharafeddineMechalikh/PureEdgeSim&amp;utm_campaign=Badge_Grade)   [![Maintainability](https://api.codeclimate.com/v1/badges/a1ffecb5230fc5771b93/maintainability)](https://codeclimate.com/github/CharafeddineMechalikh/PureEdgeSim/maintainability)   [![codebeat badge](https://codebeat.co/badges/bbe172a2-1169-4bbe-b6a6-0505631babc6)](https://codebeat.co/projects/github-com-charafeddinemechalikh-pureedgesim-master)
+[![DOI](https://zenodo.org/badge/163447483.svg)](https://zenodo.org/badge/latestdoi/163447483)  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  [![Build Status](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim.svg?branch=master)](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim)  [![Codacy Badge](https://api.codacy.com/project/badge/Grade/25ee278611014a9bb242297480703cf9)](https://www.codacy.com/manual/CharafeddineMechalikh/PureEdgeSim?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CharafeddineMechalikh/PureEdgeSim&amp;utm_campaign=Badge_Grade)   [![Maintainability](https://api.codeclimate.com/v1/badges/a1ffecb5230fc5771b93/maintainability)](https://codeclimate.com/github/CharafeddineMechalikh/PureEdgeSim/maintainability)   [![codebeat badge](https://codebeat.co/badges/bbe172a2-1169-4bbe-b6a6-0505631babc6)](https://codebeat.co/projects/github-com-charafeddinemechalikh-pureEdgesim-master)
 
 ## 1. Background
 
-Fog and edge computing, two emerging computing paradigms that aim to overcome the cloud computing limitations by bringing its applications at the edge of the network. Thus, reducing both the latency and the cloud workload and leading to a more scalable network. Nevertheless, in these distributed environments where many devices need to offload their tasks to one another (either to increase their lifetime or to minimize the task completion delay) many issues such as resources management strategies has to be solved. Instead of testing them on a real distributed system, the simulation makes it possible to evaluate the proposed strategies and algorithms in a repeatable, controllable and cost-effective way before their actual deployment. However, when it comes to simulation tools, edge and fog computing still did not get the attention they deserve (with only few simulators for fog computing such as iFogSim, edgeCloudSim. Meanwhile, no simulator for pure edge computing).
+Fog and Edge computing, two emerging computing paradigms that aim to overcome the Cloud computing limitations by bringing its applications at the Edge of the network. Thus, reducing both the latency and the Cloud workload and leading to a more scalable network. Nevertheless, in these distributed environments where many devices need to offload their tasks to one another (either to increase their lifetime or to minimize the task completion delay) many issues such as resources management strategies has to be solved. Instead of testing them on a real distributed system, the simulation makes it possible to evaluate the proposed strategies and algorithms in a repeatable, controllable and cost-effective way before their actual deployment. However, when it comes to simulation tools, Edge and Fog computing still did not get the attention they deserve (with only few simulators for Fog computing such as iFogSim, EdgeCloudSim. Meanwhile, no simulator for pure Edge computing).
 
-We introduce PureEdgeSim, a new simulator based on [CloudSim Plus](http://cloudsimplus.org) that is designed to simulate cloud, fog, and edge computing environments. It allows to evaluate the performance of resources management strategies in terms of network usage, latency, resources utilization, energy consumption, etc. and enables the simulation of several scenarios such as the Internet of Things (IoT), connected vehicles/ VANETs/MANET, pure edge computing environments (peer-to peer networks such as mobile devices cloud), and mobile edge computing. 
+We introduce PureEdgeSim, a new simulator based on [CloudSim Plus](http://Cloudsimplus.org) that is designed to simulate Cloud, Fog, and Edge computing environments. It allows to evaluate the performance of resources management strategies in terms of network usage, latency, resources utilization, energy consumption, etc. and enables the simulation of several scenarios such as the Internet of Things (IoT), connected vehicles/ VANETs/MANET, pure Edge computing environments (peer-to peer networks such as mobile devices Cloud), and mobile Edge computing. 
 
 ## Why it is named "Pure"EdgeSim  (Pure Edge Computing Simulator)
 
-Although fog and edge computing are usually referred to as the same paradigm, the main difference between them is their locations. In the pure edge computing (which this simulator is named after), edge nodes are deployed in the edge devices themselves following peer-to-peer architecture. Therefore, it provides even lower latency than fog computing, while in fog computing, the fog nodes are deployed on servers, mini-clouds, etc. following a client-server architecture (D’Angelo, M. 2016). That is why the PureEdgeSim is named so.
+Although Fog and Edge computing are usually referred to as the same paradigm, the main difference between them is their locations. In the pure Edge computing (which this simulator is named after), Edge nodes are deployed in the Edge devices themselves following peer-to-peer architecture. Therefore, it provides even lower latency than Fog computing, while in Fog computing, the Fog nodes are deployed on servers, mini-Clouds, etc. following a client-server architecture (D’Angelo, M. 2016). That is why the PureEdgeSim is named so.
    
 ## 2. PureEdgeSim Architecture
 
-PureEdgeSim enables the simulation of resource management strategies and allows to evaluate the performance of cloud, fog, and pure edge computing environments. It grantees high scalability by enabling the simulation of thousands of devices. Besides, it supports the edge devices heterogeneity (i.e. whether this device is mobile or not, whether battery-powered or not, different  applications requirements: tasks file size, tasks CPU utilization,and latency requirement, etc.) 
+PureEdgeSim enables the simulation of resource management strategies and allows to evaluate the performance of Cloud, Fog, and pure Edge computing environments. It grantees high scalability by enabling the simulation of thousands of devices. Besides, it supports the Edge devices heterogeneity (i.e. whether this device is mobile or not, whether battery-powered or not, different  applications requirements: tasks file size, tasks CPU utilization,and latency requirement, etc.) 
 
 ![Environment](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/PureEdgeSim/files/scenario.JPG)
 
@@ -30,10 +30,10 @@ It consists of the following 7 modules:
 *   Simulation Manager, that initiates the simulation environment, schedules all the events and generates the output. It consists of two important classes, the Simulation Manager class which manages the simulation, schedules the tasks generation, etc. The Simulation Logger class that generates the simulation output saves it in comma-separated value (CSV) format in order to easily exploit them later using any spreadsheet editor (e.g. Microsoft Excel...).
 
 
-*   Data Centers Manager: it generates and manages all the data centers and devices (i.e. cloud, fog or edge). It consists of two classes: the Edge Data Center class, that contains the specific properties of edge devices such as the location, the mobility, the energy source, and the capacity/ remaining energy if it is battery-powered. The second class is the Server Manager which generates the needed servers and edge devices, their hosts and their virtual machines.
+*   Data Centers Manager: it generates and manages all the data centers and devices (i.e. Cloud, Fog or Edge). It consists of two classes: the Edge Data Center class, that contains the specific properties of Edge devices such as the location, the mobility, the energy source, and the capacity/ remaining energy if it is battery-powered. The second class is the Server Manager which generates the needed servers and Edge devices, their hosts and their virtual machines.
 
 
-*   Tasks Generator which is behind the tasks generation, -currently- it assigns an application such as e-health, smart-home, and augmented-reality (that can be defined in `settings/applications.xml` file) to each edge device. Then, it will generates the needed tasks according to the assigned type, which guarantees the heterogeneity of applications.  
+*   Tasks Generator which is behind the tasks generation, -currently- it assigns an application such as e-health, smart-home, and augmented-reality (that can be defined in `settings/applications.xml` file) to each Edge device. Then, it will generates the needed tasks according to the assigned type, which guarantees the heterogeneity of applications.  
 
 
 *   The Network Module: that consists mainly of the Network Model class.which is behind the transfer of tasks/containers/ request... 
@@ -53,7 +53,7 @@ PureEdgeSim architecture
 *   Cloud, Fog, and pure Edge computing scenarios
 
 
-*   And basicly, any scenario that involves computing on distributed nodes or mobility, for example:
+*   And basicaly, any scenario that involves computing on distributed nodes or mobility, for example:
 
 VANETs/MANET networks, IoT applications, Mobile Devices Clouds, Mobile Edge Computing,... 
   
@@ -74,9 +74,9 @@ The mobility model will assign a random location to each device.
 Then the mobile devices will change their location according to the model in use.
 *   The support for devices heterogeneity:
 
-The user can define heterogenous edge device, Fog servers, and Cloud Data Centers in the corresponding `.xml` files. 
+The user can define heterogenous Edge device, Fog servers, and Cloud Data Centers in the corresponding `.xml` files. 
 
-He will decide wether and edge device is mobile or not, wether it is battery-powered or not ( and the size of its battery), 
+He will decide wether and Edge device is mobile or not, wether it is battery-powered or not ( and the size of its battery), 
 
 and how much computing capacity it has.
 
@@ -101,7 +101,7 @@ Readable code and an architecture that is easy to understand.
 
 *   Wide applicability and extensibility:
 
-The support for many simulation scenarios : IoT, VANETs/MANET clouds, Fog computing environments..
+The support for many simulation scenarios : IoT, VANETs/MANET Clouds, Fog computing environments..
 
 The user can evaluate the orchestration algorithms, the architectures,...
 
@@ -113,11 +113,11 @@ The user can implement new orchestration algorithms(machine learning algorithms:
 
 He can also implement new network, energy, mobility, or tasks generation models. 
 
-He can groupe edge devices into clusters, deploy the orchestrator node in the cluster head for example,
+He can groupe Edge devices into clusters, deploy the orchestrator node in the cluster head for example,
 
-and form a sort of edge devices cloud.
+and form a sort of Edge devices Cloud.
 
-He can also solve the registry scalability issue by mirroring the containers images close to the edge,
+He can also solve the registry scalability issue by mirroring the containers images close to the Edge,
 
 and so on...   
 
@@ -153,13 +153,13 @@ PureEdgeSim provides 5 input files located under the `/settings/` folder (you ca
 
 *   The `applications XML` file: This file decribes the types of applications that will be used by the tasks generator.
 
-Each of these application has different characterestics (CPU utilization, files size, latency requirements..). When the     simulation starts, the tasks generator will associate one of these applications to each edge device. Then, based on the assigned application type, it will generate the tasks of these device, which enables the support for devices heterogeneity ( the heterogeneity of their applications, in this case).
+Each of these application has different characterestics (CPU utilization, files size, latency requirements..). When the     simulation starts, the tasks generator will associate one of these applications to each Edge device. Then, based on the assigned application type, it will generate the tasks of these device, which enables the support for devices heterogeneity ( the heterogeneity of their applications, in this case).
 
-*   The `edge devices XML` file:  PureEdgeSim also enables the user to generate hundreds or even thousands of heterogenous devices. To do this, the user will specify the types of edge devices that will be generated and their proportions/ percentages in the `edge_device.xml` file. The server manager will then generate the desired number of edge devices based on the proposed types. For instance, if the user define two types of devices and sets the percentage of each type to 50% and sets the number of edge devices (in the simulation parameters file) to 1000 devices, the server manager will generate 500 devices of type 1, and 500 devices of type 2. Each of those types can have different computing capacity, energy consumption,  and other settings as well that enable the heterogeneity of devices ( whether the device is mobile or not, battery-powered or not, and how much is its battery capacity...).
+*   The `Edge devices XML` file:  PureEdgeSim also enables the user to generate hundreds or even thousands of heterogenous devices. To do this, the user will specify the types of Edge devices that will be generated and their proportions/ percentages in the `Edge_device.xml` file. The server manager will then generate the desired number of Edge devices based on the proposed types. For instance, if the user define two types of devices and sets the percentage of each type to 50% and sets the number of Edge devices (in the simulation parameters file) to 1000 devices, the server manager will generate 500 devices of type 1, and 500 devices of type 2. Each of those types can have different computing capacity, energy consumption,  and other settings as well that enable the heterogeneity of devices ( whether the device is mobile or not, battery-powered or not, and how much is its battery capacity...).
 
-*   The `Fog datacenters XML` file : This file describes the Fog datacenters that will be generated during the simulation. However, unlike the edge devices file, this file contains the fog datacenters that need to be generated instead of their types. Therefore, if the user wants to generate 4 different servers, he must include each one of them in the file. Each datacenter is characterised by its compuitng capacity, its energy consumption, its location, and its hosts. Each host has a set of Virtual machines with a specified computing capacity. These virtual machines are responsible for executing the offloading tasks.
+*   The `Fog datacenters XML` file : This file describes the Fog datacenters that will be generated during the simulation. However, unlike the Edge devices file, this file contains the Fog datacenters that need to be generated instead of their types. Therefore, if the user wants to generate 4 different servers, he must include each one of them in the file. Each datacenter is characterised by its compuitng capacity, its energy consumption, its location, and its hosts. Each host has a set of Virtual machines with a specified computing capacity. These virtual machines are responsible for executing the offloading tasks.
 
-*   The `Cloud datacetners xml` file:  This file describes the cloud datacenters that will be generated during the simulation (similar to that of fog servers). 
+*   The `Cloud datacetners xml` file:  This file describes the Cloud datacenters that will be generated during the simulation (similar to that of Fog servers). 
 
 ### 5.3 The Simulation Parameters File
 
@@ -189,17 +189,17 @@ The parameters file contains the following set of parameters:
 |--------------|-------|-------------|------------------------------------------------------------|
 |`length`      |Integer|>= 1         |The simulation area length (in meters)                      |
 |`width`       |Integer|>= 1         |The simulation area width (in meters)                       |
-|`edge_range`  |Integer|>= 1         |The range of edge devices (in meters)                       |
-|`fog_coverage`|Integer|>= 1         |The raius of the area covered by each fog server (in meters)|
+|`Edge_range`  |Integer|>= 1         |The range of Edge devices (in meters)                       |
+|`Fog_coverage`|Integer|>= 1         |The raius of the area covered by each Fog server (in meters)|
 |`speed`       |Double |>= 0         |The speed of mobile devices in meters/seconds) (0= disabled)|
 
 *   The Server Manager settings:
 
 |Parameter                   |Type   |Options/Range|Description                                                  | 
 |----------------------------|-------|-------------|-------------------------------------------------------------|
-|`min_number_of_edge_devices`|Integer|>= 1         |The number of edge devices at the beginning of the simulation|
-|`max_number_of_edge_devices`|Integer|>= 1         |The number of edge devices at the end of the simulation      |
-|`edge_device_counter_size`  |Integer|>= 1         |The growing rate in the number of devices in each iteration  |
+|`min_number_of_Edge_devices`|Integer|>= 1         |The number of Edge devices at the beginning of the simulation|
+|`max_number_of_Edge_devices`|Integer|>= 1         |The number of Edge devices at the end of the simulation      |
+|`Edge_device_counter_size`  |Integer|>= 1         |The growing rate in the number of devices in each iteration  |
 
 *   The Network Model settings:
 
@@ -207,19 +207,19 @@ The parameters file contains the following set of parameters:
 |-------------------------|-------|-------------|-------------------------------------------------------------------------|
 |`wlan_bandwidth`         |Integer|>= 1         |The local area network bandwidth (in Mbps)                               |
 |`wan_bandwidth`          |Integer|>= 1         |The backhaul network bandwidth (in Mbps)                                 |
-|`wan_propogation_delay`  |Double |>= 0         |The propagation delay (when sending data/tasks to the cloud) (in seconds)|  
+|`wan_propogation_delay`  |Double |>= 0         |The propagation delay (when sending data/tasks to the Cloud) (in seconds)|  
 |`network_update_interval`|Double |>= 0.01      |The network model refresh interval (in seconds)                          |
 
 *   The Tasks Orchestration settings:
 
 |Parameter                           |Type   |Options/Range                 |Description                                                                                                                                                                                                                    |
 |------------------------------------|-------|------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|`enable_registry`                   |Boolean|true or false                 |Enabling it means that before executing a task, a container will be pulled from the registry/cloud                                                                                                                             |
+|`enable_registry`                   |Boolean|true or false                 |Enabling it means that before executing a task, a container will be pulled from the registry/Cloud                                                                                                                             |
 |`enable_orchestrators`              |Boolean|true or false                 |Enabling this means that the task/offloading request will be sent to the specifed/ nearest orchestrator. Disabling this means that each device will orchestrate its owb tasks.                                                 |
-|`deploy_orchestrator`               |Boolean|Cloud or Fog                  |To deploy the orchestrator on the cloud, fog, or any custom location (e.g. cluster heads, the user in this case need to implement his clustering algorithm)                                                                    |
+|`deploy_orchestrator`               |Boolean|Cloud or Fog                  |To deploy the orchestrator on the Cloud, Fog, or any custom location (e.g. cluster heads, the user in this case need to implement his clustering algorithm)                                                                    |
 |`applications_CPU_allocation_policy`|Boolean|SPACE_SHARED or TIME_SHARED   |Time shared means that the tasks can be executed in same virtual machine at simae time (however this increases the simulation duration). Space shared means that the tasks are executed one after the otherby a virtual machine|
 |`tasks_generation_rate`             |Integer|>= 1                          |The number of tasks generated by each device every minute                                                                                                                                                                      |
-|`orchestration_architectures`       |Boolean|CLOUD_ONLY, FOG_AND_CLOUD,... |The computing paradigms that are used                                                                                                                                                                                          |
+|`orchestration_architectures`       |Boolean|Cloud_ONLY, Fog_AND_Cloud,... |The computing paradigms that are used                                                                                                                                                                                          |
 |`orchestration_algorithms`          |Boolean|(any algorithm name)          |The algorithm used by the orchestrator to find the offloading destination                                                                                                                                                      |
 
 *   The Energy Model parameters:
@@ -232,7 +232,7 @@ The parameters file contains the following set of parameters:
 
 ### 5.4 The Edge Devices, Fog Servers, and Cloud Datacenters Files
 
-These files contain the specification of edge devices, fog datacenters, and cloud datacenters.
+These files contain the specification of Edge devices, Fog datacenters, and Cloud datacenters.
 
 *   Datacenters characteristics
 
@@ -265,7 +265,7 @@ These files contain the specification of edge devices, fog datacenters, and clou
 
  *The sum of virtual machines attributes values (e.g. CPU cores) must be inferior than those of the host*
 
-*   The edge devices file follows the same structure as the Fog and Cloud `.xml` files. However as we said previously, if we want to generate 100 devices for example, we will not define all these devices in this file, instead, we will define the types of devices that will be generated, for example 25% of the generated devices will be of type 1, etc. The edge devices are considered as datacenters that contains one host with one VM (the user can add more if needed, by editing this file). The device without a virtual machine is considered a simple sensor (no computing capabilities). The following table highlights the attributes that only edge devices have : 
+*   The Edge devices file follows the same structure as the Fog and Cloud `.xml` files. However as we said previously, if we want to generate 100 devices for example, we will not define all these devices in this file, instead, we will define the types of devices that will be generated, for example 25% of the generated devices will be of type 1, etc. The Edge devices are considered as datacenters that contains one host with one VM (the user can add more if needed, by editing this file). The device without a virtual machine is considered a simple sensor (no computing capabilities). The following table highlights the attributes that only Edge devices have : 
 
 |Attribute        |Type   |Options/Range|Description                                                   |
 |-----------------|-------|-------------|--------------------------------------------------------------|
@@ -293,7 +293,7 @@ Real time analysis of simulation environment
 
 *   Fixed some minor bugs 
 
-*   Added some tutorials and exapmles (more to be added soon) 
+*   Added some tutorials and examples (more to be added soon) on how to implement your own energy model, mobility model, your custom edge devices/ datacenters , custom orchestrator and custom tasks generator
 
 
 ## New version 2.0.0 (oct 24th 2019)

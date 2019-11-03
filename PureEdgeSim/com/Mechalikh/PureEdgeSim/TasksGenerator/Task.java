@@ -1,17 +1,9 @@
 package com.mechalikh.pureedgesim.TasksGenerator;
 
-import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
-
+import org.cloudbus.cloudsim.cloudlets.CloudletSimple; 
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 
-public class Task extends CloudletSimple {
-	private Status failureReason = Status.NULL;
-
-	public static enum Status {
-		FAILED_DUE_TO_LATENCY, FAILED_BECAUSE_DEVICE_DEAD, FAILED_DUE_TO_DEVICE_MOBILITY,
-		NOT_GENERATED_BECAUSE_DEVICE_DEAD, FAILED_NO_RESOURCES, NULL
-	}
-
+public class Task extends CloudletSimple {  
 	private double offloadingTime;
 	private double maxLatency; 
 	private EdgeDataCenter device;
@@ -37,16 +29,7 @@ public class Task extends CloudletSimple {
 	public void setMaxLatency(double maxLatency) {
 		this.maxLatency = maxLatency;
 	}
-
-	public Status getFailureReason() {
-		return failureReason;
-	}
-
-	public void setFailureReason(Status status) {
-		this.failureReason = status;
-	}
  
-
 	public EdgeDataCenter getEdgeDevice() {
 		return device;
 	}

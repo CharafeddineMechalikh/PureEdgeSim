@@ -212,7 +212,7 @@ public class SimLog {
 		List<Double> devicesDeathTime = new ArrayList<Double>();
 		int batteryPoweredDevicesCount = 0;
 		int aliveBatteryPoweredDevicesCount = 0;
-		List<EdgeDataCenter> datacentersList = simulationManager.getServersManager().getDatacenterList();
+		List<? extends EdgeDataCenter> datacentersList = simulationManager.getServersManager().getDatacenterList();
 
 		for (int j = 0; j < datacentersList.size(); j++) {
 			dc = (EdgeDataCenter) datacentersList.get(j);

@@ -123,7 +123,7 @@ public class SimulationVisualizer {
 		double fgUsage = 0;
 		double edgecount = 0;
 		double fogcount = 0;
-		List<EdgeDataCenter> datacenterList = simulationManager.getServersManager().getDatacenterList();
+		List<? extends EdgeDataCenter> datacenterList = simulationManager.getServersManager().getDatacenterList();
 		for (int i = 0; i < datacenterList.size(); i++) {
 			if (datacenterList.get(i).getType() == TYPES.CLOUD) {
 				cpuUsage = datacenterList.get(i).getTotalCpuUtilization();

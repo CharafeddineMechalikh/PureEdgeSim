@@ -11,11 +11,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudsimplus.util.Log;
 import org.xml.sax.SAXException;
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.DefaultEdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.EnergyModel;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
 import com.mechalikh.pureedgesim.LocationManager.Mobility;
 import com.mechalikh.pureedgesim.LocationManager.MobilityManager;
+import com.mechalikh.pureedgesim.Network.DefaultNetworkModel;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
 import com.mechalikh.pureedgesim.ScenarioManager.FilesParser;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
@@ -29,6 +30,7 @@ import com.mechalikh.pureedgesim.TasksGenerator.TasksGenerator;
 import com.mechalikh.pureedgesim.TasksOrchestration.EdgeOrchestrator;
 import com.mechalikh.pureedgesim.TasksOrchestration.Orchestrator;
 import com.mechalikh.pureedgesim.DataCentersManager.DefaultEnergyModel;
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 
 import ch.qos.logback.classic.Level;
 
@@ -47,10 +49,11 @@ public class MainApplication {
 	protected static int cpuCores;
 	protected static List<Scenario> Iterations = new ArrayList<Scenario>();
 	protected static Class<? extends Mobility> mobilityManager = MobilityManager.class;
-	protected static Class<? extends EdgeDataCenter> edgedatacenter = EdgeDataCenter.class;
+	protected static Class<? extends EdgeDataCenter> edgedatacenter = DefaultEdgeDataCenter.class;
 	protected static Class<? extends TasksGenerator> tasksGenerator = DefaultTasksGenerator.class;
 	protected static Class<? extends Orchestrator> orchestrator = EdgeOrchestrator.class;
 	protected static Class<? extends EnergyModel> energyModel = DefaultEnergyModel.class;
+	protected static Class<? extends NetworkModel> networkModel = DefaultNetworkModel.class;
 
 	public static void main(String[] args) {
 		launchSimulation();
@@ -140,23 +143,26 @@ public class MainApplication {
 						Iterations.get(it).getOrchAlgorithm(), Iterations.get(it).getOrchArchitecture());
 
 				// Generate all data centers, servers, an devices
-				ServersManager serversManager = new ServersManager(simulationManager, mobilityManager, energyModel,edgedatacenter);
+				ServersManager serversManager = new ServersManager(simulationManager, mobilityManager, energyModel,
+						edgedatacenter);
 				serversManager.generateDatacentersAndDevices();
 				simulationManager.setServersManager(serversManager);
 
-				// Generate tasks list 
+				// Generate tasks list
 				Constructor<?> TasksGeneratorConstructor = tasksGenerator.getConstructor(SimulationManager.class);
-				TasksGenerator tasksGenerator=  (TasksGenerator) TasksGeneratorConstructor.newInstance(simulationManager);
+				TasksGenerator tasksGenerator = (TasksGenerator) TasksGeneratorConstructor
+						.newInstance(simulationManager);
 				List<Task> tasksList = tasksGenerator.generate();
 				simulationManager.setTasksList(tasksList);
 
-				// Initialize the orchestrator 
+				// Initialize the orchestrator
 				Constructor<?> OrchestratorConstructor = orchestrator.getConstructor(SimulationManager.class);
-				Orchestrator edgeOrchestrator =  (Orchestrator) OrchestratorConstructor.newInstance(simulationManager); 
+				Orchestrator edgeOrchestrator = (Orchestrator) OrchestratorConstructor.newInstance(simulationManager);
 				simulationManager.setOrchestrator(edgeOrchestrator);
 
 				// Initialize the network model
-				NetworkModel networkModel = new NetworkModel(simulation, simulationManager);
+				Constructor<?> networkConstructor = networkModel.getConstructor(SimulationManager.class);
+				NetworkModel networkModel = (NetworkModel) networkConstructor.newInstance(simulationManager);
 				simulationManager.setNetworkModel(networkModel);
 
 				// Finally launch the simulation

@@ -5,7 +5,7 @@ import java.util.List;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimEntity;
 import org.cloudbus.cloudsim.core.events.SimEvent;
-import org.cloudbus.cloudsim.vms.Vm;
+import org.cloudbus.cloudsim.vms.Vm; 
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
@@ -38,7 +38,7 @@ public class SimulationManager extends CloudSimEntity {
 	private int oldProgress = -1;
 	private Scenario scenario;
 	private NetworkModel networkModel;
-	private List<EdgeDataCenter> orchestratorsList;
+	private List<? extends EdgeDataCenter> orchestratorsList;
 	private double failedTasksCount = 0;
 	private int tasksCount = 0;
 

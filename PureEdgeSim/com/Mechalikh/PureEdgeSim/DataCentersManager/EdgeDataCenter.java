@@ -2,8 +2,7 @@ package com.mechalikh.pureedgesim.DataCentersManager;
 
 import java.util.ArrayList;
 import java.util.List; 
-import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicySimple;
-import org.cloudbus.cloudsim.core.events.SimEvent;
+import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicySimple;  
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 
@@ -13,28 +12,28 @@ import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksOrchestration.VmTaskMapItem;
 
-public class EdgeDataCenter extends DatacenterSimple {
-	private static final int UPDATE_STATUS = 2000; // Avoid conflicting with CloudSim Plus Tags
-	private simulationParameters.TYPES deviceType;
-	private boolean isMobile = false;
-	private boolean isBatteryPowered = false;
-	private double batteryCapacity;
-	private EnergyModel energyModel;
-	private boolean isDead = false;
-	private double deathTime;
-	private List<VmTaskMapItem> vmTaskMap;
-	private int applicationType;
-	private boolean isOrchestrator = false;
-	private long storageMemory;
-	private long availableStorageMemory;
-	private double totalCpuUtilization = 0;
-	private int utilizationFrequency = 0;
-	private boolean isIdle = true;
-	private long ramMemory;
-	private Mobility mobilityManager;
-	private EdgeDataCenter orchestrator;
-	private double currentCpuUtilization = 0;
-	private SimulationManager simulationManager;
+public abstract class EdgeDataCenter extends DatacenterSimple {
+	protected static final int UPDATE_STATUS = 2000; // Avoid conflicting with CloudSim Plus Tags
+	protected simulationParameters.TYPES deviceType;
+	protected boolean isMobile = false;
+	protected boolean isBatteryPowered = false;
+	protected double batteryCapacity;
+	protected EnergyModel energyModel;
+	protected boolean isDead = false;
+	protected double deathTime;
+	protected List<VmTaskMapItem> vmTaskMap;
+	protected int applicationType;
+	protected boolean isOrchestrator = false;
+	protected long storageMemory;
+	protected long availableStorageMemory;
+	protected double totalCpuUtilization = 0;
+	protected int utilizationFrequency = 0;
+	protected boolean isIdle = true;
+	protected long ramMemory;
+	protected Mobility mobilityManager;
+	protected EdgeDataCenter orchestrator;
+	protected double currentCpuUtilization = 0;
+	protected SimulationManager simulationManager;
 
 	public EdgeDataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
 		super(simulationManager.getSimulation(), hostList,new VmAllocationPolicySimple());
@@ -50,37 +49,9 @@ public class EdgeDataCenter extends DatacenterSimple {
 		setStorageMemory(memory);
 		setRamMemory(ram);
 	}
+ 
 
-	@Override
-	protected void startEntity() {
-		super.startEntity();
-		schedule(this, simulationParameters.INITIALIZATION_TIME, UPDATE_STATUS);
-
-	}
-
-	@Override
-	public void processEvent(final SimEvent ev) {
-		switch (ev.getTag()) {
-		case UPDATE_STATUS:
-			// Update energy consumption
-			updateEnergyConsumption();
-
-			// Update location
-			if (isMobile())
-				getMobilityManager().getNextLocation();
-
-			if (!isDead()) {
-				schedule(this, simulationParameters.UPDATE_INTERVAL, UPDATE_STATUS);
-			}
-
-			break;
-		default:
-			super.processEvent(ev);
-			break;
-		}
-	}
-
-	private void updateEnergyConsumption() {
+	protected void updateEnergyConsumption() {
 		setIdle(true);
 		double vmUsage = 0;
 		currentCpuUtilization = 0;

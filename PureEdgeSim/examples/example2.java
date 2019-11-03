@@ -4,8 +4,8 @@ import com.mechalikh.pureedgesim.MainApplication;
 
 public class example2 extends MainApplication {
  /*
-  * This is a simple example showing how to launch simulation suing a custom mobility model.
-  * by removing it, pureEdgeSim will use the default models provided by ¨PureEdgeSim.
+  * This is a simple example showing how to launch simulation using a custom mobility model.
+  * by removing it, pureEdgeSim will use the default models provided by PureEdgeSim.
   * As you can see, this class extends the Main class provided by PureEdgeSim, which is required  for this example to work
   */
 	public example2(int fromIteration, int step_) {
