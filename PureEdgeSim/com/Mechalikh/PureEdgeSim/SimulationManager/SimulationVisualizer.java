@@ -52,28 +52,20 @@ public class SimulationVisualizer {
 	}
 
 	void updateCharts() {
-		if (isFirstTime()) {
+		if (firstTime) {
 			initCharts();
 			charts.add(mapChart);
 			charts.add(cpuUtilizationChart);
 			charts.add(networkUtilizationChart);
 			charts.add(tasksSuccessChart);
 			displayCharts();
-			setFirstTime(false);
+			firstTime = false;
 		}
 		mapChart();
 		networkUtilizationChart();
 		tasksSucessRateChart();
 		utilizationChart();
 		displayCharts();
-	}
-
-	private void setFirstTime(boolean firstTime) {
-		this.firstTime = firstTime;
-	}
-
-	private boolean isFirstTime() {
-		return firstTime;
 	}
 
 	private void initCharts() {
@@ -105,20 +97,14 @@ public class SimulationVisualizer {
 		if (((int) simulationManager.getSimulation().clockInMinutes()) != clock) {
 			clock = (int) simulationManager.getSimulation().clockInMinutes();
 			double tasksFailed = 100 - simulationManager.getFailureRate();
-			getTasksFailedList().add(tasksFailed);
-		} else {
-			return;
+			tasksFailedList.add(tasksFailed);
+			updateSeries(tasksSuccessChart, "Tasks failed", null, toArray(tasksFailedList), SeriesMarkers.NONE,
+					Color.BLACK);
 		}
-		updateSeries(tasksSuccessChart, "Tasks failed", null, toArray(tasksFailedList), SeriesMarkers.NONE,
-				Color.BLACK);
-	}
-
-	private List<Double> getTasksFailedList() {
-		return this.tasksFailedList;
 	}
 
 	void utilizationChart() {
-		double cpuUsage = 0;
+		double clUsage = 0;
 		double edUsage = 0;
 		double fgUsage = 0;
 		double edgecount = 0;
@@ -126,7 +112,7 @@ public class SimulationVisualizer {
 		List<? extends EdgeDataCenter> datacenterList = simulationManager.getServersManager().getDatacenterList();
 		for (int i = 0; i < datacenterList.size(); i++) {
 			if (datacenterList.get(i).getType() == TYPES.CLOUD) {
-				cpuUsage = datacenterList.get(i).getTotalCpuUtilization();
+				clUsage = datacenterList.get(i).getTotalCpuUtilization();
 
 			} else if (datacenterList.get(i).getType() == TYPES.EDGE && datacenterList.get(i).getVmList().size() > 0) {
 				edUsage += datacenterList.get(i).getTotalCpuUtilization();
@@ -137,9 +123,9 @@ public class SimulationVisualizer {
 				fgUsage += datacenterList.get(i).getTotalCpuUtilization();
 			}
 		}
-		edUsage = edUsage / edgecount;
-		fgUsage = fgUsage / fogcount;
-		cloudUsage.add(cpuUsage);
+		edUsage /= edgecount;
+		fgUsage /= fogcount;
+		cloudUsage.add(clUsage);
 		edgeUsage.add(edUsage);
 		fogUsage.add(fgUsage);
 		currentTime.add(simulationManager.getSimulation().clock());
@@ -168,8 +154,7 @@ public class SimulationVisualizer {
 
 		updateStyle(networkUtilizationChart,
 				new Double[] { currentTime - 200, currentTime, 0.0, simulationParameters.WAN_BANDWIDTH / 1000.0 });
-		updateSeries(networkUtilizationChart, "WAN", time, toArray(wanUsage), SeriesMarkers.NONE, Color.BLACK);
-
+		updateSeries(networkUtilizationChart, "WAN", time, toArray(wanUsage), SeriesMarkers.NONE, Color.BLACK); 
 	}
 
 	private void addEdgeDevicesToMap() {
@@ -323,9 +308,10 @@ public class SimulationVisualizer {
 	}
 
 	public void saveCharts() throws IOException {
-		String folderName = MainApplication.getOutputFolder() + "/" + simulationManager.getSimulationLogger().getSimStartTime()
-				+ "/simulation_" + simulationManager.getSimulationId() + "/iteration_"
-				+ simulationManager.getIterationId() + "__" + simulationManager.getScenario().toString();
+		String folderName = MainApplication.getOutputFolder() + "/"
+				+ simulationManager.getSimulationLogger().getSimStartTime() + "/simulation_"
+				+ simulationManager.getSimulationId() + "/iteration_" + simulationManager.getIterationId() + "__"
+				+ simulationManager.getScenario().toString();
 		new File(folderName).mkdirs();
 		BitmapEncoder.saveBitmapWithDPI(mapChart, folderName + "/map_chart", BitmapFormat.PNG, 600);
 		BitmapEncoder.saveBitmapWithDPI(networkUtilizationChart, folderName + "/network_usage", BitmapFormat.PNG, 600);

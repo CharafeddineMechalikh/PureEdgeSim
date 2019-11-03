@@ -24,7 +24,6 @@ public abstract class NetworkModel extends CloudSimEntity {
 	// transferred file are stored
 	protected List<FileTransferProgress> transferProgressList;
 	protected SimulationManager simulationManager;
-	protected int firstIndex = 0;
 	protected double bwUsage = 0;
 
 	public NetworkModel(SimulationManager simulationManager) {
@@ -37,23 +36,9 @@ public abstract class NetworkModel extends CloudSimEntity {
 		this.simulationManager = simulationManager;
 	}
 
-	@Override
-	public void processEvent(SimEvent ev) {
-	}
-
 	public List<FileTransferProgress> getTransferProgressList() {
 		return transferProgressList;
 	}
-
-	protected abstract void sendRequestFromOrchToDest(Task task);
-
-	protected abstract void sendResultFromOrchToDev(Task task);
-
-	protected abstract void sendResultFromDevToOrch(Task task);
-
-	protected abstract void addContainer(Task task);
-
-	protected abstract void sendRequestFromDeviceToOrch(Task task);
 
 	protected abstract void updateTasksProgress();
 
@@ -63,41 +48,30 @@ public abstract class NetworkModel extends CloudSimEntity {
 
 	protected abstract void transferFinished(FileTransferProgress transfer);
 
-	protected abstract void containerDownloadFinished(FileTransferProgress transfer);
-
-	protected abstract void resultsReturnedToDevice(FileTransferProgress transfer);
-
-	protected abstract void returnResultToDevice(FileTransferProgress transfer);
-
-	protected abstract void executeTaskOrDownloadContainer(FileTransferProgress transfer);
-
-	protected abstract void offloadingRequestRecievedByOrchestrator(FileTransferProgress transfer);
-
-	protected boolean sameLanIsUsed(FileTransferProgress transfer1, FileTransferProgress transfer2) {
+	protected boolean sameLanIsUsed(Task task1, Task task2) {
 		// The trasfers share same Lan of they have one device in common
 		// Compare orchestrator
-		return ((transfer1.getTask().getOrchestrator() == transfer2.getTask().getOrchestrator())
-				|| (transfer1.getTask().getOrchestrator() == transfer2.getTask().getVm().getHost().getDatacenter())
-				|| (transfer1.getTask().getOrchestrator() == transfer2.getTask().getEdgeDevice())
+		return ((task1.getOrchestrator() == task2.getOrchestrator())
+				|| (task1.getOrchestrator() == task2.getVm().getHost().getDatacenter())
+				|| (task1.getOrchestrator() == task2.getEdgeDevice())
 
 				// Compare origin device
-				|| (transfer1.getTask().getEdgeDevice() == transfer2.getTask().getOrchestrator())
-				|| (transfer1.getTask().getEdgeDevice() == transfer2.getTask().getVm().getHost().getDatacenter())
-				|| (transfer1.getTask().getEdgeDevice() == transfer2.getTask().getEdgeDevice())
+				|| (task1.getEdgeDevice() == task2.getOrchestrator())
+				|| (task1.getEdgeDevice() == task2.getVm().getHost().getDatacenter())
+				|| (task1.getEdgeDevice() == task2.getEdgeDevice())
 
 				// Compare offloading destination
-				|| (transfer1.getTask().getVm().getHost().getDatacenter() == transfer2.getTask().getOrchestrator())
-				|| (transfer1.getTask().getVm().getHost().getDatacenter() == transfer2.getTask().getVm().getHost()
-						.getDatacenter())
-				|| (transfer1.getTask().getVm().getHost().getDatacenter() == transfer2.getTask().getEdgeDevice()));
+				|| (task1.getVm().getHost().getDatacenter() == task2.getOrchestrator())
+				|| (task1.getVm().getHost().getDatacenter() == task2.getVm().getHost().getDatacenter())
+				|| (task1.getVm().getHost().getDatacenter() == task2.getEdgeDevice()));
 	}
 
 	protected boolean wanIsUsed(FileTransferProgress fileTransferProgress) {
-		return ((fileTransferProgress.getTransferType() == FileTransferProgress.TASK
+		return ((fileTransferProgress.getTransferType() == FileTransferProgress.Type.TASK
 				&& ((EdgeVM) fileTransferProgress.getTask().getVm()).getType().equals(TYPES.CLOUD))
 				// If the offloading destination is the cloud
 
-				|| fileTransferProgress.getTransferType() == FileTransferProgress.CONTAINER
+				|| fileTransferProgress.getTransferType() == FileTransferProgress.Type.CONTAINER
 				// Or if containers will be downloaded from registry
 
 				|| (fileTransferProgress.getTask().getOrchestrator().getType() == simulationParameters.TYPES.CLOUD));
@@ -127,16 +101,20 @@ public abstract class NetworkModel extends CloudSimEntity {
 
 	@Override
 	protected void startEntity() {
+		// do someting or schedule events
+	}
+
+	@Override
+	public void processEvent(SimEvent ev) {
+		// process the scheduled events
 	}
 
 	public double getWanUtilization() {
 		int wanTasks = 0;
 		for (int j = 0; j < transferProgressList.size(); j++) {
-			if (transferProgressList.get(j).getRemainingFileSize() > 0) {
-				if (wanIsUsed(transferProgressList.get(j))) {
-					wanTasks++;
-					bwUsage += transferProgressList.get(j).getRemainingFileSize();
-				}
+			if (transferProgressList.get(j).getRemainingFileSize() > 0 && wanIsUsed(transferProgressList.get(j))) {
+				wanTasks++;
+				bwUsage += transferProgressList.get(j).getRemainingFileSize();
 			}
 		}
 		bwUsage = (wanTasks > 0 ? bwUsage / wanTasks : 0) / 1000;

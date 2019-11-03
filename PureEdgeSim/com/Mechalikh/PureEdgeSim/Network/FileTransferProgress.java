@@ -3,28 +3,24 @@ package com.mechalikh.pureedgesim.Network;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public class FileTransferProgress {
-	public static final int Base = 3000;
-	public static final int TASK = Base + 1;
-	public static final int CONTAINER = Base + 2;
-	public static final int RESULTS_TO_DEV = Base + 3;
-	public static final int RESULTS_TO_ORCH = Base + 4;
-	public static final int REQUEST = Base + 5;
-
+	public static enum Type {
+		TASK, CONTAINER, RESULTS_TO_DEV, RESULTS_TO_ORCH, REQUEST
+	} 
 	private Task task;
 	private double remainingFileSize; // in kbits
 	private double wanBandwidth;// kbits/s
 	private double lanBandwidth;// kbits/s
 	private double wanNetworkUsage = 0; // seconds
 	private double lanNetworkUsage = 0; // seconds
-	private int transferType;
+	private Type transferType;
 	private double fileSize; // in kbits
 	private double currentBandwidth; // kbits/s
 
-	public FileTransferProgress(Task task, double remainingFileSize, int transferType) {
+	public FileTransferProgress(Task task, double remainingFileSize, Type type) {
 		this.task = task;
 		this.remainingFileSize = remainingFileSize;
-		this.fileSize= remainingFileSize;
-		this.transferType = transferType;
+		this.fileSize = remainingFileSize;
+		this.transferType = type;
 	}
 
 	public double getRemainingFileSize() {
@@ -37,7 +33,7 @@ public class FileTransferProgress {
 
 	public Task getTask() {
 		return task;
-	} 
+	}
 
 	public double getWanBandwidth() {
 		return wanBandwidth;
@@ -52,7 +48,7 @@ public class FileTransferProgress {
 	}
 
 	public void setLanBandwidth(double lanBandwidth) {
-		this.lanBandwidth = lanBandwidth; 
+		this.lanBandwidth = lanBandwidth;
 	}
 
 	public double getWanNetworkUsage() {
@@ -71,20 +67,20 @@ public class FileTransferProgress {
 		this.lanNetworkUsage = lanNetworkUsage;
 	}
 
-	public int getTransferType() {
+	public Type getTransferType() {
 		return transferType;
 	}
- 
+
 	public double getFileSize() {
 		return fileSize;
 	}
- 
+
 	public void setCurrentBandwidth(double bandwidth) {
-		this.currentBandwidth = bandwidth; 
+		this.currentBandwidth = bandwidth;
 	}
 
 	public double getCurrentBandwidth() {
-		return this.currentBandwidth; 
+		return this.currentBandwidth;
 	}
 
 }

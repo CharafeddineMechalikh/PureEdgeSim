@@ -540,7 +540,7 @@ public class SimLog {
 		this.totalBandwidth += transfer.getFileSize() / (transfer.getLanNetworkUsage() * 1000); // Kbits/s to Mbits/s
 		this.totalTraffic += transfer.getFileSize() / 8000; // Kbits to Mbytes
 
-		if (transfer.getTransferType() == FileTransferProgress.CONTAINER) {
+		if (transfer.getTransferType() == FileTransferProgress.Type.CONTAINER) {
 			this.containersLanUsage += transfer.getLanNetworkUsage();
 			this.containersWanUsage += transfer.getWanNetworkUsage();
 		}

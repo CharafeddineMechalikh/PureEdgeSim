@@ -7,7 +7,7 @@ import com.mechalikh.pureedgesim.LocationManager.MobilityManager;
 import com.mechalikh.pureedgesim.TasksGenerator.DefaultTasksGenerator;
 import com.mechalikh.pureedgesim.TasksOrchestration.EdgeOrchestrator;
 
-public class example1 extends MainApplication {
+public class Example1 extends MainApplication {
 	/*
 	 * This is a simple example showing how to launch simulation using custom
 	 * mobility model, energy model, custom edge orchestrator, custom tasks
@@ -17,7 +17,7 @@ public class example1 extends MainApplication {
 	 * the Main class provided by PureEdgeSim, which is required for this example to
 	 * work.
 	 */
-	public example1(int fromIteration, int step_) {
+	public Example1(int fromIteration, int step_) {
 		super(fromIteration, step_);
 	}
 

@@ -28,8 +28,7 @@ public class DefaultEdgeDataCenter extends EdgeDataCenter{
 
 			// Update location
 			if (isMobile())
-				getMobilityManager().getNextLocation();
-			System.err.println("hhhhhhhhhhhhhhhhhhhhhhh");
+				getMobilityManager().getNextLocation(); 
 
 			if (!isDead()) {
 				schedule(this, simulationParameters.UPDATE_INTERVAL, UPDATE_STATUS);

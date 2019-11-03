@@ -2,14 +2,14 @@ package examples;
 
 import com.mechalikh.pureedgesim.MainApplication;
 
-public class example4 extends MainApplication {
+public class Example4 extends MainApplication {
 	/*
 	 * This is a simple example showing how to launch simulation using a custom
 	 * energy model. by removing it, pureEdgeSim will use the default models
 	 * provided by PureEdgeSim. As you can see, this class extends the Main class
 	 * provided by PureEdgeSim, which is required for this example to work
 	 */
-	public example4(int fromIteration, int step_) {
+	public Example4(int fromIteration, int step_) {
 		super(fromIteration, step_);
 	}
 

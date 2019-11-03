@@ -67,45 +67,43 @@ public class ChartsGenerator {
 	}
 
 	private void byAlgorithms(String x_series, String y_series, String y_series_label, String folder) {
-		for (int orch = 0; orch < simulationParameters.ORCHESTRATION_ARCHITECTURES.length; orch++) {  
-			chart = new XYChartBuilder().height(400).width(600).theme(ChartTheme.Matlab)
-					.xAxisTitle(x_series).yAxisTitle(y_series_label).build();
-			chart.setTitle(y_series + " (" + simulationParameters.ORCHESTRATION_ARCHITECTURES[orch] + ")");  
+		for (int orch = 0; orch < simulationParameters.ORCHESTRATION_ARCHITECTURES.length; orch++) {
+			chart = new XYChartBuilder().height(400).width(600).theme(ChartTheme.Matlab).xAxisTitle(x_series)
+					.yAxisTitle(y_series_label).build();
+			chart.setTitle(y_series + " (" + simulationParameters.ORCHESTRATION_ARCHITECTURES[orch] + ")");
 			chart.getStyler().setLegendVisible(true);
 			for (int alg = 0; alg < simulationParameters.ORCHESTRATION_AlGORITHMS.length; alg++) {
 				double[] xData = toArray(getColumn(x_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
 						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]));
 				double[] yData = toArray(getColumn(y_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
 						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]));
-				XYSeries series = chart.addSeries(simulationParameters.ORCHESTRATION_AlGORITHMS[alg], xData,
-						yData);
+				XYSeries series = chart.addSeries(simulationParameters.ORCHESTRATION_AlGORITHMS[alg], xData, yData);
 				series.setMarker(SeriesMarkers.CIRCLE); // Marker type :circle,rectangle, diamond..
 				series.setLineStyle(new BasicStroke());
 			}
 			// Save the chart
 			saveBitmap("Algorithms" + folder + "/",
-					y_series + "__" + simulationParameters.ORCHESTRATION_ARCHITECTURES[orch]); 
+					y_series + "__" + simulationParameters.ORCHESTRATION_ARCHITECTURES[orch]);
 		}
 	}
 
 	public void byArchitectures(String x_series, String y_series, String y_series_label, String folder) {
-		for (int alg = 0; alg < simulationParameters.ORCHESTRATION_AlGORITHMS.length; alg++) {  
-			chart = new XYChartBuilder().height(400).width(600).theme(ChartTheme.Matlab)
-					.xAxisTitle(x_series).yAxisTitle(y_series_label).build();
-			chart.setTitle(y_series + " (" + simulationParameters.ORCHESTRATION_AlGORITHMS[alg] + ")"); 
+		for (int alg = 0; alg < simulationParameters.ORCHESTRATION_AlGORITHMS.length; alg++) {
+			chart = new XYChartBuilder().height(400).width(600).theme(ChartTheme.Matlab).xAxisTitle(x_series)
+					.yAxisTitle(y_series_label).build();
+			chart.setTitle(y_series + " (" + simulationParameters.ORCHESTRATION_AlGORITHMS[alg] + ")");
 			chart.getStyler().setLegendVisible(true);
 			for (int orch = 0; orch < simulationParameters.ORCHESTRATION_ARCHITECTURES.length; orch++) {
 				double[] xData = toArray(getColumn(x_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
 						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]));
 				double[] yData = toArray(getColumn(y_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
 						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]));
-				XYSeries series = chart.addSeries(simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
-						xData, yData);
+				XYSeries series = chart.addSeries(simulationParameters.ORCHESTRATION_ARCHITECTURES[orch], xData, yData);
 				series.setMarker(SeriesMarkers.CIRCLE); // Marker type :circle,rectangle, diamond..
 				series.setLineStyle(new BasicStroke());
 			}
 			// Save the chart
-			saveBitmap( "Architectures" + folder + "/",
+			saveBitmap("Architectures" + folder + "/",
 					y_series + "__" + simulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
 		}
 	}
@@ -132,7 +130,7 @@ public class ChartsGenerator {
 		}
 		return list;
 	}
-	
+
 	private double[] toArray(List<Double> list) {
 		double[] results = new double[list.size()];
 		for (int i = 0; i < list.size(); i++)
@@ -140,39 +138,14 @@ public class ChartsGenerator {
 		return results;
 	}
 
-	public void generate() { 
-		displayChart("Edge devices count", "Average wainting time (s)", "Time (s)", "/Delays");
-		displayChart("Edge devices count", "Average execution delay (s)", "Time (s)", "/Delays");
+	public void generate() {
+		generateTasksCharts();
+		generateNetworkCharts();
+		generateCpuCharts();
+		generateEnergyCharts(); 
+	}
 
-		displayChart("Edge devices count", "Tasks successfully executed", "Number of tasks", "/Tasks");
-		displayChart("Edge devices count", "Tasks failed (delay)", "Number of tasks", "/Tasks");
-		displayChart("Edge devices count", "Tasks failed (device dead)", "Number of tasks", "/Tasks");
-		displayChart("Edge devices count", "Tasks failed (mobility)", "Number of tasks", "/Tasks");
-		displayChart("Edge devices count", "Tasks not generated due to the death of devices", "Number of tasks",
-				"/Tasks");
-
-		displayChart("Edge devices count", "Total tasks executed (Cloud)", "Number of tasks", "/Tasks");
-		displayChart("Edge devices count", "Tasks successfully executed (Cloud)", "Number of tasks", "/Tasks");
-		displayChart("Edge devices count", "Total tasks executed (Fog)", "Number of tasks", "/Tasks");
-		displayChart("Edge devices count", "Tasks successfully executed (Fog)", "Number of tasks", "/Tasks");
-		displayChart("Edge devices count", "Total tasks executed (Edge)", "Number of tasks", "/Tasks");
-		displayChart("Edge devices count", "Tasks successfully executed (Edge)", "Number of tasks", "/Tasks");
-
-		displayChart("Edge devices count", "Network usage (s)", "Time (s)", "/Network");
-		displayChart("Edge devices count", "Wan usage (s)", "Time (s)", "/Network");
-		displayChart("Edge devices count", "Average bandwidth per task (Mbps)", "Bandwidth (Mbps)", "/Network");
-		if (simulationParameters.ENABLE_REGISTRY) {
-			displayChart("Edge devices count", "Containers wan usage (s)", "Time (s)", "/Network");
-			displayChart("Edge devices count", "Containers lan usage (s)", "Time (s)", "/Network");
-		}
-
-		displayChart("Edge devices count", "Average VM CPU usage (%)", "CPU utilization (%)", "/CPU Utilization");
-		displayChart("Edge devices count", "Average VM CPU usage (Cloud) (%)", "CPU utilization (%)",
-				"/CPU Utilization");
-		displayChart("Edge devices count", "Average VM CPU usage (Fog) (%)", "CPU utilization (%)", "/CPU Utilization");
-		displayChart("Edge devices count", "Average VM CPU usage (Edge) (%)", "CPU utilization (%)",
-				"/CPU Utilization");
-
+	private void generateEnergyCharts() {
 		displayChart("Edge devices count", "Energy consumption (Wh)", "Consumed energy (Wh)", "/Energy");
 		displayChart("Edge devices count", "Average energy consumption (Wh/Data center)", "Consumed energy (Wh)",
 				"/Energy");
@@ -190,6 +163,45 @@ public class ChartsGenerator {
 		displayChart("Edge devices count", "Average remaining power (Wh)", "Remaining energy (Wh)", "/Edge Devices");
 		displayChart("Edge devices count", "Average remaining power (%)", "Remaining energy (%)", "/Edge Devices");
 		displayChart("Edge devices count", "First edge device death time (s)", "Time (s)", "/Edge Devices");
+
+	}
+
+	private void generateCpuCharts() {
+		displayChart("Edge devices count", "Average VM CPU usage (%)", "CPU utilization (%)", "/CPU Utilization");
+		displayChart("Edge devices count", "Average VM CPU usage (Cloud) (%)", "CPU utilization (%)",
+				"/CPU Utilization");
+		displayChart("Edge devices count", "Average VM CPU usage (Fog) (%)", "CPU utilization (%)", "/CPU Utilization");
+		displayChart("Edge devices count", "Average VM CPU usage (Edge) (%)", "CPU utilization (%)",
+				"/CPU Utilization");
+	}
+
+	private void generateNetworkCharts() {
+		displayChart("Edge devices count", "Network usage (s)", "Time (s)", "/Network");
+		displayChart("Edge devices count", "Wan usage (s)", "Time (s)", "/Network");
+		displayChart("Edge devices count", "Average bandwidth per task (Mbps)", "Bandwidth (Mbps)", "/Network");
+		if (simulationParameters.ENABLE_REGISTRY) {
+			displayChart("Edge devices count", "Containers wan usage (s)", "Time (s)", "/Network");
+			displayChart("Edge devices count", "Containers lan usage (s)", "Time (s)", "/Network");
+		}
+	}
+
+	private void generateTasksCharts() {
+		displayChart("Edge devices count", "Average wainting time (s)", "Time (s)", "/Delays");
+		displayChart("Edge devices count", "Average execution delay (s)", "Time (s)", "/Delays");
+
+		displayChart("Edge devices count", "Tasks successfully executed", "Number of tasks", "/Tasks");
+		displayChart("Edge devices count", "Tasks failed (delay)", "Number of tasks", "/Tasks");
+		displayChart("Edge devices count", "Tasks failed (device dead)", "Number of tasks", "/Tasks");
+		displayChart("Edge devices count", "Tasks failed (mobility)", "Number of tasks", "/Tasks");
+		displayChart("Edge devices count", "Tasks not generated due to the death of devices", "Number of tasks",
+				"/Tasks");
+
+		displayChart("Edge devices count", "Total tasks executed (Cloud)", "Number of tasks", "/Tasks");
+		displayChart("Edge devices count", "Tasks successfully executed (Cloud)", "Number of tasks", "/Tasks");
+		displayChart("Edge devices count", "Total tasks executed (Fog)", "Number of tasks", "/Tasks");
+		displayChart("Edge devices count", "Tasks successfully executed (Fog)", "Number of tasks", "/Tasks");
+		displayChart("Edge devices count", "Total tasks executed (Edge)", "Number of tasks", "/Tasks");
+		displayChart("Edge devices count", "Tasks successfully executed (Edge)", "Number of tasks", "/Tasks");
 
 	}
 

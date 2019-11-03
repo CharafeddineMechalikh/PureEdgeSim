@@ -54,31 +54,32 @@ public class DefaultNetworkModel extends NetworkModel {
 	}
 
 	public void sendRequestFromOrchToDest(Task task) {
-		transferProgressList.add(new FileTransferProgress(task, task.getFileSize() * 8, FileTransferProgress.TASK));
+		transferProgressList
+				.add(new FileTransferProgress(task, task.getFileSize() * 8, FileTransferProgress.Type.TASK));
 	}
 
 	public void sendResultFromOrchToDev(Task task) {
-		transferProgressList
-				.add(new FileTransferProgress(task, task.getOutputSize() * 8, FileTransferProgress.RESULTS_TO_DEV));
+		transferProgressList.add(
+				new FileTransferProgress(task, task.getOutputSize() * 8, FileTransferProgress.Type.RESULTS_TO_DEV));
 	}
 
 	public void sendResultFromDevToOrch(Task task) {
 		if (task.getOrchestrator() != task.getEdgeDevice())
-			transferProgressList.add(
-					new FileTransferProgress(task, task.getOutputSize() * 8, FileTransferProgress.RESULTS_TO_ORCH));
+			transferProgressList.add(new FileTransferProgress(task, task.getOutputSize() * 8,
+					FileTransferProgress.Type.RESULTS_TO_ORCH));
 		else
 			scheduleNow(this, DefaultNetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV, task);
 	}
 
 	public void addContainer(Task task) {
 		transferProgressList
-				.add(new FileTransferProgress(task, task.getContainerSize() * 8, FileTransferProgress.CONTAINER));
+				.add(new FileTransferProgress(task, task.getContainerSize() * 8, FileTransferProgress.Type.CONTAINER));
 	}
 
 	public void sendRequestFromDeviceToOrch(Task task) {
 		if (task.getOrchestrator() != task.getEdgeDevice())
 			transferProgressList
-					.add(new FileTransferProgress(task, task.getFileSize() * 8, FileTransferProgress.REQUEST));
+					.add(new FileTransferProgress(task, task.getFileSize() * 8, FileTransferProgress.Type.REQUEST));
 		else // The device orchestrate its tasks by itself, so, send the request directly to
 				// destination
 			scheduleNow(simulationManager, SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, task);
@@ -87,10 +88,7 @@ public class DefaultNetworkModel extends NetworkModel {
 	protected void updateTasksProgress() {
 		// Ignore finished transfers, so we will start looping from the first index of
 		// the remaining transfers
-		if (firstIndex < transferProgressList.size()
-				&& transferProgressList.get(firstIndex).getRemainingFileSize() == 0)
-			firstIndex++;
-		for (int i = firstIndex; i < transferProgressList.size(); i++) {
+		for (int i = 0; i < transferProgressList.size(); i++) {
 			int remainingTransfersCount_Lan = 0;
 			int remainingTransfersCount_Wan = 0;
 			if (transferProgressList.get(i).getRemainingFileSize() > 0) {
@@ -100,11 +98,10 @@ public class DefaultNetworkModel extends NetworkModel {
 							remainingTransfersCount_Wan++;
 							bwUsage += transferProgressList.get(j).getRemainingFileSize();
 						}
-						if (sameLanIsUsed(transferProgressList.get(i), transferProgressList.get(j))) {
+						if (sameLanIsUsed(transferProgressList.get(i).getTask(), transferProgressList.get(j).getTask())) {
 							// Both transfers use same Lan
 							remainingTransfersCount_Lan++;
 						}
-
 					}
 				}
 				// allocate bandwidths
@@ -141,26 +138,28 @@ public class DefaultNetworkModel extends NetworkModel {
 
 	protected void updateEnergyConsumption(FileTransferProgress transfer, String type) {
 		// update energy consumption
-		EdgeDataCenter origin = null;
-		EdgeDataCenter destination = null;
 		if ("Orchestrator".equals(type)) {
-			origin = transfer.getTask().getEdgeDevice();
-			destination = transfer.getTask().getOrchestrator();
+			calculateEnergyConsumption(transfer.getTask().getEdgeDevice(), transfer.getTask().getOrchestrator(),
+					transfer);
 		} else if ("Destination".equals(type)) {
-			origin = transfer.getTask().getOrchestrator();
-			destination = ((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter());
+			calculateEnergyConsumption(transfer.getTask().getOrchestrator(),
+					((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()), transfer);
 		} else if ("Container".equals(type)) {
-			origin = simulationManager.getServersManager().getDatacenterList().get(0);// registry, so set the first
-																						// cloud datacenter as the
-																						// origin
-			destination = transfer.getTask().getEdgeDevice();
+			// registry, so set the first cloud datacenter as the origin
+			calculateEnergyConsumption(simulationManager.getServersManager().getDatacenterList().get(0),
+					transfer.getTask().getEdgeDevice(), transfer);
 		} else if ("Result_Orchestrator".equals(type)) {
-			origin = ((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter());
-			destination = transfer.getTask().getOrchestrator();
+			calculateEnergyConsumption(((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()),
+					transfer.getTask().getOrchestrator(), transfer);
 		} else if ("Result_Origin".equals(type)) {
-			origin = transfer.getTask().getOrchestrator();
-			destination = transfer.getTask().getEdgeDevice();
+			calculateEnergyConsumption(transfer.getTask().getOrchestrator(), transfer.getTask().getEdgeDevice(),
+					transfer);
 		}
+
+	}
+
+	private void calculateEnergyConsumption(EdgeDataCenter origin, EdgeDataCenter destination,
+			FileTransferProgress transfer) {
 		if (origin != null) {
 			origin.getEnergyModel().updatewirelessEnergyConsumption(transfer, origin, destination,
 					DefaultEnergyModel.TRANSMISSION);
@@ -170,25 +169,29 @@ public class DefaultNetworkModel extends NetworkModel {
 	}
 
 	protected void transferFinished(FileTransferProgress transfer) {
-		// update logger parameters
+		// Update logger parameters
 		simulationManager.getSimulationLogger().updateNetworkUsage(transfer);
+
+		// Delete the transfer from the queue
+		transferProgressList.remove(transfer);
+
 		// If it is an offlaoding request that is sent to the orchestrator
-		if (transfer.getTransferType() == FileTransferProgress.REQUEST) {
+		if (transfer.getTransferType() == FileTransferProgress.Type.REQUEST) {
 			offloadingRequestRecievedByOrchestrator(transfer);
 			updateEnergyConsumption(transfer, "Orchestrator");
 		}
 		// If it is an task (or offloading request) that is sent to the destination
-		else if (transfer.getTransferType() == FileTransferProgress.TASK) {
+		else if (transfer.getTransferType() == FileTransferProgress.Type.TASK) {
 			executeTaskOrDownloadContainer(transfer);
 			updateEnergyConsumption(transfer, "Destination");
 		}
 		// If the container has been downloaded, then execute the task now
-		else if (transfer.getTransferType() == FileTransferProgress.CONTAINER) {
+		else if (transfer.getTransferType() == FileTransferProgress.Type.CONTAINER) {
 			containerDownloadFinished(transfer);
 			updateEnergyConsumption(transfer, "Container");
 		}
 		// If the transfer of execution results to the orchestrator has finished
-		else if (transfer.getTransferType() == FileTransferProgress.RESULTS_TO_ORCH) {
+		else if (transfer.getTransferType() == FileTransferProgress.Type.RESULTS_TO_ORCH) {
 			returnResultToDevice(transfer);
 			updateEnergyConsumption(transfer, "Result_Orchestrator");
 		}
