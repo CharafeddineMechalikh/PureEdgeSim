@@ -27,7 +27,7 @@ import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksGenerator.DefaultTasksGenerator;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 import com.mechalikh.pureedgesim.TasksGenerator.TasksGenerator;
-import com.mechalikh.pureedgesim.TasksOrchestration.EdgeOrchestrator;
+import com.mechalikh.pureedgesim.TasksOrchestration.DefaultEdgeOrchestrator;
 import com.mechalikh.pureedgesim.TasksOrchestration.Orchestrator;
 import com.mechalikh.pureedgesim.DataCentersManager.DefaultEnergyModel;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
@@ -51,7 +51,7 @@ public class MainApplication {
 	protected static Class<? extends Mobility> mobilityManager = MobilityManager.class;
 	protected static Class<? extends EdgeDataCenter> edgedatacenter = DefaultEdgeDataCenter.class;
 	protected static Class<? extends TasksGenerator> tasksGenerator = DefaultTasksGenerator.class;
-	protected static Class<? extends Orchestrator> orchestrator = EdgeOrchestrator.class;
+	protected static Class<? extends Orchestrator> orchestrator = DefaultEdgeOrchestrator.class;
 	protected static Class<? extends EnergyModel> energyModel = DefaultEnergyModel.class;
 	protected static Class<? extends NetworkModel> networkModel = DefaultNetworkModel.class;
 
