@@ -134,9 +134,17 @@ To decrease the simultion time, the user can also enable parralelism.
 
  (i)  Download the zip file from github.
  
- (ii) Import the project to your IDE (New -> Java Project -> Use default location -> and then chose the PureEdgeSim folder)  .
+ (ii) Import the project to your IDE (New -> Java Project -> Use default location -> and then chose the PureEdgeSim folder)
  
- (iii) Launch the `main.java` class.
+ Wait (1 or 2 minutes) for the dependencies to be downlaoded (you need internet connection).
+ 
+ Once the required libriaries are downloaded the errors will disappear, and you can use the simulator.
+ 
+ If the errors don't disappear after few minutes, you need to add maven to your IDE, or simply add the required libraries
+ 
+ manually( you can find them [here](https://drive.google.com/open?id=1tc3_1UnIYO0AtAXDVf18AHj5g8MdFMNs) ).  
+ 
+ (iii) Launch the `MainApplication.java` class, to launch the simulation and to test PureEdgeSim 
  
  *Running the simulation from command line will be added soon..*
     

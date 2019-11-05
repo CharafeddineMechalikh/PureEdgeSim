@@ -44,7 +44,7 @@ public class SimulationVisualizer {
 	private List<Double> tasksFailedList = new ArrayList<>();
 	private List<XYChart> charts = new ArrayList<XYChart>();
 	private SimulationManager simulationManager;
-	private double clock = -1;
+	private int clock = -1;
 	private boolean firstTime = true;
 
 	public SimulationVisualizer(SimulationManager simulationManager) {
@@ -97,8 +97,11 @@ public class SimulationVisualizer {
 		if (((int) simulationManager.getSimulation().clockInMinutes()) != clock) {
 			clock = (int) simulationManager.getSimulation().clockInMinutes();
 			double tasksFailed = 100 - simulationManager.getFailureRate();
+			double[] time = new double[clock];
+			for(int i=0;i<clock;i++)
+				time[i]=i;
 			tasksFailedList.add(tasksFailed);
-			updateSeries(tasksSuccessChart, "Tasks failed", null, toArray(tasksFailedList), SeriesMarkers.NONE,
+			updateSeries(tasksSuccessChart, "Tasks failed", time, toArray(tasksFailedList), SeriesMarkers.NONE,
 					Color.BLACK);
 		}
 	}
