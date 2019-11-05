@@ -126,7 +126,7 @@ Basically any scenario that involves data centers, servers, or geo-distributed d
 
 The user can trade-off between simulation duration and its accuracy. 
 
-To decrease the simultion time, the user can also enable parralelism.
+To decrease the simultion time, the user can also enable parallelism.
 
 ## 5. Getting started with PureEdgeSim
 
@@ -293,10 +293,112 @@ Example of real time charts :
 
 Real time analysis of simulation environment
 
-### 5.6 Examples 
+### 5.6 Building your scenario
+
+### The evaluated architecture (paradigm/ combination of computing paradigms):
+
+In the `simulation_parameters.properties` file under the `settings/` folder, you can specify the architecture/ architectures that will be used by the task orchestrator during the simulation :
+
+*   To use the Cloud alone for processing data (no processing of data on the Edge/Fog) set the `orchestration_architectures`  as
+
+`orchestration_architectures = CLOUD_ONLY`
+
+*   To use the Cloud with the Fog, for processing data set the `orchestration_architectures`  as
+
+`orchestration_architectures = FOG_AND_CLOUD`
+
+*   To use the edge devices for processing data (no processing of data on the Fog and the Cloud) set the `orchestration_architectures`  as
+
+`orchestration_architectures = EDGE_ONLY`
+
+*   To process data on the Cloud and the edge devices (no Fog servers) set the `orchestration_architectures`  as
+
+`orchestration_architectures = CLOUD_ONLY`
+
+*   To use all the three paradigms simultaniously set it to 
+
+`orchestration_architectures = ALL`
+
+*   You can also set it to FOG_ONLY if the cloud is absent in your scenario.
+
+### The load balancing algorithm :
+
+To use your custom load balancing algorithm, follow example 5. You can find it in the examples folder.
+
+### Custom Mobility Model
+
+If your scenario involves a specific mobility model, you can follow example 1, and implement your custom model. Remember to edit the `edge_devices.xml` file in order to specify which devices are mobile or not. If you don't add a custom mobility model, PureEdgeSim will use the default one.
+
+### Custom Energy Model
+
+Similar to the custom mobility model, you can follow example 2 to see how to add your energy model. if you don't add it, pureEdgeSim will use the default one.
+
+### The cloud datacenters
+
+You can add as many datacenters, hosts or virtual machines in the `cloud.xml` file.
+
+### The fog servers
+
+Similar to the cloud, but remember to set the location of each server ( in the `fog_servers.xml` file). 
+
+You also need to make sure that these servers covers the simulation area by editing these lines from the `simulation_parameters.properties` file
+
+`fog_coverage=50
+
+length=200
+
+width=200`     
+
+In this example, the radius of the coverage area of Fog servers is set to 50 meters, while the simulation area is set to 200x 200 meters. 
+
+If we only generate one Fog server, this means that some edge device may be not in the coverage area, which causes there tasks to fail. In this case we need to increase the coverage area (e.g. from 50 to 200 meters), minimize the simulation area (e.g. from 200x200 to 50x50 ) or add more fog servers in order to cover the whole area. 
+
+### The edge devices
+
+You can define the types of edge devices in the `edge_devices.xml` file. if you want to add mobile devices. set `<mobility>` to true. You can specifify the speed of mobile device in the `simulation_parameters.properties` file as follows:
+
+`speed = 1.4`
+
+int his example the speed is set to 1.4 meters per second  (approximately 5 km/h).
+
+You can also set whether the devices of that type are battery powered or not by changing the `<battery>` value (`true` means battery powered)
+
+### Simulation duration VS accuracy
+
+This is a discrete event simulator, this means that the simulation duration depends on the number of generated events. The more the events, the longer is the simulation.
+
+To decrease the simulation duration you can change these parameters in the `simulation_parameters.properties`  file:
+
+`simulation_time=10
+
+parallel_simulation=false
+
+update_interval=1 
+
+pause_length=5
+
+display_real_time_charts=true
+
+charts_update_interval=1
+
+wait_for_all_tasks=true  
+
+network_update_interval=1`  
+
+The simulation time in this case is set to 10 minutes. you can increase it or decrease it dependiing on your needs.  the pause length is set to 5 seconds, you can set it to 0 if needed (to gain some time between iterations). 
+
+You can also disable the real time charts by setting the `display_real_time_charts` to `false`. Finally, you can set the value of `wait_for_all_tasks` to `false` , which means that the simulation manager will ends the simualtion right after the set 10 minutes (in this exmaple) of time and will not for the tasks that are being executed to finish. This may affect the simulation results so be aware.
+
+Other parameters that help to reduce the simulation time are the `update_interval` and the `network_update_interval`. if you set these two to `0.01`  you will get a higher accuracy (a realistic simulation results), however this may take hours or days. To reduce the simulation time you can trade-off between the simulation delay and its accuracy by setting them to a higher value, for example `0.1` or `1` or even more...
+
+Lakily PureEdgeSim offers the possibility to launch parallel simulations which can be done by setting the value of `parallel_simulation` to `true`.
+
+### 5.7 Examples 
+
 We provide a set of examples to show how to implement custom mobility model, tasks generation model, custom edge devices/datacenters, custom tasks orchestration and load balancing algorithms, and custom energy model.
 
 These examples can be found under the `examples/` folder. 
+
 ## 6. Change log of the latest versions
 
 ## New version 2.2.0 (nov 2nd 2019)
