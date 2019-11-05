@@ -301,29 +301,51 @@ In the `simulation_parameters.properties` file under the `settings/` folder, you
 
 *   To use the Cloud alone for processing data (no processing of data on the Edge/Fog) set the `orchestration_architectures`  as
 
-`orchestration_architectures = CLOUD_ONLY`
+```
+
+orchestration_architectures = CLOUD_ONLY
+
+```
 
 *   To use the Cloud with the Fog, for processing data set the `orchestration_architectures`  as
 
-`orchestration_architectures = FOG_AND_CLOUD`
+```
+
+orchestration_architectures = FOG_AND_CLOUD
+
+```
 
 *   To use the edge devices for processing data (no processing of data on the Fog and the Cloud) set the `orchestration_architectures`  as
 
-`orchestration_architectures = EDGE_ONLY`
+```
+
+orchestration_architectures = EDGE_ONLY
+
+
+```
 
 *   To process data on the Cloud and the edge devices (no Fog servers) set the `orchestration_architectures`  as
 
-`orchestration_architectures = CLOUD_ONLY`
+```
+
+orchestration_architectures = CLOUD_ONLY
+
+```
 
 *   To use all the three paradigms simultaniously set it to 
 
-`orchestration_architectures = ALL`
+```
+
+orchestration_architectures = ALL
+
+
+```
 
 *   You can also set it to FOG_ONLY if the cloud is absent in your scenario.
 
 ### The load balancing algorithm :
 
-To use your custom load balancing algorithm, follow example 5. You can find it in the examples folder.
+To use your custom load balancing algorithm, follow example 5. You can find it in the `examples/` folder.
 
 ### Custom Mobility Model
 
@@ -343,11 +365,15 @@ Similar to the cloud, but remember to set the location of each server ( in the `
 
 You also need to make sure that these servers covers the simulation area by editing these lines from the `simulation_parameters.properties` file
 
-`fog_coverage=50
+```
+
+fog_coverage=50
 
 length=200
 
-width=200`     
+width=200
+
+```     
 
 In this example, the radius of the coverage area of Fog servers is set to 50 meters, while the simulation area is set to 200x 200 meters. 
 
@@ -357,11 +383,29 @@ If we only generate one Fog server, this means that some edge device may be not 
 
 You can define the types of edge devices in the `edge_devices.xml` file. if you want to add mobile devices. set `<mobility>` to true. You can specifify the speed of mobile device in the `simulation_parameters.properties` file as follows:
 
-`speed = 1.4`
+```
 
-int his example the speed is set to 1.4 meters per second  (approximately 5 km/h).
+speed = 1.4
 
-You can also set whether the devices of that type are battery powered or not by changing the `<battery>` value (`true` means battery powered)
+```
+
+in this example the speed is set to 1.4 meters per second (approximately 5 km/h).
+
+You can also set whether the devices of that type are battery powered or not, by changing the `<battery>` value. `true` which means battery powered)
+
+To test the scalability of the selected architecture (the computing paradigms) you can use a growing number of devices. To do so, edit the following values  
+
+```
+
+min_number_of_edge_devices=100
+
+max_number_of_edge_devices=500
+
+edge_device_counter_size=100
+
+```
+
+In this case, the simulation will start with 100 devices, and grow up to 500 devices (from 100 , to 200, to 300, to 400, to 500). The counter value is the growth rate between the iterations.  
 
 ### Simulation duration VS accuracy
 
@@ -369,7 +413,9 @@ This is a discrete event simulator, this means that the simulation duration depe
 
 To decrease the simulation duration you can change these parameters in the `simulation_parameters.properties`  file:
 
-`simulation_time=10
+```
+
+simulation_time=10
 
 parallel_simulation=false
 
@@ -383,7 +429,9 @@ charts_update_interval=1
 
 wait_for_all_tasks=true  
 
-network_update_interval=1`  
+network_update_interval=1
+
+```  
 
 The simulation time in this case is set to 10 minutes. you can increase it or decrease it dependiing on your needs.  the pause length is set to 5 seconds, you can set it to 0 if needed (to gain some time between iterations). 
 
@@ -402,6 +450,7 @@ These examples can be found under the `examples/` folder.
 ## 6. Change log of the latest versions
 
 ## New version 2.2.0 (nov 2nd 2019)
+
 *   The code has been improved  
 
 *   Fixed some minor bugs 
