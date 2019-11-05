@@ -1,14 +1,15 @@
 package com.mechalikh.pureedgesim.TasksGenerator;
 
-import org.cloudbus.cloudsim.cloudlets.CloudletSimple; 
+import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 
-public class Task extends CloudletSimple {  
+public class Task extends CloudletSimple {
 	private double offloadingTime;
-	private double maxLatency; 
+	private double maxLatency;
 	private EdgeDataCenter device;
 	private long containerSize;
 	private EdgeDataCenter orchestrator;
+	private double receptionTime = -1; // the time when the task, or the corresponding container has been received by the offloading destination 
 
 	public Task(int id, long cloudletLength, long pesNumber) {
 		super(id, cloudletLength, pesNumber);
@@ -29,7 +30,7 @@ public class Task extends CloudletSimple {
 	public void setMaxLatency(double maxLatency) {
 		this.maxLatency = maxLatency;
 	}
- 
+
 	public EdgeDataCenter getEdgeDevice() {
 		return device;
 	}
@@ -48,12 +49,18 @@ public class Task extends CloudletSimple {
 
 	public void setOrchestrator(EdgeDataCenter orch) {
 		this.orchestrator = orch;
-
 	}
 
 	public EdgeDataCenter getOrchestrator() {
 		return orchestrator;
+	}
 
+	public double getReceptionTime() {
+		return receptionTime;
+	}
+
+	public void setReceptionTime(double time) {
+		receptionTime = time;
 	}
 
 }

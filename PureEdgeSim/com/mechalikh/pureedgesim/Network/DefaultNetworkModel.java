@@ -182,11 +182,13 @@ public class DefaultNetworkModel extends NetworkModel {
 		}
 		// If it is an task (or offloading request) that is sent to the destination
 		else if (transfer.getTransferType() == FileTransferProgress.Type.TASK) {
+			transfer.getTask().setReceptionTime(simulationManager.getSimulation().clock());
 			executeTaskOrDownloadContainer(transfer);
 			updateEnergyConsumption(transfer, "Destination");
 		}
 		// If the container has been downloaded, then execute the task now
-		else if (transfer.getTransferType() == FileTransferProgress.Type.CONTAINER) {
+		else if (transfer.getTransferType() == FileTransferProgress.Type.CONTAINER) { 
+			transfer.getTask().setReceptionTime(simulationManager.getSimulation().clock());
 			containerDownloadFinished(transfer);
 			updateEnergyConsumption(transfer, "Container");
 		}

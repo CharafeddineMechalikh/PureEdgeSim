@@ -523,7 +523,14 @@ public class SimLog {
 
 	public void getTasksExecutionInfos(Task task) {
 		this.totalExecutionTime += task.getActualCpuTime();
-		this.totalWaitingTime += task.getExecStartTime() - task.getTime();
+		if(task.getReceptionTime()!= -1) // the task is offloaded or a container has been downloaded
+			// in this case don't include the network utilisation time in the waiting time 
+			// so the waiting time will be the time between the reception of the task (or the conatiner) by the destination and the time of execution
+		this.totalWaitingTime += task.getExecStartTime() - task.getReceptionTime();
+		else 
+			// in case the task is not offloaded, and no container has been downloaded ( no network usage)
+			//the waitingdelay will be the difference between the tasks execution time and the task generation time 
+			this.totalWaitingTime+= task.getExecStartTime() - task.getTime();
 		this.executedTasksCount++;
 		if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.CLOUD) {
 			this.tasksExecutedOnCloud++;
