@@ -353,7 +353,7 @@ If your scenario involves a specific mobility model, you can follow example 1, a
 
 ### Custom Energy Model
 
-Similar to the custom mobility model, you can follow example 2 to see how to add your energy model. if you don't add it, pureEdgeSim will use the default one.
+Similar to the custom mobility model, you can follow example 2 to see how to add your energy model. If you don't add it, pureEdgeSim will use the default one.
 
 ### The cloud datacenters
 
@@ -381,7 +381,7 @@ If we only generate one Fog server, this means that some edge device may be not 
 
 ### The edge devices
 
-You can define the types of edge devices in the `edge_devices.xml` file. if you want to add mobile devices. set `<mobility>` to true. You can specifify the speed of mobile device in the `simulation_parameters.properties` file as follows:
+You can define the types of edge devices in the `edge_devices.xml` file. If you want to add mobile devices, set `<mobility>` to true. You can specifify the speed of mobile device in the `simulation_parameters.properties` file as follows:
 
 ```
 
@@ -409,7 +409,7 @@ In this case, the simulation will start with 100 devices, and grow up to 500 dev
 
 ### Simulation duration VS accuracy
 
-This is a discrete event simulator, this means that the simulation duration depends on the number of generated events. The more the events, the longer is the simulation.
+This is a discrete event simulator. This means that the simulation duration depends on the number of generated events. The more the events, the longer is the simulation.
 
 To decrease the simulation duration you can change these parameters in the `simulation_parameters.properties`  file:
 
@@ -433,11 +433,11 @@ network_update_interval=1
 
 ```  
 
-The simulation time in this case is set to 10 minutes. you can increase it or decrease it dependiing on your needs.  the pause length is set to 5 seconds, you can set it to 0 if needed (to gain some time between iterations). 
+The simulation time (`simulation_time`) in this case is set to 10 minutes. You can increase it or decrease it dependiing on your needs.  The pause length (`pause_length`) is set to 5 seconds. You can set it to 0 if needed (to gain some time between iterations). 
 
-You can also disable the real time charts by setting the `display_real_time_charts` to `false`. Finally, you can set the value of `wait_for_all_tasks` to `false` , which means that the simulation manager will ends the simualtion right after the set 10 minutes (in this exmaple) of time and will not for the tasks that are being executed to finish. This may affect the simulation results so be aware.
+You can also disable the real time charts by setting the `display_real_time_charts` to `false`. Finally, you can set the value of `wait_for_all_tasks` to `false`, which means that the simulation will finish right after its time ends (in this exmaple 10 minutes) and will not wait for the tasks that are being executed to finish. This may affect the simulation results (the tasks being executed will be considered as failed) so be aware.
 
-Other parameters that help to reduce the simulation time are the `update_interval` and the `network_update_interval`. if you set these two to `0.01`  you will get a higher accuracy (a realistic simulation results), however this may take hours or days. To reduce the simulation time you can trade-off between the simulation delay and its accuracy by setting them to a higher value, for example `0.1` or `1` or even more...
+Other parameters that help to reduce the simulation time are the `update_interval` and the `network_update_interval`. If you set these two to `0.01`, you will get a higher accuracy (a realistic simulation results). However, this may take hours or days. To reduce the simulation time, you can trade-off between the simulation delay and its accuracy by setting them (those intervals) to a higher values, for example `0.1` or `1` or even more...
 
 Lakily PureEdgeSim offers the possibility to launch parallel simulations which can be done by setting the value of `parallel_simulation` to `true`.
 
@@ -451,53 +451,53 @@ These examples can be found under the `examples/` folder.
 
 ## New version 2.2.0 (nov 2nd 2019)
 
-*   The code has been improved  
+*   The code has been improved.  
 
-*   Fixed some minor bugs 
+*   Fixed some minor bugs. 
 
-*   Added some tutorials and examples (more to be added soon) on how to implement your own energy model, mobility model, your custom edge devices/ datacenters , custom orchestrator and custom tasks generator
+*   Added some tutorials and examples (more to be added soon) on how to implement your own energy model, mobility model, your custom edge devices/ datacenters , custom orchestrator and custom tasks generator.
 
 ## New version 2.0.0 (oct 24th 2019)
 
-*   The code has been revisited and cleaned, now it is more readable  
+*   The code has been revisited and cleaned, now it is more readable.  
 
-*   New mobility model and new parameters for mobility update 
+*   New mobility model and new parameters for mobility update. 
 
-Now it uses speed in m/s instead of intervals
+Now it uses speed in m/s instead of intervals.
 
 The new mobility model works on demand, instead of generating a list for each device containing all its location changes (from the beginning of the simulation). 
 
-The egde devices will request the next location only when needed (which reduces the use of memory)
+The egde devices will request the next location only when needed (which reduces the use of memory).
 
-*   New and more realistic energy model
+*   New and more realistic energy model.
 
-*   Added initialization time to simulation parameters (in order to ignore the time when the resources are being generated)
+*   Added initialization time to simulation parameters (in order to ignore the time when the resources are being generated).
 
-*   Some bugs here and there has been fixed 
+*   Some bugs here and there has been fixed. 
 
-*   Added ram as a propoerty to EdgeDataCenter class
+*   Added ram as a propoerty to EdgeDataCenter class.
 
-*   Added real time simulation map (now you can verify and check how your mobility model is working)  
+*   Added real time simulation map (now you can verify and check how your mobility model is working).  
 
-*   Added some real time charts 
+*   Added some real time charts. 
 
-Showing the CPU utilization of Cloud, Fog and Edge resources, the WAN utilization, and the tasks success rate
+Showing the CPU utilization of Cloud, Fog and Edge resources, the WAN utilization, and the tasks success rate.
 
-*   Added the possibility to generate charts at the end of the simulation and to save them in a *.PNG format 
+*   Added the possibility to generate charts at the end of the simulation and to save them in a *.PNG format. 
 
-More than 64 high resolution charts can be generated with one click, in order to make it easier for the user to check his simlation results
+More than 64 high resolution charts can be generated with one click, in order to make it easier for the user to check his simlation results.
 
 The user can always generate other charts using the generated `.csv` file.
 
-*   Added new simulation parameters regarding charts (displaying them, the refresh delay, saving them..)
+*   Added new simulation parameters regarding charts (displaying them, the refresh delay, saving them..).
 
-*   The ability to enable or desable orchestrators
+*   The ability to enable or desable orchestrators.
 
 If disabled, the device will orchestrate its tasks by itself. 
 
 If enabled, the user can select any devices/datacenters to be the orchestrators, 
 
-Then, the tasks will be sent to the nearest orchestrator in order to find the best offloading destination
+Then, the tasks will be sent to the nearest orchestrator in order to find the best offloading destination.
 
 *   Now the containers network usage can be found in the `.csv` file.
 
