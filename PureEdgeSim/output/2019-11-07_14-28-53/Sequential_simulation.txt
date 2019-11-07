@@ -1,0 +1,37 @@
+2019/11/07 14:28:53 - simulation time       0 (s) : ServersManager- Datacenters and devices were generated
+2019/11/07 14:28:53 - simulation time       0 (s) : SimulationManager-  Orchestration algorithm= TRADE_OFF-  Architechitecture= CLOUD_ONLY -  number of edge devices= 100
+2019/11/07 14:28:53 - simulation time       0 (s) : SimulationManager- Simulation: 1  , iteration: 1
+2019/11/07 14:29:02 - simulation time     670 (s) : 
+2019/11/07 14:29:02 - simulation time     670 (s) : ------------------------------------------------------- OUTPUT -------------------------------------------------------
+2019/11/07 14:29:02 - simulation time     670 (s) : 
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Tasks not sent because device died (low energy)                         :                   0 % (0 tasks)
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Tasks sent from edge devices                                            :                 100 % (1100 among 1100 generated tasks)
+2019/11/07 14:29:02 - simulation time     670 (s) : -------------------------------------All values below are based on the sent tasks-------------------------------------
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Tasks execution delay                                                   :             237.845 seconds
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Average tasks execution delay                                           :              0.5636 seconds
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Tasks waiting time (from task submiting to the execution start)         :                84.4 seconds
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Average tasks waiting time (from task submiting to the execution start) :                 0.2 seconds
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Tasks successfully executed                                             :             30.2727 % (333 among 1100 sent tasks)
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Tasks failures
+2019/11/07 14:29:02 - simulation time     670 (s) :                                        Not executed due to resources unavailable:                   0 % (0 tasks)
+2019/11/07 14:29:02 - simulation time     670 (s) :                               Successfully executed but failed due to high delay:             11.1818 % (123 tasks from 1100 successfully sent tasks)
+2019/11/07 14:29:02 - simulation time     670 (s) :                  Tasks execution results not returned because the device is dead:                   0 % (0 tasks)
+2019/11/07 14:29:02 - simulation time     670 (s) :                      Tasks execution results not returned due to device mobility:             58.5455 % (644 tasks)
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Tasks executed on each level                                            : Cloud=          456 tasks (where 333 were successfully executed )
+2019/11/07 14:29:02 - simulation time     670 (s) :                                                                                   Fog=              0 tasks (where 0 were successfully executed )
+2019/11/07 14:29:02 - simulation time     670 (s) :                                                                                   Edge=             0 tasks (where 0 were successfully executed )
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Network usage                                                           :                2400 seconds (The total traffic: 1146.3 (MBytes) )
+2019/11/07 14:29:02 - simulation time     670 (s) :                                                                                   Wan=            456 seconds (19 % of total usage, WAN used when downloading containers=0 % of WAN usage )
+2019/11/07 14:29:02 - simulation time     670 (s) :                                                                                   Lan=           2400 seconds (100 % of total usage, LAN used when downloading containers=0 % of LAN usage )
+2019/11/07 14:29:02 - simulation time     670 (s) :                                                             Average bandwidth per transfer=  171.1321 Mbps  
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Average vm CPU utilization                                              :              0.0243 %
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Average vm CPU utilization per level                                    : Cloud=       1.7721 %
+2019/11/07 14:29:02 - simulation time     670 (s) :                                                                                   Fog=              0 %
+2019/11/07 14:29:02 - simulation time     670 (s) :                                                                                   Edge=             0 %
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Energy consumption                                                      :              1.4188 Wh (Average: 0.0138 Wh/data center(or device))
+2019/11/07 14:29:02 - simulation time     670 (s) :                                                                                 :                        (Average: 0.0031 Wh/task)
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Energy Consumption per level                                            : Cloud=       0.3288 Wh (Average: 0.3288 Wh/data center)
+2019/11/07 14:29:02 - simulation time     670 (s) :                                                                                   Fog=         0.3291 Wh (Average: 0.1646 Wh/data center)
+2019/11/07 14:29:02 - simulation time     670 (s) :                                                                                   Edge=        0.7608 Wh (Average: 0.0076 Wh/edge device)
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Dead edge devices due to battery drain                                  :                   0 devices (Among 50 devices with batteries (0 %))
+2019/11/07 14:29:02 - simulation time     670 (s) : SimLog- Average remaining power (devices with batteries that are still alive)   :             17.4426 Wh (Average: 99.9567 %)

@@ -10,7 +10,8 @@ import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters; 
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.TasksGenerator.Task; 
 import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker; 
 import com.mechalikh.pureedgesim.TasksOrchestration.Orchestrator;
@@ -218,6 +219,7 @@ public class SimulationManager extends CloudSimEntity {
 	private void sendFromOrchToDestination(Task task) {
 		if (taskFailed(task, 1))
 			return;
+
 		// Find the best VM for executing the task
 		edgeOrchestrator.initialize(task);
 
@@ -227,7 +229,9 @@ public class SimulationManager extends CloudSimEntity {
 			simLog.incrementTasksFailedLackOfRessources(task);
 			tasksCount++;
 			return;
-		}
+		} else
+			simLog.taskSentFromOrchToDest(task);
+
 		// If the task is offloaded
 		// and the orchestrator is not the offloading destination
 		if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()
@@ -239,7 +243,7 @@ public class SimulationManager extends CloudSimEntity {
 			scheduleNow(this, EXECUTE_TASK, task);
 		}
 	}
-
+	
 	private void sendTaskToOrchestrator(Task task) {
 		if (taskFailed(task, 0))
 			return;
@@ -378,7 +382,8 @@ public class SimulationManager extends CloudSimEntity {
 		return false;
 	}
 
-	private boolean sameLocation(EdgeDataCenter Dev1, EdgeDataCenter Dev2) {
+	private boolean sameLocation(EdgeDataCenter Dev1, EdgeDataCenter Dev2) { 
+		if(Dev1.getType()==TYPES.CLOUD || Dev2.getType()== TYPES.CLOUD) return true;
 		double distance = Math.abs(Math.sqrt(Math.pow((Dev1.getLocation().getXPos() - Dev2.getLocation().getXPos()), 2)
 				+ Math.pow((Dev1.getLocation().getYPos() - Dev2.getLocation().getYPos()), 2)));
 		int RANGE = simulationParameters.EDGE_RANGE;

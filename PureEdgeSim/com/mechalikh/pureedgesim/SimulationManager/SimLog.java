@@ -523,15 +523,21 @@ public class SimLog {
 
 	public void getTasksExecutionInfos(Task task) {
 		this.totalExecutionTime += task.getActualCpuTime();
-		if(task.getReceptionTime()!= -1) // the task is offloaded or a container has been downloaded
-			// in this case don't include the network utilisation time in the waiting time 
-			// so the waiting time will be the time between the reception of the task (or the conatiner) by the destination and the time of execution
-		this.totalWaitingTime += task.getExecStartTime() - task.getReceptionTime();
-		else 
-			// in case the task is not offloaded, and no container has been downloaded ( no network usage)
-			//the waitingdelay will be the difference between the tasks execution time and the task generation time 
-			this.totalWaitingTime+= task.getExecStartTime() - task.getTime();
+		if (task.getReceptionTime() != -1) // the task is offloaded or a container has been downloaded
+			// in this case don't include the network utilisation time in the waiting time
+			// so the waiting time will be the time between the reception of the task (or
+			// the conatiner) by the destination and the time of execution
+			this.totalWaitingTime += task.getExecStartTime() - task.getReceptionTime();
+		else
+			// in case the task is not offloaded, and no container has been downloaded ( no
+			// network usage)
+			// the waitingdelay will be the difference between the tasks execution time and
+			// the task generation time
+			this.totalWaitingTime += task.getExecStartTime() - task.getTime();
 		this.executedTasksCount++;
+	}
+
+	public void taskSentFromOrchToDest(Task task) {
 		if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.CLOUD) {
 			this.tasksExecutedOnCloud++;
 		} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.FOG) {
@@ -544,7 +550,7 @@ public class SimLog {
 	public void updateNetworkUsage(FileTransferProgress transfer) {
 		this.totalLanUsage += transfer.getLanNetworkUsage();
 		this.totalWanUsage += transfer.getWanNetworkUsage();
-		this.totalBandwidth += transfer.getAverageBandwidth()/1000; // Kbits/s to Mbits/s
+		this.totalBandwidth += transfer.getAverageBandwidth() / 1000; // Kbits/s to Mbits/s
 		this.totalTraffic += transfer.getFileSize() / 8000; // Kbits to Mbytes
 
 		if (transfer.getTransferType() == FileTransferProgress.Type.CONTAINER) {
