@@ -60,8 +60,7 @@ public class simulationParameters {
 	public static String[] ORCHESTRATION_ARCHITECTURES;  // The used paradigms : Cloud, Edge, Fog..
 	public static boolean ENABLE_REGISTRY;               // To download the container image or execute the task directly    
 	public static int APPS_COUNT;                        // The number of the applications specified by the user in the Application.xml file
-	public static String[] APPLICATIONS = { "AUGMENTED_REALITY", "E_HEALTH", "HEAVY_COMP_APP", "SMART_HOME" }; // The applications that are used
-	public static double[][] APPLICATIONS_TABLE = new double[APPLICATIONS.length][6]; // The applications characteristics
+	public static double[][] APPLICATIONS_TABLE;         // The applications characteristics
 	public static String CPU_ALLOCATION_POLICY;          // CPU allocation policy : TIME_SHARED (results in long simulation time) or SPACE_SHARED 
 	public static String DEPLOY_ORCHESTRATOR="";         // The location where the orchestrators are deployed (Edge devices, Cloud, Fog servers)
 	public static boolean WAIT_FOR_TASKS;                // After the end of the simulation time, some tasks may still not be executed yet,

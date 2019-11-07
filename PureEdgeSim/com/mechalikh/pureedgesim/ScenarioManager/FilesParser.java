@@ -207,6 +207,7 @@ public class FilesParser {
 			NodeList appList = doc.getElementsByTagName("application");
 			simulationParameters.APPS_COUNT = appList.getLength();// save the number of apps, this will be used later by
 																	// the tasks generator
+			simulationParameters.APPLICATIONS_TABLE= new double[appList.getLength()][6]; 
 			for (int i = 0; i < appList.getLength(); i++) {
 				Node appNode = appList.item(i);
 
@@ -217,11 +218,8 @@ public class FilesParser {
 				isElementPresent(appElement, "request_size");
 				isElementPresent(appElement, "results_size");
 				isElementPresent(appElement, "task_length");
-				isElementPresent(appElement, "required_core");
-
-				String appName = appElement.getAttribute("name");
-				// SimualtionParamters.APP_TYPES appType =
-				// SimualtionParamters.APP_TYPES.valueOf(appName);
+				isElementPresent(appElement, "required_core"); 
+				
 				double max_delay = Double
 						.parseDouble(appElement.getElementsByTagName("max_delay").item(0).getTextContent());
 				double container_size = Double
@@ -234,14 +232,14 @@ public class FilesParser {
 						.parseDouble(appElement.getElementsByTagName("task_length").item(0).getTextContent());
 				double required_core = Double
 						.parseDouble(appElement.getElementsByTagName("required_core").item(0).getTextContent());
-				int index = getAppIndex(appName);
+				 
 				// save apps parameters
-				simulationParameters.APPLICATIONS_TABLE[index][0] = max_delay; // max delay in seconds
-				simulationParameters.APPLICATIONS_TABLE[index][1] = request_size; // avg request size (KB)
-				simulationParameters.APPLICATIONS_TABLE[index][2] = results_size; // avg downloaded results size (KB)
-				simulationParameters.APPLICATIONS_TABLE[index][3] = task_length; // avg task length (MI)
-				simulationParameters.APPLICATIONS_TABLE[index][4] = required_core; // required # of core
-				simulationParameters.APPLICATIONS_TABLE[index][5] = container_size; // the size of the container (KB)
+				simulationParameters.APPLICATIONS_TABLE[i][0] = max_delay; // max delay in seconds
+				simulationParameters.APPLICATIONS_TABLE[i][1] = request_size; // avg request size (KB)
+				simulationParameters.APPLICATIONS_TABLE[i][2] = results_size; // avg downloaded results size (KB)
+				simulationParameters.APPLICATIONS_TABLE[i][3] = task_length; // avg task length (MI)
+				simulationParameters.APPLICATIONS_TABLE[i][4] = required_core; // required # of core
+				simulationParameters.APPLICATIONS_TABLE[i][5] = container_size; // the size of the container (KB)
 			}
 
 		} catch (Exception e) {
@@ -271,15 +269,6 @@ public class FilesParser {
 			throw new IllegalArgumentException(
 					"Attribure '" + key + "' is not found in '" + element.getNodeName() + "'");
 		}
-	}
-
-	public int getAppIndex(String appname) {
-		for (int i = 0; i < simulationParameters.APPLICATIONS.length; i++) {
-			if (appname.equals(simulationParameters.APPLICATIONS[i]))
-				return i;
-		}
-		SimLog.println("Invalid application scenario " + appname + " check Applications.xml file");
-		Runtime.getRuntime().exit(0);
-		return -1;
-	}
+	} 
+	 
 }
