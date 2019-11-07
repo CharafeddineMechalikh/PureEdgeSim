@@ -2,8 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/163447483.svg)](https://zenodo.org/badge/latestdoi/163447483)  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  [![Build Status](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim.svg?branch=master)](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim)  [![Codacy Badge](https://api.codacy.com/project/badge/Grade/25ee278611014a9bb242297480703cf9)](https://www.codacy.com/manual/CharafeddineMechalikh/PureEdgeSim?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CharafeddineMechalikh/PureEdgeSim&amp;utm_campaign=Badge_Grade)   [![Maintainability](https://api.codeclimate.com/v1/badges/a1ffecb5230fc5771b93/maintainability)](https://codeclimate.com/github/CharafeddineMechalikh/PureEdgeSim/maintainability)   [![codebeat badge](https://codebeat.co/badges/bbe172a2-1169-4bbe-b6a6-0505631babc6)](https://codebeat.co/projects/github-com-charafeddinemechalikh-pureedgesim-master)
 
-For more information read the wiki here: 
-[PureEdgeSim WIKI](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki)
+**For more information read the wiki here: [PureEdgeSim WIKI](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki)**
 
 ## 1. Background
 
