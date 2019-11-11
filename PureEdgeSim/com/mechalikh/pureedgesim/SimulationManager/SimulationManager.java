@@ -5,15 +5,15 @@ import java.util.List;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimEntity;
 import org.cloudbus.cloudsim.core.events.SimEvent;
-import org.cloudbus.cloudsim.vms.Vm; 
+import org.cloudbus.cloudsim.vms.Vm;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
-import com.mechalikh.pureedgesim.TasksGenerator.Task; 
-import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker; 
+import com.mechalikh.pureedgesim.TasksGenerator.Task;
+import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker;
 import com.mechalikh.pureedgesim.TasksOrchestration.Orchestrator;
 
 public class SimulationManager extends CloudSimEntity {
@@ -29,7 +29,7 @@ public class SimulationManager extends CloudSimEntity {
 	private CustomBroker broker;
 	private List<Task> tasksList;
 	private Orchestrator edgeOrchestrator;
-	private ServersManager serversManager; 
+	private ServersManager serversManager;
 	private SimulationVisualizer simulationVisualizer;
 	private CloudSim simulation;
 	private int simulationId;
@@ -243,31 +243,33 @@ public class SimulationManager extends CloudSimEntity {
 			scheduleNow(this, EXECUTE_TASK, task);
 		}
 	}
-	
+
 	private void sendTaskToOrchestrator(Task task) {
 		if (taskFailed(task, 0))
 			return;
 
 		simLog.incrementTasksSent();
 
-		// Send the offloading request to the closest orchestrator
-		double min = -1;
-		int selected = 0;
-		double distance;
-		for (int i = 0; i < orchestratorsList.size(); i++) {
-			if (orchestratorsList.get(i).getType() != simulationParameters.TYPES.CLOUD) {
-				distance = Math.abs(Math.sqrt(Math
-						.pow((task.getEdgeDevice().getLocation().getXPos()
-								- orchestratorsList.get(i).getLocation().getXPos()), 2)
-						+ Math.pow((task.getEdgeDevice().getLocation().getYPos()
-								- orchestratorsList.get(i).getLocation().getYPos()), 2)));
-				if (min == -1 || min > distance) {
-					min = distance;
-					selected = i;
+		if (simulationParameters.ENABLE_ORCHESTRATORS) {
+			// Send the offloading request to the closest orchestrator
+			double min = -1;
+			int selected = 0;
+			double distance;
+
+			for (int i = 0; i < orchestratorsList.size(); i++) {
+				if (orchestratorsList.get(i).getType() != simulationParameters.TYPES.CLOUD) {
+					distance = Math.abs(Math.sqrt(Math
+							.pow((task.getEdgeDevice().getLocation().getXPos()
+									- orchestratorsList.get(i).getLocation().getXPos()), 2)
+							+ Math.pow((task.getEdgeDevice().getLocation().getYPos()
+									- orchestratorsList.get(i).getLocation().getYPos()), 2)));
+					if (min == -1 || min > distance) {
+						min = distance;
+						selected = i;
+					}
 				}
 			}
-		}
-		if (simulationParameters.ENABLE_ORCHESTRATORS) {
+
 			if (orchestratorsList.size() == 0) {
 				simLog.printSameLine("SimulationManager- Error no orchestrator found", "red");
 				return;
@@ -382,8 +384,9 @@ public class SimulationManager extends CloudSimEntity {
 		return false;
 	}
 
-	private boolean sameLocation(EdgeDataCenter Dev1, EdgeDataCenter Dev2) { 
-		if(Dev1.getType()==TYPES.CLOUD || Dev2.getType()== TYPES.CLOUD) return true;
+	private boolean sameLocation(EdgeDataCenter Dev1, EdgeDataCenter Dev2) {
+		if (Dev1.getType() == TYPES.CLOUD || Dev2.getType() == TYPES.CLOUD)
+			return true;
 		double distance = Math.abs(Math.sqrt(Math.pow((Dev1.getLocation().getXPos() - Dev2.getLocation().getXPos()), 2)
 				+ Math.pow((Dev1.getLocation().getYPos() - Dev2.getLocation().getYPos()), 2)));
 		int RANGE = simulationParameters.EDGE_RANGE;
@@ -396,7 +399,7 @@ public class SimulationManager extends CloudSimEntity {
 		// Get orchestrators list from the server manager
 		orchestratorsList = serversManager.getOrchestratorsList();
 		this.serversManager = serversManager;
-		
+
 		// Submit vm list to the broker
 		simLog.deepLog("SimulationManager- Submitting VM list to the broker");
 		broker.submitVmList(serversManager.getVmList());

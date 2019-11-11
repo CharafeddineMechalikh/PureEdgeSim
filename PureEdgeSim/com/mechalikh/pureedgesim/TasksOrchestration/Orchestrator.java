@@ -8,6 +8,7 @@ import org.cloudbus.cloudsim.vms.Vm;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
@@ -122,6 +123,7 @@ public abstract class Orchestrator {
 	}
 
 	protected boolean sameLocation(EdgeDataCenter device1, EdgeDataCenter device2, int RANGE) {
+		if(device2.getType()==TYPES.CLOUD) return true;
 		double distance = Math
 				.abs(Math.sqrt(Math.pow((device1.getLocation().getXPos() - device2.getLocation().getXPos()), 2)
 						+ Math.pow((device1.getLocation().getYPos() - device2.getLocation().getYPos()), 2)));

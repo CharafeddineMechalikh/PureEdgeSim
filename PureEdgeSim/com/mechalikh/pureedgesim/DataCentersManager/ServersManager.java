@@ -72,6 +72,10 @@ public class ServersManager {
 					&& datacentersList.get(i).getType() == simulationParameters.TYPES.FOG) {
 				datacentersList.get(i).setOrchestrator(true);
 				orchestratorsList.add(datacentersList.get(i));
+			}else if ("EDGE".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
+					&& datacentersList.get(i).getType() == simulationParameters.TYPES.EDGE) {
+				datacentersList.get(i).setOrchestrator(true);
+				orchestratorsList.add(datacentersList.get(i));
 			}
 		}
 
