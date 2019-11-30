@@ -53,60 +53,60 @@ public abstract class Orchestrator {
 		} else if ("EDGE_AND_CLOUD".equals(architecture)) {
 			edgeAndCloud(task);
 		}
-		// Offload it only if resources are available (i.e. the offloading distination
-		// is available)
-		if (task.getVm() != Vm.NULL)
-			sendTask(task);// Send the task to execute it
-
 	}
 
 	// If the orchestration scenario is EDGE_ONLY send Tasks only to
 	// edge virtual machines (vms)
 	private void edgeOnly(Task task) {
 		String[] Architecture = { "Edge" };
-		findVM(Architecture, task);
-
+		sendTask(task, findVM(Architecture, task));
 	}
 
 	// If the orchestration scenario is ClOUD_ONLY send Tasks (cloudlets) only to
 	// cloud virtual machines (vms)
 	private void cloudOnly(Task task) {
 		String[] Architecture = { "Cloud" };
-		findVM(Architecture, task);
+		sendTask(task, findVM(Architecture, task));
 	}
 
 	// If the orchestration scenario is FOG_AND_CLOUD send Tasks only to
 	// fog or cloud virtual machines (vms)
 	private void fogAndCloud(Task task) {
 		String[] Architecture = { "Cloud", "Fog" };
-		findVM(Architecture, task);
+		sendTask(task, findVM(Architecture, task));
 	}
 
 	// If the orchestration scenario is FOG_AND_CLOUD send Tasks only to
 	// fog or cloud virtual machines (vms)
 	private void edgeAndCloud(Task task) {
 		String[] Architecture = { "Cloud", "Edge" };
-		findVM(Architecture, task);
+		sendTask(task, findVM(Architecture, task));
 	}
 
 	// If the orchestration scenario is FOG_AND_CLOUD send Tasks only to
 	// fog or cloud virtual machines (vms)
 	private void fogOnly(Task task) {
 		String[] Architecture = { "Fog" };
-		findVM(Architecture, task);
+		sendTask(task, findVM(Architecture, task));
 	}
 
 	// If the orchestration scenario is ALL send Tasks (cloudlets) any virtual
 	// machine (vm)
 	private void all(Task task) {
 		String[] Architecture = { "Cloud", "Fog", "Edge" };
-		findVM(Architecture, task);
-	} 
+		sendTask(task, findVM(Architecture, task));
+	}
 
-	protected abstract void findVM(String[] architecture, Task task);
+	protected abstract int findVM(String[] architecture, Task task);
 
-	protected void sendTask(Task task) {
-		task.getEdgeDevice().getVmTaskMap().add(new VmTaskMapItem((EdgeVM) task.getVm(), task));
+	protected void sendTask(Task task, int vm) {
+		// assign the tasks to the vm found
+		assignTaskToVm(vm, task);
+
+		// Offload it only if resources are available (i.e. the offloading distination
+		// is available)
+		if (task.getVm() != Vm.NULL) // Send the task to execute it
+			task.getEdgeDevice().getVmTaskMap().add(new VmTaskMapItem((EdgeVM) task.getVm(), task));
 	}
 
 	protected void assignTaskToVm(int vmIndex, Task task) {
@@ -123,7 +123,8 @@ public abstract class Orchestrator {
 	}
 
 	protected boolean sameLocation(EdgeDataCenter device1, EdgeDataCenter device2, int RANGE) {
-		if(device2.getType()==TYPES.CLOUD) return true;
+		if (device2.getType() == TYPES.CLOUD)
+			return true;
 		double distance = Math
 				.abs(Math.sqrt(Math.pow((device1.getLocation().getXPos() - device2.getLocation().getXPos()), 2)
 						+ Math.pow((device1.getLocation().getYPos() - device2.getLocation().getYPos()), 2)));
@@ -163,5 +164,7 @@ public abstract class Orchestrator {
 												task.getOrchestrator(), simulationParameters.EDGE_RANGE))
 										&& ((EdgeDataCenter) edgeVM.getHost().getDatacenter()).isDead())));
 	}
+
+	public abstract void resultsReturned(Task task);
 
 }

@@ -54,16 +54,18 @@ public abstract class NetworkModel extends CloudSimEntity {
 		return ((task1.getOrchestrator() == task2.getOrchestrator())
 				|| (task1.getOrchestrator() == task2.getVm().getHost().getDatacenter())
 				|| (task1.getOrchestrator() == task2.getEdgeDevice())
+				|| (task1.getOrchestrator() == task2.getRegistry())
 
 				// Compare origin device
 				|| (task1.getEdgeDevice() == task2.getOrchestrator())
 				|| (task1.getEdgeDevice() == task2.getVm().getHost().getDatacenter())
-				|| (task1.getEdgeDevice() == task2.getEdgeDevice())
+				|| (task1.getEdgeDevice() == task2.getEdgeDevice()) || (task1.getEdgeDevice() == task2.getRegistry())
 
 				// Compare offloading destination
 				|| (task1.getVm().getHost().getDatacenter() == task2.getOrchestrator())
 				|| (task1.getVm().getHost().getDatacenter() == task2.getVm().getHost().getDatacenter())
-				|| (task1.getVm().getHost().getDatacenter() == task2.getEdgeDevice()));
+				|| (task1.getVm().getHost().getDatacenter() == task2.getEdgeDevice())
+				|| (task1.getVm().getHost().getDatacenter() == task2.getRegistry()));
 	}
 
 	protected boolean wanIsUsed(FileTransferProgress fileTransferProgress) {
@@ -71,11 +73,12 @@ public abstract class NetworkModel extends CloudSimEntity {
 				&& ((EdgeVM) fileTransferProgress.getTask().getVm()).getType().equals(TYPES.CLOUD))
 				// If the offloading destination is the cloud
 
-				|| fileTransferProgress.getTransferType() == FileTransferProgress.Type.CONTAINER
+				|| (fileTransferProgress.getTransferType() == FileTransferProgress.Type.CONTAINER
+						&& (fileTransferProgress.getTask().getRegistry()== null || fileTransferProgress.getTask().getRegistry().getType() == TYPES.CLOUD))
 				// Or if containers will be downloaded from registry
 
 				|| (fileTransferProgress.getTask().getOrchestrator().getType() == simulationParameters.TYPES.CLOUD));
-		// Or if the orchestrator is deployed in the cloud
+	         	// Or if the orchestrator is deployed in the cloud
 
 	}
 

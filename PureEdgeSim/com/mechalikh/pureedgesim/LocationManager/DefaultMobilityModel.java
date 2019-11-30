@@ -4,17 +4,17 @@ import java.util.Random;
 
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 
-public class MobilityManager extends Mobility {
+public class DefaultMobilityModel extends Mobility {
 	private boolean pause = false;
 	private double pauseDuration = -1;
 	private double mobilityDuration = new Random().nextInt(100);
 	private int orientationAngle = new Random().nextInt(359);
 
-	public MobilityManager(Location currentLocation) {
+	public DefaultMobilityModel(Location currentLocation) {
 		super(currentLocation);
 	}
 
-	public MobilityManager() { 
+	public DefaultMobilityModel() { 
 		super();
 	}
 

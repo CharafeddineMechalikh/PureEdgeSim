@@ -10,7 +10,8 @@ public class Task extends CloudletSimple {
 	private long containerSize;
 	private EdgeDataCenter orchestrator;
 	private double receptionTime = -1; // the time when the task, or the corresponding container has been received by the offloading destination 
-
+    private EdgeDataCenter registry;
+	private int applicationID;
 	public Task(int id, long cloudletLength, long pesNumber) {
 		super(id, cloudletLength, pesNumber);
 	}
@@ -63,4 +64,20 @@ public class Task extends CloudletSimple {
 		receptionTime = time;
 	}
 
+	public EdgeDataCenter getRegistry() {
+		return registry;
+	}
+
+	public void setRegistry(EdgeDataCenter registry) {
+		this.registry = registry;
+	}
+
+	public int getApplicationID() {
+		return applicationID;
+	}
+
+	public void setApplicationID(int applicationID) {
+		this.applicationID = applicationID;
+	}
+ 
 }

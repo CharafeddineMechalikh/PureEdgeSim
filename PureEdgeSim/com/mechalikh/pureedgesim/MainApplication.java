@@ -15,7 +15,7 @@ import com.mechalikh.pureedgesim.DataCentersManager.DefaultEdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.EnergyModel;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
 import com.mechalikh.pureedgesim.LocationManager.Mobility;
-import com.mechalikh.pureedgesim.LocationManager.MobilityManager;
+import com.mechalikh.pureedgesim.LocationManager.DefaultMobilityModel;
 import com.mechalikh.pureedgesim.Network.DefaultNetworkModel;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
 import com.mechalikh.pureedgesim.ScenarioManager.FilesParser;
@@ -48,7 +48,7 @@ public class MainApplication {
 	protected int step = 1;
 	protected static int cpuCores;
 	protected static List<Scenario> Iterations = new ArrayList<Scenario>();
-	protected static Class<? extends Mobility> mobilityManager = MobilityManager.class;
+	protected static Class<? extends Mobility> mobilityManager = DefaultMobilityModel.class;
 	protected static Class<? extends EdgeDataCenter> edgedatacenter = DefaultEdgeDataCenter.class;
 	protected static Class<? extends TasksGenerator> tasksGenerator = DefaultTasksGenerator.class;
 	protected static Class<? extends Orchestrator> orchestrator = DefaultEdgeOrchestrator.class;

@@ -131,6 +131,7 @@ public class SimulationManager extends CloudSimEntity {
 			// Result returned to edge device
 			if (taskFailed(task, 0))
 				return;
+			this.edgeOrchestrator.resultsReturned(task);
 			tasksCount++;
 			break;
 
@@ -416,5 +417,9 @@ public class SimulationManager extends CloudSimEntity {
 
 	public void setNetworkModel(NetworkModel networkModel) {
 		this.networkModel = networkModel;
+	}
+
+	public List<Task> getTasksList() {
+		return tasksList;
 	}
 }

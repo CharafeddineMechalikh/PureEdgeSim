@@ -12,11 +12,11 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 		super(simulationManager);
 	}
 
-	protected void findVM(String[] architecture, Task task) {
+	protected int findVM(String[] architecture, Task task) {
 		if ("ROUND_ROBIN".equals(algorithm)) {
-			roundRobin(architecture, task);
+			return roundRobin(architecture, task);
 		} else if ("TRADE_OFF".equals(algorithm)) {
-			tradeOff(architecture, task);
+			return tradeOff(architecture, task);
 		} else {
 			SimLog.println("");
 			SimLog.println("Default Orchestrator- Unknnown orchestration algorithm '" + algorithm
@@ -24,9 +24,10 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 			// Cancel the simulation
 			Runtime.getRuntime().exit(0);
 		}
+		return -1;
 	}
 
-	private void tradeOff(String[] architecture, Task task) {
+	private int tradeOff(String[] architecture, Task task) {
 		int vm = -1;
 		double min = -1;
 		double new_min;// vm with minimum assigned tasks;
@@ -54,11 +55,11 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 				}
 			}
 		}
-		// assign the tasks to the vm found
-		assignTaskToVm(vm, task);
+		// assign the tasks to the found vm 
+		return vm;
 	}
 
-	private void roundRobin(String[] architecture, Task task) {
+	private int roundRobin(String[] architecture, Task task) {
 		List<EdgeVM> vmList = simulationManager.getServersManager().getVmList();
 		int vm = -1;
 		int minTasksCount = -1; // vm with minimum assigned tasks;
@@ -77,8 +78,13 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 				}
 			}
 		}
-		// assign the tasks to the vm found
-		assignTaskToVm(vm, task);
+		// assign the tasks to the found vm 
+		return vm;
+	}
+
+	@Override
+	public void resultsReturned(Task task) {
+
 	}
 
 }

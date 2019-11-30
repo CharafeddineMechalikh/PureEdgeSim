@@ -13,6 +13,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+ 
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 
@@ -61,7 +62,8 @@ public class FilesParser {
 			simulationParameters.CLEAN_OUTPUT_FOLDER = Boolean
 					.parseBoolean(prop.getProperty("clear_output_folder").trim());
 			simulationParameters.WAIT_FOR_TASKS = Boolean.parseBoolean(prop.getProperty("wait_for_all_tasks").trim());
-			simulationParameters.ENABLE_REGISTRY = Boolean.parseBoolean(prop.getProperty("enable_registry").trim());
+			simulationParameters.ENABLE_REGISTRY = Boolean.parseBoolean(prop.getProperty("enable_registry").trim()); 
+			simulationParameters.registry_mode = prop.getProperty("registry_mode").trim(); 
 			simulationParameters.ENABLE_ORCHESTRATORS = Boolean
 					.parseBoolean(prop.getProperty("enable_orchestrators").trim());
 

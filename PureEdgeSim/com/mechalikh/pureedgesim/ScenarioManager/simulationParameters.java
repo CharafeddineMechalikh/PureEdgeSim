@@ -59,6 +59,7 @@ public class simulationParameters {
 	public static String[] ORCHESTRATION_AlGORITHMS;     // Tasks orchestration algorithms
 	public static String[] ORCHESTRATION_ARCHITECTURES;  // The used paradigms : Cloud, Edge, Fog..
 	public static boolean ENABLE_REGISTRY;               // To download the container image or execute the task directly    
+	public static String registry_mode;                  // Where the containers will be downloaded from
 	public static int APPS_COUNT;                        // The number of the applications specified by the user in the Application.xml file
 	public static double[][] APPLICATIONS_TABLE;         // The applications characteristics
 	public static String CPU_ALLOCATION_POLICY;          // CPU allocation policy : TIME_SHARED (results in long simulation time) or SPACE_SHARED 
@@ -66,6 +67,7 @@ public class simulationParameters {
 	public static boolean WAIT_FOR_TASKS;                // After the end of the simulation time, some tasks may still not be executed yet,
                                                          // this variable will allow the user to wait for the execution of all tasks or to 
                                                          // end the simulation when the predifined time ends. 
+	
 
 
 

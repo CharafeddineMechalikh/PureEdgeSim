@@ -12,9 +12,9 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 		super(simulationManager);
 	}
 
-	protected void findVM(String[] architecture, Task task) {
+	protected int findVM(String[] architecture, Task task) {
 		if ("INCEREASE_LIFETIME".equals(algorithm)) {
-			increseLifetime(architecture, task);
+			return increseLifetime(architecture, task);
 		} else {
 			SimLog.println("");
 			SimLog.println("Custom Orchestrator- Unknnown orchestration algorithm '" + algorithm
@@ -22,9 +22,10 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 			// Cancel the simulation
 			Runtime.getRuntime().exit(0);
 		}
+		return -1;
 	}
 
-	private void increseLifetime(String[] architecture, Task task) {
+	private int increseLifetime(String[] architecture, Task task) {
 		int vm = -1;
 		double minTasksCount = -1; // vm with minimum assigned tasks;
 		double vmMips = 0;
@@ -71,7 +72,13 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 			}
 		}
 		// assign the tasks to the vm found
-		assignTaskToVm(vm, task);
+		return vm;
+	}
+
+	@Override
+	public void resultsReturned(Task task) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
