@@ -1,7 +1,9 @@
 package com.mechalikh.pureedgesim.TasksOrchestration;
 
 import java.util.List;
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
+
+import org.cloudbus.cloudsim.vms.Vm;
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
@@ -37,10 +39,12 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 			if (offloadingIsPossible(task, vmList.get(i), architecture)) {
 				double latency = 1;
 				double energy = 1;
-				if (vmList.get(i).getType() == simulationParameters.TYPES.CLOUD) {
+				if (((EdgeDataCenter) vmList.get(i).getHost().getDatacenter())
+						.getType() == simulationParameters.TYPES.CLOUD) {
 					latency = 1.6;
 					energy = 1.1;
-				} else if (vmList.get(i).getType() == simulationParameters.TYPES.EDGE) {
+				} else if (((EdgeDataCenter) vmList.get(i).getHost().getDatacenter())
+						.getType() == simulationParameters.TYPES.EDGE) {
 					energy = 1.4;
 				}
 				new_min = (orchestrationHistory.get(i).size() + 1) * latency * energy / vmList.get(i).getMips();
@@ -55,12 +59,12 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 				}
 			}
 		}
-		// assign the tasks to the found vm 
+		// assign the tasks to the found vm
 		return vm;
 	}
 
 	private int roundRobin(String[] architecture, Task task) {
-		List<EdgeVM> vmList = simulationManager.getServersManager().getVmList();
+		List<Vm> vmList = simulationManager.getServersManager().getVmList();
 		int vm = -1;
 		int minTasksCount = -1; // vm with minimum assigned tasks;
 		// get best vm for this task
@@ -78,7 +82,7 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 				}
 			}
 		}
-		// assign the tasks to the found vm 
+		// assign the tasks to the found vm
 		return vm;
 	}
 

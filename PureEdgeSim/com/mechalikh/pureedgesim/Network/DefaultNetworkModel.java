@@ -2,8 +2,7 @@ package com.mechalikh.pureedgesim.Network;
 
 import java.util.List;
 import org.cloudbus.cloudsim.core.events.SimEvent;
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter; 
 import com.mechalikh.pureedgesim.DataCentersManager.DefaultEnergyModel;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
@@ -217,7 +216,7 @@ public class DefaultNetworkModel extends NetworkModel {
 		// if the results are returned from the cloud, consider the wan propagation
 		// delay
 		if (transfer.getTask().getOrchestrator().getType().equals(TYPES.CLOUD)
-				|| ((EdgeVM) transfer.getTask().getVm()).getType().equals(TYPES.CLOUD))
+				|| ((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD))
 			schedule(this, simulationParameters.WAN_PROPAGATION_DELAY, DefaultNetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV,
 					transfer.getTask());
 		else
@@ -227,14 +226,14 @@ public class DefaultNetworkModel extends NetworkModel {
 
 	protected void executeTaskOrDownloadContainer(FileTransferProgress transfer) {
 		if (simulationParameters.ENABLE_REGISTRY
-				&& !((EdgeVM) transfer.getTask().getVm()).getType().equals(TYPES.CLOUD)) {
+				&& !((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD)) {
 			// if the registry is enabled and the task is offloaded to the fog or the edge,
 			// then download the container
 			scheduleNow(this, DefaultNetworkModel.DOWNLOAD_CONTAINER, transfer.getTask());
 
 		} else {// if the registry is disabled, execute directly the request, as it represents
 				// the offloaded task in this case
-			if (((EdgeVM) transfer.getTask().getVm()).getType().equals(TYPES.CLOUD))
+			if (((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD))
 				schedule(simulationManager, simulationParameters.WAN_PROPAGATION_DELAY, SimulationManager.EXECUTE_TASK,
 						transfer.getTask());
 			else

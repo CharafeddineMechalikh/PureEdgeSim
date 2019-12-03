@@ -1,14 +1,15 @@
 package com.mechalikh.pureedgesim.TasksOrchestration;
+ 
+import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public class VmTaskMapItem {
 
 	private Task task;
-	private EdgeVM vm;
+	private Vm vm;
 
-	public VmTaskMapItem(EdgeVM vm, Task task) {
+	public VmTaskMapItem(Vm vm, Task task) {
 		 this.setVm(vm);
 		 this.setTask(task);
 	}
@@ -21,11 +22,11 @@ public class VmTaskMapItem {
 		this.task = task;
 	}
 
-	public EdgeVM getVm() {
+	public Vm getVm() {
 		return vm;
 	}
 
-	public void setVm(EdgeVM vm) {
+	public void setVm(Vm vm) {
 		this.vm = vm;
 	}
 

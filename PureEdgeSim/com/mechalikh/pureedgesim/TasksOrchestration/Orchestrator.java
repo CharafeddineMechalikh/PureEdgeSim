@@ -5,8 +5,7 @@ import java.util.List;
 
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter; 
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
@@ -15,7 +14,7 @@ import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public abstract class Orchestrator {
 	protected List<List<Integer>> orchestrationHistory;
-	protected List<EdgeVM> vmList;
+	protected List<Vm> vmList;
 	protected SimulationManager simulationManager;
 	protected SimLog simLog;
 	protected String algorithm;
@@ -106,7 +105,7 @@ public abstract class Orchestrator {
 		// Offload it only if resources are available (i.e. the offloading distination
 		// is available)
 		if (task.getVm() != Vm.NULL) // Send the task to execute it
-			task.getEdgeDevice().getVmTaskMap().add(new VmTaskMapItem((EdgeVM) task.getVm(), task));
+			task.getEdgeDevice().getVmTaskMap().add(new VmTaskMapItem((Vm) task.getVm(), task));
 	}
 
 	protected void assignTaskToVm(int vmIndex, Task task) {
@@ -115,7 +114,7 @@ public abstract class Orchestrator {
 		} else {
 			task.setVm(vmList.get(vmIndex)); // send this task to this vm
 			simLog.deepLog(simulationManager.getSimulation().clock() + " : EdgeOrchestrator, Task: " + task.getId()
-					+ " assigned to " + vmList.get(vmIndex).getType() + " vm: " + vmList.get(vmIndex).getId());
+					+ " assigned to " + ((EdgeDataCenter)vmList.get(vmIndex).getHost().getDatacenter()).getType() + " vm: " + vmList.get(vmIndex).getId());
 
 			// update history
 			orchestrationHistory.get(vmIndex).add((int) task.getId());
@@ -140,8 +139,8 @@ public abstract class Orchestrator {
 		return false;
 	}
 
-	protected boolean offloadingIsPossible(Task task, EdgeVM edgeVM, String[] architecture) {
-		simulationParameters.TYPES vmType = edgeVM.getType();
+	protected boolean offloadingIsPossible(Task task, Vm edgeVM, String[] architecture) {
+		simulationParameters.TYPES vmType = ((EdgeDataCenter)edgeVM.getHost().getDatacenter()).getType();
 		return ((arrayContains(architecture, "Cloud") && vmType == simulationParameters.TYPES.CLOUD) // cloud
 				|| (arrayContains(architecture, "Fog") && vmType == simulationParameters.TYPES.FOG // fog
 				// compare destination (fog host) location and origin (edge) location, if they

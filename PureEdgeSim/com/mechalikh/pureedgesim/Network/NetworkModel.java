@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cloudbus.cloudsim.core.CloudSimEntity;
-import org.cloudbus.cloudsim.core.events.SimEvent;
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
+import org.cloudbus.cloudsim.core.events.SimEvent; 
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter; 
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
@@ -70,7 +70,7 @@ public abstract class NetworkModel extends CloudSimEntity {
 
 	protected boolean wanIsUsed(FileTransferProgress fileTransferProgress) {
 		return ((fileTransferProgress.getTransferType() == FileTransferProgress.Type.TASK
-				&& ((EdgeVM) fileTransferProgress.getTask().getVm()).getType().equals(TYPES.CLOUD))
+				&& ((EdgeDataCenter) fileTransferProgress.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD))
 				// If the offloading destination is the cloud
 
 				|| (fileTransferProgress.getTransferType() == FileTransferProgress.Type.CONTAINER

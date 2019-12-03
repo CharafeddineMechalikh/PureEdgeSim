@@ -20,7 +20,6 @@ import org.cloudbus.cloudsim.vms.Vm;
 
 import com.mechalikh.pureedgesim.MainApplication;
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeVM;
 import com.mechalikh.pureedgesim.Network.FileTransferProgress;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
@@ -486,13 +485,14 @@ public class SimLog {
 
 	public void incrementTasksFailed(Task task) {
 		this.tasksFailed++;
+		simulationParameters.TYPES type = ((EdgeDataCenter) task.getVm().getHost().getDatacenter()).getType();
 		if (task.getVm() == Vm.NULL)
 			return;
-		if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.CLOUD) {
+		if (type == simulationParameters.TYPES.CLOUD) {
 			this.tasksFailedCloud++;
-		} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.FOG) {
+		} else if (type == simulationParameters.TYPES.FOG) {
 			this.tasksFailedFog++;
-		} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.EDGE) {
+		} else if (type == simulationParameters.TYPES.EDGE) {
 			this.tasksFailedEdge++;
 		}
 	}
@@ -538,11 +538,12 @@ public class SimLog {
 	}
 
 	public void taskSentFromOrchToDest(Task task) {
-		if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.CLOUD) {
+		simulationParameters.TYPES type = ((EdgeDataCenter) task.getVm().getHost().getDatacenter()).getType();
+		if (type == simulationParameters.TYPES.CLOUD) {
 			this.tasksExecutedOnCloud++;
-		} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.FOG) {
+		} else if (type == simulationParameters.TYPES.FOG) {
 			this.tasksExecutedOnFog++;
-		} else if (((EdgeVM) task.getVm()).getType() == simulationParameters.TYPES.EDGE) {
+		} else if (type == simulationParameters.TYPES.EDGE) {
 			this.tasksExecutedOnEdge++;
 		}
 	}

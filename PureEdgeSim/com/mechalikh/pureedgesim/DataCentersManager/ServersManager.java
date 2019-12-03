@@ -20,6 +20,8 @@ import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerTimeShared;
 import org.cloudbus.cloudsim.schedulers.vm.VmScheduler;
 import org.cloudbus.cloudsim.schedulers.vm.VmSchedulerSpaceShared;
+import org.cloudbus.cloudsim.vms.Vm;
+import org.cloudbus.cloudsim.vms.VmSimple;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,7 +34,7 @@ import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
 public class ServersManager {
 	private List<EdgeDataCenter> datacentersList;
-	private List<EdgeVM> vmList;
+	private List<Vm> vmList;
 	private List<EdgeDataCenter> orchestratorsList;
 	private SimulationManager simulationManager;
 	private Class<? extends Mobility> mobilityManager;
@@ -43,7 +45,7 @@ public class ServersManager {
 			Class<? extends EnergyModel> energyModel, Class<? extends EdgeDataCenter> edgedatacenter) {
 		datacentersList = new ArrayList<EdgeDataCenter>();
 		orchestratorsList = new ArrayList<EdgeDataCenter>();
-		vmList = new ArrayList<EdgeVM>();
+		vmList = new ArrayList<Vm>();
 		this.mobilityManager = mobilityManager;
 		this.energyModel = energyModel;
 		this.edgeDataCenterType = edgedatacenter;
@@ -266,7 +268,7 @@ public class ServersManager {
 				else
 					tasksScheduler = new CloudletSchedulerTimeShared();
 
-				EdgeVM vm = new EdgeVM(vmList.size(), vmMips, vmNumOfCores);
+				Vm vm = new VmSimple(vmList.size(), vmMips, vmNumOfCores);
 				vm.setRam(vmRam).setBw(vmBandwidth).setSize(vmStorage).setCloudletScheduler(tasksScheduler);
 				vm.getUtilizationHistory().enable();
 				vm.setHost(host);
@@ -278,7 +280,7 @@ public class ServersManager {
 		return hostList;
 	}
 
-	public List<EdgeVM> getVmList() {
+	public List<Vm> getVmList() {
 		return vmList;
 
 	}
