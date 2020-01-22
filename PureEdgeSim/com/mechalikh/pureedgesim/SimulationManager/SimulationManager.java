@@ -43,8 +43,7 @@ public class SimulationManager extends CloudSimEntity {
 	private double failedTasksCount = 0;
 	private int tasksCount = 0;
 
-	public SimulationManager(SimLog simLog, CloudSim simulation, int simulationId, int iteration, Scenario scenario)
-			throws Exception {
+	public SimulationManager(SimLog simLog, CloudSim simulation, int simulationId, int iteration, Scenario scenario) {
 		super(simulation);
 		this.simulation = simulation;
 		this.simLog = simLog;
@@ -78,14 +77,12 @@ public class SimulationManager extends CloudSimEntity {
 		simLog.print("SimulationManager- Simulation: " + this.simulationId + "  , iteration: " + this.iteration);
 
 		// Tasks scheduling
-		for (int i = 0; i < tasksList.size(); i++) {
-
+		for (Task task : tasksList) {
 			if (!simulationParameters.ENABLE_ORCHESTRATORS)
-				tasksList.get(i).setOrchestrator(tasksList.get(i).getEdgeDevice());
+				task.setOrchestrator(task.getEdgeDevice());
 
 			// Schedule the tasks offloading
-			schedule(this, tasksList.get(i).getTime(), SEND_TO_ORCH, tasksList.get(i));
-
+			schedule(this, task.getTime(), SEND_TO_ORCH, task);
 		}
 
 		// Scheduling the end of the simulation
@@ -230,8 +227,9 @@ public class SimulationManager extends CloudSimEntity {
 			simLog.incrementTasksFailedLackOfRessources(task);
 			tasksCount++;
 			return;
-		} else
+		} else {
 			simLog.taskSentFromOrchToDest(task);
+		}
 
 		// If the task is offloaded
 		// and the orchestrator is not the offloading destination
@@ -282,7 +280,7 @@ public class SimulationManager extends CloudSimEntity {
 	}
 
 	private CustomBroker createBroker() {
-		CustomBroker broker = null;
+		CustomBroker broker;
 		try {
 			broker = new CustomBroker(simulation);
 			broker.setSimulationManager(this);
@@ -373,7 +371,7 @@ public class SimulationManager extends CloudSimEntity {
 			tasksCount++;
 			return true;
 		}
-		if (phase == 2 && ((EdgeDataCenter) task.getVm().getHost().getDatacenter()) != null
+		if (phase == 2 && (task.getVm().getHost().getDatacenter()) != null
 				&& ((EdgeDataCenter) task.getVm().getHost().getDatacenter())
 						.getType() != simulationParameters.TYPES.CLOUD
 				&& !sameLocation(task.getEdgeDevice(), ((EdgeDataCenter) task.getVm().getHost().getDatacenter()))) {

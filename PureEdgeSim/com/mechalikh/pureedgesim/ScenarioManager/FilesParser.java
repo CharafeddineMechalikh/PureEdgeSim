@@ -7,12 +7,10 @@ import java.io.InputStream;
 import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
  
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
@@ -20,8 +18,7 @@ import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 public class FilesParser {
 
 	// Scan files
-	public boolean checkFiles(String simProp, String edgeFile, String fogFile, String appFile, String cloudFile)
-			throws SAXException, IOException, ParserConfigurationException {
+	public boolean checkFiles(String simProp, String edgeFile, String fogFile, String appFile, String cloudFile) {
 		simulationParameters.EDGE_DEVICES_FILE = edgeFile;
 		simulationParameters.FOG_SERVERS_FILE = fogFile;
 		simulationParameters.CLOUD_DATACENTERS_FILE = cloudFile;
@@ -198,7 +195,7 @@ public class FilesParser {
 
 	private boolean checkAppFile(String appFile) {
 		SimLog.println("FilesParser- Checking applications file");
-		Document doc = null;
+		Document doc;
 		try {
 			File devicesFile = new File(appFile);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

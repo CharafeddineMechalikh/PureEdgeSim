@@ -213,8 +213,7 @@ public class DefaultNetworkModel extends NetworkModel {
 	}
 
 	protected void returnResultToDevice(FileTransferProgress transfer) {
-		// if the results are returned from the cloud, consider the wan propagation
-		// delay
+		// if the results are returned from the cloud, consider the wan propagation delay
 		if (transfer.getTask().getOrchestrator().getType().equals(TYPES.CLOUD)
 				|| ((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD))
 			schedule(this, simulationParameters.WAN_PROPAGATION_DELAY, DefaultNetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV,

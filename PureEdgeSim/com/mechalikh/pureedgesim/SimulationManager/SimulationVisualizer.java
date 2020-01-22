@@ -113,17 +113,17 @@ public class SimulationVisualizer {
 		double edgecount = 0;
 		double fogcount = 0;
 		List<? extends EdgeDataCenter> datacenterList = simulationManager.getServersManager().getDatacenterList();
-		for (int i = 0; i < datacenterList.size(); i++) {
-			if (datacenterList.get(i).getType() == TYPES.CLOUD) {
-				clUsage = datacenterList.get(i).getTotalCpuUtilization();
+		for (EdgeDataCenter edgeDataCenter : datacenterList) {
+			if (edgeDataCenter.getType() == TYPES.CLOUD) {
+				clUsage = edgeDataCenter.getTotalCpuUtilization();
 
-			} else if (datacenterList.get(i).getType() == TYPES.EDGE && datacenterList.get(i).getVmList().size() > 0) {
-				edUsage += datacenterList.get(i).getTotalCpuUtilization();
+			} else if (edgeDataCenter.getType() == TYPES.EDGE && edgeDataCenter.getVmList().size() > 0) {
+				edUsage += edgeDataCenter.getTotalCpuUtilization();
 				edgecount++;
 
-			} else if (datacenterList.get(i).getType() == TYPES.FOG) {
+			} else if (edgeDataCenter.getType() == TYPES.FOG) {
 				fogcount++;
-				fgUsage += datacenterList.get(i).getTotalCpuUtilization();
+				fgUsage += edgeDataCenter.getTotalCpuUtilization();
 			}
 		}
 		edUsage /= edgecount;
@@ -163,14 +163,14 @@ public class SimulationVisualizer {
 	private void addEdgeDevicesToMap() {
 		// Initialize the X and Y series that will be used to draw the map
 		// Dead devices series
-		List<Double> x_deadEdgeDevicesList = new ArrayList<Double>();
-		List<Double> y_deadEdgeDevicesList = new ArrayList<Double>();
+		List<Double> x_deadEdgeDevicesList = new ArrayList<>();
+		List<Double> y_deadEdgeDevicesList = new ArrayList<>();
 		// Idle devices series
-		List<Double> x_idleEdgeDevicesList = new ArrayList<Double>();
-		List<Double> y_idleEdgeDevicesList = new ArrayList<Double>();
+		List<Double> x_idleEdgeDevicesList = new ArrayList<>();
+		List<Double> y_idleEdgeDevicesList = new ArrayList<>();
 		// Active devices series
-		List<Double> x_activeEdgeDevicesList = new ArrayList<Double>();
-		List<Double> y_activeEdgeDevicesList = new ArrayList<Double>();
+		List<Double> x_activeEdgeDevicesList = new ArrayList<>();
+		List<Double> y_activeEdgeDevicesList = new ArrayList<>();
 
 		// Browse all devices and create the series
 		// Skip the first items (cloud data centers + fog servers)
@@ -216,11 +216,11 @@ public class SimulationVisualizer {
 		if (simulationManager.getScenario().getStringOrchArchitecture().contains("FOG")
 				|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL")) {
 			// List of idle servers
-			List<Double> x_idleFogServersList = new ArrayList<Double>();
-			List<Double> y_idleFogServersList = new ArrayList<Double>();
+			List<Double> x_idleFogServersList = new ArrayList<>();
+			List<Double> y_idleFogServersList = new ArrayList<>();
 			// List of active servers
-			List<Double> x_activeFogServersList = new ArrayList<Double>();
-			List<Double> y_activeFogServersList = new ArrayList<Double>();
+			List<Double> x_activeFogServersList = new ArrayList<>();
+			List<Double> y_activeFogServersList = new ArrayList<>();
 
 			for (int j = simulationParameters.NUM_OF_CLOUD_DATACENTERS; j < simulationParameters.NUM_OF_FOG_DATACENTERS
 					+ simulationParameters.NUM_OF_CLOUD_DATACENTERS; j++) {
@@ -258,7 +258,7 @@ public class SimulationVisualizer {
 
 	private void displayCharts() {
 		if (firstTime) {
-			swingWrapper = new SwingWrapper<XYChart>(charts);
+			swingWrapper = new SwingWrapper<>(charts);
 			simulationResultsFrame = swingWrapper.displayChartMatrix(); // Display charts
 			simulationResultsFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		} else {

@@ -66,12 +66,6 @@ public class simulationParameters {
 	public static String DEPLOY_ORCHESTRATOR="";         // The location where the orchestrators are deployed (Edge devices, Cloud, Fog servers)
 	public static boolean WAIT_FOR_TASKS;                // After the end of the simulation time, some tasks may still not be executed yet,
                                                          // this variable will allow the user to wait for the execution of all tasks or to 
-                                                         // end the simulation when the predifined time ends. 
-	
-
-
-
- 
-	
+                                                         // end the simulation when the predifined time ends.
 
 }
