@@ -1,16 +1,13 @@
 package com.mechalikh.pureedgesim;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.xml.parsers.ParserConfigurationException;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudsimplus.util.Log;
-import org.xml.sax.SAXException;
 import com.mechalikh.pureedgesim.DataCentersManager.DefaultEdgeDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.EnergyModel;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
@@ -47,7 +44,7 @@ public class MainApplication {
 	protected int fromIteration;
 	protected int step = 1;
 	protected static int cpuCores;
-	protected static List<Scenario> Iterations = new ArrayList<Scenario>();
+	protected static List<Scenario> Iterations = new ArrayList<>();
 	protected static Class<? extends Mobility> mobilityManager = DefaultMobilityModel.class;
 	protected static Class<? extends EdgeDataCenter> edgedatacenter = DefaultEdgeDataCenter.class;
 	protected static Class<? extends TasksGenerator> tasksGenerator = DefaultTasksGenerator.class;
@@ -64,12 +61,9 @@ public class MainApplication {
 
 		// Check files
 		FilesParser fp = new FilesParser();
-		try {
-			if (!fp.checkFiles(simConfigfile, edgeDevicesFile, fogDevicesFile, applicationsFile, cloudFile))
-				Runtime.getRuntime().exit(0); // if files aren't correct stop everything.
-		} catch (SAXException | IOException | ParserConfigurationException e) {
-			e.printStackTrace();
-		}
+		if (!fp.checkFiles(simConfigfile, edgeDevicesFile, fogDevicesFile, applicationsFile, cloudFile))
+			Runtime.getRuntime().exit(0); // if files aren't correct stop everything.
+
 		// Disable cloudsim plus log
 		Log.setLevel(Level.OFF);
 
@@ -100,8 +94,10 @@ public class MainApplication {
 			simulationList.parallelStream().forEach(MainApplication::startSimulation);
 			// end::parallelExecution[]
 
-		} else // Sequential execution
+		} else { // Sequential execution
 			new MainApplication(0, 1).startSimulation();
+		}
+
 
 		// Simulation Finished
 		Date endDate = Calendar.getInstance().getTime();
