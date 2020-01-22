@@ -28,9 +28,11 @@
 
 *   New mobility model and new parameters for mobility update 
 
-  Now it uses speed in m/s instead of intervals
-  The new mobility model works on demand, instead of generating a list for each device containing all its location changes (from the beginning of the simulation). 
-  The egde devices will request the next location only when needed (which reduces the use of memory)
+   Now it uses speed in m/s instead of intervals
+    
+   The new mobility model works on demand, instead of generating a list for each device containing all its location changes (from the beginning of the simulation). 
+
+   The egde devices will request the next location only when needed (which reduces the use of memory)
   
 *   New and more realistic energy model and new energy parameters 
 
@@ -44,11 +46,11 @@
 
 *   Added some real time charts 
 
-  Showing the CPU utilization of Cloud, Fog and Edge resources, the WAN utilization, and the tasks success rate
+   Showing the CPU utilization of Cloud, Fog and Edge resources, the WAN utilization, and the tasks success rate
   
 *   Adding the possibility to generate charts at the end of the simulation and to save them in a *.PNG format 
 
-  More than 64 high resolution charts can be generated with one click, in order to make it easier for the user to check his simlation results
+   More than 64 high resolution charts can be generated with one click, in order to make it easier for the user to check his simlation results
   
   The user can always generate other charts using the generated CSV file.
   
@@ -82,29 +84,29 @@
 
 *   Improved the network model: 
 
-  Adding support for containers,bugs fixing, 
+   Adding support for containers,bugs fixing, 
   
-  Adding fog servers coverage, 
+   Adding fog servers coverage, 
   
-  Adding edge  wireless range.
+   Adding edge  wireless range.
   
-  The ability to chose edge network type (fully peer to peer or sharing a same access point).
+   The ability to chose edge network type (fully peer to peer or sharing a same access point).
   
 *   Improved mobility model
 
-  More realistic mobility model
+   More realistic mobility model
   
-  Added a map/ simulation area (height x width)
+   Added a map/ simulation area (height x width)
   
 *   Adding support for physical depolyement of the orchestrator 
 
-  Deploying the orchestrator on the cloud for example, on fog servers...etc
+   Deploying the orchestrator on the cloud for example, on fog servers...etc
   
 *   New simulation parameters
 
-  New parameters for the aforementioned changes
+   New parameters for the aforementioned changes
   
-  New simulation parameters in order to control the trade off between simulation accuracy and simulation time, etc. 
+   New simulation parameters in order to control the trade off between simulation accuracy and simulation time, etc. 
   
 *   Improved simulation time
 
