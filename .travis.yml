@@ -1,5 +1,4 @@
 language: java
 jdk:
   - openjdk12
-
-script: ant build
+install: mvn clean install
