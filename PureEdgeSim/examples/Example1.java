@@ -8,7 +8,7 @@ public class Example1 extends MainApplication {
 	 * This is a simple example showing how to launch simulation using custom
 	 * mobility model, energy model, custom edge orchestrator, custom tasks
 	 * generator, and custom edge devices. By removing them, you will use the
-	 * default models provided by ¨PureEdgeSim. As you can see, this class extends
+	 * default models provided by PureEdgeSim. As you can see, this class extends
 	 * the Main class provided by PureEdgeSim, which is required for this example to
 	 * work.
 	 */
