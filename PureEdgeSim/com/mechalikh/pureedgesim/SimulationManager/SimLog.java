@@ -99,9 +99,9 @@ public class SimLog {
 		printTasksRelatedResults();
 		printNetworkRelatedResults();
 		printResourcesUtilizationResults(finishedTasks);
-		String s = "\n";
-		for (int i = 0; i < log.size(); i++) {
-			s += log.get(i) + "\n";
+		StringBuilder s = new StringBuilder("\n");
+		for (String value : log) {
+			s.append(value).append("\n");
 		}
 		System.out.print(s);
 		// update the log
@@ -198,7 +198,6 @@ public class SimLog {
 		double averageCloudCpuUtilization = 0;
 		double averageEdgeCpuUtilization = 0;
 		double averageFogCpuUtilization = 0;
-		EdgeDataCenter dc;
 		int deadEdgeDevicesCount = 0;
 		double energyConsumption = 0;
 		double cloudEnConsumption = 0;
@@ -206,21 +205,18 @@ public class SimLog {
 		double fogEnConsumption = 0;
 		double averageRemainingPowerWh = 0;
 		double averageRemainingPower = 0;
-		List<Double> remainingPower = new ArrayList<Double>();
+		List<Double> remainingPower = new ArrayList<>();
 		double firstDeviceDeathTime = -1; // -1 means invalid
-		List<Double> devicesDeathTime = new ArrayList<Double>();
+		List<Double> devicesDeathTime = new ArrayList<>();
 		int batteryPoweredDevicesCount = 0;
 		int aliveBatteryPoweredDevicesCount = 0;
 		List<? extends EdgeDataCenter> datacentersList = simulationManager.getServersManager().getDatacenterList();
 
-		for (int j = 0; j < datacentersList.size(); j++) {
-			dc = (EdgeDataCenter) datacentersList.get(j);
+		for (EdgeDataCenter dc : datacentersList) {
 			if (dc.getType() == simulationParameters.TYPES.CLOUD) {
 				cloudEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
 				averageCloudCpuUtilization += dc.getTotalCpuUtilization();
-			}
-
-			else if (dc.getType() == simulationParameters.TYPES.FOG) {
+			} else if (dc.getType() == simulationParameters.TYPES.FOG) {
 				fogEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
 				averageFogCpuUtilization += dc.getTotalCpuUtilization();
 			} else if (dc.getType() == simulationParameters.TYPES.EDGE) {

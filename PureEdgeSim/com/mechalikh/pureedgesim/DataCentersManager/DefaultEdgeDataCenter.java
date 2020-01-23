@@ -7,7 +7,7 @@ import org.cloudbus.cloudsim.hosts.Host;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
-public class DefaultEdgeDataCenter extends EdgeDataCenter{
+public class DefaultEdgeDataCenter extends EdgeDataCenter {
 
 	public DefaultEdgeDataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
 		super(simulationManager, hostList);
@@ -22,22 +22,23 @@ public class DefaultEdgeDataCenter extends EdgeDataCenter{
 	@Override
 	public void processEvent(final SimEvent ev) {
 		switch (ev.getTag()) {
-		case UPDATE_STATUS:
-			// Update energy consumption
-			updateEnergyConsumption();
+			case UPDATE_STATUS:
+				// Update energy consumption
+				updateEnergyConsumption();
 
-			// Update location
-			if (isMobile())
-				getMobilityManager().getNextLocation(); 
+				// Update location
+				if (isMobile()) {
+					getMobilityManager().getNextLocation();
+				}
 
-			if (!isDead()) {
-				schedule(this, simulationParameters.UPDATE_INTERVAL, UPDATE_STATUS);
-			}
+				if (!isDead()) {
+					schedule(this, simulationParameters.UPDATE_INTERVAL, UPDATE_STATUS);
+				}
 
-			break;
-		default:
-			super.processEvent(ev);
-			break;
+				break;
+			default:
+				super.processEvent(ev);
+				break;
 		}
 	}
 

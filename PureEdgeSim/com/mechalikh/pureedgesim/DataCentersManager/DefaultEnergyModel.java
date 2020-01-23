@@ -9,7 +9,7 @@ import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
  * Abidi, W., Lirathni, H., & Ezzedine, T. (2017). 
  * EEZC : Energy Efficient Zone based Clustering protocol for Heterogeneous Wireless Sensor Networks.
  */
-public class DefaultEnergyModel extends EnergyModel{
+public class DefaultEnergyModel extends EnergyModel {
 	public static final int TRANSMISSION = 0;
 	public static final int RECEPTION = 1; 
 	// The power consumption for each transferred bit (in joul per bit : J/bit)
@@ -36,14 +36,15 @@ public class DefaultEnergyModel extends EnergyModel{
 	public void updatewirelessEnergyConsumption(FileTransferProgress file, EdgeDataCenter device1,
 			EdgeDataCenter device2, int flag) {
 
-		double distance = 0;
+		double distance;
 		if (device1.getType() == TYPES.CLOUD || device2.getType() == TYPES.CLOUD || device1.getType() == TYPES.FOG
-				|| device2.getType() == TYPES.FOG)
+				|| device2.getType() == TYPES.FOG) {
 			distance = 10;
-		else
+		} else {
 			distance = Math
 					.abs(Math.sqrt(Math.pow((device1.getLocation().getXPos() - device2.getLocation().getXPos()), 2)
 							+ Math.pow((device1.getLocation().getYPos() - device2.getLocation().getYPos()), 2)));
+		}
 
 		int sizeInBits = (int) (file.getFileSize() * 1000);
 

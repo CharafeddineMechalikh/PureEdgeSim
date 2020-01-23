@@ -1,8 +1,9 @@
 package com.mechalikh.pureedgesim.DataCentersManager;
 
 import java.util.ArrayList;
-import java.util.List; 
-import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicySimple;  
+import java.util.List;
+
+import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 
@@ -38,13 +39,13 @@ public abstract class EdgeDataCenter extends DatacenterSimple {
 	public EdgeDataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
 		super(simulationManager.getSimulation(), hostList,new VmAllocationPolicySimple());
 		this.simulationManager = simulationManager;
-		vmTaskMap = new ArrayList<VmTaskMapItem>();
+		vmTaskMap = new ArrayList<>();
 
 		long memory = 0;
 		long ram = 0;
-		for (int i = 0; i < hostList.size(); i++) {
-			memory += hostList.get(i).getStorage().getAvailableResource();
-			ram += hostList.get(i).getRam().getCapacity();
+		for (Host host : hostList) {
+			memory += host.getStorage().getAvailableResource();
+			ram += host.getRam().getCapacity();
 		}
 		setStorageMemory(memory);
 		setRamMemory(ram);

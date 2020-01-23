@@ -8,6 +8,7 @@ import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.hosts.HostSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
@@ -43,9 +44,9 @@ public class ServersManager {
 
 	public ServersManager(SimulationManager simulationManager, Class<? extends Mobility> mobilityManager,
 			Class<? extends EnergyModel> energyModel, Class<? extends EdgeDataCenter> edgedatacenter) {
-		datacentersList = new ArrayList<EdgeDataCenter>();
-		orchestratorsList = new ArrayList<EdgeDataCenter>();
-		vmList = new ArrayList<Vm>();
+		datacentersList = new ArrayList<>();
+		orchestratorsList = new ArrayList<>();
+		vmList = new ArrayList<>();
 		this.mobilityManager = mobilityManager;
 		this.energyModel = energyModel;
 		this.edgeDataCenterType = edgedatacenter;
@@ -64,20 +65,20 @@ public class ServersManager {
 	}
 
 	private void selectOrchestrators() {
-		for (int i = 0; i < datacentersList.size(); i++) {
+		for (EdgeDataCenter edgeDataCenter : datacentersList) {
 			if ("".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
 					|| ("CLOUD".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
-							&& datacentersList.get(i).getType() == simulationParameters.TYPES.CLOUD)) {
-				datacentersList.get(i).setOrchestrator(true);
-				orchestratorsList.add(datacentersList.get(i));
+					&& edgeDataCenter.getType() == simulationParameters.TYPES.CLOUD)) {
+				edgeDataCenter.setOrchestrator(true);
+				orchestratorsList.add(edgeDataCenter);
 			} else if ("FOG".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
-					&& datacentersList.get(i).getType() == simulationParameters.TYPES.FOG) {
-				datacentersList.get(i).setOrchestrator(true);
-				orchestratorsList.add(datacentersList.get(i));
-			}else if ("EDGE".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
-					&& datacentersList.get(i).getType() == simulationParameters.TYPES.EDGE) {
-				datacentersList.get(i).setOrchestrator(true);
-				orchestratorsList.add(datacentersList.get(i));
+					&& edgeDataCenter.getType() == simulationParameters.TYPES.FOG) {
+				edgeDataCenter.setOrchestrator(true);
+				orchestratorsList.add(edgeDataCenter);
+			} else if ("EDGE".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
+					&& edgeDataCenter.getType() == simulationParameters.TYPES.EDGE) {
+				edgeDataCenter.setOrchestrator(true);
+				orchestratorsList.add(edgeDataCenter);
 			}
 		}
 
@@ -207,7 +208,7 @@ public class ServersManager {
 	private List<Host> createHosts(Element datacenterElement, simulationParameters.TYPES type) {
 
 		// Here are the steps needed to create a hosts and vms for that datacenter.
-		List<Host> hostList = new ArrayList<Host>();
+		List<Host> hostList = new ArrayList<>();
 
 		NodeList hostNodeList = datacenterElement.getElementsByTagName("host");
 		for (int j = 0; j < hostNodeList.getLength(); j++) {
@@ -231,7 +232,7 @@ public class ServersManager {
 			// A Machine contains one or more PEs or CPUs/Cores. Therefore, should
 			// create a list to store these PEs before creating
 			// a Machine.
-			List<Pe> peList = new ArrayList<Pe>();
+			List<Pe> peList = new ArrayList<>();
 
 			// Create PEs and add these into the list.
 			// for a quad-core machine, a list of 4 PEs is required:

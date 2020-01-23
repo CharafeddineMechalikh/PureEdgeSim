@@ -11,7 +11,7 @@ public abstract class TasksGenerator {
 	private SimulationManager simulationManager;
 
 	public TasksGenerator(SimulationManager simulationManager) {
-		taskList = new ArrayList<Task>();
+		taskList = new ArrayList<>();
 		this.setSimulationManager(simulationManager);
 		this.datacentersList = this.getSimulationManager().getServersManager().getDatacenterList();
 	}

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cloudbus.cloudsim.core.CloudSimEntity;
-import org.cloudbus.cloudsim.core.events.SimEvent; 
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter; 
+import org.cloudbus.cloudsim.core.events.SimEvent;
+import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
@@ -29,7 +29,7 @@ public abstract class NetworkModel extends CloudSimEntity {
 	public NetworkModel(SimulationManager simulationManager) {
 		super(simulationManager.getSimulation());
 		setSimulationManager(simulationManager);
-		transferProgressList = new ArrayList<FileTransferProgress>();
+		transferProgressList = new ArrayList<>();
 	}
 
 	private void setSimulationManager(SimulationManager simulationManager) {
@@ -83,7 +83,7 @@ public abstract class NetworkModel extends CloudSimEntity {
 	}
 
 	protected void updateBandwidth(FileTransferProgress transfer) {
-		double bandwidth = 0;
+		double bandwidth;
 		if (wanIsUsed(transfer)) {
 			// The bandwidth will be limited by the minimum value
 			// If the lan bandwidth is 1 mbps and the wan bandwidth is 4 mbps
@@ -114,15 +114,14 @@ public abstract class NetworkModel extends CloudSimEntity {
 
 	public double getWanUtilization() {
 		int wanTasks = 0;
-		for (int j = 0; j < transferProgressList.size(); j++) {
-			if (transferProgressList.get(j).getRemainingFileSize() > 0 && wanIsUsed(transferProgressList.get(j))) {
+		for (FileTransferProgress fileTransferProgress : transferProgressList) {
+			if (fileTransferProgress.getRemainingFileSize() > 0 && wanIsUsed(fileTransferProgress)) {
 				wanTasks++;
-				bwUsage += transferProgressList.get(j).getRemainingFileSize();
+				bwUsage += fileTransferProgress.getRemainingFileSize();
 			}
 		}
 		bwUsage = (wanTasks > 0 ? bwUsage / wanTasks : 0) / 1000;
-		double utilization = Math.min(bwUsage, 300);
-		return utilization;
+		return Math.min(bwUsage, 300);
 	}
 
 }

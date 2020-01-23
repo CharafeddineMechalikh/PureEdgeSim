@@ -23,7 +23,7 @@ public abstract class Orchestrator {
 	public Orchestrator(SimulationManager simulationManager) {
 		this.simulationManager = simulationManager;
 		simLog = simulationManager.getSimulationLogger();
-		orchestrationHistory = new ArrayList<List<Integer>>();
+		orchestrationHistory = new ArrayList<>();
 		vmList = simulationManager.getServersManager().getVmList();
 		algorithm = simulationManager.getScenario().getStringOrchAlgorithm();
 		architecture = simulationManager.getScenario().getStringOrchArchitecture();
@@ -32,9 +32,8 @@ public abstract class Orchestrator {
 
 	private void initHistoryList(int size) {
 		for (int vm = 0; vm < size; vm++) {
-			// Creating a list to store the orchestration history for each VM (virtual
-			// machine)
-			orchestrationHistory.add(new ArrayList<Integer>());
+			// Creating a list to store the orchestration history for each VM (virtual machine)
+			orchestrationHistory.add(new ArrayList<>());
 		}
 	}
 
@@ -54,43 +53,37 @@ public abstract class Orchestrator {
 		}
 	}
 
-	// If the orchestration scenario is EDGE_ONLY send Tasks only to
-	// edge virtual machines (vms)
+	// If the orchestration scenario is EDGE_ONLY send Tasks only to edge virtual machines (vms)
 	private void edgeOnly(Task task) {
 		String[] Architecture = { "Edge" };
 		sendTask(task, findVM(Architecture, task));
 	}
 
-	// If the orchestration scenario is ClOUD_ONLY send Tasks (cloudlets) only to
-	// cloud virtual machines (vms)
+	// If the orchestration scenario is ClOUD_ONLY send Tasks (cloudlets) only to cloud virtual machines (vms)
 	private void cloudOnly(Task task) {
 		String[] Architecture = { "Cloud" };
 		sendTask(task, findVM(Architecture, task));
 	}
 
-	// If the orchestration scenario is FOG_AND_CLOUD send Tasks only to
-	// fog or cloud virtual machines (vms)
+	// If the orchestration scenario is FOG_AND_CLOUD send Tasks only to fog or cloud virtual machines (vms)
 	private void fogAndCloud(Task task) {
 		String[] Architecture = { "Cloud", "Fog" };
 		sendTask(task, findVM(Architecture, task));
 	}
 
-	// If the orchestration scenario is FOG_AND_CLOUD send Tasks only to
-	// fog or cloud virtual machines (vms)
+	// If the orchestration scenario is FOG_AND_CLOUD send Tasks only to fog or cloud virtual machines (vms)
 	private void edgeAndCloud(Task task) {
 		String[] Architecture = { "Cloud", "Edge" };
 		sendTask(task, findVM(Architecture, task));
 	}
 
-	// If the orchestration scenario is FOG_AND_CLOUD send Tasks only to
-	// fog or cloud virtual machines (vms)
+	// If the orchestration scenario is FOG_AND_CLOUD send Tasks only to fog or cloud virtual machines (vms)
 	private void fogOnly(Task task) {
 		String[] Architecture = { "Fog" };
 		sendTask(task, findVM(Architecture, task));
 	}
 
-	// If the orchestration scenario is ALL send Tasks (cloudlets) any virtual
-	// machine (vm)
+	// If the orchestration scenario is ALL send Tasks (cloudlets) any virtual machine (vm)
 	private void all(Task task) {
 		String[] Architecture = { "Cloud", "Fog", "Edge" };
 		sendTask(task, findVM(Architecture, task));
@@ -102,8 +95,7 @@ public abstract class Orchestrator {
 		// assign the tasks to the vm found
 		assignTaskToVm(vm, task);
 
-		// Offload it only if resources are available (i.e. the offloading distination
-		// is available)
+		// Offload it only if resources are available (i.e. the offloading destination is available)
 		if (task.getVm() != Vm.NULL) // Send the task to execute it
 			task.getEdgeDevice().getVmTaskMap().add(new VmTaskMapItem((Vm) task.getVm(), task));
 	}
@@ -117,7 +109,7 @@ public abstract class Orchestrator {
 					+ " assigned to " + ((EdgeDataCenter)vmList.get(vmIndex).getHost().getDatacenter()).getType() + " vm: " + vmList.get(vmIndex).getId());
 
 			// update history
-			orchestrationHistory.get(vmIndex).add((int) task.getId());
+			orchestrationHistory.get(vmIndex).add(task.getId());
 		}
 	}
 
@@ -132,8 +124,8 @@ public abstract class Orchestrator {
 	}
 
 	protected boolean arrayContains(String[] Architecture, String value) {
-		for (int i = 0; i < Architecture.length; i++) {
-			if (Architecture[i].equals(value))
+		for (String s : Architecture) {
+			if (s.equals(value))
 				return true;
 		}
 		return false;
