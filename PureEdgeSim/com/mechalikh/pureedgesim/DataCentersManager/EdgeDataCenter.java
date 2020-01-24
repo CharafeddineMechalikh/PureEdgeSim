@@ -35,9 +35,10 @@ public abstract class EdgeDataCenter extends DatacenterSimple {
 	protected EdgeDataCenter orchestrator;
 	protected double currentCpuUtilization = 0;
 	protected SimulationManager simulationManager;
+	private boolean generateTasks = true;
 
 	public EdgeDataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
-		super(simulationManager.getSimulation(), hostList,new VmAllocationPolicySimple());
+		super(simulationManager.getSimulation(), hostList, new VmAllocationPolicySimple());
 		this.simulationManager = simulationManager;
 		vmTaskMap = new ArrayList<>();
 
@@ -50,7 +51,6 @@ public abstract class EdgeDataCenter extends DatacenterSimple {
 		setStorageMemory(memory);
 		setRamMemory(ram);
 	}
- 
 
 	protected void updateEnergyConsumption() {
 		setIdle(true);
@@ -213,10 +213,17 @@ public abstract class EdgeDataCenter extends DatacenterSimple {
 
 	public void setEnergyModel(Object energyModel) {
 		this.energyModel = (EnergyModel) energyModel;
-
 	}
 
 	public EdgeDataCenter getOrchestrator() {
 		return this.orchestrator;
+	}
+
+	public void setTasksGeneration(boolean generateTasks) {
+		this.generateTasks = generateTasks;
+	}
+
+	public boolean isGeneratingTasks() {
+		return this.generateTasks;
 	}
 }

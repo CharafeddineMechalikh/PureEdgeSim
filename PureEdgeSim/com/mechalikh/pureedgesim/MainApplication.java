@@ -237,5 +237,9 @@ public class MainApplication {
 	protected static void setCustomEnergyModel(Class<? extends EnergyModel> energyModel2) {
 		energyModel = energyModel2;
 	}
+	
+	protected static void setCustomNetworkModel(Class<? extends NetworkModel> networkModel2) {
+		networkModel = networkModel2;
+	}
 
 }

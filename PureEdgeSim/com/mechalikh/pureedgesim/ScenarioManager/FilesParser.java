@@ -11,7 +11,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
- 
+
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 
@@ -59,8 +59,8 @@ public class FilesParser {
 			simulationParameters.CLEAN_OUTPUT_FOLDER = Boolean
 					.parseBoolean(prop.getProperty("clear_output_folder").trim());
 			simulationParameters.WAIT_FOR_TASKS = Boolean.parseBoolean(prop.getProperty("wait_for_all_tasks").trim());
-			simulationParameters.ENABLE_REGISTRY = Boolean.parseBoolean(prop.getProperty("enable_registry").trim()); 
-			simulationParameters.registry_mode = prop.getProperty("registry_mode").trim(); 
+			simulationParameters.ENABLE_REGISTRY = Boolean.parseBoolean(prop.getProperty("enable_registry").trim());
+			simulationParameters.registry_mode = prop.getProperty("registry_mode").trim();
 			simulationParameters.ENABLE_ORCHESTRATORS = Boolean
 					.parseBoolean(prop.getProperty("enable_orchestrators").trim());
 
@@ -134,8 +134,12 @@ public class FilesParser {
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document xmlDoc = dBuilder.parse(devicesFile);
 			xmlDoc.getDocumentElement().normalize();
-
-			NodeList datacenterList = xmlDoc.getElementsByTagName("datacenter");
+			NodeList datacenterList;
+			if (type == TYPES.EDGE)
+				datacenterList = xmlDoc.getElementsByTagName("device");
+			else
+				datacenterList = xmlDoc.getElementsByTagName("datacenter");
+			double percentage = 0;
 			for (int i = 0; i < datacenterList.getLength(); i++) {
 
 				Node datacenterNode = datacenterList.item(i);
@@ -150,7 +154,10 @@ public class FilesParser {
 					isElementPresent(datacenterElement, "mobility");
 					isElementPresent(datacenterElement, "battery");
 					isElementPresent(datacenterElement, "percentage");
-					isElementPresent(datacenterElement, "batterycapacity");
+					percentage += Double
+							.parseDouble(datacenterElement.getElementsByTagName("percentage").item(0).getTextContent());
+					isElementPresent(datacenterElement, "batteryCapacity");
+					isElementPresent(datacenterElement, "generateTasks");
 				} else if (type == TYPES.CLOUD) {
 					simulationParameters.NUM_OF_CLOUD_DATACENTERS++;
 				} else {
@@ -182,8 +189,12 @@ public class FilesParser {
 						isElementPresent(vmElement, "storage");
 					}
 				}
+			} 
+			if (percentage != 100 && type == TYPES.EDGE) {
+				SimLog.println(
+						"FilesParser- check the edge_devices.xml file!, the sum of percentages must be equal to 100%");
+				return false;
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			SimLog.println("FilesParser- Failed to load edge devices file!");
@@ -206,7 +217,7 @@ public class FilesParser {
 			NodeList appList = doc.getElementsByTagName("application");
 			simulationParameters.APPS_COUNT = appList.getLength();// save the number of apps, this will be used later by
 																	// the tasks generator
-			simulationParameters.APPLICATIONS_TABLE= new double[appList.getLength()][6]; 
+			simulationParameters.APPLICATIONS_TABLE = new double[appList.getLength()][6];
 			for (int i = 0; i < appList.getLength(); i++) {
 				Node appNode = appList.item(i);
 
@@ -217,8 +228,8 @@ public class FilesParser {
 				isElementPresent(appElement, "request_size");
 				isElementPresent(appElement, "results_size");
 				isElementPresent(appElement, "task_length");
-				isElementPresent(appElement, "required_core"); 
-				
+				isElementPresent(appElement, "required_core");
+
 				double max_delay = Double
 						.parseDouble(appElement.getElementsByTagName("max_delay").item(0).getTextContent());
 				double container_size = Double
@@ -231,7 +242,7 @@ public class FilesParser {
 						.parseDouble(appElement.getElementsByTagName("task_length").item(0).getTextContent());
 				double required_core = Double
 						.parseDouble(appElement.getElementsByTagName("required_core").item(0).getTextContent());
-				 
+
 				// save apps parameters
 				simulationParameters.APPLICATIONS_TABLE[i][0] = max_delay; // max delay in seconds
 				simulationParameters.APPLICATIONS_TABLE[i][1] = request_size; // avg request size (KB)
@@ -268,6 +279,6 @@ public class FilesParser {
 			throw new IllegalArgumentException(
 					"Attribure '" + key + "' is not found in '" + element.getNodeName() + "'");
 		}
-	} 
-	 
+	}
+
 }

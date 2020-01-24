@@ -1,4 +1,19 @@
 # Changelog
+## New version 2.3 (jan 24th 2020) 
+
+*   Fixed the exception when initialization time is < 60 seconds
+
+*   Fixed the task generator (tasks were generated during the initialization time, which shouldn't happen, the initialization time aims to ignore the time needed to generate the resources. generating tasks at that time will cause many of them to fail.
+
+*   Fixed the file parser, now it checks if the sum of percentages of edge devices types is equal to 100% ( in the edge_devices.xml file).
+
+*   Now you can add your custom network model via the setCustomNetworkModel() method
+
+*   File parser was not checking the edge devices xml file, now it is fixed.
+
+*   Simulation manager used the update interval instead of the charts update interval, when updating charts, now it is fixed.
+
+*   Now you can define which devices generate tasks/data via the edge_devices.xml file.
 
 ## New version 2.2.3 (nov 7th 2019) 
 

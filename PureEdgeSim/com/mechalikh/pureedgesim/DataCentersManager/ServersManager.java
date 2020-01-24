@@ -31,6 +31,7 @@ import org.w3c.dom.NodeList;
 import com.mechalikh.pureedgesim.LocationManager.Location;
 import com.mechalikh.pureedgesim.LocationManager.Mobility;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
 public class ServersManager {
@@ -68,7 +69,7 @@ public class ServersManager {
 		for (EdgeDataCenter edgeDataCenter : datacentersList) {
 			if ("".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
 					|| ("CLOUD".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
-					&& edgeDataCenter.getType() == simulationParameters.TYPES.CLOUD)) {
+							&& edgeDataCenter.getType() == simulationParameters.TYPES.CLOUD)) {
 				edgeDataCenter.setOrchestrator(true);
 				orchestratorsList.add(edgeDataCenter);
 			} else if ("FOG".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
@@ -157,30 +158,30 @@ public class ServersManager {
 		}
 	}
 
-	private EdgeDataCenter createDatacenter(Element datacenterElement, simulationParameters.TYPES level)
+	private EdgeDataCenter createDatacenter(Element datacenterElement, simulationParameters.TYPES type)
 			throws Exception {
 
 		int x_position = -1;
 		int y_position = -1;
 
-		List<Host> hostList = createHosts(datacenterElement, level);
+		List<Host> hostList = createHosts(datacenterElement, type);
 
 		Location datacenterLocation = null;
 		Constructor<?> datacenterConstructor = edgeDataCenterType.getConstructor(SimulationManager.class, List.class);
 		EdgeDataCenter datacenter = (EdgeDataCenter) datacenterConstructor.newInstance(getSimulationManager(),
 				hostList);
-		if (level == simulationParameters.TYPES.FOG) {
+		if (type == simulationParameters.TYPES.FOG) {
 			Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
 			x_position = Integer.parseInt(location.getElementsByTagName("x_pos").item(0).getTextContent());
 			y_position = Integer.parseInt(location.getElementsByTagName("y_pos").item(0).getTextContent());
 			datacenterLocation = new Location(x_position, y_position);
-		} else if (level == simulationParameters.TYPES.EDGE) {
+		} else if (type == simulationParameters.TYPES.EDGE) {
 			datacenter.setMobile(
 					Boolean.parseBoolean(datacenterElement.getElementsByTagName("mobility").item(0).getTextContent()));
 			datacenter.setBattery(
 					Boolean.parseBoolean(datacenterElement.getElementsByTagName("battery").item(0).getTextContent()));
 			datacenter.setBatteryCapacity(Double
-					.parseDouble(datacenterElement.getElementsByTagName("batterycapacity").item(0).getTextContent()));
+					.parseDouble(datacenterElement.getElementsByTagName("batteryCapacity").item(0).getTextContent()));
 
 			// Generate random location for edge devices
 			datacenterLocation = new Location(new Random().nextInt(simulationParameters.AREA_LENGTH),
@@ -195,7 +196,10 @@ public class ServersManager {
 				.parseDouble(datacenterElement.getElementsByTagName("maxConsumption").item(0).getTextContent());
 		datacenter.setOrchestrator(Boolean
 				.parseBoolean(datacenterElement.getElementsByTagName("isOrchestrator").item(0).getTextContent()));
-		datacenter.setType(level);
+		datacenter.setType(type);
+		if (type == TYPES.EDGE)
+			datacenter.setTasksGeneration(Boolean
+					.parseBoolean(datacenterElement.getElementsByTagName("generateTasks").item(0).getTextContent()));
 
 		Constructor<?> mobilityConstructor = mobilityManager.getConstructor(Location.class);
 		datacenter.setMobilityManager(mobilityConstructor.newInstance(datacenterLocation));

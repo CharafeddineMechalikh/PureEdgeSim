@@ -6,6 +6,7 @@ import org.cloudbus.cloudsim.utilizationmodels.UtilizationModel;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
 
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
 public class DefaultTasksGenerator extends TasksGenerator {
@@ -14,24 +15,24 @@ public class DefaultTasksGenerator extends TasksGenerator {
 	}
 
 	public List<Task> generate() {
-		datacentersList = datacentersList.subList(
-				datacentersList.size() - getSimulationManager().getScenario().getDevicesCount(),
-				datacentersList.size());
-		double simulationTime = simulationParameters.SIMULATION_TIME / 60; // in minutes
-		for (int dev = 0; dev < getSimulationManager().getScenario().getDevicesCount(); dev++) { // for each device
+		// get simulation time in minutes (excluding the initialization time)
+		double simulationTime = (simulationParameters.SIMULATION_TIME - simulationParameters.INITIALIZATION_TIME) / 60;
+		for (int dev = 0; dev < datacentersList.size(); dev++) { // for each device
+			if (datacentersList.get(dev).getType() == TYPES.EDGE && datacentersList.get(dev).isGeneratingTasks()) {
 
-			int app = new Random().nextInt(simulationParameters.APPS_COUNT); // pickup a random application type for
-																				// every device
-			datacentersList.get(dev).setApplication(app); // assign this application to that device
-			for (int st = 0; st < simulationTime; st++) { // for each minute
-				// generating tasks
-				int time = st * 60;
-				time += new Random().nextInt(59);// pickup random second in this minute "st";
+				int app = new Random().nextInt(simulationParameters.APPS_COUNT); // pickup a random application type for
+																					// every device
+				datacentersList.get(dev).setApplication(app); // assign this application to that device
+				for (int st = 0; st < simulationTime; st++) { // for each minute
+					// generating tasks
+					int time = st * 60;
+					time += new Random().nextInt(59);// pickup random second in this minute "st";
 
-				// Shift the time by the defined value "INITIALIZATION_TIME"
-				// in order to start after generating all the resources
-				time += simulationParameters.INITIALIZATION_TIME;
-				insert(time, app, dev);
+					// Shift the time by the defined value "INITIALIZATION_TIME"
+					// in order to start after generating all the resources
+					time += simulationParameters.INITIALIZATION_TIME;
+					insert(time, app, dev);
+				}
 			}
 		}
 		return this.getTaskList();

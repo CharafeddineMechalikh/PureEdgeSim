@@ -97,10 +97,10 @@ public class SimulationVisualizer {
 		if (((int) simulationManager.getSimulation().clockInMinutes()) != clock) {
 			clock = (int) simulationManager.getSimulation().clockInMinutes();
 			double tasksFailed = 100 - simulationManager.getFailureRate();
-			double[] time = new double[clock];
-			for(int i=0;i<clock;i++)
+			double[] time = new double[clock+1];
+			for(int i=0;i<=clock;i++)
 				time[i]=i;
-			tasksFailedList.add(tasksFailed);
+			tasksFailedList.add(tasksFailed); 
 			updateSeries(tasksSuccessChart, "Tasks failed", time, toArray(tasksFailedList), SeriesMarkers.NONE,
 					Color.BLACK);
 		}

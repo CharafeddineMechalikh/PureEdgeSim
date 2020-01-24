@@ -152,7 +152,7 @@ public class SimulationManager extends CloudSimEntity {
 			simulationVisualizer.updateCharts();
 
 			// Schedule the next update
-			schedule(this, simulationParameters.UPDATE_INTERVAL, UPDATE_REAL_TIME_CHARTS);
+			schedule(this, simulationParameters.CHARTS_UPDATE_INTERVAL, UPDATE_REAL_TIME_CHARTS);
 			break;
 
 		case PRINT_LOG:
