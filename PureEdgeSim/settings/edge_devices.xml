@@ -28,7 +28,7 @@
 						<core>4</core>
 						<mips>70000</mips>
 						<ram>4000</ram>
-						<storage>256000</storage>
+						<storage>256000</storage> <!--256MB of caching memory used in example 6 --> 
 					</VM>
 				</VMs>
 			</host>

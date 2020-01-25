@@ -58,6 +58,7 @@ public class DefaultTasksGenerator extends TasksGenerator {
 			task[i].setContainerSize(containerSize);
 			task[i].setMaxLatency(maxLatency);
 			task[i].setEdgeDevice(datacentersList.get(dev)); // the device that generate this task (the origin)
+			task[i].setRegistry(datacentersList.get(0)); //set the cloud as registry
 			taskList.add(task[i]);
 			getSimulationManager().getSimulationLogger()
 					.deepLog("BasicTasksGenerator, Task " + id + " with execution time " + time + " (s) generated.");

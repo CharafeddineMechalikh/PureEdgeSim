@@ -47,7 +47,7 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 						.getType() == simulationParameters.TYPES.EDGE) {
 					energy = 1.4;
 				}
-				new_min = (orchestrationHistory.get(i).size() + 1) * latency * energy / vmList.get(i).getMips();
+				new_min = (orchestrationHistory.get(i).size() + 1) * latency * energy * task.getLength() / vmList.get(i).getMips();
 				if (min == -1) { // if it is the first iteration
 					min = new_min;
 					// if this is the first time, set the first vm as the
@@ -87,8 +87,7 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 	}
 
 	@Override
-	public void resultsReturned(Task task) {
-
+	public void resultsReturned(Task task) { 
 	}
 
 }

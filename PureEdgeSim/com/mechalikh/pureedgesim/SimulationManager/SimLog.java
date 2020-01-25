@@ -481,9 +481,10 @@ public class SimLog {
 
 	public void incrementTasksFailed(Task task) {
 		this.tasksFailed++;
-		simulationParameters.TYPES type = ((EdgeDataCenter) task.getVm().getHost().getDatacenter()).getType();
 		if (task.getVm() == Vm.NULL)
 			return;
+		simulationParameters.TYPES type = ((EdgeDataCenter) task.getVm().getHost().getDatacenter()).getType();
+		
 		if (type == simulationParameters.TYPES.CLOUD) {
 			this.tasksFailedCloud++;
 		} else if (type == simulationParameters.TYPES.FOG) {

@@ -157,8 +157,7 @@ public class SimulationManager extends CloudSimEntity {
 
 		case PRINT_LOG:
 			// Print results when simulation is over
-			List<Task> finishedTasks = broker.getCloudletFinishedList();
-
+			List<Task> finishedTasks = broker.getCloudletFinishedList(); 
 			// If some tasks have not been executed
 			if (simulationParameters.WAIT_FOR_TASKS && (tasksCount / simLog.getGeneratedTasks()) < 1) {
 				// 1 = 100% , 0,9= 90%
@@ -271,6 +270,7 @@ public class SimulationManager extends CloudSimEntity {
 
 			if (orchestratorsList.size() == 0) {
 				simLog.printSameLine("SimulationManager- Error no orchestrator found", "red");
+				tasksCount++;
 				return;
 			}
 			task.setOrchestrator(orchestratorsList.get(selected));

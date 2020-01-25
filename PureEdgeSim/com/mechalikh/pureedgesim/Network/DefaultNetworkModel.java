@@ -144,8 +144,8 @@ public class DefaultNetworkModel extends NetworkModel {
 			calculateEnergyConsumption(transfer.getTask().getOrchestrator(),
 					((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()), transfer);
 		} else if ("Container".equals(type)) {
-			// registry, so set the first cloud datacenter as the origin
-			calculateEnergyConsumption(simulationManager.getServersManager().getDatacenterList().get(0),
+			// update the energy consumption of the registry and the device
+			calculateEnergyConsumption(transfer.getTask().getRegistry(),
 					transfer.getTask().getEdgeDevice(), transfer);
 		} else if ("Result_Orchestrator".equals(type)) {
 			calculateEnergyConsumption(((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()),
@@ -224,7 +224,7 @@ public class DefaultNetworkModel extends NetworkModel {
 	}
 
 	protected void executeTaskOrDownloadContainer(FileTransferProgress transfer) {
-		if (simulationParameters.ENABLE_REGISTRY
+		if (simulationParameters.ENABLE_REGISTRY && "CLOUD".equals(simulationParameters.registry_mode)
 				&& !((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD)) {
 			// if the registry is enabled and the task is offloaded to the fog or the edge,
 			// then download the container

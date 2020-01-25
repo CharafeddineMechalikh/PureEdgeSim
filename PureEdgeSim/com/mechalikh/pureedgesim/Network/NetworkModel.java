@@ -104,7 +104,7 @@ public abstract class NetworkModel extends CloudSimEntity {
 
 	@Override
 	protected void startEntity() {
-		// do someting or schedule events
+		// do something or schedule events
 	}
 
 	@Override
