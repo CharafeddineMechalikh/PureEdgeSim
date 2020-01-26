@@ -157,7 +157,7 @@ public class SimulationManager extends CloudSimEntity {
 
 		case PRINT_LOG:
 			// Print results when simulation is over
-			List<Task> finishedTasks = broker.getCloudletFinishedList(); 
+			List<Task> finishedTasks = broker.getCloudletFinishedList();
 			// If some tasks have not been executed
 			if (simulationParameters.WAIT_FOR_TASKS && (tasksCount / simLog.getGeneratedTasks()) < 1) {
 				// 1 = 100% , 0,9= 90%
@@ -329,35 +329,35 @@ public class SimulationManager extends CloudSimEntity {
 		// task not generated because device died
 		if (phase == 0 && task.getEdgeDevice().isDead()) {
 			simLog.incrementNotGeneratedBeacuseDeviceDead();
-			failedTasksCount++;
-			tasksCount++;
+			task.setFailureReason(Task.Status.NOT_GENERATED_BECAUSE_DEVICE_DEAD);
+			setFailed(task);
 			return true;
 		} // Set the task as failed if the device is dead
 		if (phase != 0 && task.getEdgeDevice().isDead()) {
-			simLog.incrementFailedBeacauseDeviceDead(task);
-			failedTasksCount++;
-			tasksCount++;
+			simLog.incrementFailedBeacauseDeviceDead(task); 
+			task.setFailureReason(Task.Status.FAILED_BECAUSE_DEVICE_DEAD);
+			setFailed(task);
 			return true;
 		}
 		// or if the orchestrator died
-		if (phase == 1 && task.getOrchestrator() != null && task.getOrchestrator().isDead()) {
+		if (phase == 1 && task.getOrchestrator() != null && task.getOrchestrator().isDead()) { 
+			task.setFailureReason(Task.Status.FAILED_BECAUSE_DEVICE_DEAD);
 			simLog.incrementFailedBeacauseDeviceDead(task);
-			failedTasksCount++;
-			tasksCount++;
+			setFailed(task);
 			return true;
 		}
 		// or the destination device is dead
-		if (phase == 2 && ((EdgeDataCenter) task.getVm().getHost().getDatacenter()).isDead()) {
+		if (phase == 2 && ((EdgeDataCenter) task.getVm().getHost().getDatacenter()).isDead()) { 
+			task.setFailureReason(Task.Status.FAILED_BECAUSE_DEVICE_DEAD);
 			simLog.incrementFailedBeacauseDeviceDead(task);
-			failedTasksCount++;
-			tasksCount++;
+			setFailed(task);
 			return true;
 		}
 		// The task is failed due to long delay
 		if ((task.getSimulation().clock() - task.getTime()) > task.getMaxLatency()) {
+			task.setFailureReason(Task.Status.FAILED_DUE_TO_LATENCY);
 			simLog.incrementTasksFailedLatency(task);
-			failedTasksCount++;
-			tasksCount++;
+			setFailed(task);
 			return true;
 		}
 		// A simple representation of task failure due to
@@ -366,21 +366,27 @@ public class SimulationManager extends CloudSimEntity {
 		if (phase == 1 && task.getOrchestrator() != null
 				&& task.getOrchestrator().getType() != simulationParameters.TYPES.CLOUD
 				&& !sameLocation(task.getEdgeDevice(), task.getOrchestrator())) {
+			task.setFailureReason(Task.Status.FAILED_DUE_TO_DEVICE_MOBILITY);
 			simLog.incrementTasksFailedMobility(task);
-			failedTasksCount++;
-			tasksCount++;
+			setFailed(task);
 			return true;
 		}
 		if (phase == 2 && (task.getVm().getHost().getDatacenter()) != null
 				&& ((EdgeDataCenter) task.getVm().getHost().getDatacenter())
 						.getType() != simulationParameters.TYPES.CLOUD
 				&& !sameLocation(task.getEdgeDevice(), ((EdgeDataCenter) task.getVm().getHost().getDatacenter()))) {
+			task.setFailureReason(Task.Status.FAILED_DUE_TO_DEVICE_MOBILITY);
 			simLog.incrementTasksFailedMobility(task);
-			failedTasksCount++;
-			tasksCount++;
+			setFailed(task);
 			return true;
 		}
 		return false;
+	}
+
+	private void setFailed(Task task) {
+		failedTasksCount++;
+		tasksCount++;
+		this.edgeOrchestrator.resultsReturned(task);
 	}
 
 	private boolean sameLocation(EdgeDataCenter Dev1, EdgeDataCenter Dev2) {

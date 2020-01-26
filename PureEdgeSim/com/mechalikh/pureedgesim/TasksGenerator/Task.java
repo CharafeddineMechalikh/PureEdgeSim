@@ -1,6 +1,8 @@
 package com.mechalikh.pureedgesim.TasksGenerator;
 
+import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
+
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 
 public class Task extends CloudletSimple {
@@ -9,9 +11,17 @@ public class Task extends CloudletSimple {
 	private EdgeDataCenter device;
 	private long containerSize;
 	private EdgeDataCenter orchestrator;
-	private double receptionTime = -1; // the time when the task, or the corresponding container has been received by the offloading destination 
-    private EdgeDataCenter registry;
+	private double receptionTime = -1; // the time when the task, or the corresponding container has been received by
+										// the offloading destination
+	private EdgeDataCenter registry;
 	private int applicationID;
+	private Status failureReason;
+
+	public static enum Status {
+		FAILED_DUE_TO_LATENCY, FAILED_BECAUSE_DEVICE_DEAD, FAILED_DUE_TO_DEVICE_MOBILITY,
+		NOT_GENERATED_BECAUSE_DEVICE_DEAD, FAILED_NO_RESSOURCES, NULL
+	}
+
 	public Task(int id, long cloudletLength, long pesNumber) {
 		super(id, cloudletLength, pesNumber);
 	}
@@ -79,5 +89,14 @@ public class Task extends CloudletSimple {
 	public void setApplicationID(int applicationID) {
 		this.applicationID = applicationID;
 	}
- 
+
+	public Status getFailureReason() {
+		return failureReason;
+	}
+
+	public void setFailureReason(Status status) {
+		this.setStatus(Cloudlet.Status.FAILED);
+		this.failureReason = status;
+	}
+
 }

@@ -1,5 +1,7 @@
 package examples;
 
+import org.cloudbus.cloudsim.cloudlets.Cloudlet.Status;
+
 import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
@@ -77,7 +79,12 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 
 	@Override
 	public void resultsReturned(Task task) {
-		// TODO Auto-generated method stub
+		if(task.getStatus()==Status.FAILED) {
+			System.err.println("CustomEdgeOrchestrator, task "+ task.getId()+" has been failed, failure reason is: "+ task.getFailureReason());
+		}else {
+
+			System.out.println("CustomEdgeOrchestrator, task "+ task.getId()+" has been successfully executed");
+		}
 		
 	}
 
