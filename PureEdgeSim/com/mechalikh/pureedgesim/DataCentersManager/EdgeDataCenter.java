@@ -1,11 +1,14 @@
 package com.mechalikh.pureedgesim.DataCentersManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
+import org.cloudbus.cloudsim.vms.Vm;
 
 import com.mechalikh.pureedgesim.LocationManager.Location;
 import com.mechalikh.pureedgesim.LocationManager.Mobility;
@@ -225,5 +228,10 @@ public abstract class EdgeDataCenter extends DatacenterSimple {
 
 	public boolean isGeneratingTasks() {
 		return this.generateTasks;
+	}
+
+	public List<Vm> getVmList() {
+		return (List<Vm>) Collections
+				.unmodifiableList(getHostList().stream().flatMap(h -> h.getVmList().stream()).collect(Collectors.toList()));
 	}
 }

@@ -65,7 +65,10 @@ public class MainApplication {
 			Runtime.getRuntime().exit(0); // if files aren't correct stop everything.
 
 		// Disable cloudsim plus log
-		Log.setLevel(Level.OFF);
+		if (!simulationParameters.DEEP_LOGGING)
+			Log.setLevel(Level.OFF);
+		else
+			Log.setLevel(Level.ALL);
 
 		Date startDate = Calendar.getInstance().getTime();
 
@@ -97,7 +100,6 @@ public class MainApplication {
 		} else { // Sequential execution
 			new MainApplication(0, 1).startSimulation();
 		}
-
 
 		// Simulation Finished
 		Date endDate = Calendar.getInstance().getTime();
@@ -237,7 +239,7 @@ public class MainApplication {
 	protected static void setCustomEnergyModel(Class<? extends EnergyModel> energyModel2) {
 		energyModel = energyModel2;
 	}
-	
+
 	protected static void setCustomNetworkModel(Class<? extends NetworkModel> networkModel2) {
 		networkModel = networkModel2;
 	}

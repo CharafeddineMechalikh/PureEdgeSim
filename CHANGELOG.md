@@ -17,6 +17,8 @@
 
 *   Fixed the registry related bugs
 
+*   Update from CloudSim Plus 3.0.1 to 4.3.0
+
 *   New example added "Example 6" to show how to use a custom network model, to do so a cooperative caching algorithm has been implemented in which devices keep replicas of the containers they downloaded in order to minimize the network usage. This required implementing a clustering algorithm by which edge devices will be grouped into clusters, and the cluster head orchestrates their tasks. So, a custom edge devices class was created which inherits the DefaultDataCenter class.
 
 ## New version 2.2.3 (nov 7th 2019) 
