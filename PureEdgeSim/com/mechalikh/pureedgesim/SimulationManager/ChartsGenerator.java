@@ -146,17 +146,17 @@ public class ChartsGenerator {
 	}
 
 	private void generateEnergyCharts() {
-		displayChart("Edge devices count", "Energy consumption (Wh)", "Consumed energy (Wh)", "/Energy");
-		displayChart("Edge devices count", "Average energy consumption (Wh/Data center)", "Consumed energy (Wh)",
+		displayChart("Edge devices count", "Energy consumption (W)", "Consumed energy (W)", "/Energy");
+		displayChart("Edge devices count", "Average energy consumption (W/Data center)", "Consumed energy (W)",
 				"/Energy");
-		displayChart("Edge devices count", "Cloud energy consumption (Wh)", "Consumed energy (Wh)", "/Energy");
-		displayChart("Edge devices count", "Average Cloud energy consumption (Wh/Data center)", "Consumed energy (Wh)",
+		displayChart("Edge devices count", "Cloud energy consumption (W)", "Consumed energy (W)", "/Energy");
+		displayChart("Edge devices count", "Average Cloud energy consumption (W/Data center)", "Consumed energy (W)",
 				"/Energy");
-		displayChart("Edge devices count", "Fog energy consumption (Wh)", "Consumed energy (Wh)", "/Energy");
-		displayChart("Edge devices count", "Average Fog energy consumption (Wh/Data center)", "Consumed energy (Wh)",
+		displayChart("Edge devices count", "Fog energy consumption (W)", "Consumed energy (W)", "/Energy");
+		displayChart("Edge devices count", "Average Fog energy consumption (W/Data center)", "Consumed energy (W)",
 				"/Energy");
-		displayChart("Edge devices count", "Edge energy consumption (Wh)", "Consumed energy (Wh)", "/Energy");
-		displayChart("Edge devices count", "Average Edge energy consumption (Wh/Device)", "Consumed energy (Wh)",
+		displayChart("Edge devices count", "Edge energy consumption (W)", "Consumed energy (W)", "/Energy");
+		displayChart("Edge devices count", "Average Edge energy consumption (W/Device)", "Consumed energy (W)",
 				"/Energy");
 
 		displayChart("Edge devices count", "Dead devices count", "Count", "/Edge Devices");

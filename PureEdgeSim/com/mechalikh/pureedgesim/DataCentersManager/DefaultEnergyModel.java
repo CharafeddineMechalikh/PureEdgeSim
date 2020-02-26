@@ -28,8 +28,8 @@ public class DefaultEnergyModel extends EnergyModel {
 	}
 
 	public void updateCpuEnergyConsumption(double cpuUtilization) {
-		double consumption = idleConsumption
-				+ (maxActiveConsumption * cpuUtilization) * simulationParameters.UPDATE_INTERVAL;
+		double consumption = (idleConsumption
+				+ ((maxActiveConsumption-idleConsumption)* cpuUtilization))/3600 * simulationParameters.UPDATE_INTERVAL; // the energy consumption value is for 1 hour, it will be divided by 3600 to get how much each second costs
 		this.cpuEnergyConsumption += consumption;
 	}
 

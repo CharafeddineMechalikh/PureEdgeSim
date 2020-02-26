@@ -6,7 +6,7 @@
 		<request_size>100</request_size><!-- the offloading request that will be sent to the orchestrator and then to the device where the task will be offloaded in kilobytes -->
 		<results_size>100</results_size><!-- the results of the offlaoded task in kilobytes -->
 		<task_length>400000</task_length><!--MI: million instructions -->
-		<required_core>1</required_core>
+		<required_core>1</required_core> 
 	</application>
 	<application name="E_HEALTH">
 		<max_delay>5</max_delay>
@@ -14,7 +14,7 @@
 		<request_size>100</request_size>
 		<results_size>100</results_size>
 		<task_length>40000</task_length>
-		<required_core>1</required_core>
+		<required_core>1</required_core>	 
 	</application>
 	<application name="HEAVY_COMP_APP">
 		<max_delay>200</max_delay> <!-- a great number represents no latency- sensitivity -->
@@ -22,7 +22,7 @@
 		<request_size>2000</request_size>
 		<results_size>1000</results_size>
 		<task_length>1200000</task_length>
-		<required_core>1</required_core>
+		<required_core>1</required_core>	 
 	</application>
 	<application name="SMART_HOME">
 		<max_delay>200</max_delay>
@@ -30,6 +30,6 @@
 		<request_size>50</request_size>
 		<results_size>50</results_size>
 		<task_length>70000</task_length>
-		<required_core>1</required_core>
+		<required_core>1</required_core>	 
 	</application> 
 </applications>

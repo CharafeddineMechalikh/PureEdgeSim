@@ -39,8 +39,7 @@ public class Example6 extends MainApplication {
 		/*
 		 * Before implementing the cooperative caching algorithm (which will require a
 		 * custom network model) we need to implement a clustering algorithm in order to
-		 * group edge devices in clusters. The clustering is made using the gray wolf
-		 * optimizer algorithm. This algorithm is implemented in the
+		 * group edge devices in clusters. The clustering algorithm is implemented in the
 		 * CustomEdgeDevice.java. We extended the DefaultEdgeDataCenter class in this
 		 * case.To use it we need to execute the following line.
 		 */

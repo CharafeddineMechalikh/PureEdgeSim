@@ -5,7 +5,7 @@
 		here), 30 percent of all devices will be of the first type, this percentage 
 		is defined here <percentage> -->
 		
-	<device arch="x86" os="linux" vmm="xen"> <!-- this is a smartphone, for example -->
+	<device > <!-- this is a smartphone, for example -->
 	
 		<mobility>true</mobility><!-- the device is mobile or fixed -->
 		<battery>true</battery> <!-- relies on battery? -->
@@ -13,7 +13,7 @@
 		<batteryCapacity>20</batteryCapacity> <!-- battery capacity in Watt-Hour -->
 		<idleConsumption>0.00001</idleConsumption><!-- idle energy consumption/ 
 			second, default=0 .000010975 -->
-		<maxConsumption>0.0011</maxConsumption><!-- max energy consumption/second, 
+		<maxConsumption>0.0011</maxConsumption><!-- max energy consumption/hour (Wh), 
 			when device cpu is use at 100% , default=0 .0011 -->
 		<isOrchestrator>false</isOrchestrator> <!-- it has a task orchestrator or not -->
 		<generateTasks>true</generateTasks> <!-- it generates data/tasks or not -->
@@ -24,7 +24,7 @@
 				<ram>4000</ram>
 				<storage>256000</storage>
 				<VMs>
-					<VM vmm="xen">
+					<VM>
 						<core>4</core>
 						<mips>70000</mips>
 						<ram>4000</ram>
@@ -34,7 +34,7 @@
 			</host>
 		</hosts>
 	</device>
-	<device arch="x86" os="linux" vmm="xen"> <!-- this is a small server -->
+	<device > <!-- this is a small server -->
 		<mobility>false</mobility>
 		<battery>false</battery>
 		<percentage>10</percentage>
@@ -50,7 +50,7 @@
 				<ram>32000</ram>
 				<storage>512000</storage>
 				<VMs>
-					<VM vmm="xen">
+					<VM>
 						<core>16</core>
 						<mips>200000</mips>
 						<ram>32000</ram>
@@ -60,7 +60,7 @@
 			</host>
 		</hosts>
 	</device>
-	<device arch="x86" os="linux" vmm="xen"> <!--  this is a laptop for example -->
+	<device > <!--  this is a laptop for example -->
 		<mobility>false</mobility>
 		<battery>true</battery>
 		<percentage>20</percentage>
@@ -76,7 +76,7 @@
 				<ram>8000</ram>
 				<storage>512000</storage>
 				<VMs>
-					<VM vmm="xen">
+					<VM>
 						<core>4</core>
 						<mips>150000</mips>
 						<ram>8000</ram>
@@ -86,7 +86,7 @@
 			</host>
 		</hosts>
 	</device>
-	<device arch="x86" os="linux" vmm="xen">
+	<device >
 		<mobility>false</mobility>
 		<battery>false</battery>
 		<percentage>40</percentage>
@@ -102,7 +102,7 @@
 				<ram>4000</ram>
 				<storage>64000</storage> <!-- this is a simple sensor that has no computing capacity -->
 				<VMs>
-					<VM vmm="xen">
+					<VM>
 						<core>1</core>
 						<mips>70000</mips>
 						<ram>4000</ram>

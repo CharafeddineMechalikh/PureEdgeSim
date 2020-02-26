@@ -144,10 +144,7 @@ public class FilesParser {
 
 				Node datacenterNode = datacenterList.item(i);
 
-				Element datacenterElement = (Element) datacenterNode;
-				isAttribtuePresent(datacenterElement, "arch");
-				isAttribtuePresent(datacenterElement, "os");
-				isAttribtuePresent(datacenterElement, "vmm");
+				Element datacenterElement = (Element) datacenterNode; 
 				isElementPresent(datacenterElement, "idleConsumption");
 				isElementPresent(datacenterElement, "maxConsumption");
 				if (type == TYPES.EDGE) {
@@ -181,8 +178,7 @@ public class FilesParser {
 					for (int k = 0; k < vmList.getLength(); k++) {
 						Node vmNode = vmList.item(k);
 
-						Element vmElement = (Element) vmNode;
-						isAttribtuePresent(vmElement, "vmm");
+						Element vmElement = (Element) vmNode; 
 						isElementPresent(vmElement, "core");
 						isElementPresent(vmElement, "mips");
 						isElementPresent(vmElement, "ram");
@@ -228,7 +224,7 @@ public class FilesParser {
 				isElementPresent(appElement, "request_size");
 				isElementPresent(appElement, "results_size");
 				isElementPresent(appElement, "task_length");
-				isElementPresent(appElement, "required_core");
+				isElementPresent(appElement, "required_core"); 
 
 				double max_delay = Double
 						.parseDouble(appElement.getElementsByTagName("max_delay").item(0).getTextContent());
@@ -241,7 +237,7 @@ public class FilesParser {
 				double task_length = Double
 						.parseDouble(appElement.getElementsByTagName("task_length").item(0).getTextContent());
 				double required_core = Double
-						.parseDouble(appElement.getElementsByTagName("required_core").item(0).getTextContent());
+						.parseDouble(appElement.getElementsByTagName("required_core").item(0).getTextContent()); 
 
 				// save apps parameters
 				simulationParameters.APPLICATIONS_TABLE[i][0] = max_delay; // max delay in seconds
@@ -249,7 +245,7 @@ public class FilesParser {
 				simulationParameters.APPLICATIONS_TABLE[i][2] = results_size; // avg downloaded results size (KB)
 				simulationParameters.APPLICATIONS_TABLE[i][3] = task_length; // avg task length (MI)
 				simulationParameters.APPLICATIONS_TABLE[i][4] = required_core; // required # of core
-				simulationParameters.APPLICATIONS_TABLE[i][5] = container_size; // the size of the container (KB)
+				simulationParameters.APPLICATIONS_TABLE[i][5] = container_size; // the size of the container (KB) 
 			}
 
 		} catch (Exception e) {

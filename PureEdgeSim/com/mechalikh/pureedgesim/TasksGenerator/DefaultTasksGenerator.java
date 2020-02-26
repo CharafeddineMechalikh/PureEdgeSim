@@ -2,7 +2,7 @@ package com.mechalikh.pureedgesim.TasksGenerator;
 
 import java.util.List;
 import java.util.Random;
-import org.cloudbus.cloudsim.utilizationmodels.UtilizationModel;
+import org.cloudbus.cloudsim.utilizationmodels.UtilizationModel; 
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
 
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
@@ -44,7 +44,7 @@ public class DefaultTasksGenerator extends TasksGenerator {
 		long requestSize = (long) simulationParameters.APPLICATIONS_TABLE[app][1];
 		long outputSize = (long) simulationParameters.APPLICATIONS_TABLE[app][2];
 		int pesNumber = (int) simulationParameters.APPLICATIONS_TABLE[app][4];
-		long containerSize = (int) simulationParameters.APPLICATIONS_TABLE[app][5]; // the size of the container
+		long containerSize = (int) simulationParameters.APPLICATIONS_TABLE[app][5]; // the size of the container 
 		Task[] task = new Task[simulationParameters.TASKS_PER_EDGE_DEVICE_PER_MINUTES];
 		int id;
 

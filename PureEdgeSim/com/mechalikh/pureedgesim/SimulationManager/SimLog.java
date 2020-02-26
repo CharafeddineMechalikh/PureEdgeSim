@@ -87,9 +87,9 @@ public class SimLog {
 					+ "Total tasks executed (Edge),Tasks successfully executed (Edge),"
 					+ "Network usage (s),Wan usage (s),Lan usage (s), Total network traffic (MBytes), Containers wan usage (s), Containers lan usage (s),Average bandwidth per task (Mbps),Average VM CPU usage (%),"
 					+ "Average VM CPU usage (Cloud) (%),Average VM CPU usage (Fog) (%),Average VM CPU usage (Edge) (%),"
-					+ "Energy consumption (Wh),Average energy consumption (Wh/Data center),Cloud energy consumption (Wh),"
-					+ "Average Cloud energy consumption (Wh/Data center),Fog energy consumption (Wh),Average Fog energy consumption (Wh/Data center),"
-					+ "Edge energy consumption (Wh),Average Edge energy consumption (Wh/Device),Dead devices count,"
+					+ "Energy consumption (W),Average energy consumption (W/Data center),Cloud energy consumption (W),"
+					+ "Average Cloud energy consumption (W/Data center),Fog energy consumption (W),Average Fog energy consumption (W/Data center),"
+					+ "Edge energy consumption (W),Average Edge energy consumption (W/Device),Dead devices count,"
 					+ "Average remaining power (Wh),Average remaining power (%), First edge device death time (s),"
 					+ "List of remaining power (%) (only battery powered devices / 0 = dead),List of the time when each device died (s)");
 		}
@@ -273,22 +273,22 @@ public class SimLog {
 		print("                                                                                  Edge= "
 				+ padLeftSpaces(decimalFormat.format(averageEdgeCpuUtilization), 13) + " %");
 		print("SimLog- Energy consumption                                                      :"
-				+ padLeftSpaces(decimalFormat.format(energyConsumption), 20) + " Wh (Average: "
-				+ decimalFormat.format(energyConsumption / datacentersList.size()) + " Wh/data center(or device))");
+				+ padLeftSpaces(decimalFormat.format(energyConsumption), 20) + " W (Average: "
+				+ decimalFormat.format(energyConsumption / datacentersList.size()) + " W/data center(or device))");
 		print("                                                                                :"
 				+ padLeftSpaces("", 20) + "    (Average: "
-				+ decimalFormat.format(energyConsumption / (double) finishedTasks.size()) + " Wh/task)");
+				+ decimalFormat.format(energyConsumption / (double) finishedTasks.size()) + " W/task)");
 		print("SimLog- Energy Consumption per level                                            : Cloud="
-				+ padLeftSpaces(decimalFormat.format(cloudEnConsumption), 13) + " Wh (Average: "
+				+ padLeftSpaces(decimalFormat.format(cloudEnConsumption), 13) + " W (Average: "
 				+ decimalFormat.format(cloudEnConsumption / simulationParameters.NUM_OF_CLOUD_DATACENTERS)
-				+ " Wh/data center)");
+				+ " W/data center)");
 		print("                                                                                  Fog="
-				+ padLeftSpaces(decimalFormat.format(fogEnConsumption), 15) + " Wh (Average: "
+				+ padLeftSpaces(decimalFormat.format(fogEnConsumption), 15) + " W (Average: "
 				+ decimalFormat.format(fogEnConsumption / simulationParameters.NUM_OF_FOG_DATACENTERS)
-				+ " Wh/data center)");
+				+ " W/data center)");
 		print("                                                                                  Edge="
-				+ padLeftSpaces(decimalFormat.format(edgeEnConsumption), 14) + " Wh (Average: "
-				+ decimalFormat.format(edgeEnConsumption / currentEdgeDevicesCount) + " Wh/edge device)");
+				+ padLeftSpaces(decimalFormat.format(edgeEnConsumption), 14) + " W (Average: "
+				+ decimalFormat.format(edgeEnConsumption / currentEdgeDevicesCount) + " W/edge device)");
 		print("SimLog- Dead edge devices due to battery drain                                  :"
 				+ padLeftSpaces(decimalFormat.format(deadEdgeDevicesCount), 20) + " devices (Among "
 				+ batteryPoweredDevicesCount + " devices with batteries ("
