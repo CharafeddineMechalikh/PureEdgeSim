@@ -19,7 +19,7 @@ public class Example4 extends MainApplication {
 		 * data center class can be found in the examples folder as well. by removing
 		 * this line, pureEdgeSim will use the default datacenters/devices class.
 		 */
-		setCustomEdgeDataCenters(CustomEdgeDataCenter.class);
+		setCustomEdgeDataCenters(CustomDataCenter.class);
 
 		// To use the PureEdgeSim default edge data centers class you can also uncomment
 		// this:

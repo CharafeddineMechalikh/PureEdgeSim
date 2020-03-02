@@ -33,12 +33,12 @@ public class DefaultEnergyModel extends EnergyModel {
 		this.cpuEnergyConsumption += consumption;
 	}
 
-	public void updatewirelessEnergyConsumption(FileTransferProgress file, EdgeDataCenter device1,
-			EdgeDataCenter device2, int flag) {
+	public void updatewirelessEnergyConsumption(FileTransferProgress file, DataCenter device1,
+			DataCenter device2, int flag) {
 
 		double distance;
-		if (device1.getType() == TYPES.CLOUD || device2.getType() == TYPES.CLOUD || device1.getType() == TYPES.FOG
-				|| device2.getType() == TYPES.FOG) {
+		if (device1.getType() == TYPES.CLOUD || device2.getType() == TYPES.CLOUD || device1.getType() == TYPES.EDGE_DATACENTER
+				|| device2.getType() == TYPES.EDGE_DATACENTER) {
 			distance = 10;
 		} else {
 			distance = Math

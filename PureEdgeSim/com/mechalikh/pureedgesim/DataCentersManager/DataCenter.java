@@ -16,7 +16,7 @@ import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksOrchestration.VmTaskMapItem;
 
-public abstract class EdgeDataCenter extends DatacenterSimple {
+public abstract class DataCenter extends DatacenterSimple {
 	protected static final int UPDATE_STATUS = 2000; // Avoid conflicting with CloudSim Plus Tags
 	protected simulationParameters.TYPES deviceType;
 	protected boolean isMobile = false;
@@ -35,12 +35,12 @@ public abstract class EdgeDataCenter extends DatacenterSimple {
 	protected boolean isIdle = true;
 	protected long ramMemory;
 	protected Mobility mobilityManager;
-	protected EdgeDataCenter orchestrator;
+	protected DataCenter orchestrator;
 	protected double currentCpuUtilization = 0;
 	protected SimulationManager simulationManager;
 	private boolean generateTasks = true;
 
-	public EdgeDataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
+	public DataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
 		super(simulationManager.getSimulation(), hostList, new VmAllocationPolicySimple());
 		this.simulationManager = simulationManager;
 		vmTaskMap = new ArrayList<>();
@@ -218,7 +218,7 @@ public abstract class EdgeDataCenter extends DatacenterSimple {
 		this.energyModel = (EnergyModel) energyModel;
 	}
 
-	public EdgeDataCenter getOrchestrator() {
+	public DataCenter getOrchestrator() {
 		return this.orchestrator;
 	}
 

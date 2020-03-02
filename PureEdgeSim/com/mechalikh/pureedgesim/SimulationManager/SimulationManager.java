@@ -6,7 +6,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimEntity;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.vms.Vm;
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
@@ -39,7 +39,7 @@ public class SimulationManager extends CloudSimEntity {
 	private int oldProgress = -1;
 	private Scenario scenario;
 	private NetworkModel networkModel;
-	private List<? extends EdgeDataCenter> orchestratorsList;
+	private List<? extends DataCenter> orchestratorsList;
 	private double failedTasksCount = 0;
 	private int tasksCount = 0;
 
@@ -233,7 +233,7 @@ public class SimulationManager extends CloudSimEntity {
 		// If the task is offloaded
 		// and the orchestrator is not the offloading destination
 		if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()
-				&& task.getOrchestrator() != ((EdgeDataCenter) task.getVm().getHost().getDatacenter())) {
+				&& task.getOrchestrator() != ((DataCenter) task.getVm().getHost().getDatacenter())) {
 			scheduleNow(networkModel, NetworkModel.SEND_REQUEST_FROM_ORCH_TO_DESTINATION, task);
 
 		} else { // The task will be executed locally / no offloading or will be executed where
@@ -347,7 +347,7 @@ public class SimulationManager extends CloudSimEntity {
 			return true;
 		}
 		// or the destination device is dead
-		if (phase == 2 && ((EdgeDataCenter) task.getVm().getHost().getDatacenter()).isDead()) { 
+		if (phase == 2 && ((DataCenter) task.getVm().getHost().getDatacenter()).isDead()) { 
 			task.setFailureReason(Task.Status.FAILED_BECAUSE_DEVICE_DEAD);
 			simLog.incrementFailedBeacauseDeviceDead(task);
 			setFailed(task);
@@ -372,9 +372,9 @@ public class SimulationManager extends CloudSimEntity {
 			return true;
 		}
 		if (phase == 2 && (task.getVm().getHost().getDatacenter()) != null
-				&& ((EdgeDataCenter) task.getVm().getHost().getDatacenter())
+				&& ((DataCenter) task.getVm().getHost().getDatacenter())
 						.getType() != simulationParameters.TYPES.CLOUD
-				&& !sameLocation(task.getEdgeDevice(), ((EdgeDataCenter) task.getVm().getHost().getDatacenter()))) {
+				&& !sameLocation(task.getEdgeDevice(), ((DataCenter) task.getVm().getHost().getDatacenter()))) {
 			task.setFailureReason(Task.Status.FAILED_DUE_TO_DEVICE_MOBILITY);
 			simLog.incrementTasksFailedMobility(task);
 			setFailed(task);
@@ -389,14 +389,14 @@ public class SimulationManager extends CloudSimEntity {
 		this.edgeOrchestrator.resultsReturned(task);
 	}
 
-	private boolean sameLocation(EdgeDataCenter Dev1, EdgeDataCenter Dev2) {
+	private boolean sameLocation(DataCenter Dev1, DataCenter Dev2) {
 		if (Dev1.getType() == TYPES.CLOUD || Dev2.getType() == TYPES.CLOUD)
 			return true;
 		double distance = Math.abs(Math.sqrt(Math.pow((Dev1.getLocation().getXPos() - Dev2.getLocation().getXPos()), 2)
 				+ Math.pow((Dev1.getLocation().getYPos() - Dev2.getLocation().getYPos()), 2)));
-		int RANGE = simulationParameters.EDGE_RANGE;
-		if (Dev1.getType() != Dev2.getType()) // One of them is fog and the other is edge
-			RANGE = simulationParameters.FOG_RANGE;
+		int RANGE = simulationParameters.EDGE_DEVICES_RANGE;
+		if (Dev1.getType() != Dev2.getType()) // One of them is an edge data center and the other is an edge device
+			RANGE = simulationParameters.EDGE_DATACENTERS_RANGE;
 		return (distance < RANGE);
 	}
 

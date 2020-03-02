@@ -27,7 +27,7 @@ public class Example1 extends MainApplication {
 		setCustomTasksGenerator(DefaultTasksGenerator.class);
 
 		// To use a custom edge device/datacenters class
-		setCustomEdgeDataCenters(CustomEdgeDataCenter.class);
+		setCustomEdgeDataCenters(CustomDataCenter.class);
 
 		// To use a custom energy model
 		setCustomEnergyModel(CustomEnergyModel.class);

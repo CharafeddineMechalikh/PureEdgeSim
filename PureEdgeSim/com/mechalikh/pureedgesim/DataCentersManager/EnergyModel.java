@@ -14,8 +14,8 @@ public abstract class EnergyModel {
 
 	public abstract void updateCpuEnergyConsumption(double cpuUtilization);
 
-	public  abstract void updatewirelessEnergyConsumption(FileTransferProgress file, EdgeDataCenter device1,
-			EdgeDataCenter device2, int flag);
+	public  abstract void updatewirelessEnergyConsumption(FileTransferProgress file, DataCenter device1,
+			DataCenter device2, int flag);
  
 
 	public double getTotalEnergyConsumption() {

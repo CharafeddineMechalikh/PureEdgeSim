@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<fog_datacenters>
+<edge_datacenters>
 	 <datacenter arch="x86" os="Linux" vmm="Xen">
 		<idleConsumption>0.00015</idleConsumption> 
 		<maxConsumption>0.016</maxConsumption> 
@@ -52,4 +52,4 @@
 		</hosts>
 	</datacenter>
 	
-</fog_datacenters>
+</edge_datacenters>

@@ -3,17 +3,17 @@ package com.mechalikh.pureedgesim.TasksGenerator;
 import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
 
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 
 public class Task extends CloudletSimple {
 	private double offloadingTime;
 	private double maxLatency;
-	private EdgeDataCenter device;
+	private DataCenter device;
 	private long containerSize;
-	private EdgeDataCenter orchestrator;
+	private DataCenter orchestrator;
 	private double receptionTime = -1; // the time when the task, or the corresponding container has been received by
 										// the offloading destination
-	private EdgeDataCenter registry;
+	private DataCenter registry;
 	private int applicationID;
 	private Status failureReason;
 
@@ -42,11 +42,11 @@ public class Task extends CloudletSimple {
 		this.maxLatency = maxLatency;
 	}
 
-	public EdgeDataCenter getEdgeDevice() {
+	public DataCenter getEdgeDevice() {
 		return device;
 	}
 
-	public void setEdgeDevice(EdgeDataCenter dev) {
+	public void setEdgeDevice(DataCenter dev) {
 		this.device = dev;
 	}
 
@@ -58,11 +58,11 @@ public class Task extends CloudletSimple {
 		return containerSize;
 	}
 
-	public void setOrchestrator(EdgeDataCenter orch) {
+	public void setOrchestrator(DataCenter orch) {
 		this.orchestrator = orch;
 	}
 
-	public EdgeDataCenter getOrchestrator() {
+	public DataCenter getOrchestrator() {
 		return orchestrator;
 	}
 
@@ -74,11 +74,11 @@ public class Task extends CloudletSimple {
 		receptionTime = time;
 	}
 
-	public EdgeDataCenter getRegistry() {
+	public DataCenter getRegistry() {
 		return registry;
 	}
 
-	public void setRegistry(EdgeDataCenter registry) {
+	public void setRegistry(DataCenter registry) {
 		this.registry = registry;
 	}
 

@@ -2,7 +2,7 @@ package com.mechalikh.pureedgesim.Network;
 
 import java.util.List;
 import org.cloudbus.cloudsim.core.events.SimEvent;
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter; 
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter; 
 import com.mechalikh.pureedgesim.DataCentersManager.DefaultEnergyModel;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
@@ -142,13 +142,13 @@ public class DefaultNetworkModel extends NetworkModel {
 					transfer);
 		} else if ("Destination".equals(type)) {
 			calculateEnergyConsumption(transfer.getTask().getOrchestrator(),
-					((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()), transfer);
+					((DataCenter) transfer.getTask().getVm().getHost().getDatacenter()), transfer);
 		} else if ("Container".equals(type)) {
 			// update the energy consumption of the registry and the device
 			calculateEnergyConsumption(transfer.getTask().getRegistry(),
 					transfer.getTask().getEdgeDevice(), transfer);
 		} else if ("Result_Orchestrator".equals(type)) {
-			calculateEnergyConsumption(((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()),
+			calculateEnergyConsumption(((DataCenter) transfer.getTask().getVm().getHost().getDatacenter()),
 					transfer.getTask().getOrchestrator(), transfer);
 		} else if ("Result_Origin".equals(type)) {
 			calculateEnergyConsumption(transfer.getTask().getOrchestrator(), transfer.getTask().getEdgeDevice(),
@@ -157,7 +157,7 @@ public class DefaultNetworkModel extends NetworkModel {
 
 	}
 
-	private void calculateEnergyConsumption(EdgeDataCenter origin, EdgeDataCenter destination,
+	private void calculateEnergyConsumption(DataCenter origin, DataCenter destination,
 			FileTransferProgress transfer) {
 		if (origin != null) {
 			origin.getEnergyModel().updatewirelessEnergyConsumption(transfer, origin, destination,
@@ -215,7 +215,7 @@ public class DefaultNetworkModel extends NetworkModel {
 	protected void returnResultToDevice(FileTransferProgress transfer) {
 		// if the results are returned from the cloud, consider the wan propagation delay
 		if (transfer.getTask().getOrchestrator().getType().equals(TYPES.CLOUD)
-				|| ((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD))
+				|| ((DataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD))
 			schedule(this, simulationParameters.WAN_PROPAGATION_DELAY, DefaultNetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV,
 					transfer.getTask());
 		else
@@ -225,14 +225,14 @@ public class DefaultNetworkModel extends NetworkModel {
 
 	protected void executeTaskOrDownloadContainer(FileTransferProgress transfer) {
 		if (simulationParameters.ENABLE_REGISTRY && "CLOUD".equals(simulationParameters.registry_mode)
-				&& !((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD)) {
-			// if the registry is enabled and the task is offloaded to the fog or the edge,
+				&& !((DataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD)) {
+			// if the registry is enabled and the task is offloaded to the edge data centers or the mist nodes (edge devices),
 			// then download the container
 			scheduleNow(this, DefaultNetworkModel.DOWNLOAD_CONTAINER, transfer.getTask());
 
 		} else {// if the registry is disabled, execute directly the request, as it represents
 				// the offloaded task in this case
-			if (((EdgeDataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD))
+			if (((DataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD))
 				schedule(simulationManager, simulationParameters.WAN_PROPAGATION_DELAY, SimulationManager.EXECUTE_TASK,
 						transfer.getTask());
 			else

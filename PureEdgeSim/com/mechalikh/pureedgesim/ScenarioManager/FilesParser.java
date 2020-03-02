@@ -18,12 +18,12 @@ import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 public class FilesParser {
 
 	// Scan files
-	public boolean checkFiles(String simProp, String edgeFile, String fogFile, String appFile, String cloudFile) {
-		simulationParameters.EDGE_DEVICES_FILE = edgeFile;
-		simulationParameters.FOG_SERVERS_FILE = fogFile;
+	public boolean checkFiles(String simProp, String edgeDevicesFile, String edgeDataCentersFile, String appFile, String cloudFile) {
+		simulationParameters.EDGE_DEVICES_FILE = edgeDevicesFile;
+		simulationParameters.EDGE_DATACENTERS_FILE = edgeDataCentersFile;
 		simulationParameters.CLOUD_DATACENTERS_FILE = cloudFile;
-		return (checkSimulationProperties(simProp) && checkXmlFiles(edgeFile, TYPES.EDGE)
-				&& checkXmlFiles(fogFile, TYPES.FOG) && checkXmlFiles(cloudFile, TYPES.CLOUD) && checkAppFile(appFile));
+		return (checkSimulationProperties(simProp) && checkXmlFiles(edgeDevicesFile, TYPES.EDGE_DEVICE)
+				&& checkXmlFiles(edgeDataCentersFile, TYPES.EDGE_DATACENTER) && checkXmlFiles(cloudFile, TYPES.CLOUD) && checkAppFile(appFile));
 	}
 
 	private boolean checkSimulationProperties(String simProp) {
@@ -64,8 +64,8 @@ public class FilesParser {
 			simulationParameters.ENABLE_ORCHESTRATORS = Boolean
 					.parseBoolean(prop.getProperty("enable_orchestrators").trim());
 
-			simulationParameters.EDGE_RANGE = Integer.parseInt(prop.getProperty("edge_range").trim()); // meters
-			simulationParameters.FOG_RANGE = Integer.parseInt(prop.getProperty("fog_coverage").trim()); // meters
+			simulationParameters.EDGE_DEVICES_RANGE = Integer.parseInt(prop.getProperty("edge_devices_range").trim()); // meters
+			simulationParameters.EDGE_DATACENTERS_RANGE = Integer.parseInt(prop.getProperty("edge_datacenters_coverage").trim()); // meters
 			simulationParameters.PAUSE_LENGTH = Integer.parseInt(prop.getProperty("pause_length").trim());// seconds
 			simulationParameters.MIN_NUM_OF_EDGE_DEVICES = Integer
 					.parseInt(prop.getProperty("min_number_of_edge_devices").trim());
@@ -135,7 +135,7 @@ public class FilesParser {
 			Document xmlDoc = dBuilder.parse(devicesFile);
 			xmlDoc.getDocumentElement().normalize();
 			NodeList datacenterList;
-			if (type == TYPES.EDGE)
+			if (type == TYPES.EDGE_DEVICE)
 				datacenterList = xmlDoc.getElementsByTagName("device");
 			else
 				datacenterList = xmlDoc.getElementsByTagName("datacenter");
@@ -147,7 +147,7 @@ public class FilesParser {
 				Element datacenterElement = (Element) datacenterNode; 
 				isElementPresent(datacenterElement, "idleConsumption");
 				isElementPresent(datacenterElement, "maxConsumption");
-				if (type == TYPES.EDGE) {
+				if (type == TYPES.EDGE_DEVICE) {
 					isElementPresent(datacenterElement, "mobility");
 					isElementPresent(datacenterElement, "battery");
 					isElementPresent(datacenterElement, "percentage");
@@ -158,7 +158,7 @@ public class FilesParser {
 				} else if (type == TYPES.CLOUD) {
 					simulationParameters.NUM_OF_CLOUD_DATACENTERS++;
 				} else {
-					simulationParameters.NUM_OF_FOG_DATACENTERS++;
+					simulationParameters.NUM_OF_EDGE_DATACENTERS++;
 					Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
 					isElementPresent(location, "x_pos");
 					isElementPresent(location, "y_pos");
@@ -186,7 +186,7 @@ public class FilesParser {
 					}
 				}
 			} 
-			if (percentage != 100 && type == TYPES.EDGE) {
+			if (percentage != 100 && type == TYPES.EDGE_DEVICE) {
 				SimLog.println(
 						"FilesParser- check the edge_devices.xml file!, the sum of percentages must be equal to 100%");
 				return false;

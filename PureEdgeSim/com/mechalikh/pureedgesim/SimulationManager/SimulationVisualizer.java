@@ -21,7 +21,7 @@ import org.knowm.xchart.style.markers.Marker;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
 import com.mechalikh.pureedgesim.MainApplication;
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 
@@ -37,8 +37,8 @@ public class SimulationVisualizer {
 	private XYChart tasksSuccessChart = new XYChartBuilder().height(270).width(450).theme(ChartTheme.Matlab)
 			.title("Tasks success rate").xAxisTitle("Time (minutes)").yAxisTitle("Success rate (%)").build();
 	private List<Double> cloudUsage = new ArrayList<>();
+	private List<Double> mistUsage = new ArrayList<>();
 	private List<Double> edgeUsage = new ArrayList<>();
-	private List<Double> fogUsage = new ArrayList<>();
 	private List<Double> wanUsage = new ArrayList<>();
 	private List<Double> currentTime = new ArrayList<>();
 	private List<Double> tasksFailedList = new ArrayList<>();
@@ -89,8 +89,8 @@ public class SimulationVisualizer {
 	void mapChart() {
 		// Add edge devices to map
 		addEdgeDevicesToMap();
-		// Add Fog servers to the map
-		addFogServersToMap();
+		// Add edge data centers to the map
+		addEdgeDataCentersToMap();
 	}
 
 	private void tasksSucessRateChart() {
@@ -108,36 +108,36 @@ public class SimulationVisualizer {
 
 	void utilizationChart() {
 		double clUsage = 0;
+		double msUsage = 0;
 		double edUsage = 0;
-		double fgUsage = 0;
-		double edgecount = 0;
-		double fogcount = 0;
-		List<? extends EdgeDataCenter> datacenterList = simulationManager.getServersManager().getDatacenterList();
-		for (EdgeDataCenter edgeDataCenter : datacenterList) {
+		double edgeDevicesCount = 0;
+		double edgeDataCentersCount = 0;
+		List<? extends DataCenter> datacenterList = simulationManager.getServersManager().getDatacenterList();
+		for (DataCenter edgeDataCenter : datacenterList) {
 			if (edgeDataCenter.getType() == TYPES.CLOUD) {
 				clUsage = edgeDataCenter.getTotalCpuUtilization();
 
-			} else if (edgeDataCenter.getType() == TYPES.EDGE && edgeDataCenter.getVmList().size() > 0) {
-				edUsage += edgeDataCenter.getTotalCpuUtilization();
-				edgecount++;
+			} else if (edgeDataCenter.getType() == TYPES.EDGE_DEVICE && edgeDataCenter.getVmList().size() > 0) {
+				msUsage += edgeDataCenter.getTotalCpuUtilization();
+				edgeDevicesCount++;
 
-			} else if (edgeDataCenter.getType() == TYPES.FOG) {
-				fogcount++;
-				fgUsage += edgeDataCenter.getTotalCpuUtilization();
+			} else if (edgeDataCenter.getType() == TYPES.EDGE_DATACENTER) {
+				edgeDataCentersCount++;
+				edUsage += edgeDataCenter.getTotalCpuUtilization();
 			}
 		}
-		edUsage /= edgecount;
-		fgUsage /= fogcount;
+		msUsage /= edgeDevicesCount;
+		edUsage /= edgeDataCentersCount;
 		cloudUsage.add(clUsage);
+		mistUsage.add(msUsage);
 		edgeUsage.add(edUsage);
-		fogUsage.add(fgUsage);
 		currentTime.add(simulationManager.getSimulation().clock());
 
 		updateSeries(cpuUtilizationChart, "Cloud", toArray(currentTime), toArray(cloudUsage), SeriesMarkers.NONE,
 				Color.BLACK);
-		updateSeries(cpuUtilizationChart, "Edge", toArray(currentTime), toArray(edgeUsage), SeriesMarkers.NONE,
+		updateSeries(cpuUtilizationChart, "Mist", toArray(currentTime), toArray(mistUsage), SeriesMarkers.NONE,
 				Color.BLACK);
-		updateSeries(cpuUtilizationChart, "Fog", toArray(currentTime), toArray(fogUsage), SeriesMarkers.NONE,
+		updateSeries(cpuUtilizationChart, "Edge", toArray(currentTime), toArray(edgeUsage), SeriesMarkers.NONE,
 				Color.BLACK);
 
 	}
@@ -173,13 +173,13 @@ public class SimulationVisualizer {
 		List<Double> y_activeEdgeDevicesList = new ArrayList<>();
 
 		// Browse all devices and create the series
-		// Skip the first items (cloud data centers + fog servers)
-		for (int i = simulationParameters.NUM_OF_FOG_DATACENTERS
+		// Skip the first items (cloud data centers + edge data centers)
+		for (int i = simulationParameters.NUM_OF_EDGE_DATACENTERS
 				+ simulationParameters.NUM_OF_CLOUD_DATACENTERS; i < simulationManager.getServersManager()
 						.getDatacenterList().size(); i++) {
 			// If it is an edge device
 			if (simulationManager.getServersManager().getDatacenterList().get(i)
-					.getType() == simulationParameters.TYPES.EDGE) {
+					.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
 
 				if (simulationManager.getServersManager().getDatacenterList().get(i).isDead()) {
 					x_deadEdgeDevicesList.add(
@@ -211,47 +211,47 @@ public class SimulationVisualizer {
 				SeriesMarkers.CIRCLE, Color.LIGHT_GRAY);
 	}
 
-	private void addFogServersToMap() {
-		// Only if Fog computing is used
-		if (simulationManager.getScenario().getStringOrchArchitecture().contains("FOG")
+	private void addEdgeDataCentersToMap() {
+		// Only if Edge computing is used
+		if (simulationManager.getScenario().getStringOrchArchitecture().contains("EDGE")
 				|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL")) {
 			// List of idle servers
-			List<Double> x_idleFogServersList = new ArrayList<>();
-			List<Double> y_idleFogServersList = new ArrayList<>();
+			List<Double> x_idleEdgeDataCentersList = new ArrayList<>();
+			List<Double> y_idleEdgeDataCentersList = new ArrayList<>();
 			// List of active servers
-			List<Double> x_activeFogServersList = new ArrayList<>();
-			List<Double> y_activeFogServersList = new ArrayList<>();
+			List<Double> x_activeEdgeDataCentersList = new ArrayList<>();
+			List<Double> y_activeEdgeDataCentersList = new ArrayList<>();
 
-			for (int j = simulationParameters.NUM_OF_CLOUD_DATACENTERS; j < simulationParameters.NUM_OF_FOG_DATACENTERS
+			for (int j = simulationParameters.NUM_OF_CLOUD_DATACENTERS; j < simulationParameters.NUM_OF_EDGE_DATACENTERS
 					+ simulationParameters.NUM_OF_CLOUD_DATACENTERS; j++) {
-				// If it is a Fog server
-				if ((simulationManager.getScenario().getStringOrchArchitecture().contains("FOG")
+				// If it is an Edge data center
+				if ((simulationManager.getScenario().getStringOrchArchitecture().contains("EDGE")
 						|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL"))
 						&& simulationManager.getServersManager().getDatacenterList().get(j)
-								.getType() == simulationParameters.TYPES.FOG
-						&& simulationParameters.NUM_OF_FOG_DATACENTERS != 0) {
+								.getType() == simulationParameters.TYPES.EDGE_DATACENTER
+						&& simulationParameters.NUM_OF_EDGE_DATACENTERS != 0) {
 
 					if (simulationManager.getServersManager().getDatacenterList().get(j).isIdle()) {
-						x_idleFogServersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
+						x_idleEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getLocation().getXPos());
-						y_idleFogServersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
+						y_idleEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getLocation().getYPos());
 
 					} else {
-						x_activeFogServersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
+						x_activeEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getLocation().getXPos());
-						y_activeFogServersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
+						y_activeEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getLocation().getYPos());
 
 					}
 				}
 			}
 
-			updateSeries(mapChart, "Idle Fog servers", toArray(x_idleFogServersList), toArray(y_idleFogServersList),
+			updateSeries(mapChart, "Idle Edge data centers", toArray(x_idleEdgeDataCentersList), toArray(y_idleEdgeDataCentersList),
 					SeriesMarkers.CROSS, Color.BLACK);
 
-			updateSeries(mapChart, "Active Fog servers", toArray(x_activeFogServersList),
-					toArray(y_activeFogServersList), SeriesMarkers.CROSS, Color.red);
+			updateSeries(mapChart, "Active Edge data centers", toArray(x_activeEdgeDataCentersList),
+					toArray(y_activeEdgeDataCentersList), SeriesMarkers.CROSS, Color.red);
 
 		}
 	}

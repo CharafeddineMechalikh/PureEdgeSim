@@ -152,11 +152,11 @@ public class ChartsGenerator {
 		displayChart("Edge devices count", "Cloud energy consumption (W)", "Consumed energy (W)", "/Energy");
 		displayChart("Edge devices count", "Average Cloud energy consumption (W/Data center)", "Consumed energy (W)",
 				"/Energy");
-		displayChart("Edge devices count", "Fog energy consumption (W)", "Consumed energy (W)", "/Energy");
-		displayChart("Edge devices count", "Average Fog energy consumption (W/Data center)", "Consumed energy (W)",
-				"/Energy");
 		displayChart("Edge devices count", "Edge energy consumption (W)", "Consumed energy (W)", "/Energy");
-		displayChart("Edge devices count", "Average Edge energy consumption (W/Device)", "Consumed energy (W)",
+		displayChart("Edge devices count", "Average Edge energy consumption (W/Data center)", "Consumed energy (W)",
+				"/Energy");
+		displayChart("Edge devices count", "Mist energy consumption (W)", "Consumed energy (W)", "/Energy");
+		displayChart("Edge devices count", "Average Mist energy consumption (W/Device)", "Consumed energy (W)",
 				"/Energy");
 
 		displayChart("Edge devices count", "Dead devices count", "Count", "/Edge Devices");
@@ -170,8 +170,8 @@ public class ChartsGenerator {
 		displayChart("Edge devices count", "Average VM CPU usage (%)", "CPU utilization (%)", "/CPU Utilization");
 		displayChart("Edge devices count", "Average VM CPU usage (Cloud) (%)", "CPU utilization (%)",
 				"/CPU Utilization");
-		displayChart("Edge devices count", "Average VM CPU usage (Fog) (%)", "CPU utilization (%)", "/CPU Utilization");
-		displayChart("Edge devices count", "Average VM CPU usage (Edge) (%)", "CPU utilization (%)",
+		displayChart("Edge devices count", "Average VM CPU usage (Edge) (%)", "CPU utilization (%)", "/CPU Utilization");
+		displayChart("Edge devices count", "Average VM CPU usage (Mist) (%)", "CPU utilization (%)",
 				"/CPU Utilization");
 	}
 
@@ -198,10 +198,10 @@ public class ChartsGenerator {
 
 		displayChart("Edge devices count", "Total tasks executed (Cloud)", "Number of tasks", "/Tasks");
 		displayChart("Edge devices count", "Tasks successfully executed (Cloud)", "Number of tasks", "/Tasks");
-		displayChart("Edge devices count", "Total tasks executed (Fog)", "Number of tasks", "/Tasks");
-		displayChart("Edge devices count", "Tasks successfully executed (Fog)", "Number of tasks", "/Tasks");
 		displayChart("Edge devices count", "Total tasks executed (Edge)", "Number of tasks", "/Tasks");
 		displayChart("Edge devices count", "Tasks successfully executed (Edge)", "Number of tasks", "/Tasks");
+		displayChart("Edge devices count", "Total tasks executed (Mist)", "Number of tasks", "/Tasks");
+		displayChart("Edge devices count", "Tasks successfully executed (Mist)", "Number of tasks", "/Tasks");
 
 	}
 

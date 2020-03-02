@@ -4,18 +4,18 @@ import java.util.List;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.hosts.Host;
 
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 /*
- * To create your own custom edge device/data center class, you need to extend the EdgeDataCenter class first.
+ * To create your own custom edge device/data center class, you need to extend the DataCenter class first.
  * Then you can add any methods you want. 
  * 
  */
-public class CustomEdgeDataCenter extends EdgeDataCenter {
+public class CustomDataCenter extends DataCenter {
 	private static final int UPDATE_STATUS = 2000; // Avoid conflicting with CloudSim Plus Tags
 
-	public CustomEdgeDataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
+	public CustomDataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
 		super(simulationManager, hostList);
 	}
 

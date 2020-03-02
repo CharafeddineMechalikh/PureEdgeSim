@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudsimplus.util.Log;
-import com.mechalikh.pureedgesim.DataCentersManager.DefaultEdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.DefaultDataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.EnergyModel;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
 import com.mechalikh.pureedgesim.LocationManager.Mobility;
@@ -27,7 +27,7 @@ import com.mechalikh.pureedgesim.TasksGenerator.TasksGenerator;
 import com.mechalikh.pureedgesim.TasksOrchestration.DefaultEdgeOrchestrator;
 import com.mechalikh.pureedgesim.TasksOrchestration.Orchestrator;
 import com.mechalikh.pureedgesim.DataCentersManager.DefaultEnergyModel;
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 
 import ch.qos.logback.classic.Level;
 
@@ -35,7 +35,7 @@ public class MainApplication {
 	// Simulation scenario files
 	protected static String simConfigfile = "PureEdgeSim/settings/simulation_parameters.properties";
 	protected static String applicationsFile = "PureEdgeSim/settings/applications.xml";
-	protected static String fogDevicesFile = "PureEdgeSim/settings/fog_servers.xml";
+	protected static String edgeDataCentersFile = "PureEdgeSim/settings/edge_datacenters.xml";
 	protected static String edgeDevicesFile = "PureEdgeSim/settings/edge_devices.xml";
 	protected static String cloudFile = "PureEdgeSim/settings/cloud.xml";
 	protected static String outputFolder = "PureEdgeSim/output/";
@@ -46,7 +46,7 @@ public class MainApplication {
 	protected static int cpuCores;
 	protected static List<Scenario> Iterations = new ArrayList<>();
 	protected static Class<? extends Mobility> mobilityManager = DefaultMobilityModel.class;
-	protected static Class<? extends EdgeDataCenter> edgedatacenter = DefaultEdgeDataCenter.class;
+	protected static Class<? extends DataCenter> edgedatacenter = DefaultDataCenter.class;
 	protected static Class<? extends TasksGenerator> tasksGenerator = DefaultTasksGenerator.class;
 	protected static Class<? extends Orchestrator> orchestrator = DefaultEdgeOrchestrator.class;
 	protected static Class<? extends EnergyModel> energyModel = DefaultEnergyModel.class;
@@ -61,7 +61,7 @@ public class MainApplication {
 
 		// Check files
 		FilesParser fp = new FilesParser();
-		if (!fp.checkFiles(simConfigfile, edgeDevicesFile, fogDevicesFile, applicationsFile, cloudFile))
+		if (!fp.checkFiles(simConfigfile, edgeDevicesFile, edgeDataCentersFile, applicationsFile, cloudFile))
 			Runtime.getRuntime().exit(0); // if files aren't correct stop everything.
 
 		// Disable cloudsim plus log
@@ -220,7 +220,7 @@ public class MainApplication {
 		return outputFolder;
 	}
 
-	protected static void setCustomEdgeDataCenters(Class<? extends EdgeDataCenter> edgedatacenter2) {
+	protected static void setCustomEdgeDataCenters(Class<? extends DataCenter> edgedatacenter2) {
 		edgedatacenter = edgedatacenter2;
 	}
 

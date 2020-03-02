@@ -1,5 +1,10 @@
 # Changelog
-## New version 2.3 (jan 24th 2020) 
+
+## Version 2.3 (jan 24th 2020)
+
+*   Improved code quality
+
+## Version 2.3 (jan 24th 2020) 
 
 *   Fixed the exception when initialization time is < 60 seconds
 
@@ -21,15 +26,15 @@
 
 *   New example added "Example 6" to show how to use a custom network model, to do so a cooperative caching algorithm has been implemented in which devices keep replicas of the containers they downloaded in order to minimize the network usage. This required implementing a clustering algorithm by which edge devices will be grouped into clusters, and the cluster head orchestrates their tasks. So, a custom edge devices class was created which inherits the DefaultDataCenter class.
 
-## New version 2.2.3 (nov 7th 2019) 
+## Version 2.2.3 (nov 7th 2019) 
 
 *   Now you can add applications easily without exiting the code.
 
-## New version 2.2.2 (nov 7th 2019) 
+## Version 2.2.2 (nov 7th 2019) 
 
 *   Fixed some minor bugs  
 
-## New version 2.2.0 (nov 2nd 2019)
+## Version 2.2.0 (nov 2nd 2019)
 
 *   The code has been improved  
 
@@ -37,13 +42,13 @@
 
 *   Added some tutorials and exapmles
 
-## New version 2.1.0 (oct 31th 2019)
+## Version 2.1.0 (oct 31th 2019)
 
 *   The code has been improved  
 
 *   Fixed some minor bugs 
 
-## New version 2.0.0 (oct 24th 2019)
+## Version 2.0.0 (oct 24th 2019)
 
 *   The code has been revisited and cleaned, now it is more readable  
 
@@ -67,11 +72,11 @@
   
 *   Adding new simulation parameters regarding charts (displaying them, the refresh delay, saving them..)  
 
-## New version 1.1.5 (apr 21st 2019)
+## Version 1.1.5 (apr 21st 2019)
 
 *   Minor fixes
 
-## New version 1.1.4 (mar 11th 2019)
+## Version 1.1.4 (mar 11th 2019)
 
 *   Improved parallel simulations
 

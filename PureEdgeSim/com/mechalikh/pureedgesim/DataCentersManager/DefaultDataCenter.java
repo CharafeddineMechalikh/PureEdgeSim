@@ -7,9 +7,9 @@ import org.cloudbus.cloudsim.hosts.Host;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
-public class DefaultEdgeDataCenter extends EdgeDataCenter {
+public class DefaultDataCenter extends DataCenter {
 
-	public DefaultEdgeDataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
+	public DefaultDataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
 		super(simulationManager, hostList);
 	}
 

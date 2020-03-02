@@ -1,6 +1,6 @@
 package examples;
 
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.EnergyModel;
 import com.mechalikh.pureedgesim.Network.FileTransferProgress;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
@@ -35,8 +35,8 @@ public class CustomEnergyModel extends EnergyModel {
 	}
 
 	@Override
-	public void updatewirelessEnergyConsumption(FileTransferProgress file, EdgeDataCenter device1,
-			EdgeDataCenter device2, int flag) {
+	public void updatewirelessEnergyConsumption(FileTransferProgress file, DataCenter device1,
+			DataCenter device2, int flag) {
 		// Here things gets complicated
 		// to simplify this example, let's assume that's every transferred Kilobyte will
 		// consume 0.0000001 Wh of energy

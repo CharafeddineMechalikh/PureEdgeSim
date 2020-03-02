@@ -35,16 +35,16 @@ import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
 public class ServersManager {
-	private List<EdgeDataCenter> datacentersList;
+	private List<DataCenter> datacentersList;
 	private List<Vm> vmList;
-	private List<EdgeDataCenter> orchestratorsList;
+	private List<DataCenter> orchestratorsList;
 	private SimulationManager simulationManager;
 	private Class<? extends Mobility> mobilityManager;
 	private Class<? extends EnergyModel> energyModel;
-	private Class<? extends EdgeDataCenter> edgeDataCenterType;
+	private Class<? extends DataCenter> edgeDataCenterType;
 
 	public ServersManager(SimulationManager simulationManager, Class<? extends Mobility> mobilityManager,
-			Class<? extends EnergyModel> energyModel, Class<? extends EdgeDataCenter> edgedatacenter) {
+			Class<? extends EnergyModel> energyModel, Class<? extends DataCenter> edgedatacenter) {
 		datacentersList = new ArrayList<>();
 		orchestratorsList = new ArrayList<>();
 		vmList = new ArrayList<>();
@@ -56,8 +56,8 @@ public class ServersManager {
 
 	public void generateDatacentersAndDevices() throws Exception {
 		generateCloudDataCenters();
-		generateFogDataCenters();
-		generateEdgeDev();
+		generateEdgeDataCenters();
+		generateEdgeDevices();
 		// Select where the orchestrators are deployed
 		if (simulationParameters.ENABLE_ORCHESTRATORS)
 			selectOrchestrators();
@@ -66,18 +66,18 @@ public class ServersManager {
 	}
 
 	private void selectOrchestrators() {
-		for (EdgeDataCenter edgeDataCenter : datacentersList) {
+		for (DataCenter edgeDataCenter : datacentersList) {
 			if ("".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
 					|| ("CLOUD".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
 							&& edgeDataCenter.getType() == simulationParameters.TYPES.CLOUD)) {
 				edgeDataCenter.setOrchestrator(true);
 				orchestratorsList.add(edgeDataCenter);
-			} else if ("FOG".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
-					&& edgeDataCenter.getType() == simulationParameters.TYPES.FOG) {
+			} else if ("EDGE".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
+					&& edgeDataCenter.getType() == simulationParameters.TYPES.EDGE_DATACENTER) {
 				edgeDataCenter.setOrchestrator(true);
 				orchestratorsList.add(edgeDataCenter);
-			} else if ("EDGE".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
-					&& edgeDataCenter.getType() == simulationParameters.TYPES.EDGE) {
+			} else if ("MIST".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
+					&& edgeDataCenter.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
 				edgeDataCenter.setOrchestrator(true);
 				orchestratorsList.add(edgeDataCenter);
 			}
@@ -85,7 +85,7 @@ public class ServersManager {
 
 	}
 
-	public void generateEdgeDev() throws Exception {
+	public void generateEdgeDevices() throws Exception {
 		// Generate edge devices instances from edge devices types in xml file
 		File devicesFile = new File(simulationParameters.EDGE_DEVICES_FILE);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -107,13 +107,13 @@ public class ServersManager {
 
 			for (int j = 0; j < devicesInstances; j++) {
 				if (datacentersList.size() > getSimulationManager().getScenario().getDevicesCount()
-						+ simulationParameters.NUM_OF_FOG_DATACENTERS) {
+						+ simulationParameters.NUM_OF_EDGE_DATACENTERS) {
 					getSimulationManager().getSimulationLogger().print(
 							"ServersManager- Wrong percentages values (the sum is superior than 100%), check edge_devices.xml file !");
 					break;
 				}
 
-				datacentersList.add(createDatacenter(edgeElement, simulationParameters.TYPES.EDGE));
+				datacentersList.add(createDatacenter(edgeElement, simulationParameters.TYPES.EDGE_DEVICE));
 
 			}
 		}
@@ -125,14 +125,14 @@ public class ServersManager {
 		// Add more devices
 		int missingInstances = getSimulationManager().getScenario().getDevicesCount() - datacentersList.size();
 		for (int k = 0; k < missingInstances; k++) {
-			datacentersList.add(createDatacenter(edgeElement, simulationParameters.TYPES.EDGE));
+			datacentersList.add(createDatacenter(edgeElement, simulationParameters.TYPES.EDGE_DEVICE));
 		}
 
 	}
 
-	private void generateFogDataCenters() throws Exception {
-		// Fill list with fog data centers
-		File serversFile = new File(simulationParameters.FOG_SERVERS_FILE);
+	private void generateEdgeDataCenters() throws Exception {
+		// Fill list with edge data centers
+		File serversFile = new File(simulationParameters.EDGE_DATACENTERS_FILE);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(serversFile);
@@ -140,7 +140,7 @@ public class ServersManager {
 		for (int i = 0; i < datacenterList.getLength(); i++) {
 			Node datacenterNode = datacenterList.item(i);
 			Element datacenterElement = (Element) datacenterNode;
-			datacentersList.add(createDatacenter(datacenterElement, simulationParameters.TYPES.FOG));
+			datacentersList.add(createDatacenter(datacenterElement, simulationParameters.TYPES.EDGE_DATACENTER));
 		}
 	}
 
@@ -158,7 +158,7 @@ public class ServersManager {
 		}
 	}
 
-	private EdgeDataCenter createDatacenter(Element datacenterElement, simulationParameters.TYPES type)
+	private DataCenter createDatacenter(Element datacenterElement, simulationParameters.TYPES type)
 			throws Exception {
 
 		int x_position = -1;
@@ -168,14 +168,14 @@ public class ServersManager {
 
 		Location datacenterLocation = null;
 		Constructor<?> datacenterConstructor = edgeDataCenterType.getConstructor(SimulationManager.class, List.class);
-		EdgeDataCenter datacenter = (EdgeDataCenter) datacenterConstructor.newInstance(getSimulationManager(),
+		DataCenter datacenter = (DataCenter) datacenterConstructor.newInstance(getSimulationManager(),
 				hostList);
-		if (type == simulationParameters.TYPES.FOG) {
+		if (type == simulationParameters.TYPES.EDGE_DATACENTER) {
 			Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
 			x_position = Integer.parseInt(location.getElementsByTagName("x_pos").item(0).getTextContent());
 			y_position = Integer.parseInt(location.getElementsByTagName("y_pos").item(0).getTextContent());
 			datacenterLocation = new Location(x_position, y_position);
-		} else if (type == simulationParameters.TYPES.EDGE) {
+		} else if (type == simulationParameters.TYPES.EDGE_DEVICE) {
 			datacenter.setMobile(
 					Boolean.parseBoolean(datacenterElement.getElementsByTagName("mobility").item(0).getTextContent()));
 			datacenter.setBattery(
@@ -197,7 +197,7 @@ public class ServersManager {
 		datacenter.setOrchestrator(Boolean
 				.parseBoolean(datacenterElement.getElementsByTagName("isOrchestrator").item(0).getTextContent()));
 		datacenter.setType(type);
-		if (type == TYPES.EDGE)
+		if (type == TYPES.EDGE_DEVICE)
 			datacenter.setTasksGeneration(Boolean
 					.parseBoolean(datacenterElement.getElementsByTagName("generateTasks").item(0).getTextContent()));
 
@@ -290,11 +290,11 @@ public class ServersManager {
 
 	}
 
-	public List<EdgeDataCenter> getDatacenterList() {
+	public List<DataCenter> getDatacenterList() {
 		return datacentersList;
 	}
 
-	public List<EdgeDataCenter> getOrchestratorsList() {
+	public List<DataCenter> getOrchestratorsList() {
 		return orchestratorsList;
 	}
 

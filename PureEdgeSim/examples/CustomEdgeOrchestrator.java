@@ -2,7 +2,7 @@ package examples;
 
 import org.cloudbus.cloudsim.cloudlets.Cloudlet.Status;
 
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
@@ -37,16 +37,16 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 		for (int i = 0; i < orchestrationHistory.size(); i++) {
 			if (offloadingIsPossible(task, vmList.get(i), architecture)) {
 				weight = 1;
-				if (((EdgeDataCenter) vmList.get(i).getHost().getDatacenter()).isBattery()) {
+				if (((DataCenter) vmList.get(i).getHost().getDatacenter()).isBattery()) {
 					if (task.getEdgeDevice()
-							.getBatteryLevel() > ((EdgeDataCenter) vmList.get(i).getHost().getDatacenter())
+							.getBatteryLevel() > ((DataCenter) vmList.get(i).getHost().getDatacenter())
 									.getBatteryLevel())
 						weight = 20; // the destination device has lower remaining power than the task offloading
 										// device,in this case it is better not to offload
 										// that's why the weight is high (20)
 					else
 						weight = 15; // in this case the destination has higher remaining power, so it is okey to
-										// offload tasks for it, if the cloud and the fog are absent.
+										// offload tasks for it, if the cloud and the edge data centers are absent.
 				} else
 					weight = 1; // if it is not battery powered
 

@@ -3,7 +3,7 @@ package com.mechalikh.pureedgesim.TasksOrchestration;
 import java.util.List;
 
 import org.cloudbus.cloudsim.vms.Vm;
-import com.mechalikh.pureedgesim.DataCentersManager.EdgeDataCenter;
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
@@ -39,12 +39,12 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 			if (offloadingIsPossible(task, vmList.get(i), architecture)) {
 				double latency = 1;
 				double energy = 1;
-				if (((EdgeDataCenter) vmList.get(i).getHost().getDatacenter())
+				if (((DataCenter) vmList.get(i).getHost().getDatacenter())
 						.getType() == simulationParameters.TYPES.CLOUD) {
 					latency = 1.6;
 					energy = 1.1;
-				} else if (((EdgeDataCenter) vmList.get(i).getHost().getDatacenter())
-						.getType() == simulationParameters.TYPES.EDGE) {
+				} else if (((DataCenter) vmList.get(i).getHost().getDatacenter())
+						.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
 					energy = 1.4;
 				}
 				new_min = (orchestrationHistory.get(i).size() + 1) * latency * energy * task.getLength() / vmList.get(i).getMips();

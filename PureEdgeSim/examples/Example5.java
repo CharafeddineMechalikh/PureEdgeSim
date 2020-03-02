@@ -27,10 +27,11 @@ public class Example5 extends MainApplication {
 		 * devices. This algorithm wotks better when you use the ALL architecture you
 		 * can compare its performance to the Round-Robin and Trade-off algorithms used
 		 * by the default orchestrator class, as this algorihtm relies more on the cloud
-		 * and the fog. You can use your own algorithm by adding it to your custom
-		 * class. After adding it to the orchestrator class,to use it you need to add it
-		 * to the simulation parameters file (under the settings/ folder). To use the
-		 * PureEdgeSim default edge orchestrator class you can also uncomment this:
+		 * and the edge data centers (cloud and edge computing). You can use your own
+		 * algorithm by adding it to your custom class. After adding it to the
+		 * orchestrator class,to use it you need to add it to the simulation parameters
+		 * file (under the settings/ folder). To use the PureEdgeSim default edge
+		 * orchestrator class you can also uncomment this:
 		 */
 		// setCustomEdgeOrchestrator(DefaultEdgeOrchestrator.class);
 

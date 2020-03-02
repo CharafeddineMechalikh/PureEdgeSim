@@ -7,12 +7,12 @@ import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DefaultEdgeDataCenter; 
+import com.mechalikh.pureedgesim.DataCentersManager.DefaultDataCenter; 
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
-public class CustomEdgeDevice extends DefaultEdgeDataCenter { 
+public class CustomEdgeDevice extends DefaultDataCenter { 
 	private static final int UPDATE_CLUSTERS = 11000; // Avoid conflicting with CloudSim Plus Tags 
 	private double weight = 0;
 	private CustomEdgeDevice parent;
@@ -54,7 +54,7 @@ public class CustomEdgeDevice extends DefaultEdgeDataCenter {
 		switch (ev.getTag()) {
 		case UPDATE_CLUSTERS:
 
-			if (this.getType() == simulationParameters.TYPES.EDGE
+			if (this.getType() == simulationParameters.TYPES.EDGE_DEVICE
 					&& simulationParameters.DEPLOY_ORCHESTRATOR.equals("CLUSTER")
 					&& (getSimulation().clock() - time > 30)) {
 				time = (int) getSimulation().clock();
@@ -76,13 +76,13 @@ public class CustomEdgeDevice extends DefaultEdgeDataCenter {
 		avg_distance = 0;
 		for (int i = 0; i < simulationManager.getServersManager().getDatacenterList().size(); i++) {
 			if (simulationManager.getServersManager().getDatacenterList().get(i)
-					.getType() == simulationParameters.TYPES.EDGE) {
+					.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
 				distance = Math.abs(Math.sqrt(Math
 						.pow((this.getLocation().getXPos() - simulationManager.getServersManager().getDatacenterList()
 								.get(i).getLocation().getXPos()), 2)
 						+ Math.pow((this.getLocation().getYPos() - simulationManager.getServersManager()
 								.getDatacenterList().get(i).getLocation().getYPos()), 2)));
-				if (distance < simulationParameters.EDGE_RANGE) {
+				if (distance < simulationParameters.EDGE_DEVICES_RANGE) {
 					// neighbor
 					neighbors++;
 					avg_distance += distance;
@@ -105,7 +105,7 @@ public class CustomEdgeDevice extends DefaultEdgeDataCenter {
 			avg_distance = avg_distance / neighbors;
 		else
 			avg_distance = 0;
-		avg_distance = avg_distance / simulationParameters.EDGE_RANGE;
+		avg_distance = avg_distance / simulationParameters.EDGE_DEVICES_RANGE;
 
 		double weight = (battery * mips / 200000 * 0.5 / neighbors) + (neighbors * 0.2) + (mobility * 0.3);
 
@@ -185,7 +185,7 @@ public class CustomEdgeDevice extends DefaultEdgeDataCenter {
 			distance = Math.abs(
 					Math.sqrt(Math.pow((this.getLocation().getXPos() - this.getParent().getLocation().getXPos()), 2)
 							+ Math.pow((this.getLocation().getYPos() - this.getParent().getLocation().getYPos()), 2)));
-			if (distance > simulationParameters.EDGE_RANGE) {
+			if (distance > simulationParameters.EDGE_DEVICES_RANGE) {
 				setOrchestrator(this);
 				this.weight = originalWeight;
 			}
@@ -194,13 +194,13 @@ public class CustomEdgeDevice extends DefaultEdgeDataCenter {
 
 		for (int i = 2; i < simulationManager.getServersManager().getDatacenterList().size(); i++) {
 			if (simulationManager.getServersManager().getDatacenterList().get(i)
-					.getType() == simulationParameters.TYPES.EDGE) {
+					.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
 				distance = Math.abs(Math.sqrt(Math
 						.pow((this.getLocation().getXPos() - simulationManager.getServersManager().getDatacenterList()
 								.get(i).getLocation().getXPos()), 2)
 						+ Math.pow((this.getLocation().getYPos() - simulationManager.getServersManager()
 								.getDatacenterList().get(i).getLocation().getYPos()), 2)));
-				if (distance <= simulationParameters.EDGE_RANGE) {
+				if (distance <= simulationParameters.EDGE_DEVICES_RANGE) {
 					// neighbors
 					if (this.weight < ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList()
 							.get(i)).weight) {// &&
