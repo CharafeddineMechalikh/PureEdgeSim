@@ -1,8 +1,5 @@
 package com.mechalikh.pureedgesim.TasksOrchestration;
 
-import java.util.List;
-
-import org.cloudbus.cloudsim.vms.Vm;
 import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
@@ -38,24 +35,26 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 		// get best vm for this task
 		for (int i = 0; i < orchestrationHistory.size(); i++) {
 			if (offloadingIsPossible(task, vmList.get(i), architecture)) {
-				double latency = 1;
-				double energy = 1;
+				// the weight below represent the priority, the less it is, the more it is
+				// suitable for offlaoding, you can change it as you want
+				double weight = 1.2; // this is an edge server 'cloudlet', the latency is slightly high then edge
+										// devices
 				if (((DataCenter) vmList.get(i).getHost().getDatacenter())
 						.getType() == simulationParameters.TYPES.CLOUD) {
-					latency = 1.6;
-					energy = 1.1;
+					weight = 1.8; // this is the cloud, it consumes more energy and results in high latency, so
+									// better to avoid it
 				} else if (((DataCenter) vmList.get(i).getHost().getDatacenter())
 						.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
-					energy = 1.4;
+					weight = 1.3;// this is an edge device, it results in an extremely low latency, but may
+									// consume more energy.
 				}
-				new_min = (orchestrationHistory.get(i).size() + 1) * latency * energy * task.getLength()
+				new_min = (orchestrationHistory.get(i).size() + 1) * weight * task.getLength()
 						/ vmList.get(i).getMips();
 				if (min == -1) { // if it is the first iteration
 					min = new_min;
 					// if this is the first time, set the first vm as the
 					vm = i; // best one
 				} else if (min > new_min) { // if this vm has more cpu mips and less waiting tasks
-					// idle vm, no tasks are waiting
 					min = new_min;
 					vm = i;
 				}
@@ -66,7 +65,6 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 	}
 
 	private int roundRobin(String[] architecture, Task task) {
-		List<Vm> vmList = simulationManager.getServersManager().getVmList();
 		int vm = -1;
 		int minTasksCount = -1; // vm with minimum assigned tasks;
 		// get best vm for this task

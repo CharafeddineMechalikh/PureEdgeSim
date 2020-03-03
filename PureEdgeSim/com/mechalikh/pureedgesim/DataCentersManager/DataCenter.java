@@ -9,8 +9,6 @@ import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicySimple;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
-
-import com.mechalikh.pureedgesim.LocationManager.Location;
 import com.mechalikh.pureedgesim.LocationManager.Mobility;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
@@ -29,22 +27,21 @@ public abstract class DataCenter extends DatacenterSimple {
 	private Resources resources;
 	protected boolean isDead = false;
 	protected double deathTime;
-	
+
 	public DataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
 		super(simulationManager.getSimulation(), hostList, new VmAllocationPolicySimple());
 		this.simulationManager = simulationManager;
 		vmTaskMap = new ArrayList<>();
-
 		long memory = 0;
 		long ram = 0;
 		for (Host host : hostList) {
 			memory += host.getStorage().getAvailableResource();
 			ram += host.getRam().getCapacity();
 		}
-		setResources(new Resources(ram, memory));
+		this.resources = new Resources(ram, memory);
 	}
 
-	protected abstract void updateEnergyConsumption();
+	protected abstract void updateCpuUtilization();
 
 	public EnergyModel getEnergyModel() {
 		return energyModel;
@@ -56,13 +53,8 @@ public abstract class DataCenter extends DatacenterSimple {
 
 	public void setType(simulationParameters.TYPES type) {
 		this.deviceType = type;
-	}
+	} 
 
-	public Location getLocation() {
-		return getMobilityManager().getCurrentLocation();
-	}
-
-	
 	public List<VmTaskMapItem> getVmTaskMap() {
 		return vmTaskMap;
 	}
@@ -116,10 +108,6 @@ public abstract class DataCenter extends DatacenterSimple {
 		return resources;
 	}
 
-	public void setResources(Resources resources) {
-		this.resources = resources;
-	}
-	
 	public boolean isDead() {
 		return isDead;
 	}

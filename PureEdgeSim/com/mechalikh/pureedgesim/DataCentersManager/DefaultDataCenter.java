@@ -24,13 +24,7 @@ public class DefaultDataCenter extends DataCenter {
 	public void processEvent(final SimEvent ev) {
 		switch (ev.getTag()) {
 		case UPDATE_STATUS:
-			// Update energy consumption
-			updateEnergyConsumption();
-
-			// Update location
-			if (getMobilityManager().isMobile()) {
-				getMobilityManager().getNextLocation();
-			}
+			updateStatus();
 
 			if (!isDead()) {
 				schedule(this, simulationParameters.UPDATE_INTERVAL, UPDATE_STATUS);
@@ -43,7 +37,29 @@ public class DefaultDataCenter extends DataCenter {
 		}
 	}
 
-	protected void updateEnergyConsumption() {
+	private void updateStatus() {
+		// Update Cpu Utilization
+		updateCpuUtilization();
+		// Update energy consumption
+		updateEnergyConsumption();
+
+		// Update location
+		if (getMobilityManager().isMobile()) {
+			getMobilityManager().getNextLocation();
+		}
+	}
+
+	private void updateEnergyConsumption() {
+		// update the energy consumption
+		getEnergyModel().updateCpuEnergyConsumption(getResources().getCurrentCpuUtilization());
+
+		if (getEnergyModel().isBattery()
+				&& this.getEnergyModel().getTotalEnergyConsumption() > getEnergyModel().getBatteryCapacity()) {
+			setDeath(true, simulationManager.getSimulation().clock());
+		}
+	}
+
+	protected void updateCpuUtilization() {
 		getResources().setIdle(true);
 		double vmUsage = 0;
 		double currentCpuUtilization = 0;
@@ -64,12 +80,6 @@ public class DefaultDataCenter extends DataCenter {
 
 		// update current CPU utilization
 		getResources().setCurrentCpuUtilization(currentCpuUtilization);
-		// update the energy consumption
-		getEnergyModel().updateCpuEnergyConsumption(currentCpuUtilization);
 
-		if (getEnergyModel().isBattery()
-				&& this.getEnergyModel().getTotalEnergyConsumption() > getEnergyModel().getBatteryCapacity()) {
-			setDeath(true, simulationManager.getSimulation().clock());
-		}
 	}
 }

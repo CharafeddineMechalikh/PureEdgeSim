@@ -37,10 +37,6 @@ public class MainApplication {
 		SIMULATION_PARAMETERS, APPLICATIONS_FILE, EDGE_DATACENTERS_FILE, EDGE_DEVICES_FILE, CLOUD_FILE
 	}
 
-	public static enum Models {
-		NETWORK, MOBILITY, ENERGY, DATACENTER, TASKS_GENERATOR, ORCHESTRATOR,
-	}
-
 	// Simulation scenario files
 	protected static String simConfigfile = "PureEdgeSim/settings/simulation_parameters.properties";
 	protected static String applicationsFile = "PureEdgeSim/settings/applications.xml";
@@ -85,21 +81,7 @@ public class MainApplication {
 		loadScenarios();
 
 		if (simulationParameters.PARALLEL) {
-			cpuCores = Runtime.getRuntime().availableProcessors();
-			List<MainApplication> simulationList = new ArrayList<>(cpuCores);
-
-			// Generate the parallel simulations
-			for (int fromIteration = 0; fromIteration < Math.min(cpuCores, Iterations.size()); fromIteration++) {
-				// The number of parallel simulations will be limited by the minimum value
-				// between cpu cores and number of iterations
-				simulationList.add(new MainApplication(fromIteration, cpuCores));
-			}
-
-			// Finally then runs them
-			// tag::parallelExecution[]
-			simulationList.parallelStream().forEach(MainApplication::startSimulation);
-			// end::parallelExecution[]
-
+			launchParallelSimulations();
 		} else { // Sequential execution
 			new MainApplication(0, 1).startSimulation();
 		}
@@ -108,6 +90,24 @@ public class MainApplication {
 		Date endDate = Calendar.getInstance().getTime();
 		SimLog.println("Main- Simulation took : " + simulationTime(startDate, endDate));
 		SimLog.println("Main- results were saved to the folder: " + outputFolder);
+
+	}
+
+	private static void launchParallelSimulations() {
+		cpuCores = Runtime.getRuntime().availableProcessors();
+		List<MainApplication> simulationList = new ArrayList<>(cpuCores);
+
+		// Generate the parallel simulations
+		for (int fromIteration = 0; fromIteration < Math.min(cpuCores, Iterations.size()); fromIteration++) {
+			// The number of parallel simulations will be limited by the minimum value
+			// between cpu cores and number of iterations
+			simulationList.add(new MainApplication(fromIteration, cpuCores));
+		}
+
+		// Finally then runs them
+		// tag::parallelExecution[]
+		simulationList.parallelStream().forEach(MainApplication::startSimulation);
+		// end::parallelExecution[]
 
 	}
 
@@ -137,7 +137,7 @@ public class MainApplication {
 		SimLog simLog = null;
 		try { // Repeat the operation for different number of devices
 			for (int it = fromIteration; it < Iterations.size() && !simulationParameters.STOP; it += step) {
-				// New simlog for each simulation (when parallelism is enabled
+				// New SimLog for each simulation (when parallelism is enabled
 				simLog = new SimLog(startTime, isFirstIteration);
 
 				// Clean output folder if it is the first iteration
@@ -303,4 +303,5 @@ public class MainApplication {
 			break;
 		}
 	}
+
 }

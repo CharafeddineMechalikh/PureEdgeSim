@@ -14,12 +14,14 @@ public class DefaultMobilityModel extends Mobility {
 		super(currentLocation);
 	}
 
-	public DefaultMobilityModel() { 
+	public DefaultMobilityModel() {
 		super();
 	}
 
 	@Override
 	public Location getNextLocation() {
+		if (simulationParameters.SPEED <= 0)
+			return currentLocation; // The speed must be > 0 in order to move/change the location
 
 		double X_position = currentLocation.getXPos(); // Get the initial X coordinate assigned to this device
 		double Y_position = currentLocation.getYPos(); // Get the initial y coordinate assigned to this device
@@ -29,32 +31,32 @@ public class DefaultMobilityModel extends Mobility {
 			pauseDuration -= simulationParameters.UPDATE_INTERVAL;
 			return currentLocation;
 		}
-		if (simulationParameters.SPEED > 0) { // The speed must be > 0 in order to move/change the location
 
-			// Make sure that the device stay in the simulation area
-			Reoriotate(X_position, Y_position);
+		// Make sure that the device stay in the simulation area
+		Reoriontate(X_position, Y_position);
 
-			if (mobilityDuration <= 0) {
-				pause();
-			}
-
-			if (pauseDuration <= 0) {
-				resume();
-			}
-
-			double distance = simulationParameters.SPEED * simulationParameters.UPDATE_INTERVAL;
-			double X_distance = Math.cos(Math.toRadians(orientationAngle)) * distance;
-			double Y_distance = Math.sin(Math.toRadians(orientationAngle)) * distance;
-			// Update the X_position
-			X_position += X_distance;
-			Y_position += Y_distance;
-			// update the currentLocation of this device
-			currentLocation = new Location(X_position, Y_position);
-			return new Location(X_position, Y_position);
-
+		if (mobilityDuration <= 0) {
+			pause();
 		}
-		return currentLocation;
 
+		if (pauseDuration <= 0) {
+			resume();
+		}
+
+		// update the currentLocation of this device
+		currentLocation = updateLocation(X_position, Y_position);
+
+		return currentLocation;
+	}
+
+	private Location updateLocation(double X_position, double Y_position) {
+		double distance = simulationParameters.SPEED * simulationParameters.UPDATE_INTERVAL;
+		double X_distance = Math.cos(Math.toRadians(orientationAngle)) * distance;
+		double Y_distance = Math.sin(Math.toRadians(orientationAngle)) * distance;
+		// Update the X_position
+		X_position += X_distance;
+		Y_position += Y_distance;
+		return new Location(X_position, Y_position);
 	}
 
 	private void resume() {
@@ -62,7 +64,7 @@ public class DefaultMobilityModel extends Mobility {
 		pause = false;
 		// Increment time and then calculate the next coordinates in the next iteration
 		// (the device is moving)
-		mobilityDuration -= simulationParameters.UPDATE_INTERVAL; 
+		mobilityDuration -= simulationParameters.UPDATE_INTERVAL;
 	}
 
 	private void pause() {
@@ -77,7 +79,7 @@ public class DefaultMobilityModel extends Mobility {
 		mobilityDuration = new Random().nextInt(100);
 	}
 
-	private void Reoriotate(double x_position, double y_position) {
+	private void Reoriontate(double x_position, double y_position) {
 		if (x_position >= simulationParameters.AREA_LENGTH)
 			orientationAngle = -90 - new Random().nextInt(180);
 		else if (x_position <= 0)
