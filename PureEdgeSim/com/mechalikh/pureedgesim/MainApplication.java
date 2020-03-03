@@ -32,6 +32,15 @@ import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import ch.qos.logback.classic.Level;
 
 public class MainApplication {
+
+	public static enum Files {
+		SIMULATION_PARAMETERS, APPLICATIONS_FILE, EDGE_DATACENTERS_FILE, EDGE_DEVICES_FILE, CLOUD_FILE
+	}
+
+	public static enum Models {
+		NETWORK, MOBILITY, ENERGY, DATACENTER, TASKS_GENERATOR, ORCHESTRATOR,
+	}
+
 	// Simulation scenario files
 	protected static String simConfigfile = "PureEdgeSim/settings/simulation_parameters.properties";
 	protected static String applicationsFile = "PureEdgeSim/settings/applications.xml";
@@ -73,14 +82,8 @@ public class MainApplication {
 		Date startDate = Calendar.getInstance().getTime();
 
 		// Walk through all orchestration scenarios
-		for (int algorithmID = 0; algorithmID < simulationParameters.ORCHESTRATION_AlGORITHMS.length; algorithmID++) {
-			// Repeat the operation of the whole set of criteria
-			for (int architectureID = 0; architectureID < simulationParameters.ORCHESTRATION_ARCHITECTURES.length; architectureID++) {
-				for (int devicesCount = simulationParameters.MIN_NUM_OF_EDGE_DEVICES; devicesCount <= simulationParameters.MAX_NUM_OF_EDGE_DEVICES; devicesCount += simulationParameters.EDGE_DEVICE_COUNTER_STEP) {
-					Iterations.add(new Scenario(devicesCount, algorithmID, architectureID));
-				}
-			}
-		}
+		loadScenarios();
+
 		if (simulationParameters.PARALLEL) {
 			cpuCores = Runtime.getRuntime().availableProcessors();
 			List<MainApplication> simulationList = new ArrayList<>(cpuCores);
@@ -108,6 +111,17 @@ public class MainApplication {
 
 	}
 
+	private static void loadScenarios() {
+		for (int algorithmID = 0; algorithmID < simulationParameters.ORCHESTRATION_AlGORITHMS.length; algorithmID++) {
+			// Repeat the operation of the whole set of criteria
+			for (int architectureID = 0; architectureID < simulationParameters.ORCHESTRATION_ARCHITECTURES.length; architectureID++) {
+				for (int devicesCount = simulationParameters.MIN_NUM_OF_EDGE_DEVICES; devicesCount <= simulationParameters.MAX_NUM_OF_EDGE_DEVICES; devicesCount += simulationParameters.EDGE_DEVICE_COUNTER_STEP) {
+					Iterations.add(new Scenario(devicesCount, algorithmID, architectureID));
+				}
+			}
+		}
+	}
+
 	public MainApplication(int fromIteration, int step_) {
 		this.fromIteration = fromIteration;
 		step = step_;
@@ -122,10 +136,11 @@ public class MainApplication {
 		SimulationManager simulationManager;
 		SimLog simLog = null;
 		try { // Repeat the operation for different number of devices
-			for (int it = fromIteration; it < Iterations.size(); it += step) {
+			for (int it = fromIteration; it < Iterations.size() && !simulationParameters.STOP; it += step) {
 				// New simlog for each simulation (when parallelism is enabled
 				simLog = new SimLog(startTime, isFirstIteration);
 
+				// Clean output folder if it is the first iteration
 				if (simulationParameters.CLEAN_OUTPUT_FOLDER && isFirstIteration && fromIteration == 0) {
 					simLog.cleanOutputFolder(outputFolder);
 				}
@@ -140,40 +155,14 @@ public class MainApplication {
 				simLog.initialize(simulationManager, Iterations.get(it).getDevicesCount(),
 						Iterations.get(it).getOrchAlgorithm(), Iterations.get(it).getOrchArchitecture());
 
-				// Generate all data centers, servers, an devices
-				ServersManager serversManager = new ServersManager(simulationManager, mobilityManager, energyModel,
-						edgedatacenter);
-				serversManager.generateDatacentersAndDevices();
-				simulationManager.setServersManager(serversManager);
-
-				// Generate tasks list
-				Constructor<?> TasksGeneratorConstructor = tasksGenerator.getConstructor(SimulationManager.class);
-				TasksGenerator tasksGenerator = (TasksGenerator) TasksGeneratorConstructor
-						.newInstance(simulationManager);
-				List<Task> tasksList = tasksGenerator.generate();
-				simulationManager.setTasksList(tasksList);
-
-				// Initialize the orchestrator
-				Constructor<?> OrchestratorConstructor = orchestrator.getConstructor(SimulationManager.class);
-				Orchestrator edgeOrchestrator = (Orchestrator) OrchestratorConstructor.newInstance(simulationManager);
-				simulationManager.setOrchestrator(edgeOrchestrator);
-
-				// Initialize the network model
-				Constructor<?> networkConstructor = networkModel.getConstructor(SimulationManager.class);
-				NetworkModel networkModel = (NetworkModel) networkConstructor.newInstance(simulationManager);
-				simulationManager.setNetworkModel(networkModel);
+				// Load custom classes and models
+				loadModels(simulationManager);
 
 				// Finally launch the simulation
 				simulationManager.startSimulation();
 
 				if (!simulationParameters.PARALLEL) {
-					// Take a few seconds pause to show the results
-					simLog.print(simulationParameters.PAUSE_LENGTH + " seconds peause...");
-					for (int k = 1; k <= simulationParameters.PAUSE_LENGTH; k++) {
-						simLog.printSameLine(".");
-						Thread.sleep(1000);
-					}
-					SimLog.println("");
+					pause(simLog);
 				}
 				iteration++;
 				SimLog.println("");
@@ -185,12 +174,48 @@ public class MainApplication {
 			}
 			SimLog.println("Main- Simulation Finished!");
 			// Generate and save charts
-			generateCharts(simLog);
+			if (!simulationParameters.STOP) // if no error happened
+				generateCharts(simLog);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			SimLog.println("Main- The simulation has been terminated due to an unexpected error");
 		}
+	}
+
+	private void pause(SimLog simLog) throws InterruptedException {
+		// Take a few seconds pause to show the results
+		simLog.print(simulationParameters.PAUSE_LENGTH + " seconds peause...");
+		for (int k = 1; k <= simulationParameters.PAUSE_LENGTH; k++) {
+			simLog.printSameLine(".");
+			Thread.sleep(1000);
+		}
+		SimLog.println("");
+	}
+
+	private void loadModels(SimulationManager simulationManager) throws Exception {
+
+		// Generate all data centers, servers, an devices
+		ServersManager serversManager = new ServersManager(simulationManager, mobilityManager, energyModel,
+				edgedatacenter);
+		serversManager.generateDatacentersAndDevices();
+		simulationManager.setServersManager(serversManager);
+
+		// Generate tasks list
+		Constructor<?> TasksGeneratorConstructor = tasksGenerator.getConstructor(SimulationManager.class);
+		TasksGenerator tasksGenerator = (TasksGenerator) TasksGeneratorConstructor.newInstance(simulationManager);
+		List<Task> tasksList = tasksGenerator.generate();
+		simulationManager.setTasksList(tasksList);
+
+		// Initialize the orchestrator
+		Constructor<?> OrchestratorConstructor = orchestrator.getConstructor(SimulationManager.class);
+		Orchestrator edgeOrchestrator = (Orchestrator) OrchestratorConstructor.newInstance(simulationManager);
+		simulationManager.setOrchestrator(edgeOrchestrator);
+
+		// Initialize the network model
+		Constructor<?> networkConstructor = networkModel.getConstructor(SimulationManager.class);
+		NetworkModel networkModel = (NetworkModel) networkConstructor.newInstance(simulationManager);
+		simulationManager.setNetworkModel(networkModel);
 	}
 
 	protected void generateCharts(SimLog simLog) {
@@ -244,4 +269,38 @@ public class MainApplication {
 		networkModel = networkModel2;
 	}
 
+	protected static void setCustomOutputFolder(String outputFolder2) {
+		outputFolder = outputFolder2;
+	}
+
+	protected static void setCustomSettingsFolder(String settingsFolder) {
+		setCustomFilePath(settingsFolder + "simulation_parameters.properties", Files.SIMULATION_PARAMETERS);
+		setCustomFilePath(settingsFolder + "applications.xml", Files.APPLICATIONS_FILE);
+		setCustomFilePath(settingsFolder + "edge_datacenters.xml", Files.EDGE_DATACENTERS_FILE);
+		setCustomFilePath(settingsFolder + "edge_devices.xml", Files.EDGE_DEVICES_FILE);
+		setCustomFilePath(settingsFolder + "cloud.xml", Files.CLOUD_FILE);
+	}
+
+	protected static void setCustomFilePath(String path, Files file) {
+		switch (file) {
+		case SIMULATION_PARAMETERS:
+			simConfigfile = path;
+			break;
+		case APPLICATIONS_FILE:
+			applicationsFile = path;
+			break;
+		case EDGE_DATACENTERS_FILE:
+			edgeDataCentersFile = path;
+			break;
+		case EDGE_DEVICES_FILE:
+			edgeDevicesFile = path;
+			break;
+		case CLOUD_FILE:
+			cloudFile = path;
+			break;
+		default:
+			SimLog.println("Unknown file type");
+			break;
+		}
+	}
 }

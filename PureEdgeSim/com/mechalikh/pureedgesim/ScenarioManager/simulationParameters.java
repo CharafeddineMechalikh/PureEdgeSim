@@ -6,7 +6,8 @@ public class simulationParameters {
 	public static String EDGE_DEVICES_FILE="";     // Edge devices xml file path
 	public static String EDGE_DATACENTERS_FILE=""; // Edge datacenters xml file path
 	public static String CLOUD_DATACENTERS_FILE="";// Cloud data centers xml file path
-
+	
+	public static boolean STOP = false;           // used as alternative to System.exit(0); 
 	public static boolean PARALLEL = false;       // Enable parallelism
 	public static double SIMULATION_TIME;         // Simulation time (in seconds) 
 	public static int PAUSE_LENGTH;               // Pause between scenarios (in seconds)
@@ -67,5 +68,4 @@ public class simulationParameters {
 	public static boolean WAIT_FOR_TASKS;                // After the end of the simulation time, some tasks may still not be executed yet,
                                                          // this variable will allow the user to wait for the execution of all tasks or to 
                                                          // end the simulation when the predifined time ends.
-
 }

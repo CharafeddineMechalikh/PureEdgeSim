@@ -1,8 +1,14 @@
 # Changelog
 
-## Version 2.3 (jan 24th 2020)
+## Version 2.4 (mar 3rd 2020)
 
-*   Improved code quality
+*   Improved code quality and removed duplication.
+
+*   Added support for custom settings and output folders.
+
+*   Added new example "example 7" to show how to link custom configurations files and custom folders.
+
+*   Improved examples.
 
 ## Version 2.3 (jan 24th 2020) 
 
@@ -12,7 +18,7 @@
 
 *   Fixed the file parser, now it checks if the sum of percentages of edge devices types is equal to 100% ( in the edge_devices.xml file).
 
-*   Now you can add your custom network model via the setCustomNetworkModel() method
+*   Now you can add your custom network model via the setCustomNetworkModel() method.
 
 *   File parser was not checking the edge devices xml file, now it is fixed.
 
@@ -99,12 +105,11 @@
 *   Added support for registry and containers
 
 *   Improved the network model:  Added support for containers,bugs fixing, added fog servers coverage, added edge  wireless range...
-  
-*   Improved mobility model:  More realistic mobility model.  Added a map/ simulation area (height x width)
-  
-*   Adding support for physical depolyement of the orchestrator:  Deploying the orchestrator on the cloud for example, on fog servers...etc.
-  
-*   New simulation parameters:   New parameters for the aforementioned changes.  New simulation parameters in order to control the trade off between simulation accuracy and simulation time, etc. 
-  
-*   Improved simulation time
 
+*   Improved mobility model:  More realistic mobility model.  Added a map/ simulation area (height x width)
+
+*   Adding support for physical depolyement of the orchestrator:  Deploying the orchestrator on the cloud for example, on fog servers...etc.
+
+*   New simulation parameters:   New parameters for the aforementioned changes.  New simulation parameters in order to control the trade off between simulation accuracy and simulation time, etc. 
+
+*   Improved simulation time

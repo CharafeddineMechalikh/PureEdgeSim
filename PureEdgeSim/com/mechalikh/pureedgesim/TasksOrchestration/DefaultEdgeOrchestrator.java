@@ -24,7 +24,8 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 			SimLog.println("Default Orchestrator- Unknnown orchestration algorithm '" + algorithm
 					+ "', please check the simulation parameters file...");
 			// Cancel the simulation
-			Runtime.getRuntime().exit(0);
+			simulationParameters.STOP = true;
+			simulationManager.getSimulation().terminate();
 		}
 		return -1;
 	}
@@ -47,7 +48,8 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 						.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
 					energy = 1.4;
 				}
-				new_min = (orchestrationHistory.get(i).size() + 1) * latency * energy * task.getLength() / vmList.get(i).getMips();
+				new_min = (orchestrationHistory.get(i).size() + 1) * latency * energy * task.getLength()
+						/ vmList.get(i).getMips();
 				if (min == -1) { // if it is the first iteration
 					min = new_min;
 					// if this is the first time, set the first vm as the
@@ -87,7 +89,7 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 	}
 
 	@Override
-	public void resultsReturned(Task task) { 
+	public void resultsReturned(Task task) {
 	}
 
 }

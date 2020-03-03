@@ -51,7 +51,6 @@ PureEdgeSim architecture
 
 *   Cloud, Edge, and Mist computing scenarios
 
-
 *   And basicaly, any scenario that involves computing on distributed nodes or mobility, for example:
 
 VANETs/MANET networks, IoT applications, Mobile Devices Clouds, Mobile Edge Computing,... 
@@ -83,6 +82,7 @@ The devices without computing capacity are considered as simple sensors that onl
 
 The user can also define the applications that are in use, their cpu utilization, their files sizes and their latency. requirements. 
 *   The scalability, generate hundreds of devices, with a single click. 
+
 
 *   A rich collection of metrics:
 
@@ -127,7 +127,6 @@ Basically any scenario that involves data centers, servers, or geo-distributed d
 The user can trade-off between simulation duration and its accuracy. 
 
 To decrease the simulation time, the user can also enable parallelism. 
-
 
 Example of real time charts :
 

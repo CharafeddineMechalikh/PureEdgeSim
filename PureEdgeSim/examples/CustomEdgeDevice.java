@@ -7,26 +7,20 @@ import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DefaultDataCenter; 
+import com.mechalikh.pureedgesim.DataCentersManager.DefaultDataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
-public class CustomEdgeDevice extends DefaultDataCenter { 
-	private static final int UPDATE_CLUSTERS = 11000; // Avoid conflicting with CloudSim Plus Tags 
+public class CustomEdgeDevice extends DefaultDataCenter {
+	private static final int UPDATE_CLUSTERS = 11000; // Avoid conflicting with CloudSim Plus Tags
 	private double weight = 0;
 	private CustomEdgeDevice parent;
 	private CustomEdgeDevice Orchestrator;
 	private double originalWeight = 0;
 	private double weightDrop = 0.7;
-	static boolean start = true;
-	static int id = -1;
 	private double mips;
-	private double avg_distance = 0;
-	private int neighbors;
-	int time = 0; 
-
-	boolean firstTime = true;
+	private int time = 0;
 	public List<Task> cache = new ArrayList<Task>();
 	public List<CustomEdgeDevice> cluster;
 
@@ -47,7 +41,7 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 	}
 
 	// The scheduled event will be processed in processEvent(). To update the
-	// clusters continously (a loop) another event has to be scheduled right after
+	// clusters continuously (a loop) another event has to be scheduled right after
 	// processing the previous one:
 	@Override
 	public void processEvent(SimEvent ev) {
@@ -55,11 +49,11 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 		case UPDATE_CLUSTERS:
 
 			if (this.getType() == simulationParameters.TYPES.EDGE_DEVICE
-					&& simulationParameters.DEPLOY_ORCHESTRATOR.equals("CLUSTER")
+					&& "CLUSTER".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
 					&& (getSimulation().clock() - time > 30)) {
 				time = (int) getSimulation().clock();
 				cluster();
-				//schedule the next update
+				// schedule the next update
 				schedule(this, 3, UPDATE_CLUSTERS);
 			}
 			break;
@@ -71,9 +65,9 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 
 	public double getOriginalWeight() {
 
-		neighbors = 0;
+		int neighbors = 0;
 		double distance = 0;
-		avg_distance = 0;
+		double avg_distance = 0;
 		for (int i = 0; i < simulationManager.getServersManager().getDatacenterList().size(); i++) {
 			if (simulationManager.getServersManager().getDatacenterList().get(i)
 					.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
@@ -200,21 +194,19 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 								.get(i).getLocation().getXPos()), 2)
 						+ Math.pow((this.getLocation().getYPos() - simulationManager.getServersManager()
 								.getDatacenterList().get(i).getLocation().getYPos()), 2)));
-				if (distance <= simulationParameters.EDGE_DEVICES_RANGE) {
-					// neighbors
-					if (this.weight < ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList()
-							.get(i)).weight) {// &&
-						// simulationManager.getServersManager().getDatacenterList().get(i).getOrchestrator().cluster.size()<15
-						setOrchestrator((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList()
-								.get(i).getOrchestrator());
-						this.setParent(
-								(CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i));
-						this.weight = ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList()
-								.get(i)).weight
-								* ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i)
-										.getOrchestrator()).weightDrop;
-					}
+				if (distance <= simulationParameters.EDGE_DEVICES_RANGE
+						// neighbors
+						&& this.weight < ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList()
+								.get(i)).weight) {
+					setOrchestrator((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i)
+							.getOrchestrator());
+					this.setParent((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i));
+					this.weight = ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList()
+							.get(i)).weight
+							* ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i)
+									.getOrchestrator()).weightDrop;
 				}
+
 			}
 		}
 
@@ -225,7 +217,7 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 			Orchestrator = this;
 		return this.Orchestrator;
 	}
- 
+
 	public Vm getVM() {
 		return this.getVmList().get(0);
 	}

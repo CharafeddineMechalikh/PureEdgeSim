@@ -78,7 +78,7 @@ public class ChartsGenerator {
 				double[] yData = toArray(getColumn(y_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
 						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]));
 				XYSeries series = chart.addSeries(simulationParameters.ORCHESTRATION_AlGORITHMS[alg], xData, yData);
-				series.setMarker(SeriesMarkers.CIRCLE); // Marker type :circle,rectangle, diamond..
+				series.setMarker(SeriesMarkers.CIRCLE); // Marker type:circle,rectangle, diamond..
 				series.setLineStyle(new BasicStroke());
 			}
 			// Save the chart
@@ -99,7 +99,7 @@ public class ChartsGenerator {
 				double[] yData = toArray(getColumn(y_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
 						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]));
 				XYSeries series = chart.addSeries(simulationParameters.ORCHESTRATION_ARCHITECTURES[orch], xData, yData);
-				series.setMarker(SeriesMarkers.CIRCLE); // Marker type :circle,rectangle, diamond..
+				series.setMarker(SeriesMarkers.CIRCLE); // Marker type: circle,rectangle, diamond..
 				series.setLineStyle(new BasicStroke());
 			}
 			// Save the chart

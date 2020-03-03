@@ -55,33 +55,7 @@ public abstract class DataCenter extends DatacenterSimple {
 		setRamMemory(ram);
 	}
 
-	protected void updateEnergyConsumption() {
-		setIdle(true);
-		double vmUsage = 0;
-		currentCpuUtilization = 0;
-
-		// get the cpu usage of all vms
-		for (int i = 0; i < this.getVmList().size(); i++) {
-			vmUsage = this.getVmList().get(i).getCloudletScheduler()
-					.getRequestedCpuPercentUtilization(simulationManager.getSimulation().clock());
-			currentCpuUtilization += vmUsage; // the current utilization
-			totalCpuUtilization += vmUsage;
-			utilizationFrequency++; // in order to get the average usage from the total usage
-			if (vmUsage != 0)
-				setIdle(false); // set as active (not idle) if at least one vm is used
-		}
-
-		if (this.getVmList().size() > 0)
-			currentCpuUtilization = currentCpuUtilization / this.getVmList().size();
-
-		// update the energy consumption
-		this.getEnergyModel().updateCpuEnergyConsumption(currentCpuUtilization);
-
-		if (isBattery() && this.getEnergyModel().getTotalEnergyConsumption() > batteryCapacity) {
-			isDead = true;
-			deathTime = simulationManager.getSimulation().clock();
-		}
-	}
+	protected abstract void updateEnergyConsumption();
 
 	public EnergyModel getEnergyModel() {
 		return energyModel;
@@ -231,7 +205,7 @@ public abstract class DataCenter extends DatacenterSimple {
 	}
 
 	public List<Vm> getVmList() {
-		return (List<Vm>) Collections
-				.unmodifiableList(getHostList().stream().flatMap(h -> h.getVmList().stream()).collect(Collectors.toList()));
+		return (List<Vm>) Collections.unmodifiableList(
+				getHostList().stream().flatMap(h -> h.getVmList().stream()).collect(Collectors.toList()));
 	}
 }

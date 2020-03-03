@@ -69,5 +69,4 @@ public class DefaultDataCenter extends DataCenter {
 			deathTime = simulationManager.getSimulation().clock();
 		}
 	}
- 
 }

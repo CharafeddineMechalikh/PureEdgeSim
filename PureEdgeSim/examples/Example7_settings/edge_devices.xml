@@ -28,7 +28,7 @@
 						<core>8</core>
 						<mips>25000</mips>
 						<ram>4000</ram>
-						<storage>256</storage> <!--256MB of caching memory used in example 6 --> 
+						<storage>256</storage> <!--256MB --> 
 					</VM>
 				</VMs>
 			</host>
@@ -54,7 +54,7 @@
 						<core>4</core>
 						<mips>16000</mips>
 						<ram>4000</ram>
-						<storage>64</storage>  <!--64MB of caching memory used in example 6 --> 
+						<storage>64</storage>
 					</VM>
 				</VMs>
 			</host>
@@ -80,7 +80,7 @@
 						<core>8</core>
 						<mips>110000</mips>
 						<ram>8000</ram>
-						<storage>256</storage><!--256MB of caching memory used in example 6 --> 
+						<storage>256</storage>
 					</VM>
 				</VMs>
 			</host>
@@ -100,9 +100,9 @@
 				<core>2</core>
 				<mips>70000</mips>
 				<ram>4000</ram>
-				<storage>0</storage> 
+				<storage>64000</storage> 
 				<VMs> 
-						<!-- this is a simple sensor that has no computing capacity --> 
+						<!-- this is a simple sensor that has no computing capacity -->
 				</VMs>
 			</host>
 		</hosts>
