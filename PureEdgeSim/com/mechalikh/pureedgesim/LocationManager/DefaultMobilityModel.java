@@ -33,7 +33,7 @@ public class DefaultMobilityModel extends Mobility {
 		}
 
 		// Make sure that the device stay in the simulation area
-		Reoriontate(X_position, Y_position);
+		reoriontate(X_position, Y_position);
 
 		if (mobilityDuration <= 0) {
 			pause();
@@ -54,9 +54,9 @@ public class DefaultMobilityModel extends Mobility {
 		double X_distance = Math.cos(Math.toRadians(orientationAngle)) * distance;
 		double Y_distance = Math.sin(Math.toRadians(orientationAngle)) * distance;
 		// Update the X_position
-		X_position += X_distance;
-		Y_position += Y_distance;
-		return new Location(X_position, Y_position);
+		double X_pos = X_position + X_distance;
+		double Y_pos = Y_position + Y_distance;
+		return new Location(X_pos, Y_pos);
 	}
 
 	private void resume() {
@@ -79,7 +79,7 @@ public class DefaultMobilityModel extends Mobility {
 		mobilityDuration = new Random().nextInt(100);
 	}
 
-	private void Reoriontate(double x_position, double y_position) {
+	private void reoriontate(double x_position, double y_position) {
 		if (x_position >= simulationParameters.AREA_LENGTH)
 			orientationAngle = -90 - new Random().nextInt(180);
 		else if (x_position <= 0)

@@ -349,8 +349,8 @@ public class SimLog {
 		writeFile(getFileName(".csv"), getResultsList());
 
 		if (!simulationParameters.SAVE_LOG) {
-			print("SimLog- no log saving");
-			Runtime.getRuntime().exit(0);
+			println("SimLog- no log saving");
+			return;
 		}
 
 		writeFile(getFileName(".txt"), log);
