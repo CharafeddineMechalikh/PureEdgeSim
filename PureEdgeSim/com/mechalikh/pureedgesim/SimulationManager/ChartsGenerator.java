@@ -186,7 +186,7 @@ public class ChartsGenerator {
 	}
 
 	private void generateTasksCharts() {
-		displayChart("Edge devices count", "Average wainting time (s)", "Time (s)", "/Delays");
+		displayChart("Edge devices count", "Average waiting time (s)", "Time (s)", "/Delays");
 		displayChart("Edge devices count", "Average execution delay (s)", "Time (s)", "/Delays");
 
 		displayChart("Edge devices count", "Tasks successfully executed", "Number of tasks", "/Tasks");

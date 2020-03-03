@@ -41,7 +41,7 @@ public abstract class DataCenter extends DatacenterSimple {
 			memory += host.getStorage().getAvailableResource();
 			ram += host.getRam().getCapacity();
 		}
-		setResources(new Resources(ram, memory, this));
+		setResources(new Resources(ram, memory));
 	}
 
 	protected abstract void updateEnergyConsumption();

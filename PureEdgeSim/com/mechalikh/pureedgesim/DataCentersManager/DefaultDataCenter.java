@@ -53,7 +53,7 @@ public class DefaultDataCenter extends DataCenter {
 			vmUsage = this.getVmList().get(i).getCloudletScheduler()
 					.getRequestedCpuPercentUtilization(simulationManager.getSimulation().clock());
 			currentCpuUtilization += vmUsage; // the current utilization
-			getResources().setTotalCpuUtilization(getResources().getTotal_CpuUtilization() + vmUsage);
+			getResources().setTotalCpuUtilization(getResources().getTotalCpuUtilization() + vmUsage);
 			getResources().incrementUtilizationFrequency(); // in order to get the average usage from the total usage
 			if (vmUsage != 0)
 				getResources().setIdle(false); // set as active (not idle) if at least one vm is used

@@ -9,7 +9,7 @@ public class Resources {
 	private double currentCpuUtilization = 0;
 	private boolean isIdle = true;
 
-	public Resources(long ram, long memory, DataCenter dataCenter) {
+	public Resources(long ram, long memory) {
 		setStorageMemory(memory);
 		setRamMemory(ram);
 	}
@@ -44,7 +44,7 @@ public class Resources {
 			utilizationFrequency = 1;
 		return totalCpuUtilization * 100 / utilizationFrequency;
 	}
-	public double getTotal_CpuUtilization() { 
+	public double getTotalCpuUtilization() { 
 		return totalCpuUtilization;
 	}
 	public double getCurrentCpuUtilization() {

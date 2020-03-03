@@ -80,7 +80,7 @@ public class SimLog {
 			// Add the CSV file header
 			resultsList.add("Orchestration architecture,Orchestration algorithm,Edge devices count,"
 					+ "Tasks execution delay (s),Average execution delay (s),Tasks waiting time (s),"
-					+ "Average wainting time (s),Generated tasks,Tasks successfully executed,"
+					+ "Average waiting time (s),Generated tasks,Tasks successfully executed,"
 					+ "Task not executed (No resources available or long waiting time),Tasks failed (delay),Tasks failed (device dead),"
 					+ "Tasks failed (mobility),Tasks not generated due to the death of devices,Total tasks executed (Cloud),"
 					+ "Tasks successfully executed (Cloud),Total tasks executed (Edge),Tasks successfully executed (Edge),"
@@ -151,7 +151,7 @@ public class SimLog {
 				+ padLeftSpaces("" + tasksExecutedOnCloud, 13) + " tasks (where "
 				+ (tasksExecutedOnCloud - tasksFailedCloud) + " were successfully executed )");
 		print("                                                                                 " + " Edge="
-				+ padLeftSpaces("" + tasksExecutedOnEdge, 15) + " tasks (where " + (tasksExecutedOnEdge - tasksFailedEdge)
+				+ padLeftSpaces("" + tasksExecutedOnEdge, 14) + " tasks (where " + (tasksExecutedOnEdge - tasksFailedEdge)
 				+ " were successfully executed )");
 		print("                                                                                 " + " Mist="
 				+ padLeftSpaces("" + tasksExecutedOnMist, 14) + " tasks (where "
@@ -276,7 +276,7 @@ public class SimLog {
 				+ padLeftSpaces(decimalFormat.format(energyConsumption), 20) + " W (Average: "
 				+ decimalFormat.format(energyConsumption / datacentersList.size()) + " W/data center(or device))");
 		print("                                                                                :"
-				+ padLeftSpaces("", 20) + "    (Average: "
+				+ padLeftSpaces("", 19) + "    (Average: "
 				+ decimalFormat.format(energyConsumption / (double) finishedTasks.size()) + " W/task)");
 		print("SimLog- Energy Consumption per level                                            : Cloud="
 				+ padLeftSpaces(decimalFormat.format(cloudEnConsumption), 13) + " W (Average: "

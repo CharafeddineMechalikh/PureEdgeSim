@@ -8,6 +8,10 @@ public class Example7 extends MainApplication {
 	 * used in this example are located in the examples/Example7_settings/ folder.
 	 * By default, if the user doesn't specify the simulation settings folder,
 	 * PureEdgeSim will use the default ones located in settings/ folder.
+	 * 
+	 * in the simulation parameters file that is used in this example
+	 * ("PureEdgeSim/examples/Example7_settings/"), the simulation time is set to 60
+	 * minutes and the update intervals to 0.1 seconds.
 	 */
 	// Below is the path for the settings folder of this example
 	private static String settingsPath = "PureEdgeSim/examples/Example7_settings/";

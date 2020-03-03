@@ -108,7 +108,6 @@
 
 *   Adding support for physical depolyement of the orchestrator:  Deploying the orchestrator on the cloud for example, on fog servers...etc.
 
-*   New simulation parameters:   New parameters for the aforementioned changes.  New simulation parameters in order to control the trade off between simulation accuracy and simulation time, etc. 
-
+*   New simulation parameters:   New parameters for the aforementioned changes.  New simulation parameters in order to control the trade off between simulation accuracy and simulation time, etc.
 
 *   Improved simulation time
