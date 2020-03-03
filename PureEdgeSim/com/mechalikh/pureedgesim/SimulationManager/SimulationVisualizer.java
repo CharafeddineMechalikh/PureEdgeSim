@@ -115,15 +115,15 @@ public class SimulationVisualizer {
 		List<? extends DataCenter> datacenterList = simulationManager.getServersManager().getDatacenterList();
 		for (DataCenter edgeDataCenter : datacenterList) {
 			if (edgeDataCenter.getType() == TYPES.CLOUD) {
-				clUsage = edgeDataCenter.getTotalCpuUtilization();
+				clUsage = edgeDataCenter.getResources().getAvgCpuUtilization();
 
 			} else if (edgeDataCenter.getType() == TYPES.EDGE_DEVICE && edgeDataCenter.getVmList().size() > 0) {
-				msUsage += edgeDataCenter.getTotalCpuUtilization();
+				msUsage += edgeDataCenter.getResources().getAvgCpuUtilization();
 				edgeDevicesCount++;
 
 			} else if (edgeDataCenter.getType() == TYPES.EDGE_DATACENTER) {
 				edgeDataCentersCount++;
-				edUsage += edgeDataCenter.getTotalCpuUtilization();
+				edUsage += edgeDataCenter.getResources().getAvgCpuUtilization();
 			}
 		}
 		msUsage /= edgeDevicesCount;
@@ -183,21 +183,21 @@ public class SimulationVisualizer {
 
 				if (simulationManager.getServersManager().getDatacenterList().get(i).isDead()) {
 					x_deadEdgeDevicesList.add(
-							simulationManager.getServersManager().getDatacenterList().get(i).getLocation().getXPos());
+							simulationManager.getServersManager().getDatacenterList().get(i).getMobilityManager().getCurrentLocation().getXPos());
 					y_deadEdgeDevicesList.add(
-							simulationManager.getServersManager().getDatacenterList().get(i).getLocation().getYPos());
+							simulationManager.getServersManager().getDatacenterList().get(i).getMobilityManager().getCurrentLocation().getYPos());
 
-				} else if (simulationManager.getServersManager().getDatacenterList().get(i).isIdle()) {
+				} else if (simulationManager.getServersManager().getDatacenterList().get(i).getResources().isIdle()) {
 					x_idleEdgeDevicesList.add(
-							simulationManager.getServersManager().getDatacenterList().get(i).getLocation().getXPos());
+							simulationManager.getServersManager().getDatacenterList().get(i).getMobilityManager().getCurrentLocation().getXPos());
 					y_idleEdgeDevicesList.add(
-							simulationManager.getServersManager().getDatacenterList().get(i).getLocation().getYPos());
+							simulationManager.getServersManager().getDatacenterList().get(i).getMobilityManager().getCurrentLocation().getYPos());
 
 				} else { // If the device is busy
 					x_activeEdgeDevicesList.add(
-							simulationManager.getServersManager().getDatacenterList().get(i).getLocation().getXPos());
+							simulationManager.getServersManager().getDatacenterList().get(i).getMobilityManager().getCurrentLocation().getXPos());
 					y_activeEdgeDevicesList.add(
-							simulationManager.getServersManager().getDatacenterList().get(i).getLocation().getYPos());
+							simulationManager.getServersManager().getDatacenterList().get(i).getMobilityManager().getCurrentLocation().getYPos());
 				}
 			}
 		}
@@ -231,17 +231,17 @@ public class SimulationVisualizer {
 								.getType() == simulationParameters.TYPES.EDGE_DATACENTER
 						&& simulationParameters.NUM_OF_EDGE_DATACENTERS != 0) {
 
-					if (simulationManager.getServersManager().getDatacenterList().get(j).isIdle()) {
+					if (simulationManager.getServersManager().getDatacenterList().get(j).getResources().isIdle()) {
 						x_idleEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
-								.getLocation().getXPos());
+								.getMobilityManager().getCurrentLocation().getXPos());
 						y_idleEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
-								.getLocation().getYPos());
+								.getMobilityManager().getCurrentLocation().getYPos());
 
 					} else {
 						x_activeEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
-								.getLocation().getXPos());
+								.getMobilityManager().getCurrentLocation().getXPos());
 						y_activeEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
-								.getLocation().getYPos());
+								.getMobilityManager().getCurrentLocation().getYPos());
 
 					}
 				}

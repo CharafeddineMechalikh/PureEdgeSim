@@ -158,8 +158,7 @@ public class ServersManager {
 		}
 	}
 
-	private DataCenter createDatacenter(Element datacenterElement, simulationParameters.TYPES type)
-			throws Exception {
+	private DataCenter createDatacenter(Element datacenterElement, simulationParameters.TYPES type) throws Exception {
 
 		int x_position = -1;
 		int y_position = -1;
@@ -168,19 +167,26 @@ public class ServersManager {
 
 		Location datacenterLocation = null;
 		Constructor<?> datacenterConstructor = edgeDataCenterType.getConstructor(SimulationManager.class, List.class);
-		DataCenter datacenter = (DataCenter) datacenterConstructor.newInstance(getSimulationManager(),
-				hostList);
+		DataCenter datacenter = (DataCenter) datacenterConstructor.newInstance(getSimulationManager(), hostList);
+		double idleConsumption = Double
+				.parseDouble(datacenterElement.getElementsByTagName("idleConsumption").item(0).getTextContent());
+		double maxConsumption = Double
+				.parseDouble(datacenterElement.getElementsByTagName("maxConsumption").item(0).getTextContent());
+		datacenter.setOrchestrator(Boolean
+				.parseBoolean(datacenterElement.getElementsByTagName("isOrchestrator").item(0).getTextContent()));
+		Constructor<?> energyConstructor = energyModel.getConstructor(double.class, double.class);
+		datacenter.setEnergyModel(energyConstructor.newInstance(maxConsumption, idleConsumption));
+		Boolean mobile = false;
 		if (type == simulationParameters.TYPES.EDGE_DATACENTER) {
 			Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
 			x_position = Integer.parseInt(location.getElementsByTagName("x_pos").item(0).getTextContent());
 			y_position = Integer.parseInt(location.getElementsByTagName("y_pos").item(0).getTextContent());
 			datacenterLocation = new Location(x_position, y_position);
 		} else if (type == simulationParameters.TYPES.EDGE_DEVICE) {
-			datacenter.setMobile(
-					Boolean.parseBoolean(datacenterElement.getElementsByTagName("mobility").item(0).getTextContent()));
-			datacenter.setBattery(
+			mobile = Boolean.parseBoolean(datacenterElement.getElementsByTagName("mobility").item(0).getTextContent());
+			datacenter.getEnergyModel().setBattery(
 					Boolean.parseBoolean(datacenterElement.getElementsByTagName("battery").item(0).getTextContent()));
-			datacenter.setBatteryCapacity(Double
+			datacenter.getEnergyModel().setBatteryCapacity(Double
 					.parseDouble(datacenterElement.getElementsByTagName("batteryCapacity").item(0).getTextContent()));
 
 			// Generate random location for edge devices
@@ -190,12 +196,6 @@ public class ServersManager {
 					+ "    location: ( " + datacenterLocation.getXPos() + "," + datacenterLocation.getYPos() + " )");
 		}
 
-		double idleConsumption = Double
-				.parseDouble(datacenterElement.getElementsByTagName("idleConsumption").item(0).getTextContent());
-		double maxConsumption = Double
-				.parseDouble(datacenterElement.getElementsByTagName("maxConsumption").item(0).getTextContent());
-		datacenter.setOrchestrator(Boolean
-				.parseBoolean(datacenterElement.getElementsByTagName("isOrchestrator").item(0).getTextContent()));
 		datacenter.setType(type);
 		if (type == TYPES.EDGE_DEVICE)
 			datacenter.setTasksGeneration(Boolean
@@ -203,9 +203,7 @@ public class ServersManager {
 
 		Constructor<?> mobilityConstructor = mobilityManager.getConstructor(Location.class);
 		datacenter.setMobilityManager(mobilityConstructor.newInstance(datacenterLocation));
-
-		Constructor<?> energyConstructor = energyModel.getConstructor(double.class, double.class);
-		datacenter.setEnergyModel(energyConstructor.newInstance(maxConsumption, idleConsumption));
+		datacenter.getMobilityManager().setMobile(mobile);
 		return datacenter;
 	}
 

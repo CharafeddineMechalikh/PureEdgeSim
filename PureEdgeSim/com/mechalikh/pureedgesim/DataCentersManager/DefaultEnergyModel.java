@@ -11,7 +11,7 @@ import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
  */
 public class DefaultEnergyModel extends EnergyModel {
 	public static final int TRANSMISSION = 0;
-	public static final int RECEPTION = 1; 
+	public static final int RECEPTION = 1;
 	// The power consumption for each transferred bit (in joul per bit : J/bit)
 	private double E_elec = simulationParameters.CONSUMED_ENERGY_PER_BIT;
 
@@ -22,28 +22,35 @@ public class DefaultEnergyModel extends EnergyModel {
 	// Energy consumption of the transmit amplifier in multipath fading channel
 	// model ( in joul per bit per meter^4 : J/bit/m^4)
 	private double E_mp = simulationParameters.AMPLIFIER_DISSIPATION_MULTIPATH;
- 
+
 	public DefaultEnergyModel(double maxActiveConsumption, double idleConsumption) {
-		super(maxActiveConsumption, idleConsumption); 
+		super(maxActiveConsumption, idleConsumption);
 	}
 
 	public void updateCpuEnergyConsumption(double cpuUtilization) {
-		double consumption = (idleConsumption
-				+ ((maxActiveConsumption-idleConsumption)* cpuUtilization))/3600 * simulationParameters.UPDATE_INTERVAL; // the energy consumption value is for 1 hour, it will be divided by 3600 to get how much each second costs
+		double consumption = (idleConsumption + ((maxActiveConsumption - idleConsumption) * cpuUtilization)) / 3600
+				* simulationParameters.UPDATE_INTERVAL; // the energy consumption value is for 1 hour, it will be
+														// divided by 3600 to get how much each second costs
 		this.cpuEnergyConsumption += consumption;
 	}
 
-	public void updatewirelessEnergyConsumption(FileTransferProgress file, DataCenter device1,
-			DataCenter device2, int flag) {
+	public void updatewirelessEnergyConsumption(FileTransferProgress file, DataCenter device1, DataCenter device2,
+			int flag) {
 
 		double distance;
-		if (device1.getType() == TYPES.CLOUD || device2.getType() == TYPES.CLOUD || device1.getType() == TYPES.EDGE_DATACENTER
-				|| device2.getType() == TYPES.EDGE_DATACENTER) {
+		if (device1.getType() == TYPES.CLOUD || device2.getType() == TYPES.CLOUD
+				|| device1.getType() == TYPES.EDGE_DATACENTER || device2.getType() == TYPES.EDGE_DATACENTER) {
 			distance = 10;
 		} else {
 			distance = Math
-					.abs(Math.sqrt(Math.pow((device1.getLocation().getXPos() - device2.getLocation().getXPos()), 2)
-							+ Math.pow((device1.getLocation().getYPos() - device2.getLocation().getYPos()), 2)));
+					.abs(Math
+							.sqrt(Math
+									.pow((device1.getMobilityManager().getCurrentLocation().getXPos()
+											- device2.getMobilityManager().getCurrentLocation().getXPos()), 2)
+									+ Math.pow(
+											(device1.getMobilityManager().getCurrentLocation().getYPos()
+													- device2.getMobilityManager().getCurrentLocation().getYPos()),
+											2)));
 		}
 
 		int sizeInBits = (int) (file.getFileSize() * 1000);
@@ -74,5 +81,7 @@ public class DefaultEnergyModel extends EnergyModel {
 	private void receptionEnergyConsumption(int sizeInBits) {
 		double consumption = (E_elec * sizeInBits);
 		this.wirelessEnergyConsumption += joulToWattHour(consumption);
-	} 
+	}
+
+
 }

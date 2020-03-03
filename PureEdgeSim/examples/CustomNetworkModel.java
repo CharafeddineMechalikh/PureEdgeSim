@@ -32,7 +32,7 @@ public class CustomNetworkModel extends DefaultNetworkModel {
 
 			// Delete the transfer from the queue
 			transferProgressList.remove(transfer);
-			
+
 		} else if (transfer.getTransferType() == FileTransferProgress.Type.CONTAINER) {
 			// the container has been downloaded, keep it in cache
 			keepReplica(transfer.getTask());
@@ -46,7 +46,7 @@ public class CustomNetworkModel extends DefaultNetworkModel {
 			containerDownloadFinished(transfer);
 
 			updateEnergyConsumption(transfer, "Container");
-			
+
 			// Delete the transfer from the queue
 			transferProgressList.remove(transfer);
 
@@ -55,23 +55,16 @@ public class CustomNetworkModel extends DefaultNetworkModel {
 	}
 
 	private void keepReplica(Task task) {
-
 		// Check if there are enough replicas before keeping a new one
 		CustomEdgeDevice edgeDevice = (CustomEdgeDevice) task.getEdgeDevice();
 		if (simulationParameters.registry_mode.equals("CACHE") && ((CustomEdgeDevice) edgeDevice.getOrchestrator())
 				.countContainer(task.getApplicationID()) < MAX_NUMBER_OF_REPLICAS) {
-			if (edgeDevice.getAvailableMemory() > task.getContainerSize()) {
-
-				edgeDevice.setAvailableMemory(edgeDevice.getAvailableMemory() - task.getContainerSize());
-				edgeDevice.cache.add(task);
-				double[] array = new double[2];
-				array[0] = task.getApplicationID();
-				array[1] = task.getEdgeDevice().getId();
-				((CustomEdgeDevice) edgeDevice.getOrchestrator()).Remotecache.add(array);
+			if (edgeDevice.getResources().getAvailableMemory() > task.getContainerSize()) {
+				saveImage(edgeDevice,task);
 			} else
 				// while the memory is not enough
-				while (edgeDevice.getAvailableMemory() < task.getContainerSize()
-						&& edgeDevice.getStorageMemory() > task.getContainerSize()) {
+				while (edgeDevice.getResources().getAvailableMemory() < task.getContainerSize()
+						&& edgeDevice.getResources().getStorageMemory() > task.getContainerSize()) {
 
 					double min = edgeDevice.getMinContainerCost();
 					if (edgeDevice.getCost(task) < min || min == -1) {
@@ -82,15 +75,19 @@ public class CustomNetworkModel extends DefaultNetworkModel {
 					}
 				}
 			// if the memory is enough
-			if (edgeDevice.getStorageMemory() > task.getContainerSize()) {
-				edgeDevice.setAvailableMemory(edgeDevice.getAvailableMemory() - task.getContainerSize());
-				edgeDevice.cache.add(task);
-				double[] array = new double[2];
-				array[0] = task.getApplicationID();
-				array[1] = task.getEdgeDevice().getId();
-				((CustomEdgeDevice) edgeDevice.getOrchestrator()).Remotecache.add(array);
+			if (edgeDevice.getResources().getAvailableMemory() > task.getContainerSize()) { 
+				saveImage(edgeDevice,task);
 			}
 		}
+	}
+
+	private void saveImage(CustomEdgeDevice edgeDevice, Task task) {
+		edgeDevice.getResources().setAvailableMemory(edgeDevice.getResources().getAvailableMemory() - task.getContainerSize());
+		edgeDevice.cache.add(task);
+		double[] array = new double[2];
+		array[0] = task.getApplicationID();
+		array[1] = task.getEdgeDevice().getId();
+		((CustomEdgeDevice) edgeDevice.getOrchestrator()).Remotecache.add(array);
 	}
 
 	private void pullContainer(Task task) {
@@ -98,7 +95,6 @@ public class CustomNetworkModel extends DefaultNetworkModel {
 			// No replica found
 			scheduleNow(this, NetworkModel.DOWNLOAD_CONTAINER, task);
 		} else {
-
 			if (((CustomEdgeDevice) task.getVm().getHost().getDatacenter()).hasContainer(task.getApplicationID())
 					|| ((CustomEdgeDevice) task.getVm().getHost().getDatacenter()).getType() == TYPES.CLOUD) {
 				// This device has a replica in its cache, so execute a task directly
@@ -106,7 +102,7 @@ public class CustomNetworkModel extends DefaultNetworkModel {
 			} else {
 				double from = ((CustomEdgeDevice) task.getEdgeDevice().getOrchestrator())
 						.findReplica(task.getApplicationID());
-				task.setRegistry(simulationManager.getServersManager().getDatacenterList().get((int) from - 3));
+				task.setRegistry(simulationManager.getServersManager().getDatacenterList().get((int) from - 3)); // the IDs are shifted by 3
 				// Pull container from another edge device
 				scheduleNow(this, NetworkModel.DOWNLOAD_CONTAINER, task);
 			}

@@ -37,9 +37,9 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 		for (int i = 0; i < orchestrationHistory.size(); i++) {
 			if (offloadingIsPossible(task, vmList.get(i), architecture)) {
 				weight = 1;
-				if (((DataCenter) vmList.get(i).getHost().getDatacenter()).isBattery()) {
-					if (task.getEdgeDevice()
-							.getBatteryLevel() > ((DataCenter) vmList.get(i).getHost().getDatacenter())
+				if (((DataCenter) vmList.get(i).getHost().getDatacenter()).getEnergyModel().isBattery()) {
+					if (task.getEdgeDevice().getEnergyModel()
+							.getBatteryLevel() > ((DataCenter) vmList.get(i).getHost().getDatacenter()).getEnergyModel()
 									.getBatteryLevel())
 						weight = 20; // the destination device has lower remaining power than the task offloading
 										// device,in this case it is better not to offload
@@ -79,13 +79,14 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 
 	@Override
 	public void resultsReturned(Task task) {
-		if(task.getStatus()==Status.FAILED) {
-			System.err.println("CustomEdgeOrchestrator, task "+ task.getId()+" has been failed, failure reason is: "+ task.getFailureReason());
-		}else {
+		if (task.getStatus() == Status.FAILED) {
+			System.err.println("CustomEdgeOrchestrator, task " + task.getId() + " has been failed, failure reason is: "
+					+ task.getFailureReason());
+		} else {
 
-			System.out.println("CustomEdgeOrchestrator, task "+ task.getId()+" has been successfully executed");
+			System.out.println("CustomEdgeOrchestrator, task " + task.getId() + " has been successfully executed");
 		}
-		
+
 	}
 
 }

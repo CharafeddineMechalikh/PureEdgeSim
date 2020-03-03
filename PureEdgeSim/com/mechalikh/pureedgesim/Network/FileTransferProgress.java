@@ -5,7 +5,8 @@ import com.mechalikh.pureedgesim.TasksGenerator.Task;
 public class FileTransferProgress {
 	public static enum Type {
 		TASK, CONTAINER, RESULTS_TO_DEV, RESULTS_TO_ORCH, REQUEST
-	} 
+	}
+
 	private Task task;
 	private double remainingFileSize; // in kbits
 	private double wanBandwidth;// kbits/s
@@ -15,8 +16,8 @@ public class FileTransferProgress {
 	private Type transferType;
 	private double fileSize; // in kbits
 	private double currentBandwidth; // kbits/s
-	private double totalBandwidths=0; // kbits/s
-	private int bwAllocationTimes=0; 
+	private double totalBandwidths = 0; // kbits/s
+	private int bwAllocationTimes = 0;
 
 	public FileTransferProgress(Task task, double remainingFileSize, Type type) {
 		this.task = task;
@@ -79,18 +80,18 @@ public class FileTransferProgress {
 
 	public void setCurrentBandwidth(double bandwidth) {
 		this.currentBandwidth = bandwidth;
-		
-		//these values used to get the average bandwidth
-		totalBandwidths+=bandwidth;
+
+		// these values used to get the average bandwidth
+		totalBandwidths += bandwidth;
 		bwAllocationTimes++;
 	}
 
 	public double getCurrentBandwidth() {
 		return currentBandwidth;
 	}
-	
+
 	public double getAverageBandwidth() {
-		return totalBandwidths/bwAllocationTimes;
+		return totalBandwidths / bwAllocationTimes;
 	}
 
 }

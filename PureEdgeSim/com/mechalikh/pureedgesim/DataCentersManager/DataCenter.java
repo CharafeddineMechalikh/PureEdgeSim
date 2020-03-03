@@ -17,29 +17,19 @@ import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksOrchestration.VmTaskMapItem;
 
 public abstract class DataCenter extends DatacenterSimple {
-	protected static final int UPDATE_STATUS = 2000; // Avoid conflicting with CloudSim Plus Tags
-	protected simulationParameters.TYPES deviceType;
-	protected boolean isMobile = false;
-	protected boolean isBatteryPowered = false;
-	protected double batteryCapacity;
-	protected EnergyModel energyModel;
-	protected boolean isDead = false;
-	protected double deathTime;
-	protected List<VmTaskMapItem> vmTaskMap;
-	protected int applicationType;
+	private simulationParameters.TYPES deviceType;
+	private EnergyModel energyModel;
+	private List<VmTaskMapItem> vmTaskMap;
+	private int applicationType;
 	protected boolean isOrchestrator = false;
-	protected long storageMemory;
-	protected long availableStorageMemory;
-	protected double totalCpuUtilization = 0;
-	protected int utilizationFrequency = 0;
-	protected boolean isIdle = true;
-	protected long ramMemory;
-	protected Mobility mobilityManager;
-	protected DataCenter orchestrator;
-	protected double currentCpuUtilization = 0;
+	private Mobility mobilityManager;
+	private DataCenter orchestrator;
 	protected SimulationManager simulationManager;
 	private boolean generateTasks = true;
-
+	private Resources resources;
+	protected boolean isDead = false;
+	protected double deathTime;
+	
 	public DataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
 		super(simulationManager.getSimulation(), hostList, new VmAllocationPolicySimple());
 		this.simulationManager = simulationManager;
@@ -51,8 +41,7 @@ public abstract class DataCenter extends DatacenterSimple {
 			memory += host.getStorage().getAvailableResource();
 			ram += host.getRam().getCapacity();
 		}
-		setStorageMemory(memory);
-		setRamMemory(ram);
+		setResources(new Resources(ram, memory, this));
 	}
 
 	protected abstract void updateEnergyConsumption();
@@ -73,50 +62,7 @@ public abstract class DataCenter extends DatacenterSimple {
 		return getMobilityManager().getCurrentLocation();
 	}
 
-	public boolean isMobile() {
-		return isMobile;
-	}
-
-	public void setMobile(boolean mobile) {
-		isMobile = mobile;
-	}
-
-	public boolean isBattery() {
-		return isBatteryPowered;
-	}
-
-	public void setBattery(boolean battery) {
-		this.isBatteryPowered = battery;
-	}
-
-	public double getBatteryCapacity() {
-		return batteryCapacity;
-	}
-
-	public void setBatteryCapacity(double batteryCapacity) {
-		this.batteryCapacity = batteryCapacity;
-	}
-
-	public double getBatteryLevel() {
-		if (!isBattery())
-			return 0;
-		if (batteryCapacity < this.getEnergyModel().getTotalEnergyConsumption())
-			return 0;
-		return batteryCapacity - this.getEnergyModel().getTotalEnergyConsumption();
-	}
-
-	public double getBatteryLevelPercentage() {
-		return getBatteryLevel() * 100 / batteryCapacity;
-	}
-
-	public boolean isDead() {
-		return isDead;
-	}
-
-	public double getDeathTime() {
-		return deathTime;
-	}
-
+	
 	public List<VmTaskMapItem> getVmTaskMap() {
 		return vmTaskMap;
 	}
@@ -135,49 +81,6 @@ public abstract class DataCenter extends DatacenterSimple {
 
 	public void setOrchestrator(boolean isOrchestrator) {
 		this.isOrchestrator = isOrchestrator;
-	}
-
-	public long getStorageMemory() {
-		return storageMemory;
-	}
-
-	public void setStorageMemory(long storage) {
-		this.storageMemory = storage;
-		setAvailableMemory(storage);
-	}
-
-	public long getRam() {
-		return ramMemory;
-	}
-
-	public void setRamMemory(long ram) {
-		this.ramMemory = ram;
-	}
-
-	public long getAvailableMemory() {
-		return availableStorageMemory;
-	}
-
-	public void setAvailableMemory(long availableMemory) {
-		this.availableStorageMemory = availableMemory;
-	}
-
-	public double getTotalCpuUtilization() {
-		if (utilizationFrequency == 0)
-			utilizationFrequency = 1;
-		return totalCpuUtilization * 100 / utilizationFrequency;
-	}
-
-	public double getCurrentCpuUtilization() {
-		return currentCpuUtilization * 100;
-	}
-
-	public boolean isIdle() {
-		return isIdle;
-	}
-
-	public void setIdle(boolean isIdle) {
-		this.isIdle = isIdle;
 	}
 
 	public Mobility getMobilityManager() {
@@ -207,5 +110,26 @@ public abstract class DataCenter extends DatacenterSimple {
 	public List<Vm> getVmList() {
 		return (List<Vm>) Collections.unmodifiableList(
 				getHostList().stream().flatMap(h -> h.getVmList().stream()).collect(Collectors.toList()));
+	}
+
+	public Resources getResources() {
+		return resources;
+	}
+
+	public void setResources(Resources resources) {
+		this.resources = resources;
+	}
+	
+	public boolean isDead() {
+		return isDead;
+	}
+
+	public double getDeathTime() {
+		return deathTime;
+	}
+
+	public void setDeath(Boolean dead, double deathTime2) {
+		isDead = dead;
+		deathTime = deathTime2;
 	}
 }

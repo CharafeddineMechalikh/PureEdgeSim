@@ -8,6 +8,7 @@ import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
 public class DefaultDataCenter extends DataCenter {
+	protected static final int UPDATE_STATUS = 2000; // Avoid conflicting with CloudSim Plus Tags
 
 	public DefaultDataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
 		super(simulationManager, hostList);
@@ -16,57 +17,59 @@ public class DefaultDataCenter extends DataCenter {
 	@Override
 	public void startEntity() {
 		super.startEntity();
-		schedule(this, simulationParameters.INITIALIZATION_TIME, UPDATE_STATUS); 
+		schedule(this, simulationParameters.INITIALIZATION_TIME, UPDATE_STATUS);
 	}
 
 	@Override
 	public void processEvent(final SimEvent ev) {
 		switch (ev.getTag()) {
-			case UPDATE_STATUS:
-				// Update energy consumption
-				updateEnergyConsumption();
+		case UPDATE_STATUS:
+			// Update energy consumption
+			updateEnergyConsumption();
 
-				// Update location
-				if (isMobile()) {
-					getMobilityManager().getNextLocation();
-				}
+			// Update location
+			if (getMobilityManager().isMobile()) {
+				getMobilityManager().getNextLocation();
+			}
 
-				if (!isDead()) {
-					schedule(this, simulationParameters.UPDATE_INTERVAL, UPDATE_STATUS);
-				}
+			if (!isDead()) {
+				schedule(this, simulationParameters.UPDATE_INTERVAL, UPDATE_STATUS);
+			}
 
-				break;
-			default:
-				super.processEvent(ev);
-				break;
+			break;
+		default:
+			super.processEvent(ev);
+			break;
 		}
 	}
 
 	protected void updateEnergyConsumption() {
-		setIdle(true);
+		getResources().setIdle(true);
 		double vmUsage = 0;
-		currentCpuUtilization = 0;
+		double currentCpuUtilization = 0;
 
 		// get the cpu usage of all vms
 		for (int i = 0; i < this.getVmList().size(); i++) {
 			vmUsage = this.getVmList().get(i).getCloudletScheduler()
 					.getRequestedCpuPercentUtilization(simulationManager.getSimulation().clock());
 			currentCpuUtilization += vmUsage; // the current utilization
-			totalCpuUtilization += vmUsage;
-			utilizationFrequency++; // in order to get the average usage from the total usage
+			getResources().setTotalCpuUtilization(getResources().getTotal_CpuUtilization() + vmUsage);
+			getResources().incrementUtilizationFrequency(); // in order to get the average usage from the total usage
 			if (vmUsage != 0)
-				setIdle(false); // set as active (not idle) if at least one vm is used
+				getResources().setIdle(false); // set as active (not idle) if at least one vm is used
 		}
 
 		if (this.getVmList().size() > 0)
 			currentCpuUtilization = currentCpuUtilization / this.getVmList().size();
 
+		// update current CPU utilization
+		getResources().setCurrentCpuUtilization(currentCpuUtilization);
 		// update the energy consumption
-		this.getEnergyModel().updateCpuEnergyConsumption(currentCpuUtilization);
+		getEnergyModel().updateCpuEnergyConsumption(currentCpuUtilization);
 
-		if (isBattery() && this.getEnergyModel().getTotalEnergyConsumption() > batteryCapacity) {
-			isDead = true;
-			deathTime = simulationManager.getSimulation().clock();
+		if (getEnergyModel().isBattery()
+				&& this.getEnergyModel().getTotalEnergyConsumption() > getEnergyModel().getBatteryCapacity()) {
+			setDeath(true, simulationManager.getSimulation().clock());
 		}
 	}
 }

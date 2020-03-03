@@ -70,9 +70,7 @@
 
 *   Added real time simulation map (now you can verify and check how your mobility model is working)  
 
-*   Added some real time charts 
-
-   Showing the CPU utilization of Cloud, Fog and Edge resources, the WAN utilization, and the tasks success rate
+*   Added some real time charts showing the CPU utilization of Cloud, Fog and Edge resources, the WAN utilization, and the tasks success rate
   
 *   Adding the possibility to generate charts at the end of the simulation and to save them in a *.PNG format: More than 64 high resolution charts can be generated with one click, in order to make it easier for the user to check his simlation results. The user can always generate other charts using the generated CSV file.
   
@@ -111,5 +109,6 @@
 *   Adding support for physical depolyement of the orchestrator:  Deploying the orchestrator on the cloud for example, on fog servers...etc.
 
 *   New simulation parameters:   New parameters for the aforementioned changes.  New simulation parameters in order to control the trade off between simulation accuracy and simulation time, etc. 
+
 
 *   Improved simulation time

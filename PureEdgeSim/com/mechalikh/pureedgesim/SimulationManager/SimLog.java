@@ -215,17 +215,17 @@ public class SimLog {
 		for (DataCenter dc : datacentersList) {
 			if (dc.getType() == simulationParameters.TYPES.CLOUD) {
 				cloudEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
-				averageCloudCpuUtilization += dc.getTotalCpuUtilization();
+				averageCloudCpuUtilization += dc.getResources().getAvgCpuUtilization();
 			} else if (dc.getType() == simulationParameters.TYPES.EDGE_DATACENTER) {
 				edgeEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
-				averageEdgeCpuUtilization += dc.getTotalCpuUtilization();
+				averageEdgeCpuUtilization += dc.getResources().getAvgCpuUtilization();
 			} else if (dc.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
 				mistEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
 				if (dc.getVmList().size() > 0) {
 					// only devices with computing capability
 					// the devices that have no VM are considered simple sensors, and will not be
 					// counted here
-					averageMistCpuUtilization += dc.getTotalCpuUtilization();
+					averageMistCpuUtilization += dc.getResources().getAvgCpuUtilization();
 					edgeDevicesCount++;
 				}
 				if (dc.isDead()) {
@@ -237,10 +237,10 @@ public class SimLog {
 					else if (firstDeviceDeathTime > dc.getDeathTime())
 						firstDeviceDeathTime = dc.getDeathTime();
 				} else {
-					if (dc.isBattery()) {
-						averageRemainingPowerWh += dc.getBatteryLevel();
-						averageRemainingPower += dc.getBatteryLevelPercentage();
-						remainingPower.add(dc.getBatteryLevelPercentage());
+					if (dc.getEnergyModel().isBattery()) {
+						averageRemainingPowerWh += dc.getEnergyModel().getBatteryLevel();
+						averageRemainingPower += dc.getEnergyModel().getBatteryLevelPercentage();
+						remainingPower.add(dc.getEnergyModel().getBatteryLevelPercentage());
 						aliveBatteryPoweredDevicesCount++;
 					}
 				}
@@ -269,7 +269,7 @@ public class SimLog {
 		print("SimLog- Average vm CPU utilization per level                                    : Cloud= "
 				+ padLeftSpaces(decimalFormat.format(averageCloudCpuUtilization), 12) + " %");
 		print("                                                                                  Edge= "
-				+ padLeftSpaces(decimalFormat.format(averageEdgeCpuUtilization), 14) + " %");
+				+ padLeftSpaces(decimalFormat.format(averageEdgeCpuUtilization), 13) + " %");
 		print("                                                                                  Mist= "
 				+ padLeftSpaces(decimalFormat.format(averageMistCpuUtilization), 13) + " %");
 		print("SimLog- Energy consumption                                                      :"
@@ -283,7 +283,7 @@ public class SimLog {
 				+ decimalFormat.format(cloudEnConsumption / simulationParameters.NUM_OF_CLOUD_DATACENTERS)
 				+ " W/data center)");
 		print("                                                                                  Edge="
-				+ padLeftSpaces(decimalFormat.format(edgeEnConsumption), 15) + " W (Average: "
+				+ padLeftSpaces(decimalFormat.format(edgeEnConsumption), 14) + " W (Average: "
 				+ decimalFormat.format(edgeEnConsumption / simulationParameters.NUM_OF_EDGE_DATACENTERS)
 				+ " W/data center)");
 		print("                                                                                  Mist="
