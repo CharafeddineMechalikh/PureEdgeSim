@@ -64,12 +64,11 @@ public class SimulationVisualizer {
 		mapChart();
 		networkUtilizationChart();
 		tasksSucessRateChart();
-		utilizationChart();
+		cpuUtilizationChart();
 		displayCharts();
 	}
 
 	private void initCharts() {
-
 		mapChart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Scatter);
 		mapChart.getStyler().setMarkerSize(4);
 		updateStyle(mapChart, new Double[] { 0.0, (double) simulationParameters.AREA_WIDTH, 0.0,
@@ -97,21 +96,19 @@ public class SimulationVisualizer {
 		if (((int) simulationManager.getSimulation().clockInMinutes()) != clock) {
 			clock = (int) simulationManager.getSimulation().clockInMinutes();
 			double tasksFailed = 100 - simulationManager.getFailureRate();
-			double[] time = new double[clock+1];
-			for(int i=0;i<=clock;i++)
-				time[i]=i;
-			tasksFailedList.add(tasksFailed); 
+			double[] time = new double[clock + 1];
+			for (int i = 0; i <= clock; i++)
+				time[i] = i;
+			tasksFailedList.add(tasksFailed);
 			updateSeries(tasksSuccessChart, "Tasks failed", time, toArray(tasksFailedList), SeriesMarkers.NONE,
 					Color.BLACK);
 		}
 	}
 
-	void utilizationChart() {
+	void cpuUtilizationChart() {
 		double clUsage = 0;
 		double msUsage = 0;
 		double edUsage = 0;
-		double edgeDevicesCount = 0;
-		double edgeDataCentersCount = 0;
 		List<? extends DataCenter> datacenterList = simulationManager.getServersManager().getDatacenterList();
 		for (DataCenter edgeDataCenter : datacenterList) {
 			if (edgeDataCenter.getType() == TYPES.CLOUD) {
@@ -119,18 +116,14 @@ public class SimulationVisualizer {
 
 			} else if (edgeDataCenter.getType() == TYPES.EDGE_DEVICE && edgeDataCenter.getVmList().size() > 0) {
 				msUsage += edgeDataCenter.getResources().getAvgCpuUtilization();
-				edgeDevicesCount++;
 
 			} else if (edgeDataCenter.getType() == TYPES.EDGE_DATACENTER) {
-				edgeDataCentersCount++;
 				edUsage += edgeDataCenter.getResources().getAvgCpuUtilization();
 			}
 		}
-		msUsage /= edgeDevicesCount;
-		edUsage /= edgeDataCentersCount;
-		cloudUsage.add(clUsage);
-		mistUsage.add(msUsage);
-		edgeUsage.add(edUsage);
+		cloudUsage.add(clUsage / simulationParameters.NUM_OF_CLOUD_DATACENTERS);
+		mistUsage.add(msUsage / simulationManager.getScenario().getDevicesCount());
+		edgeUsage.add(edUsage / simulationParameters.NUM_OF_EDGE_DATACENTERS);
 		currentTime.add(simulationManager.getSimulation().clock());
 
 		updateSeries(cpuUtilizationChart, "Cloud", toArray(currentTime), toArray(cloudUsage), SeriesMarkers.NONE,
@@ -157,7 +150,7 @@ public class SimulationVisualizer {
 
 		updateStyle(networkUtilizationChart,
 				new Double[] { currentTime - 200, currentTime, 0.0, simulationParameters.WAN_BANDWIDTH / 1000.0 });
-		updateSeries(networkUtilizationChart, "WAN", time, toArray(wanUsage), SeriesMarkers.NONE, Color.BLACK); 
+		updateSeries(networkUtilizationChart, "WAN", time, toArray(wanUsage), SeriesMarkers.NONE, Color.BLACK);
 	}
 
 	private void addEdgeDevicesToMap() {
@@ -182,22 +175,22 @@ public class SimulationVisualizer {
 					.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
 
 				if (simulationManager.getServersManager().getDatacenterList().get(i).isDead()) {
-					x_deadEdgeDevicesList.add(
-							simulationManager.getServersManager().getDatacenterList().get(i).getMobilityManager().getCurrentLocation().getXPos());
-					y_deadEdgeDevicesList.add(
-							simulationManager.getServersManager().getDatacenterList().get(i).getMobilityManager().getCurrentLocation().getYPos());
+					x_deadEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
+							.getMobilityManager().getCurrentLocation().getXPos());
+					y_deadEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
+							.getMobilityManager().getCurrentLocation().getYPos());
 
 				} else if (simulationManager.getServersManager().getDatacenterList().get(i).getResources().isIdle()) {
-					x_idleEdgeDevicesList.add(
-							simulationManager.getServersManager().getDatacenterList().get(i).getMobilityManager().getCurrentLocation().getXPos());
-					y_idleEdgeDevicesList.add(
-							simulationManager.getServersManager().getDatacenterList().get(i).getMobilityManager().getCurrentLocation().getYPos());
+					x_idleEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
+							.getMobilityManager().getCurrentLocation().getXPos());
+					y_idleEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
+							.getMobilityManager().getCurrentLocation().getYPos());
 
 				} else { // If the device is busy
-					x_activeEdgeDevicesList.add(
-							simulationManager.getServersManager().getDatacenterList().get(i).getMobilityManager().getCurrentLocation().getXPos());
-					y_activeEdgeDevicesList.add(
-							simulationManager.getServersManager().getDatacenterList().get(i).getMobilityManager().getCurrentLocation().getYPos());
+					x_activeEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
+							.getMobilityManager().getCurrentLocation().getXPos());
+					y_activeEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
+							.getMobilityManager().getCurrentLocation().getYPos());
 				}
 			}
 		}
@@ -236,7 +229,6 @@ public class SimulationVisualizer {
 								.getMobilityManager().getCurrentLocation().getXPos());
 						y_idleEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getMobilityManager().getCurrentLocation().getYPos());
-
 					} else {
 						x_activeEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getMobilityManager().getCurrentLocation().getXPos());
@@ -247,8 +239,8 @@ public class SimulationVisualizer {
 				}
 			}
 
-			updateSeries(mapChart, "Idle Edge data centers", toArray(x_idleEdgeDataCentersList), toArray(y_idleEdgeDataCentersList),
-					SeriesMarkers.CROSS, Color.BLACK);
+			updateSeries(mapChart, "Idle Edge data centers", toArray(x_idleEdgeDataCentersList),
+					toArray(y_idleEdgeDataCentersList), SeriesMarkers.CROSS, Color.BLACK);
 
 			updateSeries(mapChart, "Active Edge data centers", toArray(x_activeEdgeDataCentersList),
 					toArray(y_activeEdgeDataCentersList), SeriesMarkers.CROSS, Color.red);

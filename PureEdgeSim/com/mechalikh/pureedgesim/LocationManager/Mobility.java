@@ -14,7 +14,7 @@ public abstract class Mobility {
 
 	public abstract Location getNextLocation();
 
-	public Location getCurrentLocation() {
+	public Location getCurrentLocation() { 
 		return currentLocation;
 	}
 	

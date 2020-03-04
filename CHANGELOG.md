@@ -66,7 +66,7 @@
 
 *   Some bugs here and there has been fixed 
 
-*   Added ram as a propoerty to EdgeDataCenter class
+*   Added ram as a property to EdgeDataCenter class
 
 *   Added real time simulation map (now you can verify and check how your mobility model is working)  
 
@@ -106,8 +106,9 @@
 
 *   Improved mobility model:  More realistic mobility model.  Added a map/ simulation area (height x width)
 
-*   Adding support for physical depolyement of the orchestrator:  Deploying the orchestrator on the cloud for example, on fog servers...etc.
-
-*   New simulation parameters:   New parameters for the aforementioned changes.  New simulation parameters in order to control the trade off between simulation accuracy and simulation time, etc.
+*   New simulation parameters for the aforementioned changes.  New simulation parameters in order to control the trade off between simulation accuracy and simulation time, etc.
 
 *   Improved simulation time
+
+*   Adding support for physical deployment of the orchestrator:  Deploying the orchestrator on the cloud for example, on fog servers...etc.
+

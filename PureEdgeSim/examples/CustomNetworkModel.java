@@ -10,7 +10,7 @@ import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public class CustomNetworkModel extends DefaultNetworkModel {
 
-	private static final int MAX_NUMBER_OF_REPLICAS = 5;
+	private static final int MAX_NUMBER_OF_REPLICAS = 8;
 
 	public CustomNetworkModel(SimulationManager simulationManager) {
 		super(simulationManager);

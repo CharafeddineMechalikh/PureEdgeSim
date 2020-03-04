@@ -23,7 +23,7 @@ public abstract class DataCenter extends DatacenterSimple {
 	private Mobility mobilityManager;
 	private DataCenter orchestrator;
 	protected SimulationManager simulationManager;
-	private boolean generateTasks = true;
+	private boolean generateTasks = false;
 	private Resources resources;
 	protected boolean isDead = false;
 	protected double deathTime;

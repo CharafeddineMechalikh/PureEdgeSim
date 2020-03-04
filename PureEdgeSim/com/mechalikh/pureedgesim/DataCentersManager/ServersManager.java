@@ -31,7 +31,6 @@ import org.w3c.dom.NodeList;
 import com.mechalikh.pureedgesim.LocationManager.Location;
 import com.mechalikh.pureedgesim.LocationManager.Mobility;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
 public class ServersManager {
@@ -188,7 +187,8 @@ public class ServersManager {
 					Boolean.parseBoolean(datacenterElement.getElementsByTagName("battery").item(0).getTextContent()));
 			datacenter.getEnergyModel().setBatteryCapacity(Double
 					.parseDouble(datacenterElement.getElementsByTagName("batteryCapacity").item(0).getTextContent()));
-
+			datacenter.setTasksGeneration(Boolean
+					.parseBoolean(datacenterElement.getElementsByTagName("generateTasks").item(0).getTextContent()));
 			// Generate random location for edge devices
 			datacenterLocation = new Location(new Random().nextInt(simulationParameters.AREA_LENGTH),
 					new Random().nextInt(simulationParameters.AREA_LENGTH));
@@ -197,9 +197,6 @@ public class ServersManager {
 		}
 
 		datacenter.setType(type);
-		if (type == TYPES.EDGE_DEVICE)
-			datacenter.setTasksGeneration(Boolean
-					.parseBoolean(datacenterElement.getElementsByTagName("generateTasks").item(0).getTextContent()));
 
 		Constructor<?> mobilityConstructor = mobilityManager.getConstructor(Location.class);
 		datacenter.setMobilityManager(mobilityConstructor.newInstance(datacenterLocation));

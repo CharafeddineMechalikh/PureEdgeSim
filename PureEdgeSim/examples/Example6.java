@@ -3,6 +3,9 @@ package examples;
 import com.mechalikh.pureedgesim.MainApplication;
 
 public class Example6 extends MainApplication {
+
+	/** you must read this to understand **/
+
 	/**
 	 * This is a simple example showing how to launch simulation using a custom
 	 * network model. The CustomNetworkModel.java is located under the
@@ -18,17 +21,26 @@ public class Example6 extends MainApplication {
 	 */
 
 	/**
-	 * Before running this example you need to 1/ enable the registry in the
-	 * simualtion parameters file and set enable_registry=false registry_mode=CACHE
+	 * Before running this example you need to
 	 * 
-	 * 2/ enable orchestrators in the simualtion parameters file and set
+	 * 1/ enable the registry in the simulation parameters file by setting
+	 * enable_registry=true registry_mode=CACHE
+	 * 
+	 * 2/ enable orchestrators in the simulation parameters file by setting
 	 * enable_orchestrators=true deploy_orchestrator=CLUSTER
 	 * 
-	 * you can than compare between registry_mode=CLOUD in which the containers are
+	 * you can then compare between registry_mode=CLOUD in which the containers are
 	 * downloaded from the cloud everytime and registry_mode=CACHE in which the
 	 * frequently needed containers are cached in edge devices. Same for
 	 * deploy_orchestrator=CLUSTER and deploy_orchestrator=CLOUD. where the
 	 * orchestrators are deployed on the cluster heads or on the cloud
+	 * 
+	 * Try to use the MIST_ONLY architecture, in order to see clearly the difference
+	 * in WAN usage (no tasks offloading to the cloud, so the wan will only be used
+	 * by containers). To see the effect, try with 60 minutes simulation time.
+	 * 
+	 * You will see that the cooperative caching algorithm decreases the WAN usage
+	 * remarkably.
 	 */
 
 	public Example6(int fromIteration, int step_) {
@@ -39,9 +51,9 @@ public class Example6 extends MainApplication {
 		/*
 		 * Before implementing the cooperative caching algorithm (which will require a
 		 * custom network model) we need to implement a clustering algorithm in order to
-		 * group edge devices in clusters. The clustering algorithm is implemented in the
-		 * CustomEdgeDevice.java. We extended the DefaultEdgeDataCenter class in this
-		 * case.To use it we need to execute the following line.
+		 * group edge devices in clusters. The clustering algorithm is implemented in
+		 * the CustomEdgeDevice.java. We extended the DefaultEdgeDataCenter class in
+		 * this case.To use it we need to execute the following line.
 		 */
 
 		setCustomEdgeDataCenters(CustomEdgeDevice.class);

@@ -17,7 +17,6 @@ public class DefaultTasksGenerator extends TasksGenerator {
 		double simulationTime = (simulationParameters.SIMULATION_TIME - simulationParameters.INITIALIZATION_TIME) / 60;
 		for (int dev = 0; dev < datacentersList.size(); dev++) { // for each device
 			if (datacentersList.get(dev).isGeneratingTasks()) {
-
 				int app = new Random().nextInt(simulationParameters.APPS_COUNT); // pickup a random application type for
 																					// every device
 				datacentersList.get(dev).setApplication(app); // assign this application to that device

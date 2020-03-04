@@ -19,7 +19,7 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 	private CustomEdgeDevice parent;
 	private CustomEdgeDevice Orchestrator;
 	private double originalWeight = 0;
-	private double weightDrop = 0.7; 
+	private double weightDrop = 0.7;
 	private int time = 0;
 	public List<Task> cache = new ArrayList<Task>();
 	public List<CustomEdgeDevice> cluster;
@@ -63,7 +63,6 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 	}
 
 	public double getOriginalWeight() {
-
 		int neighbors = 0;
 		double distance = 0;
 		double avg_distance = 0;
@@ -71,7 +70,6 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 			if (simulationManager.getServersManager().getDatacenterList().get(i)
 					.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
 				distance = getDistance(this, simulationManager.getServersManager().getDatacenterList().get(i));
-
 				if (distance < simulationParameters.EDGE_DEVICES_RANGE) {
 					// neighbor
 					neighbors++;
@@ -79,35 +77,30 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 				}
 			}
 		}
-		double battery = 0;
+		double battery = 2;
 		double mobility = 1;
-		if (this.getMobilityManager().isMobile())
+		if (getMobilityManager().isMobile())
 			mobility = 0;
-		if (!getEnergyModel().isBattery())
-			battery = 1;
-		else
+		if (getEnergyModel().isBattery())
 			battery = getEnergyModel().getBatteryLevel() / 100;
-		double mips=0;
-		if (this.getVmList().size() > 0)
-			mips = this.getVmList().get(0).getMips();
-		else
-			mips = 0;
+		double mips = 0;
+		if (getVmList().size() > 0)
+			mips = getVmList().get(0).getMips();
 		if (neighbors > 0)
-			avg_distance = avg_distance / neighbors;
-		else
-			avg_distance = 0;
-		avg_distance = avg_distance / simulationParameters.EDGE_DEVICES_RANGE;
+			avg_distance = avg_distance / neighbors / simulationParameters.EDGE_DEVICES_RANGE;
 
-		double weight = (battery * mips / 200000 * 0.5 / neighbors) + (neighbors * 0.2) + (mobility * 0.3);
+		// mips is divided by 200000 to normalize it, it is out of the parenthesis so
+		// the weight becomes 0 when mips = 0
+		return weight = mips / 200000 * ((battery * 0.5 / neighbors) + (neighbors * 0.2) + (mobility * 0.3));
 
-		if (mips == 0)
-			weight = 0;
-		return weight;
 	}
 
 	private double getDistance(CustomEdgeDevice device1, DataCenter device2) {
-		return Math.abs(Math.sqrt(Math.pow((device1.getMobilityManager().getCurrentLocation().getXPos() - device2.getMobilityManager().getCurrentLocation().getXPos()), 2)
-				+ Math.pow((device1.getMobilityManager().getCurrentLocation().getYPos() - device2.getMobilityManager().getCurrentLocation().getYPos()), 2)));
+		return Math.abs(Math.sqrt(Math
+				.pow((device1.getMobilityManager().getCurrentLocation().getXPos()
+						- device2.getMobilityManager().getCurrentLocation().getXPos()), 2)
+				+ Math.pow((device1.getMobilityManager().getCurrentLocation().getYPos()
+						- device2.getMobilityManager().getCurrentLocation().getYPos()), 2)));
 	}
 
 	private double getOrchestratorWeight() {
@@ -121,19 +114,16 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 	}
 
 	public void setOrchestrator(CustomEdgeDevice edgeDataCenter) {
-
 		if (this == edgeDataCenter) {
-
 			if (this.Orchestrator != null)
 				this.Orchestrator.cluster.remove(this);
 			this.Orchestrator = this;
 			this.isOrchestrator = true;
-			this.setParent(null);
+			this.parent = null;
 			if (!this.cluster.contains(this))
 				this.cluster.add(this);
 			if (!simulationManager.getServersManager().getOrchestratorsList().contains(this))
 				simulationManager.getServersManager().getOrchestratorsList().add(this);
-
 		}
 
 		else {
@@ -147,8 +137,7 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 			if (Orchestrator != null)
 				this.Orchestrator.cluster.remove(this);
 			simulationManager.getServersManager().getOrchestratorsList().remove(this);
-
-			this.setParent(edgeDataCenter);
+			this.parent = edgeDataCenter;
 			this.Orchestrator = edgeDataCenter;
 			this.isOrchestrator = false;
 			if (!edgeDataCenter.cluster.contains(this))
@@ -159,7 +148,7 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 
 			edgeDataCenter.Orchestrator = edgeDataCenter;
 			edgeDataCenter.isOrchestrator = true;
-			edgeDataCenter.setParent(null);
+			edgeDataCenter.parent = null;
 			if (!simulationManager.getServersManager().getOrchestratorsList().contains(edgeDataCenter))
 				simulationManager.getServersManager().getOrchestratorsList().add(edgeDataCenter);
 		}
@@ -167,43 +156,31 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 	}
 
 	private void cluster() {
-
 		originalWeight = getOriginalWeight();
-
-		if (this.getOrchestratorWeight() < originalWeight) {
-			// System.err.println(this.getOrchestratorWeight()+" < "+originalWeight);
+		if ((this.getOrchestratorWeight() < originalWeight) || ((this.parent != null)
+				&& (getDistance(this, this.parent) > simulationParameters.EDGE_DEVICES_RANGE))) {
 			setOrchestrator(this);
 			this.weight = originalWeight;
 		}
 
-		double distance = 0;
-		if (this.getParent() != null) {
-			distance = getDistance(this, this.getParent());
-			if (distance > simulationParameters.EDGE_DEVICES_RANGE) {
-				setOrchestrator(this);
-				this.weight = originalWeight;
-			}
-
-		}
-
 		for (int i = 2; i < simulationManager.getServersManager().getDatacenterList().size(); i++) {
 			if (simulationManager.getServersManager().getDatacenterList().get(i)
-					.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
-				distance = getDistance(this, simulationManager.getServersManager().getDatacenterList().get(i));
-				if (distance <= simulationParameters.EDGE_DEVICES_RANGE
-						// neighbors
-						&& this.weight < ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList()
-								.get(i)).weight) {
-					setOrchestrator((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i)
-							.getOrchestrator());
-					this.setParent((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i));
-					this.weight = ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList()
-							.get(i)).weight
-							* ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i)
-									.getOrchestrator()).weightDrop;
-				}
+					.getType() == simulationParameters.TYPES.EDGE_DEVICE
+					&& getDistance(this, simulationManager.getServersManager().getDatacenterList()
+							.get(i)) <= simulationParameters.EDGE_DEVICES_RANGE
+					// neighbors
+					&& (this.weight < ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList()
+							.get(i)).weight)) {
 
+				setOrchestrator((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i)
+						.getOrchestrator());
+				this.parent = (CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i);
+				this.weight = ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList()
+						.get(i)).weight
+						* ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i)
+								.getOrchestrator()).weightDrop;
 			}
+
 		}
 
 	}
@@ -216,14 +193,6 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 
 	public Vm getVM() {
 		return this.getVmList().get(0);
-	}
-
-	public boolean hasContainer2(double appId) {
-		for (int i = 0; i < cache.size(); i++) {
-			if (cache.get(i).getApplicationID() == appId)
-				return true;
-		}
-		return false;
 	}
 
 	public boolean hasContainer(double appId) {
@@ -340,7 +309,8 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 			}
 		}
 		if (app != -1) {
-			this.getResources().setAvailableMemory(this.getResources().getAvailableMemory() + cache.get(app).getContainerSize());
+			this.getResources()
+					.setAvailableMemory(this.getResources().getAvailableMemory() + cache.get(app).getContainerSize());
 			CustomEdgeDevice orch;
 			if (isOrchestrator)
 				orch = this;
@@ -359,11 +329,4 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 		}
 	}
 
-	public CustomEdgeDevice getParent() {
-		return parent;
-	}
-
-	public void setParent(CustomEdgeDevice parent) {
-		this.parent = parent;
-	}
 }

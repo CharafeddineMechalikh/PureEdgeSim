@@ -22,7 +22,6 @@ public class ChartsGenerator {
 
 	private List<String[]> records = new ArrayList<>();
 	private String fileName;
-	private XYChart chart;
 
 	public ChartsGenerator(String fileName) {
 		this.fileName = fileName;
@@ -67,11 +66,10 @@ public class ChartsGenerator {
 	}
 
 	private void byAlgorithms(String x_series, String y_series, String y_series_label, String folder) {
+		XYChart chart;
 		for (int orch = 0; orch < simulationParameters.ORCHESTRATION_ARCHITECTURES.length; orch++) {
-			chart = new XYChartBuilder().height(400).width(600).theme(ChartTheme.Matlab).xAxisTitle(x_series)
-					.yAxisTitle(y_series_label).build();
-			chart.setTitle(y_series + " (" + simulationParameters.ORCHESTRATION_ARCHITECTURES[orch] + ")");
-			chart.getStyler().setLegendVisible(true);
+			chart = initChart(x_series, y_series, y_series_label,
+					simulationParameters.ORCHESTRATION_ARCHITECTURES[orch]);
 			for (int alg = 0; alg < simulationParameters.ORCHESTRATION_AlGORITHMS.length; alg++) {
 				double[] xData = toArray(getColumn(x_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
 						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]));
@@ -82,17 +80,15 @@ public class ChartsGenerator {
 				series.setLineStyle(new BasicStroke());
 			}
 			// Save the chart
-			saveBitmap("Algorithms" + folder + "/",
+			saveBitmap(chart, "Algorithms" + folder + "/",
 					y_series + "__" + simulationParameters.ORCHESTRATION_ARCHITECTURES[orch]);
 		}
 	}
 
 	public void byArchitectures(String x_series, String y_series, String y_series_label, String folder) {
+		XYChart chart;
 		for (int alg = 0; alg < simulationParameters.ORCHESTRATION_AlGORITHMS.length; alg++) {
-			chart = new XYChartBuilder().height(400).width(600).theme(ChartTheme.Matlab).xAxisTitle(x_series)
-					.yAxisTitle(y_series_label).build();
-			chart.setTitle(y_series + " (" + simulationParameters.ORCHESTRATION_AlGORITHMS[alg] + ")");
-			chart.getStyler().setLegendVisible(true);
+			chart = initChart(x_series, y_series, y_series_label, simulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
 			for (int orch = 0; orch < simulationParameters.ORCHESTRATION_ARCHITECTURES.length; orch++) {
 				double[] xData = toArray(getColumn(x_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
 						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]));
@@ -103,12 +99,20 @@ public class ChartsGenerator {
 				series.setLineStyle(new BasicStroke());
 			}
 			// Save the chart
-			saveBitmap("Architectures" + folder + "/",
+			saveBitmap(chart, "Architectures" + folder + "/",
 					y_series + "__" + simulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
 		}
 	}
 
-	private void saveBitmap(String folder, String name) {
+	private XYChart initChart(String x_series, String y_series, String y_series_label, String title) {
+		XYChart chart = new XYChartBuilder().height(400).width(600).theme(ChartTheme.Matlab).xAxisTitle(x_series)
+				.yAxisTitle(y_series_label).build();
+		chart.setTitle(y_series + " (" + title + ")");
+		chart.getStyler().setLegendVisible(true);
+		return chart;
+	}
+
+	private void saveBitmap(XYChart chart, String folder, String name) {
 		try {
 			File file = new File(new File(fileName).getParent() + "/Final results/" + folder);
 			file.mkdirs();
@@ -142,7 +146,7 @@ public class ChartsGenerator {
 		generateTasksCharts();
 		generateNetworkCharts();
 		generateCpuCharts();
-		generateEnergyCharts(); 
+		generateEnergyCharts();
 	}
 
 	private void generateEnergyCharts() {
@@ -170,7 +174,8 @@ public class ChartsGenerator {
 		displayChart("Edge devices count", "Average VM CPU usage (%)", "CPU utilization (%)", "/CPU Utilization");
 		displayChart("Edge devices count", "Average VM CPU usage (Cloud) (%)", "CPU utilization (%)",
 				"/CPU Utilization");
-		displayChart("Edge devices count", "Average VM CPU usage (Edge) (%)", "CPU utilization (%)", "/CPU Utilization");
+		displayChart("Edge devices count", "Average VM CPU usage (Edge) (%)", "CPU utilization (%)",
+				"/CPU Utilization");
 		displayChart("Edge devices count", "Average VM CPU usage (Mist) (%)", "CPU utilization (%)",
 				"/CPU Utilization");
 	}

@@ -20,7 +20,7 @@ public class DefaultMobilityModel extends Mobility {
 
 	@Override
 	public Location getNextLocation() {
-		if (simulationParameters.SPEED <= 0)
+		if (simulationParameters.SPEED <= 0 || !isMobile)
 			return currentLocation; // The speed must be > 0 in order to move/change the location
 
 		double X_position = currentLocation.getXPos(); // Get the initial X coordinate assigned to this device
@@ -44,9 +44,8 @@ public class DefaultMobilityModel extends Mobility {
 		}
 
 		// update the currentLocation of this device
-		currentLocation = updateLocation(X_position, Y_position);
+		return currentLocation = updateLocation(X_position, Y_position);
 
-		return currentLocation;
 	}
 
 	private Location updateLocation(double X_position, double Y_position) {
