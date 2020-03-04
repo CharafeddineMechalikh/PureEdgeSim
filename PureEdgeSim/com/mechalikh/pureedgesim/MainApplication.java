@@ -35,7 +35,7 @@ public class MainApplication extends MainApplicationAbstract{
 		// Check files
 		FilesParser fp = new FilesParser();
 		if (!fp.checkFiles(simConfigfile, edgeDevicesFile, edgeDataCentersFile, applicationsFile, cloudFile))
-			Runtime.getRuntime().exit(0); // if files aren't correct stop everything.
+			return; // if files aren't correct stop everything.
 
 		// Disable cloudsim plus log
 		if (!simulationParameters.DEEP_LOGGING)

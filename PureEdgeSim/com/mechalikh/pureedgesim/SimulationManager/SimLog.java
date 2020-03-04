@@ -98,7 +98,7 @@ public class SimLog {
 	public void showIterationResults(List<Task> finishedTasks) {
 		printTasksRelatedResults();
 		printNetworkRelatedResults();
-		printResourcesUtilizationResults(finishedTasks);
+		printResourcesUsageResults(finishedTasks);
 		StringBuilder s = new StringBuilder("\n");
 		for (String value : log) {
 			s.append(value).append("\n");
@@ -192,7 +192,7 @@ public class SimLog {
 						+ (totalBandwidth / transfersCount) + ",");
 	}
 
-	public void printResourcesUtilizationResults(List<Task> finishedTasks) {
+	public void printResourcesUsageResults(List<Task> finishedTasks) {
 		int edgeDevicesCount = 0;
 		double averageCpuUtilization = 0;
 		double averageCloudCpuUtilization = 0;

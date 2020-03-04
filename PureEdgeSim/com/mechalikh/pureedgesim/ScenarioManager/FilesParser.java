@@ -74,7 +74,7 @@ public class FilesParser {
 			if (simulationParameters.MIN_NUM_OF_EDGE_DEVICES > simulationParameters.MAX_NUM_OF_EDGE_DEVICES) {
 				SimLog.println(
 						"FilelParser, Error,  the entered min number of edge devices is superior than the max number, check the 'simulation.properties' file.");
-				System.exit(0);
+				return false;
 			}
 			simulationParameters.EDGE_DEVICE_COUNTER_STEP = Integer
 					.parseInt(prop.getProperty("edge_device_counter_size").trim());
