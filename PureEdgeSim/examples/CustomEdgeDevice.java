@@ -163,6 +163,11 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 			this.weight = originalWeight;
 		}
 
+		compareWeightWithNeighbors();
+
+	}
+
+	private void compareWeightWithNeighbors() {
 		for (int i = 2; i < simulationManager.getServersManager().getDatacenterList().size(); i++) {
 			if (simulationManager.getServersManager().getDatacenterList().get(i)
 					.getType() == simulationParameters.TYPES.EDGE_DEVICE
@@ -182,7 +187,6 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 			}
 
 		}
-
 	}
 
 	public CustomEdgeDevice getOrchestrator() {
@@ -300,17 +304,10 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 	}
 
 	public void deleteMinAapp() {
-		double mincost = -1;
-		int app = -1;
-		for (int i = 0; i < cache.size(); i++) {
-			if (getCost(cache.get(i)) < mincost || mincost == -1) {
-				mincost = getCost(cache.get(i));
-				app = i;
-			}
-		}
+		int app = getAppWithMinCost();
 		if (app != -1) {
 			this.getResources()
-					.setAvailableMemory(this.getResources().getAvailableMemory() + cache.get(app).getContainerSize());
+					.setAvailableMemory(this.getResources().getAvailableStorage() + cache.get(app).getContainerSize());
 			CustomEdgeDevice orch;
 			if (isOrchestrator)
 				orch = this;
@@ -319,6 +316,18 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 			removeFromRemote(orch, cache.get(app));
 			cache.remove(app);
 		}
+	}
+
+	private int getAppWithMinCost() {
+		double minCost = -1;
+		int app = -1;
+		for (int i = 0; i < cache.size(); i++) {
+			if (getCost(cache.get(i)) < minCost || minCost == -1) {
+				minCost = getCost(cache.get(i));
+				app = i;
+			}
+		}
+		return app;
 	}
 
 	private void removeFromRemote(CustomEdgeDevice orch, Task task) {

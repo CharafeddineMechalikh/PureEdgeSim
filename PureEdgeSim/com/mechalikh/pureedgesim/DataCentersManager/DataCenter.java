@@ -32,13 +32,13 @@ public abstract class DataCenter extends DatacenterSimple {
 		super(simulationManager.getSimulation(), hostList, new VmAllocationPolicySimple());
 		this.simulationManager = simulationManager;
 		vmTaskMap = new ArrayList<>();
-		long memory = 0;
+		long storage = 0;
 		long ram = 0;
 		for (Host host : hostList) {
-			memory += host.getStorage().getAvailableResource();
+			storage += host.getStorage().getAvailableResource();
 			ram += host.getRam().getCapacity();
 		}
-		this.resources = new Resources(ram, memory);
+		this.resources = new Resources(ram, storage);
 	}
 
 	protected abstract void updateCpuUtilization();

@@ -9,8 +9,8 @@ public class Resources {
 	private double currentCpuUtilization = 0;
 	private boolean isIdle = true;
 
-	public Resources(long ram, long memory) {
-		setStorageMemory(memory);
+	public Resources(long ram, long storage) {
+		setStorageMemory(storage);
 		setRamMemory(ram);
 	}
 
@@ -31,7 +31,7 @@ public class Resources {
 		this.ramMemory = ram;
 	}
 
-	public long getAvailableMemory() {
+	public long getAvailableStorage() {
 		return availableStorageMemory;
 	}
 

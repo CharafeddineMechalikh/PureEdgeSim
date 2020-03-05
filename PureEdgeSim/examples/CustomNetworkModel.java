@@ -57,27 +57,30 @@ public class CustomNetworkModel extends DefaultNetworkModel {
 	private void keepReplica(Task task) {
 		// Check if there are enough replicas before keeping a new one
 		CustomEdgeDevice edgeDevice = (CustomEdgeDevice) task.getEdgeDevice();
-		if (simulationParameters.registry_mode.equals("CACHE") && ((CustomEdgeDevice) edgeDevice.getOrchestrator())
-				.countContainer(task.getApplicationID()) < MAX_NUMBER_OF_REPLICAS) {
-			if (edgeDevice.getResources().getAvailableMemory() > task.getContainerSize()) {
+		if (canKeepReplica(edgeDevice, task)) {
+			if (edgeDevice.getResources().getAvailableStorage() > task.getContainerSize()) {
 				saveImage(edgeDevice, task);
 			} else {
 				// while the storage is not enough
 				freeStorage(edgeDevice, task);
 			}
 			// if the memory is enough
-			if (edgeDevice.getResources().getAvailableMemory() > task.getContainerSize()) {
+			if (edgeDevice.getResources().getAvailableStorage() > task.getContainerSize()) {
 				saveImage(edgeDevice, task);
 			}
 		}
 	}
 
-	private void freeStorage(CustomEdgeDevice edgeDevice, Task task) {
-		// while the storage is not enough
-		while (edgeDevice.getResources().getAvailableMemory() < task.getContainerSize()
-				&& edgeDevice.getResources().getStorageMemory() > task.getContainerSize()) {
+	private boolean canKeepReplica(CustomEdgeDevice edgeDevice, Task task) {
+		return (simulationParameters.registry_mode.equals("CACHE")&& ((CustomEdgeDevice) edgeDevice.getOrchestrator())
+				.countContainer(task.getApplicationID()) < MAX_NUMBER_OF_REPLICAS);
+	}
 
-			double min = edgeDevice.getMinContainerCost();
+	private void freeStorage(CustomEdgeDevice edgeDevice, Task task) {
+		// while the available storage is not enough
+		double min = 0;
+		while (storageIsEnough(edgeDevice,task)) {
+			min = edgeDevice.getMinContainerCost();
 			if (edgeDevice.getCost(task) < min || min == -1) {
 				// delete the app with the highest cost
 				edgeDevice.deleteMinAapp();
@@ -87,9 +90,14 @@ public class CustomNetworkModel extends DefaultNetworkModel {
 		}
 	}
 
+	private boolean storageIsEnough(CustomEdgeDevice edgeDevice, Task task) { 
+		return (edgeDevice.getResources().getAvailableStorage() < task.getContainerSize()
+				&& edgeDevice.getResources().getStorageMemory() > task.getContainerSize());
+	}
+
 	private void saveImage(CustomEdgeDevice edgeDevice, Task task) {
 		edgeDevice.getResources()
-				.setAvailableMemory(edgeDevice.getResources().getAvailableMemory() - task.getContainerSize());
+				.setAvailableMemory(edgeDevice.getResources().getAvailableStorage() - task.getContainerSize());
 		edgeDevice.cache.add(task);
 		double[] array = new double[2];
 		array[0] = task.getApplicationID();

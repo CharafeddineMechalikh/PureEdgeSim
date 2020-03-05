@@ -29,33 +29,20 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 
 	private int increseLifetime(String[] architecture, Task task) {
 		int vm = -1;
-		double minTasksCount = -1; // vm with minimum assigned tasks;
+		double minTasksCount = 0; // vm with minimum assigned tasks;
 		double vmMips = 0;
-		double weight = 0;
+		double weight;
 		double minWeight = 20;
 		// get best vm for this task
 		for (int i = 0; i < orchestrationHistory.size(); i++) {
 			if (offloadingIsPossible(task, vmList.get(i), architecture)) {
-				weight = 1;
-				if (((DataCenter) vmList.get(i).getHost().getDatacenter()).getEnergyModel().isBattery()) {
-					if (task.getEdgeDevice().getEnergyModel()
-							.getBatteryLevel() > ((DataCenter) vmList.get(i).getHost().getDatacenter()).getEnergyModel()
-									.getBatteryLevel())
-						weight = 20; // the destination device has lower remaining power than the task offloading
-										// device,in this case it is better not to offload
-										// that's why the weight is high (20)
-					else
-						weight = 15; // in this case the destination has higher remaining power, so it is okey to
-										// offload tasks for it, if the cloud and the edge data centers are absent.
-				} else
-					weight = 1; // if it is not battery powered
-
-				if (minTasksCount == 0)
-					minTasksCount = 1;// avoid devision by 0
+				weight = getWeight(task, ((DataCenter) vmList.get(i).getHost().getDatacenter()));
 
 				if (minTasksCount == -1) { // if it is the first iteration
 					minTasksCount = orchestrationHistory.get(i).size()
-							- vmList.get(i).getCloudletScheduler().getCloudletFinishedList().size() + 1;
+							- vmList.get(i).getCloudletScheduler().getCloudletFinishedList().size() + 1; // avoid
+																											// devision
+																											// by 0
 					// if this is the first time, set the first vm as the
 					vm = i; // best one
 					vmMips = vmList.get(i).getMips();
@@ -75,6 +62,20 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 		}
 		// assign the tasks to the vm found
 		return vm;
+	}
+
+	private double getWeight(Task task, DataCenter dataCenter) {
+		double weight = 1;// if it is not battery powered
+		if (dataCenter.getEnergyModel().isBattery()) {
+			if (task.getEdgeDevice().getEnergyModel().getBatteryLevel() > dataCenter.getEnergyModel().getBatteryLevel())
+				weight = 20; // the destination device has lower remaining power than the task offloading
+								// device, in this case it is better not to offload
+								// that's why the weight is high (20)
+			else
+				weight = 15; // in this case the destination has higher remaining power, so it is okey to
+								// offload tasks for it, if the cloud and the edge data centers are absent.
+		}
+		return weight;
 	}
 
 	@Override

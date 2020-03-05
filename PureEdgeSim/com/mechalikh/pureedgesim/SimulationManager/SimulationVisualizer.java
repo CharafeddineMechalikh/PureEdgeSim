@@ -132,7 +132,6 @@ public class SimulationVisualizer {
 				Color.BLACK);
 		updateSeries(cpuUtilizationChart, "Edge", toArray(currentTime), toArray(edgeUsage), SeriesMarkers.NONE,
 				Color.BLACK);
-
 	}
 
 	void networkUtilizationChart() {

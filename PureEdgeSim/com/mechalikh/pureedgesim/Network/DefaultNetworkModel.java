@@ -2,7 +2,7 @@ package com.mechalikh.pureedgesim.Network;
 
 import java.util.List;
 import org.cloudbus.cloudsim.core.events.SimEvent;
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter; 
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.DefaultEnergyModel;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
@@ -87,22 +87,24 @@ public class DefaultNetworkModel extends NetworkModel {
 	protected void updateTasksProgress() {
 		// Ignore finished transfers, so we will start looping from the first index of
 		// the remaining transfers
+		int remainingTransfersCount_Lan;
+		int remainingTransfersCount_Wan;
 		for (int i = 0; i < transferProgressList.size(); i++) {
-			int remainingTransfersCount_Lan = 0;
-			int remainingTransfersCount_Wan = 0;
 			if (transferProgressList.get(i).getRemainingFileSize() > 0) {
-				for (int j = i; j < transferProgressList.size(); j++) {
-					if (transferProgressList.get(j).getRemainingFileSize() > 0 && j != i) {
-						if (wanIsUsed(transferProgressList.get(j))) {
-							remainingTransfersCount_Wan++;
-							bwUsage += transferProgressList.get(j).getRemainingFileSize();
-						}
-						if (sameLanIsUsed(transferProgressList.get(i).getTask(), transferProgressList.get(j).getTask())) {
-							// Both transfers use same Lan
-							remainingTransfersCount_Lan++;
-						}
+				remainingTransfersCount_Lan = 0;
+				remainingTransfersCount_Wan = 0;
+				for (int j = 0; j < transferProgressList.size(); j++) {
+					if (transferProgressList.get(j).getRemainingFileSize() > 0 && j != i
+							&& wanIsUsed(transferProgressList.get(j))) {
+						remainingTransfersCount_Wan++;
+						bwUsage += transferProgressList.get(j).getRemainingFileSize();
+					} else if (transferProgressList.get(j).getRemainingFileSize() > 0 && j != i && sameLanIsUsed(
+							transferProgressList.get(i).getTask(), transferProgressList.get(j).getTask())) {
+						// Both transfers use same Lan
+						remainingTransfersCount_Lan++;
 					}
 				}
+
 				// allocate bandwidths
 				transferProgressList.get(i).setLanBandwidth(getLanBandwidth(remainingTransfersCount_Lan));
 				transferProgressList.get(i).setWanBandwidth(getWanBandwidth(remainingTransfersCount_Wan));
@@ -145,8 +147,7 @@ public class DefaultNetworkModel extends NetworkModel {
 					((DataCenter) transfer.getTask().getVm().getHost().getDatacenter()), transfer);
 		} else if ("Container".equals(type)) {
 			// update the energy consumption of the registry and the device
-			calculateEnergyConsumption(transfer.getTask().getRegistry(),
-					transfer.getTask().getEdgeDevice(), transfer);
+			calculateEnergyConsumption(transfer.getTask().getRegistry(), transfer.getTask().getEdgeDevice(), transfer);
 		} else if ("Result_Orchestrator".equals(type)) {
 			calculateEnergyConsumption(((DataCenter) transfer.getTask().getVm().getHost().getDatacenter()),
 					transfer.getTask().getOrchestrator(), transfer);
@@ -157,8 +158,7 @@ public class DefaultNetworkModel extends NetworkModel {
 
 	}
 
-	private void calculateEnergyConsumption(DataCenter origin, DataCenter destination,
-			FileTransferProgress transfer) {
+	private void calculateEnergyConsumption(DataCenter origin, DataCenter destination, FileTransferProgress transfer) {
 		if (origin != null) {
 			origin.getEnergyModel().updatewirelessEnergyConsumption(transfer, origin, destination,
 					DefaultEnergyModel.TRANSMISSION);
@@ -186,7 +186,7 @@ public class DefaultNetworkModel extends NetworkModel {
 			updateEnergyConsumption(transfer, "Destination");
 		}
 		// If the container has been downloaded, then execute the task now
-		else if (transfer.getTransferType() == FileTransferProgress.Type.CONTAINER) { 
+		else if (transfer.getTransferType() == FileTransferProgress.Type.CONTAINER) {
 			transfer.getTask().setReceptionTime(simulationManager.getSimulation().clock());
 			containerDownloadFinished(transfer);
 			updateEnergyConsumption(transfer, "Container");
@@ -213,7 +213,8 @@ public class DefaultNetworkModel extends NetworkModel {
 	}
 
 	protected void returnResultToDevice(FileTransferProgress transfer) {
-		// if the results are returned from the cloud, consider the wan propagation delay
+		// if the results are returned from the cloud, consider the wan propagation
+		// delay
 		if (transfer.getTask().getOrchestrator().getType().equals(TYPES.CLOUD)
 				|| ((DataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD))
 			schedule(this, simulationParameters.WAN_PROPAGATION_DELAY, DefaultNetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV,
@@ -226,7 +227,8 @@ public class DefaultNetworkModel extends NetworkModel {
 	protected void executeTaskOrDownloadContainer(FileTransferProgress transfer) {
 		if (simulationParameters.ENABLE_REGISTRY && "CLOUD".equals(simulationParameters.registry_mode)
 				&& !((DataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD)) {
-			// if the registry is enabled and the task is offloaded to the edge data centers or the mist nodes (edge devices),
+			// if the registry is enabled and the task is offloaded to the edge data centers
+			// or the mist nodes (edge devices),
 			// then download the container
 			scheduleNow(this, DefaultNetworkModel.DOWNLOAD_CONTAINER, transfer.getTask());
 

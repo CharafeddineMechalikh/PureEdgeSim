@@ -106,9 +106,8 @@
 
 *   Improved mobility model:  More realistic mobility model.  Added a map/ simulation area (height x width)
 
-*   New simulation parameters for the aforementioned changes.  New simulation parameters in order to control the trade off between simulation accuracy and simulation time, etc.
+*   New simulation parameters for the aforementioned changes. The ability to control the trade off between simulation accuracy and simulation time, etc.
 
 *   Improved simulation time
 
 *   Adding support for physical deployment of the orchestrator:  Deploying the orchestrator on the cloud for example, on fog servers...etc.
-

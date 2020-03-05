@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.BitmapEncoder.BitmapFormat;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.XYSeries;
-import org.knowm.xchart.BitmapEncoder.BitmapFormat;
 import org.knowm.xchart.style.Styler.ChartTheme;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
@@ -22,6 +22,7 @@ public class ChartsGenerator {
 
 	private List<String[]> records = new ArrayList<>();
 	private String fileName;
+	private String folder;
 
 	public ChartsGenerator(String fileName) {
 		this.fileName = fileName;
@@ -61,47 +62,45 @@ public class ChartsGenerator {
 	}
 
 	public void displayChart(String x_series, String y_series, String y_series_label, String folder) {
-		byAlgorithms(x_series, y_series, y_series_label, folder);
-		byArchitectures(x_series, y_series, y_series_label, folder);
+		this.folder = folder;
+		// Create the charts filtered by algorithms (byAlgorithm = true), in order to
+		// compare the orchestration algorithms
+		generateChart(x_series, y_series, y_series_label, true);
+		// Create charts that are filtered by architectures (byAlgorithm = false)
+		generateChart(x_series, y_series, y_series_label, false);
+
+		// byAlgorithms(x_series, y_series, y_series_label, folder);
+		// byArchitectures(x_series, y_series, y_series_label, folder);
+
 	}
 
-	private void byAlgorithms(String x_series, String y_series, String y_series_label, String folder) {
+	public void generateChart(String x_series, String y_series, String y_series_label, boolean byAlgorithms) {
 		XYChart chart;
-		for (int orch = 0; orch < simulationParameters.ORCHESTRATION_ARCHITECTURES.length; orch++) {
-			chart = initChart(x_series, y_series, y_series_label,
-					simulationParameters.ORCHESTRATION_ARCHITECTURES[orch]);
-			for (int alg = 0; alg < simulationParameters.ORCHESTRATION_AlGORITHMS.length; alg++) {
-				double[] xData = toArray(getColumn(x_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
-						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]));
-				double[] yData = toArray(getColumn(y_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
-						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]));
-				XYSeries series = chart.addSeries(simulationParameters.ORCHESTRATION_AlGORITHMS[alg], xData, yData);
-				series.setMarker(SeriesMarkers.CIRCLE); // Marker type:circle,rectangle, diamond..
-				series.setLineStyle(new BasicStroke());
-			}
-			// Save the chart
-			saveBitmap(chart, "Algorithms" + folder + "/",
-					y_series + "__" + simulationParameters.ORCHESTRATION_ARCHITECTURES[orch]);
-		}
-	}
+		for (int i = 0; i < (byAlgorithms ? simulationParameters.ORCHESTRATION_AlGORITHMS.length
+				: simulationParameters.ORCHESTRATION_ARCHITECTURES.length); i++) {
+			chart = initChart(x_series, y_series, y_series_label, getArray(byAlgorithms)[i]);
+			for (int j = 0; j < (byAlgorithms ? simulationParameters.ORCHESTRATION_ARCHITECTURES.length
+					: simulationParameters.ORCHESTRATION_AlGORITHMS.length); j++) {
+				double[] xData = toArray(
+						getColumn(x_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[(byAlgorithms ? j : i)],
+								simulationParameters.ORCHESTRATION_AlGORITHMS[(byAlgorithms ? i : j)]));
+				double[] yData = toArray(
+						getColumn(y_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[(byAlgorithms ? j : i)],
+								simulationParameters.ORCHESTRATION_AlGORITHMS[(byAlgorithms ? i : j)]));
 
-	public void byArchitectures(String x_series, String y_series, String y_series_label, String folder) {
-		XYChart chart;
-		for (int alg = 0; alg < simulationParameters.ORCHESTRATION_AlGORITHMS.length; alg++) {
-			chart = initChart(x_series, y_series, y_series_label, simulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
-			for (int orch = 0; orch < simulationParameters.ORCHESTRATION_ARCHITECTURES.length; orch++) {
-				double[] xData = toArray(getColumn(x_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
-						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]));
-				double[] yData = toArray(getColumn(y_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[orch],
-						simulationParameters.ORCHESTRATION_AlGORITHMS[alg]));
-				XYSeries series = chart.addSeries(simulationParameters.ORCHESTRATION_ARCHITECTURES[orch], xData, yData);
+				XYSeries series = chart.addSeries(getArray(!byAlgorithms)[j], xData, yData);
 				series.setMarker(SeriesMarkers.CIRCLE); // Marker type: circle,rectangle, diamond..
 				series.setLineStyle(new BasicStroke());
 			}
 			// Save the chart
-			saveBitmap(chart, "Architectures" + folder + "/",
-					y_series + "__" + simulationParameters.ORCHESTRATION_AlGORITHMS[alg]);
+			saveBitmap(chart, (byAlgorithms ? "Architectures" : "Algorithms") + folder + "/",
+					y_series + "__" + getArray(byAlgorithms)[i]);
 		}
+	}
+
+	private String[] getArray(boolean byAlgorithms) {
+		return (byAlgorithms ? simulationParameters.ORCHESTRATION_AlGORITHMS
+				: simulationParameters.ORCHESTRATION_ARCHITECTURES);
 	}
 
 	private XYChart initChart(String x_series, String y_series, String y_series_label, String title) {
