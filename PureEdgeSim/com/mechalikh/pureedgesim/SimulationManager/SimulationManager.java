@@ -2,21 +2,20 @@ package com.mechalikh.pureedgesim.SimulationManager;
 
 import java.io.IOException;
 import java.util.List;
+
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.cloudbus.cloudsim.core.CloudSimEntity;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.vms.Vm;
+
 import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker;
-import com.mechalikh.pureedgesim.TasksOrchestration.Orchestrator;
 
-public class SimulationManager extends CloudSimEntity {
+public class SimulationManager extends SimulationManagerAbstract {
 	public static final int Base = 1000; // avoid conflict with CloudSim Plus tags
 	public static final int SEND_TASK_FROM_ORCH_TO_DESTINATION = Base + 8;
 	private static final int PRINT_LOG = Base + 1;
@@ -26,30 +25,13 @@ public class SimulationManager extends CloudSimEntity {
 	public static final int RESULT_RETURN_FINISHED = Base + 5;
 	public static final int SEND_TO_ORCH = Base + 6;
 	public static final int UPDATE_REAL_TIME_CHARTS = Base + 7;
-	private CustomBroker broker;
-	private List<Task> tasksList;
-	private Orchestrator edgeOrchestrator;
-	private ServersManager serversManager;
-	private SimulationVisualizer simulationVisualizer;
-	private CloudSim simulation;
-	private int simulationId;
-	private int iteration;
-	private SimLog simLog;
 	private int lastWrittenNumber = 0;
 	private int oldProgress = -1;
-	private Scenario scenario;
-	private NetworkModel networkModel;
-	private List<? extends DataCenter> orchestratorsList;
 	private double failedTasksCount = 0;
 	private int tasksCount = 0;
 
 	public SimulationManager(SimLog simLog, CloudSim simulation, int simulationId, int iteration, Scenario scenario) {
-		super(simulation);
-		this.simulation = simulation;
-		this.simLog = simLog;
-		this.scenario = scenario;
-		this.simulationId = simulationId;
-		this.iteration = iteration;
+		super(simLog, simulation, simulationId, iteration, scenario);
 
 		// Create Broker
 		broker = createBroker();
@@ -260,7 +242,8 @@ public class SimulationManager extends CloudSimEntity {
 							.pow((task.getEdgeDevice().getMobilityManager().getCurrentLocation().getXPos()
 									- orchestratorsList.get(i).getMobilityManager().getCurrentLocation().getXPos()), 2)
 							+ Math.pow((task.getEdgeDevice().getMobilityManager().getCurrentLocation().getYPos()
-									- orchestratorsList.get(i).getMobilityManager().getCurrentLocation().getYPos()), 2)));
+									- orchestratorsList.get(i).getMobilityManager().getCurrentLocation().getYPos()),
+									2)));
 					if (min == -1 || min > distance) {
 						min = distance;
 						selected = i;
@@ -291,38 +274,10 @@ public class SimulationManager extends CloudSimEntity {
 		return broker;
 	}
 
-	public NetworkModel getNetworkModel() {
-		return this.networkModel;
-	}
-
-	public int getSimulationId() {
-		return this.simulationId;
-	}
-
-	public SimLog getSimulationLogger() {
-		return simLog;
-	}
-
-	public ServersManager getServersManager() {
-		return serversManager;
-	}
-
-	public Scenario getScenario() {
-		return this.scenario;
-	}
-
-	public CustomBroker getBroker() {
-		return this.broker;
-	}
-
 	public double getFailureRate() {
 		double result = (failedTasksCount * 100) / tasksList.size();
 		failedTasksCount = 0;
 		return result;
-	}
-
-	public int getIterationId() {
-		return this.iteration;
 	}
 
 	public boolean taskFailed(Task task, int phase) {
@@ -334,20 +289,20 @@ public class SimulationManager extends CloudSimEntity {
 			return true;
 		} // Set the task as failed if the device is dead
 		if (phase != 0 && task.getEdgeDevice().isDead()) {
-			simLog.incrementFailedBeacauseDeviceDead(task); 
+			simLog.incrementFailedBeacauseDeviceDead(task);
 			task.setFailureReason(Task.Status.FAILED_BECAUSE_DEVICE_DEAD);
 			setFailed(task);
 			return true;
 		}
 		// or if the orchestrator died
-		if (phase == 1 && task.getOrchestrator() != null && task.getOrchestrator().isDead()) { 
+		if (phase == 1 && task.getOrchestrator() != null && task.getOrchestrator().isDead()) {
 			task.setFailureReason(Task.Status.FAILED_BECAUSE_DEVICE_DEAD);
 			simLog.incrementFailedBeacauseDeviceDead(task);
 			setFailed(task);
 			return true;
 		}
 		// or the destination device is dead
-		if (phase == 2 && ((DataCenter) task.getVm().getHost().getDatacenter()).isDead()) { 
+		if (phase == 2 && ((DataCenter) task.getVm().getHost().getDatacenter()).isDead()) {
 			task.setFailureReason(Task.Status.FAILED_BECAUSE_DEVICE_DEAD);
 			simLog.incrementFailedBeacauseDeviceDead(task);
 			setFailed(task);
@@ -372,8 +327,7 @@ public class SimulationManager extends CloudSimEntity {
 			return true;
 		}
 		if (phase == 2 && (task.getVm().getHost().getDatacenter()) != null
-				&& ((DataCenter) task.getVm().getHost().getDatacenter())
-						.getType() != simulationParameters.TYPES.CLOUD
+				&& ((DataCenter) task.getVm().getHost().getDatacenter()).getType() != simulationParameters.TYPES.CLOUD
 				&& !sameLocation(task.getEdgeDevice(), ((DataCenter) task.getVm().getHost().getDatacenter()))) {
 			task.setFailureReason(Task.Status.FAILED_DUE_TO_DEVICE_MOBILITY);
 			simLog.incrementTasksFailedMobility(task);
@@ -392,38 +346,15 @@ public class SimulationManager extends CloudSimEntity {
 	private boolean sameLocation(DataCenter Dev1, DataCenter Dev2) {
 		if (Dev1.getType() == TYPES.CLOUD || Dev2.getType() == TYPES.CLOUD)
 			return true;
-		double distance = Math.abs(Math.sqrt(Math.pow((Dev1.getMobilityManager().getCurrentLocation().getXPos() - Dev2.getMobilityManager().getCurrentLocation().getXPos()), 2)
-				+ Math.pow((Dev1.getMobilityManager().getCurrentLocation().getYPos() - Dev2.getMobilityManager().getCurrentLocation().getYPos()), 2)));
+		double distance = Math.abs(Math.sqrt(Math
+				.pow((Dev1.getMobilityManager().getCurrentLocation().getXPos()
+						- Dev2.getMobilityManager().getCurrentLocation().getXPos()), 2)
+				+ Math.pow((Dev1.getMobilityManager().getCurrentLocation().getYPos()
+						- Dev2.getMobilityManager().getCurrentLocation().getYPos()), 2)));
 		int RANGE = simulationParameters.EDGE_DEVICES_RANGE;
 		if (Dev1.getType() != Dev2.getType()) // One of them is an edge data center and the other is an edge device
 			RANGE = simulationParameters.EDGE_DATACENTERS_RANGE;
 		return (distance < RANGE);
 	}
 
-	public void setServersManager(ServersManager serversManager) {
-		// Get orchestrators list from the server manager
-		orchestratorsList = serversManager.getOrchestratorsList();
-		this.serversManager = serversManager;
-
-		// Submit vm list to the broker
-		simLog.deepLog("SimulationManager- Submitting VM list to the broker");
-		broker.submitVmList(serversManager.getVmList());
-	}
-
-	public void setTasksList(List<Task> tasksList) {
-		this.tasksList = tasksList;
-	}
-
-	public void setOrchestrator(Orchestrator edgeOrchestrator) {
-		this.edgeOrchestrator = edgeOrchestrator;
-
-	}
-
-	public void setNetworkModel(NetworkModel networkModel) {
-		this.networkModel = networkModel;
-	}
-
-	public List<Task> getTasksList() {
-		return tasksList;
-	}
 }

@@ -19,9 +19,7 @@ import org.knowm.xchart.style.Styler.ChartTheme;
 import org.knowm.xchart.style.Styler.LegendPosition;
 import org.knowm.xchart.style.markers.Marker;
 import org.knowm.xchart.style.markers.SeriesMarkers;
-
 import com.mechalikh.pureedgesim.MainApplication;
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
 
@@ -61,10 +59,15 @@ public class SimulationVisualizer {
 			displayCharts();
 			firstTime = false;
 		}
-		mapChart();
+		currentTime.add(simulationManager.getSimulation().clock());
+		// Add edge devices to map and display their CPU utilization
+		edgeDevicesMapAndCpu();
+		// Add edge data centers to the map and display their CPU utilization
+		edgeDataCentersMapAndCpu();
+		// Display cloud CPU utilization
+		cloudCpuUsage();
 		networkUtilizationChart();
 		tasksSucessRateChart();
-		cpuUtilizationChart();
 		displayCharts();
 	}
 
@@ -85,13 +88,6 @@ public class SimulationVisualizer {
 				simulationParameters.WAN_BANDWIDTH / 1000.0 });
 	}
 
-	void mapChart() {
-		// Add edge devices to map
-		addEdgeDevicesToMap();
-		// Add edge data centers to the map
-		addEdgeDataCentersToMap();
-	}
-
 	private void tasksSucessRateChart() {
 		if (((int) simulationManager.getSimulation().clockInMinutes()) != clock) {
 			clock = (int) simulationManager.getSimulation().clockInMinutes();
@@ -105,32 +101,19 @@ public class SimulationVisualizer {
 		}
 	}
 
-	void cpuUtilizationChart() {
+	void cloudCpuUsage() {
 		double clUsage = 0;
-		double msUsage = 0;
-		double edUsage = 0;
-		List<? extends DataCenter> datacenterList = simulationManager.getServersManager().getDatacenterList();
-		for (DataCenter edgeDataCenter : datacenterList) {
-			if (edgeDataCenter.getType() == TYPES.CLOUD) {
-				clUsage = edgeDataCenter.getResources().getAvgCpuUtilization();
+		for (int i = 0; i < simulationParameters.NUM_OF_CLOUD_DATACENTERS; i++) {
+			if (simulationManager.getServersManager().getDatacenterList().get(i).getType() == TYPES.CLOUD) {
+				clUsage = simulationManager.getServersManager().getDatacenterList().get(i).getResources()
+						.getAvgCpuUtilization();
 
-			} else if (edgeDataCenter.getType() == TYPES.EDGE_DEVICE && edgeDataCenter.getVmList().size() > 0) {
-				msUsage += edgeDataCenter.getResources().getAvgCpuUtilization();
-
-			} else if (edgeDataCenter.getType() == TYPES.EDGE_DATACENTER) {
-				edUsage += edgeDataCenter.getResources().getAvgCpuUtilization();
 			}
 		}
 		cloudUsage.add(clUsage / simulationParameters.NUM_OF_CLOUD_DATACENTERS);
-		mistUsage.add(msUsage / simulationManager.getScenario().getDevicesCount());
-		edgeUsage.add(edUsage / simulationParameters.NUM_OF_EDGE_DATACENTERS);
-		currentTime.add(simulationManager.getSimulation().clock());
+		
 
 		updateSeries(cpuUtilizationChart, "Cloud", toArray(currentTime), toArray(cloudUsage), SeriesMarkers.NONE,
-				Color.BLACK);
-		updateSeries(cpuUtilizationChart, "Mist", toArray(currentTime), toArray(mistUsage), SeriesMarkers.NONE,
-				Color.BLACK);
-		updateSeries(cpuUtilizationChart, "Edge", toArray(currentTime), toArray(edgeUsage), SeriesMarkers.NONE,
 				Color.BLACK);
 	}
 
@@ -152,7 +135,8 @@ public class SimulationVisualizer {
 		updateSeries(networkUtilizationChart, "WAN", time, toArray(wanUsage), SeriesMarkers.NONE, Color.BLACK);
 	}
 
-	private void addEdgeDevicesToMap() {
+	private void edgeDevicesMapAndCpu() {
+		double msUsage = 0;
 		// Initialize the X and Y series that will be used to draw the map
 		// Dead devices series
 		List<Double> x_deadEdgeDevicesList = new ArrayList<>();
@@ -186,6 +170,8 @@ public class SimulationVisualizer {
 							.getMobilityManager().getCurrentLocation().getYPos());
 
 				} else { // If the device is busy
+					msUsage += simulationManager.getServersManager().getDatacenterList().get(i).getResources()
+							.getAvgCpuUtilization();
 					x_activeEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
 							.getMobilityManager().getCurrentLocation().getXPos());
 					y_activeEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
@@ -193,6 +179,10 @@ public class SimulationVisualizer {
 				}
 			}
 		}
+
+		mistUsage.add(msUsage / simulationManager.getScenario().getDevicesCount());
+		updateSeries(cpuUtilizationChart, "Mist", toArray(currentTime), toArray(mistUsage), SeriesMarkers.NONE,
+				Color.BLACK);
 		updateSeries(mapChart, "Idle devices", toArray(x_idleEdgeDevicesList), toArray(y_idleEdgeDevicesList),
 				SeriesMarkers.CIRCLE, Color.blue);
 
@@ -201,9 +191,12 @@ public class SimulationVisualizer {
 
 		updateSeries(mapChart, "Dead devices", toArray(x_deadEdgeDevicesList), toArray(y_deadEdgeDevicesList),
 				SeriesMarkers.CIRCLE, Color.LIGHT_GRAY);
+
 	}
 
-	private void addEdgeDataCentersToMap() {
+	private void edgeDataCentersMapAndCpu() {
+
+		double edUsage = 0;
 		// Only if Edge computing is used
 		if (simulationManager.getScenario().getStringOrchArchitecture().contains("EDGE")
 				|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL")) {
@@ -229,6 +222,9 @@ public class SimulationVisualizer {
 						y_idleEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getMobilityManager().getCurrentLocation().getYPos());
 					} else {
+						edUsage += simulationManager.getServersManager().getDatacenterList().get(j).getResources()
+								.getAvgCpuUtilization();
+
 						x_activeEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getMobilityManager().getCurrentLocation().getXPos());
 						y_activeEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
@@ -237,6 +233,10 @@ public class SimulationVisualizer {
 					}
 				}
 			}
+
+			edgeUsage.add(edUsage / simulationParameters.NUM_OF_EDGE_DATACENTERS);
+			updateSeries(cpuUtilizationChart, "Edge", toArray(currentTime), toArray(edgeUsage), SeriesMarkers.NONE,
+					Color.BLACK);
 
 			updateSeries(mapChart, "Idle Edge data centers", toArray(x_idleEdgeDataCentersList),
 					toArray(y_idleEdgeDataCentersList), SeriesMarkers.CROSS, Color.BLACK);
@@ -254,7 +254,6 @@ public class SimulationVisualizer {
 			simulationResultsFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		} else {
 			simulationResultsFrame.repaint();
-
 		}
 
 		// Display simulation time

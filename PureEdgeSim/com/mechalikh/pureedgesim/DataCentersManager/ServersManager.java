@@ -54,8 +54,8 @@ public class ServersManager {
 	}
 
 	public void generateDatacentersAndDevices() throws Exception {
-		generateCloudDataCenters();
-		generateEdgeDataCenters();
+		generateDataCenters(simulationParameters.CLOUD_DATACENTERS_FILE, simulationParameters.TYPES.CLOUD);
+		generateDataCenters(simulationParameters.EDGE_DATACENTERS_FILE, simulationParameters.TYPES.EDGE_DATACENTER);
 		generateEdgeDevices();
 		// Select where the orchestrators are deployed
 		if (simulationParameters.ENABLE_ORCHESTRATORS)
@@ -91,34 +91,16 @@ public class ServersManager {
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(devicesFile);
 		NodeList edgeDevicesList = doc.getElementsByTagName("device");
-		int instancesPercentage = 0;
 		Element edgeElement = null;
 
-		// Load all devices types in edgedevices.xml file
+		// Load all devices types in edge_devices.xml file
 		for (int i = 0; i < edgeDevicesList.getLength(); i++) {
 			Node edgeNode = edgeDevicesList.item(i);
 			edgeElement = (Element) edgeNode;
-			instancesPercentage = Integer
-					.parseInt(edgeElement.getElementsByTagName("percentage").item(0).getTextContent());
-
-			// Find the number of instances of this type of devices
-			float devicesInstances = getSimulationManager().getScenario().getDevicesCount() * instancesPercentage / 100;
-
-			for (int j = 0; j < devicesInstances; j++) {
-				if (datacentersList.size() > getSimulationManager().getScenario().getDevicesCount()
-						+ simulationParameters.NUM_OF_EDGE_DATACENTERS) {
-					getSimulationManager().getSimulationLogger().print(
-							"ServersManager- Wrong percentages values (the sum is superior than 100%), check edge_devices.xml file !");
-					break;
-				}
-
-				datacentersList.add(createDatacenter(edgeElement, simulationParameters.TYPES.EDGE_DEVICE));
-
-			}
+			generateDevicesInstances(edgeElement);
 		}
-		if (datacentersList.size() < getSimulationManager().getScenario().getDevicesCount()) // if percentage of
-																								// generated devices is
-																								// < 100%
+		// if percentage of generated devices is < 100%
+		if (datacentersList.size() < getSimulationManager().getScenario().getDevicesCount())
 			getSimulationManager().getSimulationLogger().print(
 					"ServersManager- Wrong percentages values (the sum is inferior than 100%), check edge_devices.xml file !");
 		// Add more devices
@@ -129,9 +111,29 @@ public class ServersManager {
 
 	}
 
-	private void generateEdgeDataCenters() throws Exception {
+	private void generateDevicesInstances(Element edgeElement) throws Exception {
+		int instancesPercentage = Integer
+				.parseInt(edgeElement.getElementsByTagName("percentage").item(0).getTextContent());
+
+		// Find the number of instances of this type of devices
+		float devicesInstances = getSimulationManager().getScenario().getDevicesCount() * instancesPercentage / 100;
+
+		for (int j = 0; j < devicesInstances; j++) {
+			if (datacentersList.size() > getSimulationManager().getScenario().getDevicesCount()
+					+ simulationParameters.NUM_OF_EDGE_DATACENTERS) {
+				getSimulationManager().getSimulationLogger().print(
+						"ServersManager- Wrong percentages values (the sum is superior than 100%), check edge_devices.xml file !");
+				break;
+			}
+
+			datacentersList.add(createDatacenter(edgeElement, simulationParameters.TYPES.EDGE_DEVICE));
+
+		}
+	}
+
+	private void generateDataCenters(String file, simulationParameters.TYPES type) throws Exception {
 		// Fill list with edge data centers
-		File serversFile = new File(simulationParameters.EDGE_DATACENTERS_FILE);
+		File serversFile = new File(file);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(serversFile);
@@ -139,21 +141,7 @@ public class ServersManager {
 		for (int i = 0; i < datacenterList.getLength(); i++) {
 			Node datacenterNode = datacenterList.item(i);
 			Element datacenterElement = (Element) datacenterNode;
-			datacentersList.add(createDatacenter(datacenterElement, simulationParameters.TYPES.EDGE_DATACENTER));
-		}
-	}
-
-	private void generateCloudDataCenters() throws Exception {
-		// Fill the list with cloud datacenters
-		File datacentersFile = new File(simulationParameters.CLOUD_DATACENTERS_FILE);
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(datacentersFile);
-		NodeList datacenterList = doc.getElementsByTagName("datacenter");
-		for (int i = 0; i < datacenterList.getLength(); i++) {
-			Node datacenterNode = datacenterList.item(i);
-			Element datacenterElement = (Element) datacenterNode;
-			datacentersList.add(createDatacenter(datacenterElement, simulationParameters.TYPES.CLOUD));
+			datacentersList.add(createDatacenter(datacenterElement, type));
 		}
 	}
 
@@ -217,17 +205,9 @@ public class ServersManager {
 			int numOfCores = Integer.parseInt(hostElement.getElementsByTagName("core").item(0).getTextContent());
 			double mips = Double.parseDouble(hostElement.getElementsByTagName("mips").item(0).getTextContent());
 			long storage = Long.parseLong(hostElement.getElementsByTagName("storage").item(0).getTextContent());
-			long bandwidth;
-			long ram;
-
-			if (type == simulationParameters.TYPES.CLOUD) {
-				bandwidth = simulationParameters.WAN_BANDWIDTH / hostNodeList.getLength();
-				ram = Integer.parseInt(hostElement.getElementsByTagName("ram").item(0).getTextContent());
-			} else {
-				bandwidth = simulationParameters.BANDWIDTH_WLAN / hostNodeList.getLength();
-				ram = Integer.parseInt(hostElement.getElementsByTagName("ram").item(0).getTextContent());
-			}
-
+			long bandwidth = (type == simulationParameters.TYPES.CLOUD ? simulationParameters.WAN_BANDWIDTH
+					: simulationParameters.BANDWIDTH_WLAN) / hostNodeList.getLength();
+			long ram = Integer.parseInt(hostElement.getElementsByTagName("ram").item(0).getTextContent());
 			// A Machine contains one or more PEs or CPUs/Cores. Therefore, should
 			// create a list to store these PEs before creating
 			// a Machine.
@@ -246,38 +226,43 @@ public class ServersManager {
 			// Create Hosts with its id and list of PEs and add them to the list of machines
 			Host host = new HostSimple(ram, bandwidth, storage, peList);
 			host.setRamProvisioner(ramProvisioner).setBwProvisioner(bwProvisioner).setVmScheduler(vmScheduler);
-
-			NodeList vmNodeList = hostElement.getElementsByTagName("VM");
-			for (int k = 0; k < vmNodeList.getLength(); k++) {
-				Node vmNode = vmNodeList.item(k);
-				Element vmElement = (Element) vmNode;
-				// VM Parameters
-				long vmNumOfCores = Long.parseLong(vmElement.getElementsByTagName("core").item(0).getTextContent());
-				double vmMips = Double.parseDouble(vmElement.getElementsByTagName("mips").item(0).getTextContent());
-				long vmStorage = Long.parseLong(vmElement.getElementsByTagName("storage").item(0).getTextContent());
-				long vmBandwidth;
-				int vmRam;
-
-				vmBandwidth = bandwidth / vmNodeList.getLength();
-				vmRam = Integer.parseInt(vmElement.getElementsByTagName("ram").item(0).getTextContent());
-
-				CloudletScheduler tasksScheduler;
-
-				if ("SPACE_SHARED".equals(simulationParameters.CPU_ALLOCATION_POLICY))
-					tasksScheduler = new CloudletSchedulerSpaceShared();
-				else
-					tasksScheduler = new CloudletSchedulerTimeShared();
-
-				Vm vm = new VmSimple(vmList.size(), vmMips, vmNumOfCores);
-				vm.setRam(vmRam).setBw(vmBandwidth).setSize(vmStorage).setCloudletScheduler(tasksScheduler);
-				vm.getUtilizationHistory().enable();
-				vm.setHost(host);
-				vmList.add(vm);
-			}
+            
+			// Load host virtual machines
+			loadVms(host, hostElement, bandwidth);
 			hostList.add(host);
 		}
 
 		return hostList;
+	}
+
+	private void loadVms(Host host, Element hostElement, long bandwidth) {
+		NodeList vmNodeList = hostElement.getElementsByTagName("VM");
+		for (int k = 0; k < vmNodeList.getLength(); k++) {
+			Node vmNode = vmNodeList.item(k);
+			Element vmElement = (Element) vmNode;
+			// VM Parameters
+			long vmNumOfCores = Long.parseLong(vmElement.getElementsByTagName("core").item(0).getTextContent());
+			double vmMips = Double.parseDouble(vmElement.getElementsByTagName("mips").item(0).getTextContent());
+			long vmStorage = Long.parseLong(vmElement.getElementsByTagName("storage").item(0).getTextContent());
+			long vmBandwidth;
+			int vmRam;
+
+			vmBandwidth = bandwidth / vmNodeList.getLength();
+			vmRam = Integer.parseInt(vmElement.getElementsByTagName("ram").item(0).getTextContent());
+
+			CloudletScheduler tasksScheduler;
+
+			if ("SPACE_SHARED".equals(simulationParameters.CPU_ALLOCATION_POLICY))
+				tasksScheduler = new CloudletSchedulerSpaceShared();
+			else
+				tasksScheduler = new CloudletSchedulerTimeShared();
+
+			Vm vm = new VmSimple(vmList.size(), vmMips, vmNumOfCores);
+			vm.setRam(vmRam).setBw(vmBandwidth).setSize(vmStorage).setCloudletScheduler(tasksScheduler);
+			vm.getUtilizationHistory().enable();
+			vm.setHost(host);
+			vmList.add(vm);
+		}
 	}
 
 	public List<Vm> getVmList() {
