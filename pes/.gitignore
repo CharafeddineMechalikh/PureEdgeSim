@@ -1,0 +1,7 @@
+target/
+bin/
+output/
+
+#IntelliJ Files
+*.iml
+.idea/

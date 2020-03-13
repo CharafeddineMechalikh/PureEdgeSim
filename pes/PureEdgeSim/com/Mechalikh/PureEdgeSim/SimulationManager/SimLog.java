@@ -307,7 +307,7 @@ public class SimLog {
 		// clean the folder where the results files will be saved
 		File dir = new File(outputFolder);
 		print("SimLog, Cleaning output folder");
-		if (dir.exists() && dir.isDirectory()) {
+		if ((dir.exists() && dir.isDirectory()) || dir.mkdir()) {
 			for (File f : dir.listFiles()) {
 				if (f.exists() && f.isFile()) {
 					if (!f.delete()) {
