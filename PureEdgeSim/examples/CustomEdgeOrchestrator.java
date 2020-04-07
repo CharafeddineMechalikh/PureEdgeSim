@@ -3,6 +3,7 @@ package examples;
 import org.cloudbus.cloudsim.cloudlets.Cloudlet.Status;
 
 import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
@@ -15,21 +16,22 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 	}
 
 	protected int findVM(String[] architecture, Task task) {
-		if ("INCEREASE_LIFETIME".equals(algorithm)) {
+		if ("INCREASE_LIFETIME".equals(algorithm)) {
 			return increseLifetime(architecture, task);
 		} else {
 			SimLog.println("");
-			SimLog.println("Custom Orchestrator- Unknnown orchestration algorithm '" + algorithm
+			SimLog.println("Custom Orchestrator- Unknown orchestration algorithm '" + algorithm
 					+ "', please check the simulation parameters file...");
 			// Cancel the simulation
-			Runtime.getRuntime().exit(0);
+			SimulationParameters.STOP = true;
+			simulationManager.getSimulation().terminate();
 		}
 		return -1;
 	}
 
 	private int increseLifetime(String[] architecture, Task task) {
 		int vm = -1;
-		double minTasksCount = 0; // vm with minimum assigned tasks;
+		double minTasksCount = -1; // vm with minimum assigned tasks;
 		double vmMips = 0;
 		double weight;
 		double minWeight = 20;
@@ -80,6 +82,7 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 
 	@Override
 	public void resultsReturned(Task task) {
+		//How to get the task execution status, (if failed or succeed, which can be used for reinforcement learning based algorithms)
 		if (task.getStatus() == Status.FAILED) {
 			System.err.println("CustomEdgeOrchestrator, task " + task.getId() + " has been failed, failure reason is: "
 					+ task.getFailureReason());

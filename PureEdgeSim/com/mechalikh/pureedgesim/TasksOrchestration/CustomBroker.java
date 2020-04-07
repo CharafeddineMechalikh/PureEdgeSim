@@ -6,7 +6,6 @@ import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public class CustomBroker extends DatacenterBrokerSimple {
 
@@ -20,9 +19,8 @@ public class CustomBroker extends DatacenterBrokerSimple {
 	public void processEvent(final SimEvent ev) {
 		super.processEvent(ev);
 		switch (ev.getTag()) {
-			case CloudSimTags.CLOUDLET_RETURN: // the task execution finished
-				final Task task = (Task) ev.getData();
-				scheduleNow(simulationManager, SimulationManager.TRANSFER_RESULTS_TO_ORCH, task);
+			case CloudSimTags.CLOUDLET_RETURN: // the task execution finished 
+				scheduleNow(simulationManager, SimulationManager.TRANSFER_RESULTS_TO_ORCH, ev.getData());
 				break;
 			default:
 				break;

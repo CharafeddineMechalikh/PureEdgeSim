@@ -5,17 +5,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicySimple;
+import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicyFirstFit;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
 import com.mechalikh.pureedgesim.LocationManager.Mobility;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksOrchestration.VmTaskMapItem;
 
 public abstract class DataCenter extends DatacenterSimple {
-	private simulationParameters.TYPES deviceType;
+	private SimulationParameters.TYPES deviceType;
 	private EnergyModel energyModel;
 	private List<VmTaskMapItem> vmTaskMap;
 	private int applicationType;
@@ -29,7 +29,7 @@ public abstract class DataCenter extends DatacenterSimple {
 	protected double deathTime;
 
 	public DataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
-		super(simulationManager.getSimulation(), hostList, new VmAllocationPolicySimple());
+		super(simulationManager.getSimulation(), hostList, new VmAllocationPolicyFirstFit());
 		this.simulationManager = simulationManager;
 		vmTaskMap = new ArrayList<>();
 		long storage = 0;
@@ -47,11 +47,11 @@ public abstract class DataCenter extends DatacenterSimple {
 		return energyModel;
 	}
 
-	public simulationParameters.TYPES getType() {
+	public SimulationParameters.TYPES getType() {
 		return deviceType;
 	}
 
-	public void setType(simulationParameters.TYPES type) {
+	public void setType(SimulationParameters.TYPES type) {
 		this.deviceType = type;
 	} 
 

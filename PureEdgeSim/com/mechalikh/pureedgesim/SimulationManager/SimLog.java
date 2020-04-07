@@ -21,7 +21,7 @@ import org.cloudbus.cloudsim.vms.Vm;
 import com.mechalikh.pureedgesim.MainApplication;
 import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.Network.FileTransferProgress;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public class SimLog {
@@ -143,7 +143,7 @@ public class SimLog {
 		print("                 Tasks execution results not returned because the device is dead:"
 				+ padLeftSpaces(decimalFormat.format((double) tasksFailedBeacauseDeviceDead * 100 / tasksSent), 20)
 				+ " % (" + tasksFailedBeacauseDeviceDead + " tasks)");
-		print("                     Tasks execution results not returned due to device mobility:"
+		print("                    Tasks execution results not returned due to devices mobility:"
 				+ padLeftSpaces(decimalFormat.format((double) tasksFailedMobility * 100 / tasksSent), 20) + " % ("
 				+ tasksFailedMobility + " tasks)");
 
@@ -213,13 +213,13 @@ public class SimLog {
 		List<? extends DataCenter> datacentersList = simulationManager.getServersManager().getDatacenterList();
 
 		for (DataCenter dc : datacentersList) {
-			if (dc.getType() == simulationParameters.TYPES.CLOUD) {
+			if (dc.getType() == SimulationParameters.TYPES.CLOUD) {
 				cloudEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
 				averageCloudCpuUtilization += dc.getResources().getAvgCpuUtilization();
-			} else if (dc.getType() == simulationParameters.TYPES.EDGE_DATACENTER) {
+			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DATACENTER) {
 				edgeEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
 				averageEdgeCpuUtilization += dc.getResources().getAvgCpuUtilization();
-			} else if (dc.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
+			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
 				mistEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
 				if (dc.getVmList().size() > 0) {
 					// only devices with computing capability
@@ -247,21 +247,21 @@ public class SimLog {
 			}
 		}
 		averageCpuUtilization = (averageCloudCpuUtilization + averageMistCpuUtilization + averageEdgeCpuUtilization)
-				/ (edgeDevicesCount + simulationParameters.NUM_OF_EDGE_DATACENTERS
-						+ simulationParameters.NUM_OF_CLOUD_DATACENTERS);
+				/ (edgeDevicesCount + SimulationParameters.NUM_OF_EDGE_DATACENTERS
+						+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS);
 		batteryPoweredDevicesCount = aliveBatteryPoweredDevicesCount + deadEdgeDevicesCount;
 		// escape from devision by 0
 		if (aliveBatteryPoweredDevicesCount == 0)
 			aliveBatteryPoweredDevicesCount = 1;
-		averageCloudCpuUtilization = averageCloudCpuUtilization / simulationParameters.NUM_OF_CLOUD_DATACENTERS;
-		averageEdgeCpuUtilization = averageEdgeCpuUtilization / simulationParameters.NUM_OF_EDGE_DATACENTERS;
+		averageCloudCpuUtilization = averageCloudCpuUtilization / SimulationParameters.NUM_OF_CLOUD_DATACENTERS;
+		averageEdgeCpuUtilization = averageEdgeCpuUtilization / SimulationParameters.NUM_OF_EDGE_DATACENTERS;
 		averageMistCpuUtilization = averageMistCpuUtilization / edgeDevicesCount;
 
 		energyConsumption = cloudEnConsumption + edgeEnConsumption + mistEnConsumption;
 		averageRemainingPower = averageRemainingPower / (double) aliveBatteryPoweredDevicesCount;
 		averageRemainingPowerWh = averageRemainingPowerWh / (double) aliveBatteryPoweredDevicesCount;
-		double averageCloudEnConsumption = cloudEnConsumption / simulationParameters.NUM_OF_CLOUD_DATACENTERS;
-		double averageEdgeEnConsumption = edgeEnConsumption / simulationParameters.NUM_OF_EDGE_DATACENTERS;
+		double averageCloudEnConsumption = cloudEnConsumption / SimulationParameters.NUM_OF_CLOUD_DATACENTERS;
+		double averageEdgeEnConsumption = edgeEnConsumption / SimulationParameters.NUM_OF_EDGE_DATACENTERS;
 		double averageMistEnConsumption = mistEnConsumption / simulationManager.getScenario().getDevicesCount();
 
 		print("SimLog- Average vm CPU utilization                                              :"
@@ -280,11 +280,11 @@ public class SimLog {
 				+ decimalFormat.format(energyConsumption / (double) finishedTasks.size()) + " W/task)");
 		print("SimLog- Energy Consumption per level                                            : Cloud="
 				+ padLeftSpaces(decimalFormat.format(cloudEnConsumption), 13) + " W (Average: "
-				+ decimalFormat.format(cloudEnConsumption / simulationParameters.NUM_OF_CLOUD_DATACENTERS)
+				+ decimalFormat.format(cloudEnConsumption / SimulationParameters.NUM_OF_CLOUD_DATACENTERS)
 				+ " W/data center)");
 		print("                                                                                  Edge="
 				+ padLeftSpaces(decimalFormat.format(edgeEnConsumption), 14) + " W (Average: "
-				+ decimalFormat.format(edgeEnConsumption / simulationParameters.NUM_OF_EDGE_DATACENTERS)
+				+ decimalFormat.format(edgeEnConsumption / SimulationParameters.NUM_OF_EDGE_DATACENTERS)
 				+ " W/data center)");
 		print("                                                                                  Mist="
 				+ padLeftSpaces(decimalFormat.format(mistEnConsumption), 14) + " W (Average: "
@@ -348,7 +348,7 @@ public class SimLog {
 		// writing results in csv file
 		writeFile(getFileName(".csv"), getResultsList());
 
-		if (!simulationParameters.SAVE_LOG) {
+		if (!SimulationParameters.SAVE_LOG) {
 			println("SimLog- no log saving");
 			return;
 		}
@@ -378,7 +378,7 @@ public class SimLog {
 	public String getFileName(String extension) {
 		String outputFilesName = MainApplication.getOutputFolder() + "/" + simStartTime;
 		new File(outputFilesName).mkdirs();
-		if (simulationParameters.PARALLEL)
+		if (SimulationParameters.PARALLEL)
 			outputFilesName += "/Parallel_simulation_" + simulationManager.getSimulationId();
 		else
 			outputFilesName += "/Sequential_simulation";
@@ -393,11 +393,11 @@ public class SimLog {
 		} else {
 			switch (flag) {
 			case DEFAULT:
-				if (simulationManager.getSimulation().clock() < simulationParameters.INITIALIZATION_TIME)
+				if (simulationManager.getSimulation().clock() < SimulationParameters.INITIALIZATION_TIME)
 					newLine = padLeftSpaces("0", 7) + " (s) : " + newLine;
 				else
 					newLine = padLeftSpaces(decimalFormat.format(
-							simulationManager.getSimulation().clock() - simulationParameters.INITIALIZATION_TIME), 7)
+							simulationManager.getSimulation().clock() - SimulationParameters.INITIALIZATION_TIME), 7)
 							+ " (s) : " + newLine;
 				log.add(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + " - simulation time "
 						+ newLine);
@@ -423,12 +423,12 @@ public class SimLog {
 	}
 
 	public void deepLog(String line) {
-		if (simulationParameters.DEEP_LOGGING)
+		if (SimulationParameters.DEEP_LOGGING)
 			print(line, DEFAULT);
 	}
 
 	public void deepLog(String line, int flag) {
-		if (simulationParameters.DEEP_LOGGING) {
+		if (SimulationParameters.DEEP_LOGGING) {
 			print(line, flag);
 		}
 	}
@@ -462,8 +462,8 @@ public class SimLog {
 
 	public void initialize(SimulationManager simulationManager, int dev, int alg, int arch) {
 		this.currentEdgeDevicesCount = dev;
-		this.currentOrchAlgorithm = simulationParameters.ORCHESTRATION_AlGORITHMS[alg];
-		this.currentOrchArchitecture = simulationParameters.ORCHESTRATION_ARCHITECTURES[arch];
+		this.currentOrchAlgorithm = SimulationParameters.ORCHESTRATION_AlGORITHMS[alg];
+		this.currentOrchArchitecture = SimulationParameters.ORCHESTRATION_ARCHITECTURES[arch];
 		this.simulationManager = simulationManager;
 	}
 
@@ -483,13 +483,13 @@ public class SimLog {
 		this.tasksFailed++;
 		if (task.getVm() == Vm.NULL)
 			return;
-		simulationParameters.TYPES type = ((DataCenter) task.getVm().getHost().getDatacenter()).getType();
+		SimulationParameters.TYPES type = ((DataCenter) task.getVm().getHost().getDatacenter()).getType();
 		
-		if (type == simulationParameters.TYPES.CLOUD) {
+		if (type == SimulationParameters.TYPES.CLOUD) {
 			this.tasksFailedCloud++;
-		} else if (type == simulationParameters.TYPES.EDGE_DATACENTER) {
+		} else if (type == SimulationParameters.TYPES.EDGE_DATACENTER) {
 			this.tasksFailedEdge++;
-		} else if (type == simulationParameters.TYPES.EDGE_DEVICE) {
+		} else if (type == SimulationParameters.TYPES.EDGE_DEVICE) {
 			this.tasksFailedMist++;
 		}
 	}
@@ -535,12 +535,12 @@ public class SimLog {
 	}
 
 	public void taskSentFromOrchToDest(Task task) {
-		simulationParameters.TYPES type = ((DataCenter) task.getVm().getHost().getDatacenter()).getType();
-		if (type == simulationParameters.TYPES.CLOUD) {
+		SimulationParameters.TYPES type = ((DataCenter) task.getVm().getHost().getDatacenter()).getType();
+		if (type == SimulationParameters.TYPES.CLOUD) {
 			this.tasksExecutedOnCloud++;
-		} else if (type == simulationParameters.TYPES.EDGE_DATACENTER) {
+		} else if (type == SimulationParameters.TYPES.EDGE_DATACENTER) {
 			this.tasksExecutedOnEdge++;
-		} else if (type == simulationParameters.TYPES.EDGE_DEVICE) {
+		} else if (type == SimulationParameters.TYPES.EDGE_DEVICE) {
 			this.tasksExecutedOnMist++;
 		}
 	}

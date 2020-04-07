@@ -12,16 +12,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 
 public class FilesParser {
 
 	// Scan files
 	public boolean checkFiles(String simProp, String edgeDevicesFile, String edgeDataCentersFile, String appFile, String cloudFile) {
-		simulationParameters.EDGE_DEVICES_FILE = edgeDevicesFile;
-		simulationParameters.EDGE_DATACENTERS_FILE = edgeDataCentersFile;
-		simulationParameters.CLOUD_DATACENTERS_FILE = cloudFile;
+		SimulationParameters.EDGE_DEVICES_FILE = edgeDevicesFile;
+		SimulationParameters.EDGE_DATACENTERS_FILE = edgeDataCentersFile;
+		SimulationParameters.CLOUD_DATACENTERS_FILE = cloudFile;
 		return (checkSimulationProperties(simProp) && checkXmlFiles(edgeDevicesFile, TYPES.EDGE_DEVICE)
 				&& checkXmlFiles(edgeDataCentersFile, TYPES.EDGE_DATACENTER) && checkXmlFiles(cloudFile, TYPES.CLOUD) && checkAppFile(appFile));
 	}
@@ -36,72 +36,72 @@ public class FilesParser {
 			// loading properties file
 			Properties prop = new Properties();
 			prop.load(input);
-			simulationParameters.PARALLEL = Boolean.parseBoolean(prop.getProperty("parallel_simulation").trim());
+			SimulationParameters.PARALLEL = Boolean.parseBoolean(prop.getProperty("parallel_simulation").trim());
 
-			simulationParameters.INITIALIZATION_TIME = Double
+			SimulationParameters.INITIALIZATION_TIME = Double
 					.parseDouble(prop.getProperty("initialization_time").trim()); // seconds
-			simulationParameters.SIMULATION_TIME = simulationParameters.INITIALIZATION_TIME
+			SimulationParameters.SIMULATION_TIME = SimulationParameters.INITIALIZATION_TIME
 					+ (double) 60 * Double.parseDouble(prop.getProperty("simulation_time").trim()); // seconds
 
-			simulationParameters.DISPLAY_REAL_TIME_CHARTS = Boolean
+			SimulationParameters.DISPLAY_REAL_TIME_CHARTS = Boolean
 					.parseBoolean(prop.getProperty("display_real_time_charts").trim());
-			simulationParameters.AUTO_CLOSE_REAL_TIME_CHARTS = Boolean
+			SimulationParameters.AUTO_CLOSE_REAL_TIME_CHARTS = Boolean
 					.parseBoolean(prop.getProperty("auto_close_real_time_charts").trim());
-			simulationParameters.CHARTS_UPDATE_INTERVAL = Double
+			SimulationParameters.CHARTS_UPDATE_INTERVAL = Double
 					.parseDouble(prop.getProperty("charts_update_interval").trim());
-			simulationParameters.SAVE_CHARTS = Boolean.parseBoolean(prop.getProperty("save_charts").trim());
+			SimulationParameters.SAVE_CHARTS = Boolean.parseBoolean(prop.getProperty("save_charts").trim());
 
-			simulationParameters.AREA_LENGTH = Integer.parseInt(prop.getProperty("length").trim()); // seconds
-			simulationParameters.AREA_WIDTH = Integer.parseInt(prop.getProperty("width").trim()); // seconds
-			simulationParameters.UPDATE_INTERVAL = Double.parseDouble(prop.getProperty("update_interval").trim()); // seconds
-			simulationParameters.DEEP_LOGGING = Boolean.parseBoolean(prop.getProperty("deep_log_enabled").trim());
-			simulationParameters.SAVE_LOG = Boolean.parseBoolean(prop.getProperty("save_log_file").trim());
-			simulationParameters.CLEAN_OUTPUT_FOLDER = Boolean
+			SimulationParameters.AREA_LENGTH = Integer.parseInt(prop.getProperty("length").trim()); // seconds
+			SimulationParameters.AREA_WIDTH = Integer.parseInt(prop.getProperty("width").trim()); // seconds
+			SimulationParameters.UPDATE_INTERVAL = Double.parseDouble(prop.getProperty("update_interval").trim()); // seconds
+			SimulationParameters.DEEP_LOGGING = Boolean.parseBoolean(prop.getProperty("deep_log_enabled").trim());
+			SimulationParameters.SAVE_LOG = Boolean.parseBoolean(prop.getProperty("save_log_file").trim());
+			SimulationParameters.CLEAN_OUTPUT_FOLDER = Boolean
 					.parseBoolean(prop.getProperty("clear_output_folder").trim());
-			simulationParameters.WAIT_FOR_TASKS = Boolean.parseBoolean(prop.getProperty("wait_for_all_tasks").trim());
-			simulationParameters.ENABLE_REGISTRY = Boolean.parseBoolean(prop.getProperty("enable_registry").trim());
-			simulationParameters.registry_mode = prop.getProperty("registry_mode").trim();
-			simulationParameters.ENABLE_ORCHESTRATORS = Boolean
+			SimulationParameters.WAIT_FOR_TASKS = Boolean.parseBoolean(prop.getProperty("wait_for_all_tasks").trim());
+			SimulationParameters.ENABLE_REGISTRY = Boolean.parseBoolean(prop.getProperty("enable_registry").trim());
+			SimulationParameters.registry_mode = prop.getProperty("registry_mode").trim();
+			SimulationParameters.ENABLE_ORCHESTRATORS = Boolean
 					.parseBoolean(prop.getProperty("enable_orchestrators").trim());
 
-			simulationParameters.EDGE_DEVICES_RANGE = Integer.parseInt(prop.getProperty("edge_devices_range").trim()); // meters
-			simulationParameters.EDGE_DATACENTERS_RANGE = Integer.parseInt(prop.getProperty("edge_datacenters_coverage").trim()); // meters
-			simulationParameters.PAUSE_LENGTH = Integer.parseInt(prop.getProperty("pause_length").trim());// seconds
-			simulationParameters.MIN_NUM_OF_EDGE_DEVICES = Integer
+			SimulationParameters.EDGE_DEVICES_RANGE = Integer.parseInt(prop.getProperty("edge_devices_range").trim()); // meters
+			SimulationParameters.EDGE_DATACENTERS_RANGE = Integer.parseInt(prop.getProperty("edge_datacenters_coverage").trim()); // meters
+			SimulationParameters.PAUSE_LENGTH = Integer.parseInt(prop.getProperty("pause_length").trim());// seconds
+			SimulationParameters.MIN_NUM_OF_EDGE_DEVICES = Integer
 					.parseInt(prop.getProperty("min_number_of_edge_devices").trim());
-			simulationParameters.MAX_NUM_OF_EDGE_DEVICES = Integer
+			SimulationParameters.MAX_NUM_OF_EDGE_DEVICES = Integer
 					.parseInt(prop.getProperty("max_number_of_edge_devices").trim());
-			if (simulationParameters.MIN_NUM_OF_EDGE_DEVICES > simulationParameters.MAX_NUM_OF_EDGE_DEVICES) {
+			if (SimulationParameters.MIN_NUM_OF_EDGE_DEVICES > SimulationParameters.MAX_NUM_OF_EDGE_DEVICES) {
 				SimLog.println(
 						"FilelParser, Error,  the entered min number of edge devices is superior than the max number, check the 'simulation.properties' file.");
 				return false;
 			}
-			simulationParameters.EDGE_DEVICE_COUNTER_STEP = Integer
+			SimulationParameters.EDGE_DEVICE_COUNTER_STEP = Integer
 					.parseInt(prop.getProperty("edge_device_counter_size").trim());
-			simulationParameters.SPEED = Double.parseDouble(prop.getProperty("speed").trim()); // meters per second m/s
-			simulationParameters.BANDWIDTH_WLAN = 1000 * Integer.parseInt(prop.getProperty("wlan_bandwidth").trim()); // Mbits/s
+			SimulationParameters.SPEED = Double.parseDouble(prop.getProperty("speed").trim()); // meters per second m/s
+			SimulationParameters.BANDWIDTH_WLAN = 1000 * Integer.parseInt(prop.getProperty("wlan_bandwidth").trim()); // Mbits/s
 																														// to
 																														// Kbits/s
-			simulationParameters.WAN_BANDWIDTH = 1000 * Integer.parseInt(prop.getProperty("wan_bandwidth").trim());// Mbits/s
+			SimulationParameters.WAN_BANDWIDTH = 1000 * Integer.parseInt(prop.getProperty("wan_bandwidth").trim());// Mbits/s
 																													// to
 																													// Kbits/s
-			simulationParameters.WAN_PROPAGATION_DELAY = Double
+			SimulationParameters.WAN_PROPAGATION_DELAY = Double
 					.parseDouble(prop.getProperty("wan_propogation_delay").trim()); // seconds
-			simulationParameters.NETWORK_UPDATE_INTERVAL = Double
+			SimulationParameters.NETWORK_UPDATE_INTERVAL = Double
 					.parseDouble(prop.getProperty("network_update_interval").trim()); // seconds
-			simulationParameters.CPU_ALLOCATION_POLICY = prop.getProperty("Applications_CPU_allocation_policy").trim();
-			simulationParameters.TASKS_PER_EDGE_DEVICE_PER_MINUTES = Integer
+			SimulationParameters.CPU_ALLOCATION_POLICY = prop.getProperty("Applications_CPU_allocation_policy").trim();
+			SimulationParameters.TASKS_PER_EDGE_DEVICE_PER_MINUTES = Integer
 					.parseInt(prop.getProperty("tasks_generation_rate").trim());
-			simulationParameters.ORCHESTRATION_ARCHITECTURES = prop.getProperty("orchestration_architectures")
+			SimulationParameters.ORCHESTRATION_ARCHITECTURES = prop.getProperty("orchestration_architectures")
 					.split(",");
-			simulationParameters.ORCHESTRATION_AlGORITHMS = prop.getProperty("orchestration_algorithms").split(",");
-			simulationParameters.DEPLOY_ORCHESTRATOR = prop.getProperty("deploy_orchestrator").trim();
+			SimulationParameters.ORCHESTRATION_AlGORITHMS = prop.getProperty("orchestration_algorithms").split(",");
+			SimulationParameters.DEPLOY_ORCHESTRATOR = prop.getProperty("deploy_orchestrator").trim();
 
-			simulationParameters.CONSUMED_ENERGY_PER_BIT = Double
+			SimulationParameters.CONSUMED_ENERGY_PER_BIT = Double
 					.parseDouble(prop.getProperty("consumed_energy_per_bit").trim()); // J/bit
-			simulationParameters.AMPLIFIER_DISSIPATION_FREE_SPACE = Double
+			SimulationParameters.AMPLIFIER_DISSIPATION_FREE_SPACE = Double
 					.parseDouble(prop.getProperty("amplifier_dissipation_free_space").trim()); // J/bit/m^2
-			simulationParameters.AMPLIFIER_DISSIPATION_MULTIPATH = Double
+			SimulationParameters.AMPLIFIER_DISSIPATION_MULTIPATH = Double
 					.parseDouble(prop.getProperty("amplifier_dissipation_multipath").trim()); // J/bit/m^4
 
 		} catch (IOException ex) {
@@ -156,9 +156,9 @@ public class FilesParser {
 					isElementPresent(datacenterElement, "batteryCapacity");
 					isElementPresent(datacenterElement, "generateTasks");
 				} else if (type == TYPES.CLOUD) {
-					simulationParameters.NUM_OF_CLOUD_DATACENTERS++;
+					SimulationParameters.NUM_OF_CLOUD_DATACENTERS++;
 				} else {
-					simulationParameters.NUM_OF_EDGE_DATACENTERS++;
+					SimulationParameters.NUM_OF_EDGE_DATACENTERS++;
 					Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
 					isElementPresent(location, "x_pos");
 					isElementPresent(location, "y_pos");
@@ -211,9 +211,9 @@ public class FilesParser {
 			doc.getDocumentElement().normalize();
 
 			NodeList appList = doc.getElementsByTagName("application");
-			simulationParameters.APPS_COUNT = appList.getLength();// save the number of apps, this will be used later by
+			SimulationParameters.APPS_COUNT = appList.getLength();// save the number of apps, this will be used later by
 																	// the tasks generator
-			simulationParameters.APPLICATIONS_TABLE = new double[appList.getLength()][6];
+			SimulationParameters.APPLICATIONS_TABLE = new double[appList.getLength()][6];
 			for (int i = 0; i < appList.getLength(); i++) {
 				Node appNode = appList.item(i);
 
@@ -240,12 +240,12 @@ public class FilesParser {
 						.parseDouble(appElement.getElementsByTagName("required_core").item(0).getTextContent()); 
 
 				// save apps parameters
-				simulationParameters.APPLICATIONS_TABLE[i][0] = max_delay; // max delay in seconds
-				simulationParameters.APPLICATIONS_TABLE[i][1] = request_size; // avg request size (KB)
-				simulationParameters.APPLICATIONS_TABLE[i][2] = results_size; // avg downloaded results size (KB)
-				simulationParameters.APPLICATIONS_TABLE[i][3] = task_length; // avg task length (MI)
-				simulationParameters.APPLICATIONS_TABLE[i][4] = required_core; // required # of core
-				simulationParameters.APPLICATIONS_TABLE[i][5] = container_size; // the size of the container (KB) 
+				SimulationParameters.APPLICATIONS_TABLE[i][0] = max_delay; // max delay in seconds
+				SimulationParameters.APPLICATIONS_TABLE[i][1] = request_size; // avg request size (KB)
+				SimulationParameters.APPLICATIONS_TABLE[i][2] = results_size; // avg downloaded results size (KB)
+				SimulationParameters.APPLICATIONS_TABLE[i][3] = task_length; // avg task length (MI)
+				SimulationParameters.APPLICATIONS_TABLE[i][4] = required_core; // required # of core
+				SimulationParameters.APPLICATIONS_TABLE[i][5] = container_size; // the size of the container (KB) 
 			}
 
 		} catch (Exception e) {

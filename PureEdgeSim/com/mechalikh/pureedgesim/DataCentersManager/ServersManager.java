@@ -30,7 +30,7 @@ import org.w3c.dom.NodeList;
 
 import com.mechalikh.pureedgesim.LocationManager.Location;
 import com.mechalikh.pureedgesim.LocationManager.Mobility;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
 public class ServersManager {
@@ -54,11 +54,11 @@ public class ServersManager {
 	}
 
 	public void generateDatacentersAndDevices() throws Exception {
-		generateDataCenters(simulationParameters.CLOUD_DATACENTERS_FILE, simulationParameters.TYPES.CLOUD);
-		generateDataCenters(simulationParameters.EDGE_DATACENTERS_FILE, simulationParameters.TYPES.EDGE_DATACENTER);
+		generateDataCenters(SimulationParameters.CLOUD_DATACENTERS_FILE, SimulationParameters.TYPES.CLOUD);
+		generateDataCenters(SimulationParameters.EDGE_DATACENTERS_FILE, SimulationParameters.TYPES.EDGE_DATACENTER);
 		generateEdgeDevices();
 		// Select where the orchestrators are deployed
-		if (simulationParameters.ENABLE_ORCHESTRATORS)
+		if (SimulationParameters.ENABLE_ORCHESTRATORS)
 			selectOrchestrators();
 		getSimulationManager().getSimulationLogger().print("ServersManager- Datacenters and devices were generated");
 
@@ -66,17 +66,17 @@ public class ServersManager {
 
 	private void selectOrchestrators() {
 		for (DataCenter edgeDataCenter : datacentersList) {
-			if ("".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
-					|| ("CLOUD".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
-							&& edgeDataCenter.getType() == simulationParameters.TYPES.CLOUD)) {
+			if ("".equals(SimulationParameters.DEPLOY_ORCHESTRATOR)
+					|| ("CLOUD".equals(SimulationParameters.DEPLOY_ORCHESTRATOR)
+							&& edgeDataCenter.getType() == SimulationParameters.TYPES.CLOUD)) {
 				edgeDataCenter.setOrchestrator(true);
 				orchestratorsList.add(edgeDataCenter);
-			} else if ("EDGE".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
-					&& edgeDataCenter.getType() == simulationParameters.TYPES.EDGE_DATACENTER) {
+			} else if ("EDGE".equals(SimulationParameters.DEPLOY_ORCHESTRATOR)
+					&& edgeDataCenter.getType() == SimulationParameters.TYPES.EDGE_DATACENTER) {
 				edgeDataCenter.setOrchestrator(true);
 				orchestratorsList.add(edgeDataCenter);
-			} else if ("MIST".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
-					&& edgeDataCenter.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
+			} else if ("MIST".equals(SimulationParameters.DEPLOY_ORCHESTRATOR)
+					&& edgeDataCenter.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
 				edgeDataCenter.setOrchestrator(true);
 				orchestratorsList.add(edgeDataCenter);
 			}
@@ -86,7 +86,7 @@ public class ServersManager {
 
 	public void generateEdgeDevices() throws Exception {
 		// Generate edge devices instances from edge devices types in xml file
-		File devicesFile = new File(simulationParameters.EDGE_DEVICES_FILE);
+		File devicesFile = new File(SimulationParameters.EDGE_DEVICES_FILE);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(devicesFile);
@@ -106,7 +106,7 @@ public class ServersManager {
 		// Add more devices
 		int missingInstances = getSimulationManager().getScenario().getDevicesCount() - datacentersList.size();
 		for (int k = 0; k < missingInstances; k++) {
-			datacentersList.add(createDatacenter(edgeElement, simulationParameters.TYPES.EDGE_DEVICE));
+			datacentersList.add(createDatacenter(edgeElement, SimulationParameters.TYPES.EDGE_DEVICE));
 		}
 
 	}
@@ -120,18 +120,18 @@ public class ServersManager {
 
 		for (int j = 0; j < devicesInstances; j++) {
 			if (datacentersList.size() > getSimulationManager().getScenario().getDevicesCount()
-					+ simulationParameters.NUM_OF_EDGE_DATACENTERS) {
+					+ SimulationParameters.NUM_OF_EDGE_DATACENTERS) {
 				getSimulationManager().getSimulationLogger().print(
 						"ServersManager- Wrong percentages values (the sum is superior than 100%), check edge_devices.xml file !");
 				break;
 			}
 
-			datacentersList.add(createDatacenter(edgeElement, simulationParameters.TYPES.EDGE_DEVICE));
+			datacentersList.add(createDatacenter(edgeElement, SimulationParameters.TYPES.EDGE_DEVICE));
 
 		}
 	}
 
-	private void generateDataCenters(String file, simulationParameters.TYPES type) throws Exception {
+	private void generateDataCenters(String file, SimulationParameters.TYPES type) throws Exception {
 		// Fill list with edge data centers
 		File serversFile = new File(file);
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -145,7 +145,7 @@ public class ServersManager {
 		}
 	}
 
-	private DataCenter createDatacenter(Element datacenterElement, simulationParameters.TYPES type) throws Exception {
+	private DataCenter createDatacenter(Element datacenterElement, SimulationParameters.TYPES type) throws Exception {
 
 		int x_position = -1;
 		int y_position = -1;
@@ -164,12 +164,12 @@ public class ServersManager {
 		Constructor<?> energyConstructor = energyModel.getConstructor(double.class, double.class);
 		datacenter.setEnergyModel(energyConstructor.newInstance(maxConsumption, idleConsumption));
 		Boolean mobile = false;
-		if (type == simulationParameters.TYPES.EDGE_DATACENTER) {
+		if (type == SimulationParameters.TYPES.EDGE_DATACENTER) {
 			Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
 			x_position = Integer.parseInt(location.getElementsByTagName("x_pos").item(0).getTextContent());
 			y_position = Integer.parseInt(location.getElementsByTagName("y_pos").item(0).getTextContent());
 			datacenterLocation = new Location(x_position, y_position);
-		} else if (type == simulationParameters.TYPES.EDGE_DEVICE) {
+		} else if (type == SimulationParameters.TYPES.EDGE_DEVICE) {
 			mobile = Boolean.parseBoolean(datacenterElement.getElementsByTagName("mobility").item(0).getTextContent());
 			datacenter.getEnergyModel().setBattery(
 					Boolean.parseBoolean(datacenterElement.getElementsByTagName("battery").item(0).getTextContent()));
@@ -178,8 +178,8 @@ public class ServersManager {
 			datacenter.setTasksGeneration(Boolean
 					.parseBoolean(datacenterElement.getElementsByTagName("generateTasks").item(0).getTextContent()));
 			// Generate random location for edge devices
-			datacenterLocation = new Location(new Random().nextInt(simulationParameters.AREA_LENGTH),
-					new Random().nextInt(simulationParameters.AREA_LENGTH));
+			datacenterLocation = new Location(new Random().nextInt(SimulationParameters.AREA_LENGTH),
+					new Random().nextInt(SimulationParameters.AREA_LENGTH));
 			getSimulationManager().getSimulationLogger().deepLog("ServersManager- Edge device:" + datacentersList.size()
 					+ "    location: ( " + datacenterLocation.getXPos() + "," + datacenterLocation.getYPos() + " )");
 		}
@@ -192,7 +192,7 @@ public class ServersManager {
 		return datacenter;
 	}
 
-	private List<Host> createHosts(Element datacenterElement, simulationParameters.TYPES type) {
+	private List<Host> createHosts(Element datacenterElement, SimulationParameters.TYPES type) {
 
 		// Here are the steps needed to create a hosts and vms for that datacenter.
 		List<Host> hostList = new ArrayList<>();
@@ -205,8 +205,8 @@ public class ServersManager {
 			int numOfCores = Integer.parseInt(hostElement.getElementsByTagName("core").item(0).getTextContent());
 			double mips = Double.parseDouble(hostElement.getElementsByTagName("mips").item(0).getTextContent());
 			long storage = Long.parseLong(hostElement.getElementsByTagName("storage").item(0).getTextContent());
-			long bandwidth = (type == simulationParameters.TYPES.CLOUD ? simulationParameters.WAN_BANDWIDTH
-					: simulationParameters.BANDWIDTH_WLAN) / hostNodeList.getLength();
+			long bandwidth = (type == SimulationParameters.TYPES.CLOUD ? SimulationParameters.WAN_BANDWIDTH
+					: SimulationParameters.BANDWIDTH_WLAN) / hostNodeList.getLength();
 			long ram = Integer.parseInt(hostElement.getElementsByTagName("ram").item(0).getTextContent());
 			// A Machine contains one or more PEs or CPUs/Cores. Therefore, should
 			// create a list to store these PEs before creating
@@ -226,7 +226,7 @@ public class ServersManager {
 			// Create Hosts with its id and list of PEs and add them to the list of machines
 			Host host = new HostSimple(ram, bandwidth, storage, peList);
 			host.setRamProvisioner(ramProvisioner).setBwProvisioner(bwProvisioner).setVmScheduler(vmScheduler);
-            
+
 			// Load host virtual machines
 			loadVms(host, hostElement, bandwidth);
 			hostList.add(host);
@@ -252,10 +252,9 @@ public class ServersManager {
 
 			CloudletScheduler tasksScheduler;
 
-			if ("SPACE_SHARED".equals(simulationParameters.CPU_ALLOCATION_POLICY))
-				tasksScheduler = new CloudletSchedulerSpaceShared();
-			else
-				tasksScheduler = new CloudletSchedulerTimeShared();
+			tasksScheduler = "SPACE_SHARED".equals(SimulationParameters.CPU_ALLOCATION_POLICY)
+					? new CloudletSchedulerSpaceShared()
+					: new CloudletSchedulerTimeShared();
 
 			Vm vm = new VmSimple(vmList.size(), vmMips, vmNumOfCores);
 			vm.setRam(vmRam).setBw(vmBandwidth).setSize(vmStorage).setCloudletScheduler(tasksScheduler);

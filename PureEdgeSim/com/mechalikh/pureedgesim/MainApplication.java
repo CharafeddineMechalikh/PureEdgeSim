@@ -12,7 +12,7 @@ import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
 import com.mechalikh.pureedgesim.ScenarioManager.FilesParser;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.ChartsGenerator;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
@@ -38,7 +38,7 @@ public class MainApplication extends MainApplicationAbstract{
 			return; // if files aren't correct stop everything.
 
 		// Disable cloudsim plus log
-		if (!simulationParameters.DEEP_LOGGING)
+		if (!SimulationParameters.DEEP_LOGGING)
 			Log.setLevel(Level.OFF);
 		else
 			Log.setLevel(Level.ALL);
@@ -48,7 +48,7 @@ public class MainApplication extends MainApplicationAbstract{
 		// Walk through all orchestration scenarios
 		loadScenarios();
 
-		if (simulationParameters.PARALLEL) {
+		if (SimulationParameters.PARALLEL) {
 			launchParallelSimulations();
 		} else { // Sequential execution
 			new MainApplication(0, 1).startSimulation();
@@ -80,10 +80,10 @@ public class MainApplication extends MainApplicationAbstract{
 	}
 
 	private static void loadScenarios() {
-		for (int algorithmID = 0; algorithmID < simulationParameters.ORCHESTRATION_AlGORITHMS.length; algorithmID++) {
+		for (int algorithmID = 0; algorithmID < SimulationParameters.ORCHESTRATION_AlGORITHMS.length; algorithmID++) {
 			// Repeat the operation of the whole set of criteria
-			for (int architectureID = 0; architectureID < simulationParameters.ORCHESTRATION_ARCHITECTURES.length; architectureID++) {
-				for (int devicesCount = simulationParameters.MIN_NUM_OF_EDGE_DEVICES; devicesCount <= simulationParameters.MAX_NUM_OF_EDGE_DEVICES; devicesCount += simulationParameters.EDGE_DEVICE_COUNTER_STEP) {
+			for (int architectureID = 0; architectureID < SimulationParameters.ORCHESTRATION_ARCHITECTURES.length; architectureID++) {
+				for (int devicesCount = SimulationParameters.MIN_NUM_OF_EDGE_DEVICES; devicesCount <= SimulationParameters.MAX_NUM_OF_EDGE_DEVICES; devicesCount += SimulationParameters.EDGE_DEVICE_COUNTER_STEP) {
 					Iterations.add(new Scenario(devicesCount, algorithmID, architectureID));
 				}
 			}
@@ -104,12 +104,12 @@ public class MainApplication extends MainApplicationAbstract{
 		SimulationManager simulationManager;
 		SimLog simLog = null;
 		try { // Repeat the operation for different number of devices
-			for (int it = fromIteration; it < Iterations.size() && !simulationParameters.STOP; it += step) {
+			for (int it = fromIteration; it < Iterations.size() && !SimulationParameters.STOP; it += step) {
 				// New SimLog for each simulation (when parallelism is enabled
 				simLog = new SimLog(startTime, isFirstIteration);
 
 				// Clean output folder if it is the first iteration
-				if (simulationParameters.CLEAN_OUTPUT_FOLDER && isFirstIteration && fromIteration == 0) {
+				if (SimulationParameters.CLEAN_OUTPUT_FOLDER && isFirstIteration && fromIteration == 0) {
 					simLog.cleanOutputFolder(outputFolder);
 				}
 				isFirstIteration = false;
@@ -129,7 +129,7 @@ public class MainApplication extends MainApplicationAbstract{
 				// Finally launch the simulation
 				simulationManager.startSimulation();
 
-				if (!simulationParameters.PARALLEL) {
+				if (!SimulationParameters.PARALLEL) {
 					pause(simLog);
 				}
 				iteration++;
@@ -142,7 +142,7 @@ public class MainApplication extends MainApplicationAbstract{
 			}
 			SimLog.println("Main- Simulation Finished!");
 			// Generate and save charts
-			if (!simulationParameters.STOP) // if no error happened
+			if (!SimulationParameters.STOP) // if no error happened
 				generateCharts(simLog);
 
 		} catch (Exception e) {
@@ -153,8 +153,8 @@ public class MainApplication extends MainApplicationAbstract{
 
 	private void pause(SimLog simLog) throws InterruptedException {
 		// Take a few seconds pause to show the results
-		simLog.print(simulationParameters.PAUSE_LENGTH + " seconds peause...");
-		for (int k = 1; k <= simulationParameters.PAUSE_LENGTH; k++) {
+		simLog.print(SimulationParameters.PAUSE_LENGTH + " seconds peause...");
+		for (int k = 1; k <= SimulationParameters.PAUSE_LENGTH; k++) {
 			simLog.printSameLine(".");
 			Thread.sleep(1000);
 		}
@@ -187,7 +187,7 @@ public class MainApplication extends MainApplicationAbstract{
 	}
 
 	protected void generateCharts(SimLog simLog) {
-		if (simulationParameters.SAVE_CHARTS && !simulationParameters.PARALLEL && simLog != null) {
+		if (SimulationParameters.SAVE_CHARTS && !SimulationParameters.PARALLEL && simLog != null) {
 			SimLog.println("Main- Saving charts...");
 			ChartsGenerator chartsGenerator = new ChartsGenerator(simLog.getFileName(".csv"));
 			chartsGenerator.generate();

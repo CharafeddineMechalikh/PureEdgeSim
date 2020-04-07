@@ -20,8 +20,8 @@ import org.knowm.xchart.style.Styler.LegendPosition;
 import org.knowm.xchart.style.markers.Marker;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 import com.mechalikh.pureedgesim.MainApplication;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
 
 public class SimulationVisualizer {
 	JFrame simulationResultsFrame;
@@ -74,18 +74,18 @@ public class SimulationVisualizer {
 	private void initCharts() {
 		mapChart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Scatter);
 		mapChart.getStyler().setMarkerSize(4);
-		updateStyle(mapChart, new Double[] { 0.0, (double) simulationParameters.AREA_WIDTH, 0.0,
-				(double) simulationParameters.AREA_LENGTH });
+		updateStyle(mapChart, new Double[] { 0.0, (double) SimulationParameters.AREA_WIDTH, 0.0,
+				(double) SimulationParameters.AREA_LENGTH });
 
 		tasksSuccessChart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
 		updateStyle(tasksSuccessChart, new Double[] { 0.0, null, null, 100.0 });
 
 		cpuUtilizationChart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
-		updateStyle(cpuUtilizationChart, new Double[] { simulationParameters.INITIALIZATION_TIME, null, 0.0, null });
+		updateStyle(cpuUtilizationChart, new Double[] { SimulationParameters.INITIALIZATION_TIME, null, 0.0, null });
 
 		networkUtilizationChart.getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
 		updateStyle(networkUtilizationChart, new Double[] { 0.0, simulationManager.getSimulation().clock(), 0.0,
-				simulationParameters.WAN_BANDWIDTH / 1000.0 });
+				SimulationParameters.WAN_BANDWIDTH / 1000.0 });
 	}
 
 	private void tasksSucessRateChart() {
@@ -103,15 +103,14 @@ public class SimulationVisualizer {
 
 	void cloudCpuUsage() {
 		double clUsage = 0;
-		for (int i = 0; i < simulationParameters.NUM_OF_CLOUD_DATACENTERS; i++) {
+		for (int i = 0; i < SimulationParameters.NUM_OF_CLOUD_DATACENTERS; i++) {
 			if (simulationManager.getServersManager().getDatacenterList().get(i).getType() == TYPES.CLOUD) {
 				clUsage = simulationManager.getServersManager().getDatacenterList().get(i).getResources()
 						.getAvgCpuUtilization();
 
 			}
 		}
-		cloudUsage.add(clUsage / simulationParameters.NUM_OF_CLOUD_DATACENTERS);
-		
+		cloudUsage.add(clUsage / SimulationParameters.NUM_OF_CLOUD_DATACENTERS);
 
 		updateSeries(cpuUtilizationChart, "Cloud", toArray(currentTime), toArray(cloudUsage), SeriesMarkers.NONE,
 				Color.BLACK);
@@ -122,16 +121,16 @@ public class SimulationVisualizer {
 
 		wanUsage.add(wan);
 
-		while (wanUsage.size() > 300 / simulationParameters.UPDATE_INTERVAL) {
+		while (wanUsage.size() > 300 / SimulationParameters.UPDATE_INTERVAL) {
 			wanUsage.remove(0);
 		}
 		double[] time = new double[wanUsage.size()];
-		double currentTime = simulationManager.getSimulation().clock() - simulationParameters.INITIALIZATION_TIME;
+		double currentTime = simulationManager.getSimulation().clock() - SimulationParameters.INITIALIZATION_TIME;
 		for (int i = wanUsage.size() - 1; i > 0; i--)
-			time[i] = currentTime - ((wanUsage.size() - i) * simulationParameters.UPDATE_INTERVAL);
+			time[i] = currentTime - ((wanUsage.size() - i) * SimulationParameters.UPDATE_INTERVAL);
 
 		updateStyle(networkUtilizationChart,
-				new Double[] { currentTime - 200, currentTime, 0.0, simulationParameters.WAN_BANDWIDTH / 1000.0 });
+				new Double[] { currentTime - 200, currentTime, 0.0, SimulationParameters.WAN_BANDWIDTH / 1000.0 });
 		updateSeries(networkUtilizationChart, "WAN", time, toArray(wanUsage), SeriesMarkers.NONE, Color.BLACK);
 	}
 
@@ -150,12 +149,12 @@ public class SimulationVisualizer {
 
 		// Browse all devices and create the series
 		// Skip the first items (cloud data centers + edge data centers)
-		for (int i = simulationParameters.NUM_OF_EDGE_DATACENTERS
-				+ simulationParameters.NUM_OF_CLOUD_DATACENTERS; i < simulationManager.getServersManager()
+		for (int i = SimulationParameters.NUM_OF_EDGE_DATACENTERS
+				+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS; i < simulationManager.getServersManager()
 						.getDatacenterList().size(); i++) {
 			// If it is an edge device
 			if (simulationManager.getServersManager().getDatacenterList().get(i)
-					.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
+					.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
 
 				if (simulationManager.getServersManager().getDatacenterList().get(i).isDead()) {
 					x_deadEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
@@ -170,14 +169,15 @@ public class SimulationVisualizer {
 							.getMobilityManager().getCurrentLocation().getYPos());
 
 				} else { // If the device is busy
-					msUsage += simulationManager.getServersManager().getDatacenterList().get(i).getResources()
-							.getAvgCpuUtilization();
+
 					x_activeEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
 							.getMobilityManager().getCurrentLocation().getXPos());
 					y_activeEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
 							.getMobilityManager().getCurrentLocation().getYPos());
 				}
 			}
+			msUsage += simulationManager.getServersManager().getDatacenterList().get(i).getResources()
+					.getAvgCpuUtilization();
 		}
 
 		mistUsage.add(msUsage / simulationManager.getScenario().getDevicesCount());
@@ -207,14 +207,14 @@ public class SimulationVisualizer {
 			List<Double> x_activeEdgeDataCentersList = new ArrayList<>();
 			List<Double> y_activeEdgeDataCentersList = new ArrayList<>();
 
-			for (int j = simulationParameters.NUM_OF_CLOUD_DATACENTERS; j < simulationParameters.NUM_OF_EDGE_DATACENTERS
-					+ simulationParameters.NUM_OF_CLOUD_DATACENTERS; j++) {
+			for (int j = SimulationParameters.NUM_OF_CLOUD_DATACENTERS; j < SimulationParameters.NUM_OF_EDGE_DATACENTERS
+					+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS; j++) {
 				// If it is an Edge data center
 				if ((simulationManager.getScenario().getStringOrchArchitecture().contains("EDGE")
 						|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL"))
 						&& simulationManager.getServersManager().getDatacenterList().get(j)
-								.getType() == simulationParameters.TYPES.EDGE_DATACENTER
-						&& simulationParameters.NUM_OF_EDGE_DATACENTERS != 0) {
+								.getType() == SimulationParameters.TYPES.EDGE_DATACENTER
+						&& SimulationParameters.NUM_OF_EDGE_DATACENTERS != 0) {
 
 					if (simulationManager.getServersManager().getDatacenterList().get(j).getResources().isIdle()) {
 						x_idleEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
@@ -222,8 +222,6 @@ public class SimulationVisualizer {
 						y_idleEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getMobilityManager().getCurrentLocation().getYPos());
 					} else {
-						edUsage += simulationManager.getServersManager().getDatacenterList().get(j).getResources()
-								.getAvgCpuUtilization();
 
 						x_activeEdgeDataCentersList.add(simulationManager.getServersManager().getDatacenterList().get(j)
 								.getMobilityManager().getCurrentLocation().getXPos());
@@ -232,9 +230,11 @@ public class SimulationVisualizer {
 
 					}
 				}
+				edUsage += simulationManager.getServersManager().getDatacenterList().get(j).getResources()
+						.getAvgCpuUtilization();
 			}
 
-			edgeUsage.add(edUsage / simulationParameters.NUM_OF_EDGE_DATACENTERS);
+			edgeUsage.add(edUsage / SimulationParameters.NUM_OF_EDGE_DATACENTERS);
 			updateSeries(cpuUtilizationChart, "Edge", toArray(currentTime), toArray(edgeUsage), SeriesMarkers.NONE,
 					Color.BLACK);
 
@@ -257,7 +257,7 @@ public class SimulationVisualizer {
 		}
 
 		// Display simulation time
-		double time = this.simulationManager.getSimulation().clock() - simulationParameters.INITIALIZATION_TIME;
+		double time = this.simulationManager.getSimulation().clock() - SimulationParameters.INITIALIZATION_TIME;
 		simulationResultsFrame.setTitle("Simulation time = " + ((int) time / 60) + " min : " + ((int) time % 60)
 				+ " seconds  -  number of edge devices = " + simulationManager.getScenario().getDevicesCount()
 				+ " -  Architecture = " + simulationManager.getScenario().getStringOrchArchitecture()

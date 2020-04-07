@@ -1,8 +1,8 @@
 package com.mechalikh.pureedgesim.DataCentersManager;
 
 import com.mechalikh.pureedgesim.Network.FileTransferProgress;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
 
 /*
  * The adopted energy model can be found in the paper
@@ -13,15 +13,15 @@ public class DefaultEnergyModel extends EnergyModel {
 	public static final int TRANSMISSION = 0;
 	public static final int RECEPTION = 1;
 	// The power consumption for each transferred bit (in joul per bit : J/bit)
-	private double E_elec = simulationParameters.CONSUMED_ENERGY_PER_BIT;
+	private double E_elec = SimulationParameters.CONSUMED_ENERGY_PER_BIT;
 
 	// Energy consumption of the transmit amplifier in free space channel model ( in
 	// joul per bit per meter^2 : J/bit/m^2)
-	private double E_fs = simulationParameters.AMPLIFIER_DISSIPATION_FREE_SPACE;
+	private double E_fs = SimulationParameters.AMPLIFIER_DISSIPATION_FREE_SPACE;
 
 	// Energy consumption of the transmit amplifier in multipath fading channel
 	// model ( in joul per bit per meter^4 : J/bit/m^4)
-	private double E_mp = simulationParameters.AMPLIFIER_DISSIPATION_MULTIPATH;
+	private double E_mp = SimulationParameters.AMPLIFIER_DISSIPATION_MULTIPATH;
 
 	public DefaultEnergyModel(double maxActiveConsumption, double idleConsumption) {
 		super(maxActiveConsumption, idleConsumption);
@@ -29,7 +29,7 @@ public class DefaultEnergyModel extends EnergyModel {
 
 	public void updateCpuEnergyConsumption(double cpuUtilization) {
 		double consumption = (idleConsumption + ((maxActiveConsumption - idleConsumption) * cpuUtilization)) / 3600
-				* simulationParameters.UPDATE_INTERVAL; // the energy consumption value is for 1 hour, it will be
+				* SimulationParameters.UPDATE_INTERVAL; // the energy consumption value is for 1 hour, it will be
 														// divided by 3600 to get how much each second costs
 		this.cpuEnergyConsumption += consumption;
 	}

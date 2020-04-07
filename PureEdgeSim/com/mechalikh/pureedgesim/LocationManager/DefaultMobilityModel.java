@@ -2,7 +2,7 @@ package com.mechalikh.pureedgesim.LocationManager;
 
 import java.util.Random;
 
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 
 public class DefaultMobilityModel extends Mobility {
 	private boolean pause = false;
@@ -20,7 +20,7 @@ public class DefaultMobilityModel extends Mobility {
 
 	@Override
 	public Location getNextLocation() {
-		if (simulationParameters.SPEED <= 0 || !isMobile)
+		if (SimulationParameters.SPEED <= 0 || !isMobile)
 			return currentLocation; // The speed must be > 0 in order to move/change the location
 
 		double X_position = currentLocation.getXPos(); // Get the initial X coordinate assigned to this device
@@ -28,7 +28,7 @@ public class DefaultMobilityModel extends Mobility {
 
 		if (pause && pauseDuration > 0) {
 			// The device mobility is paused until that random delay finishes
-			pauseDuration -= simulationParameters.UPDATE_INTERVAL;
+			pauseDuration -= SimulationParameters.UPDATE_INTERVAL;
 			return currentLocation;
 		}
 
@@ -49,7 +49,7 @@ public class DefaultMobilityModel extends Mobility {
 	}
 
 	private Location updateLocation(double X_position, double Y_position) {
-		double distance = simulationParameters.SPEED * simulationParameters.UPDATE_INTERVAL;
+		double distance = SimulationParameters.SPEED * SimulationParameters.UPDATE_INTERVAL;
 		double X_distance = Math.cos(Math.toRadians(orientationAngle)) * distance;
 		double Y_distance = Math.sin(Math.toRadians(orientationAngle)) * distance;
 		// Update the X_position
@@ -63,7 +63,7 @@ public class DefaultMobilityModel extends Mobility {
 		pause = false;
 		// Increment time and then calculate the next coordinates in the next iteration
 		// (the device is moving)
-		mobilityDuration -= simulationParameters.UPDATE_INTERVAL;
+		mobilityDuration -= SimulationParameters.UPDATE_INTERVAL;
 	}
 
 	private void pause() {
@@ -79,11 +79,11 @@ public class DefaultMobilityModel extends Mobility {
 	}
 
 	private void reoriontate(double x_position, double y_position) {
-		if (x_position >= simulationParameters.AREA_LENGTH)
+		if (x_position >= SimulationParameters.AREA_LENGTH)
 			orientationAngle = -90 - new Random().nextInt(180);
 		else if (x_position <= 0)
 			orientationAngle = -90 + new Random().nextInt(180);
-		if (y_position >= simulationParameters.AREA_WIDTH)
+		if (y_position >= SimulationParameters.AREA_WIDTH)
 			orientationAngle = -new Random().nextInt(180);
 		else if (y_position <= 0)
 			orientationAngle = new Random().nextInt(180);

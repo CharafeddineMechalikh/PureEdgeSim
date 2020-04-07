@@ -43,9 +43,6 @@ public abstract class MainApplicationAbstract {
 	protected static Class<? extends EnergyModel> energyModel = DefaultEnergyModel.class;
 	protected static Class<? extends NetworkModel> networkModel = DefaultNetworkModel.class;
 
-	public MainApplicationAbstract() {
-	}
-
 	public static String getOutputFolder() {
 		return outputFolder;
 	}

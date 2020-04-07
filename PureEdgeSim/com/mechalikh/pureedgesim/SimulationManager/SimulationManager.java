@@ -10,8 +10,8 @@ import org.cloudbus.cloudsim.vms.Vm;
 import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker;
 
@@ -37,7 +37,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 		broker = createBroker();
 
 		// Show real time results during the simulation
-		if (simulationParameters.DISPLAY_REAL_TIME_CHARTS && !simulationParameters.PARALLEL)
+		if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL)
 			simulationVisualizer = new SimulationVisualizer(this);
 	}
 
@@ -60,7 +60,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 
 		// Tasks scheduling
 		for (Task task : tasksList) {
-			if (!simulationParameters.ENABLE_ORCHESTRATORS)
+			if (!SimulationParameters.ENABLE_ORCHESTRATORS)
 				task.setOrchestrator(task.getEdgeDevice());
 
 			// Schedule the tasks offloading
@@ -68,14 +68,14 @@ public class SimulationManager extends SimulationManagerAbstract {
 		}
 
 		// Scheduling the end of the simulation
-		schedule(this, simulationParameters.SIMULATION_TIME, PRINT_LOG);
+		schedule(this, SimulationParameters.SIMULATION_TIME, PRINT_LOG);
 
 		// Updating real time charts
-		if (simulationParameters.DISPLAY_REAL_TIME_CHARTS && !simulationParameters.PARALLEL)
-			schedule(this, simulationParameters.INITIALIZATION_TIME, UPDATE_REAL_TIME_CHARTS);
+		if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL)
+			schedule(this, SimulationParameters.INITIALIZATION_TIME, UPDATE_REAL_TIME_CHARTS);
 
 		// Show simulation progress
-		schedule(this, simulationParameters.INITIALIZATION_TIME, SHOW_PROGRESS);
+		schedule(this, SimulationParameters.INITIALIZATION_TIME, SHOW_PROGRESS);
 
 		simLog.printSameLine("Simulation progress : [", "red");
 	}
@@ -126,7 +126,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 				} else
 					simLog.printSameLine("#", "red");
 			}
-			schedule(this, simulationParameters.SIMULATION_TIME / 100, SHOW_PROGRESS);
+			schedule(this, SimulationParameters.SIMULATION_TIME / 100, SHOW_PROGRESS);
 			break;
 
 		case UPDATE_REAL_TIME_CHARTS:
@@ -134,14 +134,14 @@ public class SimulationManager extends SimulationManagerAbstract {
 			simulationVisualizer.updateCharts();
 
 			// Schedule the next update
-			schedule(this, simulationParameters.CHARTS_UPDATE_INTERVAL, UPDATE_REAL_TIME_CHARTS);
+			schedule(this, SimulationParameters.CHARTS_UPDATE_INTERVAL, UPDATE_REAL_TIME_CHARTS);
 			break;
 
 		case PRINT_LOG:
 			// Print results when simulation is over
 			List<Task> finishedTasks = broker.getCloudletFinishedList();
 			// If some tasks have not been executed
-			if (simulationParameters.WAIT_FOR_TASKS && (tasksCount / simLog.getGeneratedTasks()) < 1) {
+			if (SimulationParameters.WAIT_FOR_TASKS && (tasksCount / simLog.getGeneratedTasks()) < 1) {
 				// 1 = 100% , 0,9= 90%
 				// Some tasks may take hours to be executed that's why we don't wait until
 				// all of them get executed, but we only wait for 99% of tasks to be executed at
@@ -155,19 +155,18 @@ public class SimulationManager extends SimulationManagerAbstract {
 
 			simLog.printSameLine(" 100% ]", "red");
 
-			if (simulationParameters.DISPLAY_REAL_TIME_CHARTS && !simulationParameters.PARALLEL) {
+			if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL) {
 				// Close real time charts after the end of the simulation
-				if (simulationParameters.AUTO_CLOSE_REAL_TIME_CHARTS)
+				if (SimulationParameters.AUTO_CLOSE_REAL_TIME_CHARTS)
 					simulationVisualizer.close();
 				try {
 					// Save those charts in bitmap and vector formats
-					if (simulationParameters.SAVE_CHARTS)
+					if (SimulationParameters.SAVE_CHARTS)
 						simulationVisualizer.saveCharts();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
-
+			} 
 			// Show results and stop the simulation
 			simLog.showIterationResults(finishedTasks);
 
@@ -230,14 +229,14 @@ public class SimulationManager extends SimulationManagerAbstract {
 
 		simLog.incrementTasksSent();
 
-		if (simulationParameters.ENABLE_ORCHESTRATORS) {
+		if (SimulationParameters.ENABLE_ORCHESTRATORS) {
 			// Send the offloading request to the closest orchestrator
 			double min = -1;
 			int selected = 0;
 			double distance;
 
 			for (int i = 0; i < orchestratorsList.size(); i++) {
-				if (orchestratorsList.get(i).getType() != simulationParameters.TYPES.CLOUD) {
+				if (orchestratorsList.get(i).getType() != SimulationParameters.TYPES.CLOUD) {
 					distance = Math.abs(Math.sqrt(Math
 							.pow((task.getEdgeDevice().getMobilityManager().getCurrentLocation().getXPos()
 									- orchestratorsList.get(i).getMobilityManager().getCurrentLocation().getXPos()), 2)
@@ -285,62 +284,56 @@ public class SimulationManager extends SimulationManagerAbstract {
 		if (phase == 0 && task.getEdgeDevice().isDead()) {
 			simLog.incrementNotGeneratedBeacuseDeviceDead();
 			task.setFailureReason(Task.Status.NOT_GENERATED_BECAUSE_DEVICE_DEAD);
-			setFailed(task);
-			return true;
+			return setFailed(task);
 		} // Set the task as failed if the device is dead
 		if (phase != 0 && task.getEdgeDevice().isDead()) {
 			simLog.incrementFailedBeacauseDeviceDead(task);
 			task.setFailureReason(Task.Status.FAILED_BECAUSE_DEVICE_DEAD);
-			setFailed(task);
-			return true;
+			return setFailed(task);
 		}
 		// or if the orchestrator died
 		if (phase == 1 && task.getOrchestrator() != null && task.getOrchestrator().isDead()) {
 			task.setFailureReason(Task.Status.FAILED_BECAUSE_DEVICE_DEAD);
 			simLog.incrementFailedBeacauseDeviceDead(task);
-			setFailed(task);
-			return true;
+			return setFailed(task);
 		}
 		// or the destination device is dead
 		if (phase == 2 && ((DataCenter) task.getVm().getHost().getDatacenter()).isDead()) {
 			task.setFailureReason(Task.Status.FAILED_BECAUSE_DEVICE_DEAD);
 			simLog.incrementFailedBeacauseDeviceDead(task);
-			setFailed(task);
-			return true;
+			return setFailed(task);
 		}
 		// The task is failed due to long delay
 		if ((task.getSimulation().clock() - task.getTime()) > task.getMaxLatency()) {
 			task.setFailureReason(Task.Status.FAILED_DUE_TO_LATENCY);
 			simLog.incrementTasksFailedLatency(task);
-			setFailed(task);
-			return true;
+			return setFailed(task);
 		}
 		// A simple representation of task failure due to
 		// device mobility, if the vm location doesn't match
 		// the edge device location (that generated this task)
 		if (phase == 1 && task.getOrchestrator() != null
-				&& task.getOrchestrator().getType() != simulationParameters.TYPES.CLOUD
+				&& task.getOrchestrator().getType() != SimulationParameters.TYPES.CLOUD
 				&& !sameLocation(task.getEdgeDevice(), task.getOrchestrator())) {
 			task.setFailureReason(Task.Status.FAILED_DUE_TO_DEVICE_MOBILITY);
 			simLog.incrementTasksFailedMobility(task);
-			setFailed(task);
-			return true;
+			return setFailed(task);
 		}
 		if (phase == 2 && (task.getVm().getHost().getDatacenter()) != null
-				&& ((DataCenter) task.getVm().getHost().getDatacenter()).getType() != simulationParameters.TYPES.CLOUD
+				&& ((DataCenter) task.getVm().getHost().getDatacenter()).getType() != SimulationParameters.TYPES.CLOUD
 				&& !sameLocation(task.getEdgeDevice(), ((DataCenter) task.getVm().getHost().getDatacenter()))) {
 			task.setFailureReason(Task.Status.FAILED_DUE_TO_DEVICE_MOBILITY);
 			simLog.incrementTasksFailedMobility(task);
-			setFailed(task);
-			return true;
+			return setFailed(task);
 		}
 		return false;
 	}
 
-	private void setFailed(Task task) {
+	private boolean setFailed(Task task) {
 		failedTasksCount++;
 		tasksCount++;
 		this.edgeOrchestrator.resultsReturned(task);
+		return true;
 	}
 
 	private boolean sameLocation(DataCenter Dev1, DataCenter Dev2) {
@@ -351,9 +344,9 @@ public class SimulationManager extends SimulationManagerAbstract {
 						- Dev2.getMobilityManager().getCurrentLocation().getXPos()), 2)
 				+ Math.pow((Dev1.getMobilityManager().getCurrentLocation().getYPos()
 						- Dev2.getMobilityManager().getCurrentLocation().getYPos()), 2)));
-		int RANGE = simulationParameters.EDGE_DEVICES_RANGE;
+		int RANGE = SimulationParameters.EDGE_DEVICES_RANGE;
 		if (Dev1.getType() != Dev2.getType()) // One of them is an edge data center and the other is an edge device
-			RANGE = simulationParameters.EDGE_DATACENTERS_RANGE;
+			RANGE = SimulationParameters.EDGE_DATACENTERS_RANGE;
 		return (distance < RANGE);
 	}
 

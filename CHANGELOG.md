@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 2.4 (apr 7th 2020)
+
+*   Updated to the latest CloudSim Plus version (5.4.0)
+
+*   Improved code quality.
+
+*   Fixed minor issues
+
 ## Version 2.4 (mar 3rd 2020)
 
 *   Improved code quality and removed duplication.
@@ -109,5 +117,6 @@
 *   New simulation parameters for the aforementioned changes. The ability to control the trade off between simulation accuracy and simulation time, etc.
 
 *   Improved simulation time
+
 
 *   Adding support for physical deployment of the orchestrator:  Deploying the orchestrator on the cloud for example, on fog servers...etc.

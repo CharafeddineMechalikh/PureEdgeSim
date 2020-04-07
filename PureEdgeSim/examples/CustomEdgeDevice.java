@@ -9,7 +9,7 @@ import org.cloudbus.cloudsim.vms.Vm;
 
 import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.DefaultDataCenter;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
@@ -35,7 +35,7 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 	// be scheduled within the startEntity() method:
 	@Override
 	public void startEntity() {
-		schedule(this, simulationParameters.INITIALIZATION_TIME + 1, UPDATE_CLUSTERS); // must be 0.1 because we are
+		schedule(this, SimulationParameters.INITIALIZATION_TIME + 1, UPDATE_CLUSTERS); // must be 0.1 because we are
 		super.startEntity();
 	}
 
@@ -47,8 +47,8 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 		switch (ev.getTag()) {
 		case UPDATE_CLUSTERS:
 
-			if (this.getType() == simulationParameters.TYPES.EDGE_DEVICE
-					&& "CLUSTER".equals(simulationParameters.DEPLOY_ORCHESTRATOR)
+			if (this.getType() == SimulationParameters.TYPES.EDGE_DEVICE
+					&& "CLUSTER".equals(SimulationParameters.DEPLOY_ORCHESTRATOR)
 					&& (getSimulation().clock() - time > 30)) {
 				time = (int) getSimulation().clock();
 				cluster();
@@ -68,9 +68,9 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 		double avg_distance = 0;
 		for (int i = 0; i < simulationManager.getServersManager().getDatacenterList().size(); i++) {
 			if (simulationManager.getServersManager().getDatacenterList().get(i)
-					.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
+					.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
 				distance = getDistance(this, simulationManager.getServersManager().getDatacenterList().get(i));
-				if (distance < simulationParameters.EDGE_DEVICES_RANGE) {
+				if (distance < SimulationParameters.EDGE_DEVICES_RANGE) {
 					// neighbor
 					neighbors++;
 					avg_distance += distance;
@@ -87,7 +87,7 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 		if (getVmList().size() > 0)
 			mips = getVmList().get(0).getMips();
 		if (neighbors > 0)
-			avg_distance = avg_distance / neighbors / simulationParameters.EDGE_DEVICES_RANGE;
+			avg_distance = avg_distance / neighbors / SimulationParameters.EDGE_DEVICES_RANGE;
 
 		// mips is divided by 200000 to normalize it, it is out of the parenthesis so
 		// the weight becomes 0 when mips = 0
@@ -158,7 +158,7 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 	private void cluster() {
 		originalWeight = getOriginalWeight();
 		if ((this.getOrchestratorWeight() < originalWeight) || ((this.parent != null)
-				&& (getDistance(this, this.parent) > simulationParameters.EDGE_DEVICES_RANGE))) {
+				&& (getDistance(this, this.parent) > SimulationParameters.EDGE_DEVICES_RANGE))) {
 			setOrchestrator(this);
 			this.weight = originalWeight;
 		}
@@ -170,9 +170,9 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 	private void compareWeightWithNeighbors() {
 		for (int i = 2; i < simulationManager.getServersManager().getDatacenterList().size(); i++) {
 			if (simulationManager.getServersManager().getDatacenterList().get(i)
-					.getType() == simulationParameters.TYPES.EDGE_DEVICE
+					.getType() == SimulationParameters.TYPES.EDGE_DEVICE
 					&& getDistance(this, simulationManager.getServersManager().getDatacenterList()
-							.get(i)) <= simulationParameters.EDGE_DEVICES_RANGE
+							.get(i)) <= SimulationParameters.EDGE_DEVICES_RANGE
 					// neighbors
 					&& (this.weight < ((CustomEdgeDevice) simulationManager.getServersManager().getDatacenterList()
 							.get(i)).weight)) {

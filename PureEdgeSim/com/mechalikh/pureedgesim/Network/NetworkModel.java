@@ -6,8 +6,8 @@ import java.util.List;
 import org.cloudbus.cloudsim.core.CloudSimEntity;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
@@ -77,7 +77,7 @@ public abstract class NetworkModel extends CloudSimEntity {
 						&& (fileTransferProgress.getTask().getRegistry()== null || fileTransferProgress.getTask().getRegistry().getType() == TYPES.CLOUD))
 				// Or if containers will be downloaded from registry
 
-				|| (fileTransferProgress.getTask().getOrchestrator().getType() == simulationParameters.TYPES.CLOUD));
+				|| (fileTransferProgress.getTask().getOrchestrator().getType() == SimulationParameters.TYPES.CLOUD));
 	         	// Or if the orchestrator is deployed in the cloud
 
 	}
@@ -95,11 +95,11 @@ public abstract class NetworkModel extends CloudSimEntity {
 	}
 
 	protected double getLanBandwidth(double remainingTasksCount_Lan) {
-		return (simulationParameters.BANDWIDTH_WLAN / (remainingTasksCount_Lan > 0 ? remainingTasksCount_Lan : 1));
+		return (SimulationParameters.BANDWIDTH_WLAN / (remainingTasksCount_Lan > 0 ? remainingTasksCount_Lan : 1));
 	}
 
 	protected double getWanBandwidth(double remainingTasksCount_Wan) {
-		return (simulationParameters.WAN_BANDWIDTH / (remainingTasksCount_Wan > 0 ? remainingTasksCount_Wan : 1));
+		return (SimulationParameters.WAN_BANDWIDTH / (remainingTasksCount_Wan > 0 ? remainingTasksCount_Wan : 1));
 	}
 
 	@Override

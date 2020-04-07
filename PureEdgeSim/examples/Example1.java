@@ -18,7 +18,7 @@ public class Example1 extends MainApplication {
 
 	public static void main(String[] args) {
 		// To change the mobility model
-		setCustomMobilityModel(CustomMobilityManager.class);
+		//setCustomMobilityModel(CustomMobilityManager.class);
 
 		// To change the tasks orchestrator
 		setCustomEdgeOrchestrator(CustomEdgeOrchestrator.class);

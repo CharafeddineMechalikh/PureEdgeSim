@@ -1,7 +1,7 @@
 package com.mechalikh.pureedgesim.TasksOrchestration;
 
 import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
@@ -18,10 +18,10 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 			return tradeOff(architecture, task);
 		} else {
 			SimLog.println("");
-			SimLog.println("Default Orchestrator- Unknnown orchestration algorithm '" + algorithm
+			SimLog.println("Default Orchestrator- Unknown orchestration algorithm '" + algorithm
 					+ "', please check the simulation parameters file...");
 			// Cancel the simulation
-			simulationParameters.STOP = true;
+			SimulationParameters.STOP = true;
 			simulationManager.getSimulation().terminate();
 		}
 		return -1;
@@ -40,11 +40,11 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 				double weight = 1.2; // this is an edge server 'cloudlet', the latency is slightly high then edge
 										// devices
 				if (((DataCenter) vmList.get(i).getHost().getDatacenter())
-						.getType() == simulationParameters.TYPES.CLOUD) {
+						.getType() == SimulationParameters.TYPES.CLOUD) {
 					weight = 1.8; // this is the cloud, it consumes more energy and results in high latency, so
 									// better to avoid it
 				} else if (((DataCenter) vmList.get(i).getHost().getDatacenter())
-						.getType() == simulationParameters.TYPES.EDGE_DEVICE) {
+						.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
 					weight = 1.3;// this is an edge device, it results in an extremely low latency, but may
 									// consume more energy.
 				}

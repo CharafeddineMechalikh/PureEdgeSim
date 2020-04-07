@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.hosts.Host;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
 public class DefaultDataCenter extends DataCenter {
@@ -17,7 +17,7 @@ public class DefaultDataCenter extends DataCenter {
 	@Override
 	public void startEntity() {
 		super.startEntity();
-		schedule(this, simulationParameters.INITIALIZATION_TIME, UPDATE_STATUS);
+		schedule(this, SimulationParameters.INITIALIZATION_TIME, UPDATE_STATUS);
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class DefaultDataCenter extends DataCenter {
 			updateStatus();
 
 			if (!isDead()) {
-				schedule(this, simulationParameters.UPDATE_INTERVAL, UPDATE_STATUS);
+				schedule(this, SimulationParameters.UPDATE_INTERVAL, UPDATE_STATUS);
 			}
 
 			break;

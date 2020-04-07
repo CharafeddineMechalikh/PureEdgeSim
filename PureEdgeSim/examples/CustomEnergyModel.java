@@ -3,7 +3,7 @@ package examples;
 import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.EnergyModel;
 import com.mechalikh.pureedgesim.Network.FileTransferProgress;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 
 public class CustomEnergyModel extends EnergyModel {
 
@@ -32,7 +32,7 @@ public class CustomEnergyModel extends EnergyModel {
 		// seconds). so we need to multiply the results by the update interval in order
 		// to get the correct measuring
 		double consumedEnergy = (idleConsumption + ((maxActiveConsumption - idleConsumption) * cpuUtilization)) / 3600
-				* simulationParameters.UPDATE_INTERVAL; // the energy consumption value is for 1 hour, it will be
+				* SimulationParameters.UPDATE_INTERVAL; // the energy consumption value is for 1 hour, it will be
 														// divided by 3600 to get how much each second costs
 
 		// the cpu and energy update interval ( see the update_interval in simulation
@@ -41,7 +41,7 @@ public class CustomEnergyModel extends EnergyModel {
 		// we need to multiply it by the interval in order to get the correct
 		// consumption
 
-		consumedEnergy = consumedEnergy * simulationParameters.UPDATE_INTERVAL;
+		consumedEnergy = consumedEnergy * SimulationParameters.UPDATE_INTERVAL;
 
 		// add the results to the consumed energy
 		this.cpuEnergyConsumption += consumedEnergy;

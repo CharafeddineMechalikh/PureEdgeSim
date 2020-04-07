@@ -16,7 +16,7 @@ import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.style.Styler.ChartTheme;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 
 public class ChartsGenerator {
 
@@ -27,7 +27,6 @@ public class ChartsGenerator {
 	public ChartsGenerator(String fileName) {
 		this.fileName = fileName;
 		loadFile();
-
 	}
 
 	private void loadFile() {
@@ -76,17 +75,17 @@ public class ChartsGenerator {
 
 	public void generateChart(String x_series, String y_series, String y_series_label, boolean byAlgorithms) {
 		XYChart chart;
-		for (int i = 0; i < (byAlgorithms ? simulationParameters.ORCHESTRATION_AlGORITHMS.length
-				: simulationParameters.ORCHESTRATION_ARCHITECTURES.length); i++) {
+		for (int i = 0; i < (byAlgorithms ? SimulationParameters.ORCHESTRATION_AlGORITHMS.length
+				: SimulationParameters.ORCHESTRATION_ARCHITECTURES.length); i++) {
 			chart = initChart(x_series, y_series, y_series_label, getArray(byAlgorithms)[i]);
-			for (int j = 0; j < (byAlgorithms ? simulationParameters.ORCHESTRATION_ARCHITECTURES.length
-					: simulationParameters.ORCHESTRATION_AlGORITHMS.length); j++) {
+			for (int j = 0; j < (byAlgorithms ? SimulationParameters.ORCHESTRATION_ARCHITECTURES.length
+					: SimulationParameters.ORCHESTRATION_AlGORITHMS.length); j++) {
 				double[] xData = toArray(
-						getColumn(x_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[(byAlgorithms ? j : i)],
-								simulationParameters.ORCHESTRATION_AlGORITHMS[(byAlgorithms ? i : j)]));
+						getColumn(x_series, SimulationParameters.ORCHESTRATION_ARCHITECTURES[(byAlgorithms ? j : i)],
+								SimulationParameters.ORCHESTRATION_AlGORITHMS[(byAlgorithms ? i : j)]));
 				double[] yData = toArray(
-						getColumn(y_series, simulationParameters.ORCHESTRATION_ARCHITECTURES[(byAlgorithms ? j : i)],
-								simulationParameters.ORCHESTRATION_AlGORITHMS[(byAlgorithms ? i : j)]));
+						getColumn(y_series, SimulationParameters.ORCHESTRATION_ARCHITECTURES[(byAlgorithms ? j : i)],
+								SimulationParameters.ORCHESTRATION_AlGORITHMS[(byAlgorithms ? i : j)]));
 
 				XYSeries series = chart.addSeries(getArray(!byAlgorithms)[j], xData, yData);
 				series.setMarker(SeriesMarkers.CIRCLE); // Marker type: circle,rectangle, diamond..
@@ -99,8 +98,8 @@ public class ChartsGenerator {
 	}
 
 	private String[] getArray(boolean byAlgorithms) {
-		return (byAlgorithms ? simulationParameters.ORCHESTRATION_AlGORITHMS
-				: simulationParameters.ORCHESTRATION_ARCHITECTURES);
+		return (byAlgorithms ? SimulationParameters.ORCHESTRATION_AlGORITHMS
+				: SimulationParameters.ORCHESTRATION_ARCHITECTURES);
 	}
 
 	private XYChart initChart(String x_series, String y_series, String y_series_label, String title) {
@@ -183,7 +182,7 @@ public class ChartsGenerator {
 		displayChart("Edge devices count", "Network usage (s)", "Time (s)", "/Network");
 		displayChart("Edge devices count", "Wan usage (s)", "Time (s)", "/Network");
 		displayChart("Edge devices count", "Average bandwidth per task (Mbps)", "Bandwidth (Mbps)", "/Network");
-		if (simulationParameters.ENABLE_REGISTRY) {
+		if (SimulationParameters.ENABLE_REGISTRY) {
 			displayChart("Edge devices count", "Containers wan usage (s)", "Time (s)", "/Network");
 			displayChart("Edge devices count", "Containers lan usage (s)", "Time (s)", "/Network");
 		}

@@ -10,10 +10,7 @@ public class Location {
 	}
 
 	public boolean equals(Location otherLocation) {
-		if (otherLocation == this)
-			return true;
-
-		return (this.xPos == otherLocation.xPos && this.yPos == otherLocation.yPos);
+		return ((otherLocation == this)|| (this.xPos == otherLocation.xPos && this.yPos == otherLocation.yPos));
 
 	}
 

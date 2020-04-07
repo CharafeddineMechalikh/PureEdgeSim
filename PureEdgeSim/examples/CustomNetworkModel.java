@@ -3,8 +3,8 @@ package examples;
 import com.mechalikh.pureedgesim.Network.DefaultNetworkModel;
 import com.mechalikh.pureedgesim.Network.FileTransferProgress;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.simulationParameters.TYPES;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
@@ -18,8 +18,8 @@ public class CustomNetworkModel extends DefaultNetworkModel {
 
 	@Override
 	protected void transferFinished(FileTransferProgress transfer) {
-		if (transfer.getTransferType() == FileTransferProgress.Type.TASK && simulationParameters.ENABLE_REGISTRY
-				&& "CACHE".equals(simulationParameters.registry_mode)) {
+		if (transfer.getTransferType() == FileTransferProgress.Type.TASK && SimulationParameters.ENABLE_REGISTRY
+				&& "CACHE".equals(SimulationParameters.registry_mode)) {
 			// the offloading request has been received, now pull the container in order to
 			// execute the task
 			pullContainer(transfer.getTask());
@@ -72,14 +72,14 @@ public class CustomNetworkModel extends DefaultNetworkModel {
 	}
 
 	private boolean canKeepReplica(CustomEdgeDevice edgeDevice, Task task) {
-		return (simulationParameters.registry_mode.equals("CACHE")&& ((CustomEdgeDevice) edgeDevice.getOrchestrator())
+		return ("CACHE".equals(SimulationParameters.registry_mode) && ((CustomEdgeDevice) edgeDevice.getOrchestrator())
 				.countContainer(task.getApplicationID()) < MAX_NUMBER_OF_REPLICAS);
 	}
 
 	private void freeStorage(CustomEdgeDevice edgeDevice, Task task) {
 		// while the available storage is not enough
 		double min = 0;
-		while (storageIsEnough(edgeDevice,task)) {
+		while (storageIsEnough(edgeDevice, task)) {
 			min = edgeDevice.getMinContainerCost();
 			if (edgeDevice.getCost(task) < min || min == -1) {
 				// delete the app with the highest cost
@@ -90,7 +90,7 @@ public class CustomNetworkModel extends DefaultNetworkModel {
 		}
 	}
 
-	private boolean storageIsEnough(CustomEdgeDevice edgeDevice, Task task) { 
+	private boolean storageIsEnough(CustomEdgeDevice edgeDevice, Task task) {
 		return (edgeDevice.getResources().getAvailableStorage() < task.getContainerSize()
 				&& edgeDevice.getResources().getStorageMemory() > task.getContainerSize());
 	}

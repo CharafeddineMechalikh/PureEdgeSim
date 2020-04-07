@@ -1,7 +1,7 @@
 package com.mechalikh.pureedgesim.ScenarioManager;
  
 
-public class simulationParameters { 
+public class SimulationParameters { 
 
 	public static String EDGE_DEVICES_FILE="";     // Edge devices xml file path
 	public static String EDGE_DATACENTERS_FILE=""; // Edge datacenters xml file path
