@@ -5,7 +5,7 @@
 ## For more information read the wiki here: [PureEdgeSim WIKI](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki) 
 A simulation tutorial can be found [here](https://drive.google.com/open?id=1Qg7UTop7Wa7TZQ8MOrXZkyo1Rga455Qm)  
 
-## A new example Example 8 with a Fuzzy Logic orchestration algorithm  can be downloaded from [here](https://github.com/CharafeddineMechalikh/PureEdgeSim_Fuzzy_Logic_Example)  
+## A new example "Example 8" with a Fuzzy Logic orchestration algorithm  can be downloaded from [here](https://github.com/CharafeddineMechalikh/PureEdgeSim_Fuzzy_Logic_Example)  
 
 ## 1. Background
 
