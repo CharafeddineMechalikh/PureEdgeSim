@@ -5,6 +5,8 @@
 ## For more information read the wiki here: [PureEdgeSim WIKI](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki) 
 A simulation tutorial can be found [here](https://drive.google.com/open?id=1Qg7UTop7Wa7TZQ8MOrXZkyo1Rga455Qm)  
 
+## A new example Example 8 with a Fuzzy Logic orchestration algorithm  can be downloaded from [here](https://github.com/CharafeddineMechalikh/PureEdgeSim_Fuzzy_Logic_Example)  
+
 ## 1. Background
 
 Edge and Mist (Extreme Edge) computing, two emerging computing paradigms that aim to overcome the Cloud computing limitations by bringing its applications at the Edge of the network. Thus, reducing both the latency and the Cloud workload and leading to a more scalable network. Nevertheless, in these distributed environments where many devices need to offload their tasks to one another (either to increase their lifetime or to minimize the task completion delay) many issues such as resources management strategies has to be solved. Instead of testing them on a real distributed system, the simulation makes it possible to evaluate the proposed strategies and algorithms in a repeatable, controllable and cost-effective way before their actual deployment. However, when it comes to simulation tools, Mist computing still did not get the attention they deserve (with only few simulators for Edge computing such as iFogSim, EdgeCloudSim).
