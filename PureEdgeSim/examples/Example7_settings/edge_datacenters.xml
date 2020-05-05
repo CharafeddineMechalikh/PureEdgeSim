@@ -17,13 +17,13 @@
 				<VMs>
 					<VM>
 						<core>4</core>
-						<mips>200000</mips>
+						<mips>100000</mips>
 						<ram>4000</ram>
 						<storage>20000</storage>
 					</VM>
 					<VM>
 						<core>4</core>
-						<mips>200000</mips>
+						<mips>100000</mips>
 						<ram>4000</ram>
 						<storage>20000</storage>
 					</VM> 
@@ -37,13 +37,13 @@
 				<VMs>
 					<VM>
 						<core>4</core>
-						<mips>200000</mips>
+						<mips>100000</mips>
 						<ram>4000</ram>
 						<storage>20000</storage>
 					</VM>
 					<VM>
 						<core>4</core>
-						<mips>200000</mips>
+						<mips>100000</mips>
 						<ram>4000</ram>
 						<storage>20000</storage>
 					</VM> 
@@ -51,5 +51,4 @@
 			</host>
 		</hosts>
 	</datacenter>
-	
 </edge_datacenters>

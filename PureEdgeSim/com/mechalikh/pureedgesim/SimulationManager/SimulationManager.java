@@ -303,12 +303,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 			simLog.incrementFailedBeacauseDeviceDead(task);
 			return setFailed(task);
 		}
-		// The task is failed due to long delay
-		if ((task.getSimulation().clock() - task.getTime()) > task.getMaxLatency()) {
-			task.setFailureReason(Task.Status.FAILED_DUE_TO_LATENCY);
-			simLog.incrementTasksFailedLatency(task);
-			return setFailed(task);
-		}
+		
 		// A simple representation of task failure due to
 		// device mobility, if the vm location doesn't match
 		// the edge device location (that generated this task)
@@ -324,6 +319,12 @@ public class SimulationManager extends SimulationManagerAbstract {
 				&& !sameLocation(task.getEdgeDevice(), ((DataCenter) task.getVm().getHost().getDatacenter()))) {
 			task.setFailureReason(Task.Status.FAILED_DUE_TO_DEVICE_MOBILITY);
 			simLog.incrementTasksFailedMobility(task);
+			return setFailed(task);
+		}
+		// The task is failed due to long delay
+		if ((task.getSimulation().clock() - task.getTime()) > task.getMaxLatency()) {
+			task.setFailureReason(Task.Status.FAILED_DUE_TO_LATENCY);
+			simLog.incrementTasksFailedLatency(task);
 			return setFailed(task);
 		}
 		return false;

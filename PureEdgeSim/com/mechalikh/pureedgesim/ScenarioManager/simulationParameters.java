@@ -1,6 +1,9 @@
 package com.mechalikh.pureedgesim.ScenarioManager;
  
+import java.util.ArrayList;
+import java.util.List;
 
+import com.mechalikh.pureedgesim.TasksGenerator.Application;
 public class SimulationParameters { 
 
 	public static String EDGE_DEVICES_FILE="";     // Edge devices xml file path
@@ -56,13 +59,11 @@ public class SimulationParameters {
 	
 	// Tasks orchestration parameters
 	public static boolean ENABLE_ORCHESTRATORS;          // Whether the tasks will be sent to the orchestrator or directly to destination
-	public static int TASKS_PER_EDGE_DEVICE_PER_MINUTES; // Tasks generation rate
 	public static String[] ORCHESTRATION_AlGORITHMS;     // Tasks orchestration algorithms
 	public static String[] ORCHESTRATION_ARCHITECTURES;  // The used paradigms : Cloud, Edge, Mist Computing..
 	public static boolean ENABLE_REGISTRY;               // To download the container image or execute the task directly    
 	public static String registry_mode;                  // Where the containers will be downloaded from
-	public static int APPS_COUNT;                        // The number of the applications specified by the user in the Application.xml file
-	public static double[][] APPLICATIONS_TABLE;         // The applications characteristics
+	public static List<Application> APPLICATIONS_LIST = new ArrayList<>();  // The applications characteristics
 	public static String CPU_ALLOCATION_POLICY;          // CPU allocation policy : TIME_SHARED (results in long simulation time) or SPACE_SHARED 
 	public static String DEPLOY_ORCHESTRATOR="";         // The location where the orchestrators are deployed (Edge devices, Cloud, Edge data centers)
 	public static boolean WAIT_FOR_TASKS;                // After the end of the simulation time, some tasks may still not be executed yet,

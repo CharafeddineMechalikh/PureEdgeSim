@@ -121,7 +121,7 @@ public abstract class NetworkModel extends CloudSimEntity {
 			}
 		}
 		bwUsage = (wanTasks > 0 ? bwUsage / wanTasks : 0) / 1000;
-		return Math.min(bwUsage, 300);
+		return Math.min(bwUsage, SimulationParameters.WAN_BANDWIDTH/1000);
 	}
 
 }

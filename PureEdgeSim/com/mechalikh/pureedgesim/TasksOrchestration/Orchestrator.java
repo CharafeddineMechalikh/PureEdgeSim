@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter; 
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
@@ -32,7 +32,8 @@ public abstract class Orchestrator {
 
 	private void initHistoryList(int size) {
 		for (int vm = 0; vm < size; vm++) {
-			// Creating a list to store the orchestration history for each VM (virtual machine)
+			// Creating a list to store the orchestration history for each VM (virtual
+			// machine)
 			orchestrationHistory.add(new ArrayList<>());
 		}
 	}
@@ -53,37 +54,42 @@ public abstract class Orchestrator {
 		}
 	}
 
-	// If the orchestration scenario is MIST_ONLY send Tasks only to edge devices 
+	// If the orchestration scenario is MIST_ONLY send Tasks only to edge devices
 	private void mistOnly(Task task) {
 		String[] Architecture = { "Mist" };
 		sendTask(task, findVM(Architecture, task));
 	}
 
-	// If the orchestration scenario is ClOUD_ONLY send Tasks (cloudlets) only to cloud virtual machines (vms)
+	// If the orchestration scenario is ClOUD_ONLY send Tasks (cloudlets) only to
+	// cloud virtual machines (vms)
 	private void cloudOnly(Task task) {
 		String[] Architecture = { "Cloud" };
 		sendTask(task, findVM(Architecture, task));
 	}
 
-	// If the orchestration scenario is EDGE_AND_CLOUD send Tasks only to edge data centers or cloud virtual machines (vms)
+	// If the orchestration scenario is EDGE_AND_CLOUD send Tasks only to edge data
+	// centers or cloud virtual machines (vms)
 	private void edgeAndCloud(Task task) {
 		String[] Architecture = { "Cloud", "Edge" };
 		sendTask(task, findVM(Architecture, task));
 	}
 
-	// If the orchestration scenario is MIST_AND_CLOUD send Tasks only to edge devices or cloud virtual machines (vms)
+	// If the orchestration scenario is MIST_AND_CLOUD send Tasks only to edge
+	// devices or cloud virtual machines (vms)
 	private void mistAndCloud(Task task) {
 		String[] Architecture = { "Cloud", "Mist" };
 		sendTask(task, findVM(Architecture, task));
 	}
 
-	// If the orchestration scenario is EDGE_ONLY send Tasks only to edge data centers 
+	// If the orchestration scenario is EDGE_ONLY send Tasks only to edge data
+	// centers
 	private void edgeOnly(Task task) {
 		String[] Architecture = { "Edge" };
 		sendTask(task, findVM(Architecture, task));
 	}
 
-	// If the orchestration scenario is ALL send Tasks to any virtual machine (vm) or device
+	// If the orchestration scenario is ALL send Tasks to any virtual machine (vm)
+	// or device
 	private void all(Task task) {
 		String[] Architecture = { "Cloud", "Edge", "Mist" };
 		sendTask(task, findVM(Architecture, task));
@@ -95,7 +101,8 @@ public abstract class Orchestrator {
 		// assign the tasks to the vm found
 		assignTaskToVm(vm, task);
 
-		// Offload it only if resources are available (i.e. the offloading destination is available)
+		// Offload it only if resources are available (i.e. the offloading destination
+		// is available)
 		if (task.getVm() != Vm.NULL) // Send the task to execute it
 			task.getEdgeDevice().getVmTaskMap().add(new VmTaskMapItem((Vm) task.getVm(), task));
 	}
@@ -106,7 +113,8 @@ public abstract class Orchestrator {
 		} else {
 			task.setVm(vmList.get(vmIndex)); // send this task to this vm
 			simLog.deepLog(simulationManager.getSimulation().clock() + " : EdgeOrchestrator, Task: " + task.getId()
-					+ " assigned to " + ((DataCenter)vmList.get(vmIndex).getHost().getDatacenter()).getType() + " vm: " + vmList.get(vmIndex).getId());
+					+ " assigned to " + ((DataCenter) vmList.get(vmIndex).getHost().getDatacenter()).getType() + " vm: "
+					+ vmList.get(vmIndex).getId());
 
 			// update history
 			orchestrationHistory.get(vmIndex).add((int) task.getId());
@@ -116,9 +124,11 @@ public abstract class Orchestrator {
 	protected boolean sameLocation(DataCenter device1, DataCenter device2, int RANGE) {
 		if (device2.getType() == TYPES.CLOUD)
 			return true;
-		double distance = Math
-				.abs(Math.sqrt(Math.pow((device1.getMobilityManager().getCurrentLocation().getXPos() - device2.getMobilityManager().getCurrentLocation().getXPos()), 2)
-						+ Math.pow((device1.getMobilityManager().getCurrentLocation().getYPos() - device2.getMobilityManager().getCurrentLocation().getYPos()), 2)));
+		double distance = Math.abs(Math.sqrt(Math
+				.pow((device1.getMobilityManager().getCurrentLocation().getXPos()
+						- device2.getMobilityManager().getCurrentLocation().getXPos()), 2)
+				+ Math.pow((device1.getMobilityManager().getCurrentLocation().getYPos()
+						- device2.getMobilityManager().getCurrentLocation().getYPos()), 2)));
 
 		return (distance < RANGE);
 	}
@@ -132,10 +142,12 @@ public abstract class Orchestrator {
 	}
 
 	protected boolean offloadingIsPossible(Task task, Vm vm, String[] architecture) {
-		SimulationParameters.TYPES vmType = ((DataCenter)vm.getHost().getDatacenter()).getType();
+		SimulationParameters.TYPES vmType = ((DataCenter) vm.getHost().getDatacenter()).getType();
 		return ((arrayContains(architecture, "Cloud") && vmType == SimulationParameters.TYPES.CLOUD) // cloud computing
-				|| (arrayContains(architecture, "Edge") && vmType == SimulationParameters.TYPES.EDGE_DATACENTER // Edge computing
-				// compare destination (edge data center) location and origin (edge device) location, if they
+				|| (arrayContains(architecture, "Edge") && vmType == SimulationParameters.TYPES.EDGE_DATACENTER // Edge
+																												// computing
+				// compare destination (edge data center) location and origin (edge device)
+				// location, if they
 				// are in same area offload to his device
 						&& (sameLocation(((DataCenter) vm.getHost().getDatacenter()), task.getEdgeDevice(),
 								SimulationParameters.EDGE_DATACENTERS_RANGE)
@@ -144,16 +156,17 @@ public abstract class Orchestrator {
 										&& sameLocation(((DataCenter) vm.getHost().getDatacenter()),
 												task.getOrchestrator(), SimulationParameters.EDGE_DATACENTERS_RANGE))))
 
-				|| (arrayContains(architecture, "Mist") && vmType == SimulationParameters.TYPES.EDGE_DEVICE // Mist computing
-				// compare destination (edge device) location and origin (edge device) location, if
-				// they are in same area offload to his device
+				|| (arrayContains(architecture, "Mist") && vmType == SimulationParameters.TYPES.EDGE_DEVICE // Mist
+																											// computing
+				// compare destination (edge device) location and origin (edge device) location,
+				// if they are in same area offload to this device
 						&& (sameLocation(((DataCenter) vm.getHost().getDatacenter()), task.getEdgeDevice(),
 								SimulationParameters.EDGE_DEVICES_RANGE)
 								// or compare the location of their orchestrators
 								|| (SimulationParameters.ENABLE_ORCHESTRATORS
 										&& sameLocation(((DataCenter) vm.getHost().getDatacenter()),
-												task.getOrchestrator(), SimulationParameters.EDGE_DEVICES_RANGE))
-										&& ((DataCenter) vm.getHost().getDatacenter()).isDead())));
+												task.getOrchestrator(), SimulationParameters.EDGE_DEVICES_RANGE)))
+						&& !((DataCenter) vm.getHost().getDatacenter()).isDead()));
 	}
 
 	public abstract void resultsReturned(Task task);

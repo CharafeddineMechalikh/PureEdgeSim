@@ -115,7 +115,7 @@ public class MainApplication extends MainApplicationAbstract{
 				isFirstIteration = false;
 
 				// New simulation instance
-				CloudSim simulation = new CloudSim();
+				CloudSim simulation = new CloudSim(0.01);
 
 				// Initialize the simulation manager
 				simulationManager = new SimulationManager(simLog, simulation, simulationId, iteration,

@@ -14,6 +14,7 @@ import org.w3c.dom.NodeList;
 
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
+import com.mechalikh.pureedgesim.TasksGenerator.Application;
 
 public class FilesParser {
 
@@ -89,9 +90,7 @@ public class FilesParser {
 					.parseDouble(prop.getProperty("wan_propogation_delay").trim()); // seconds
 			SimulationParameters.NETWORK_UPDATE_INTERVAL = Double
 					.parseDouble(prop.getProperty("network_update_interval").trim()); // seconds
-			SimulationParameters.CPU_ALLOCATION_POLICY = prop.getProperty("Applications_CPU_allocation_policy").trim();
-			SimulationParameters.TASKS_PER_EDGE_DEVICE_PER_MINUTES = Integer
-					.parseInt(prop.getProperty("tasks_generation_rate").trim());
+			SimulationParameters.CPU_ALLOCATION_POLICY = prop.getProperty("Applications_CPU_allocation_policy").trim(); 
 			SimulationParameters.ORCHESTRATION_ARCHITECTURES = prop.getProperty("orchestration_architectures")
 					.split(",");
 			SimulationParameters.ORCHESTRATION_AlGORITHMS = prop.getProperty("orchestration_algorithms").split(",");
@@ -210,10 +209,7 @@ public class FilesParser {
 			doc = dBuilder.parse(devicesFile);
 			doc.getDocumentElement().normalize();
 
-			NodeList appList = doc.getElementsByTagName("application");
-			SimulationParameters.APPS_COUNT = appList.getLength();// save the number of apps, this will be used later by
-																	// the tasks generator
-			SimulationParameters.APPLICATIONS_TABLE = new double[appList.getLength()][6];
+			NodeList appList = doc.getElementsByTagName("application"); 
 			for (int i = 0; i < appList.getLength(); i++) {
 				Node appNode = appList.item(i);
 
@@ -225,27 +221,39 @@ public class FilesParser {
 				isElementPresent(appElement, "results_size");
 				isElementPresent(appElement, "task_length");
 				isElementPresent(appElement, "required_core"); 
-
+				isElementPresent(appElement, "rate"); 
+				
+				// max delay in seconds
 				double max_delay = Double
 						.parseDouble(appElement.getElementsByTagName("max_delay").item(0).getTextContent());
-				double container_size = Double
-						.parseDouble(appElement.getElementsByTagName("container_size").item(0).getTextContent());
-				double request_size = Double
-						.parseDouble(appElement.getElementsByTagName("request_size").item(0).getTextContent());
-				double results_size = Double
-						.parseDouble(appElement.getElementsByTagName("results_size").item(0).getTextContent());
+				
+				// the size of the container (KB)
+				long container_size = Long
+						.parseLong(appElement.getElementsByTagName("container_size").item(0).getTextContent());
+				
+				// average request size (KB)
+				long request_size = Long
+						.parseLong(appElement.getElementsByTagName("request_size").item(0).getTextContent());
+				
+				// average downloaded results size (KB)
+				long results_size = Long
+						.parseLong(appElement.getElementsByTagName("results_size").item(0).getTextContent());
+				
+				// average task length (MI)
 				double task_length = Double
 						.parseDouble(appElement.getElementsByTagName("task_length").item(0).getTextContent());
-				double required_core = Double
-						.parseDouble(appElement.getElementsByTagName("required_core").item(0).getTextContent()); 
+				
+				// required number of CPU cores
+				int required_cores = Integer
+						.parseInt(appElement.getElementsByTagName("required_core").item(0).getTextContent()); 
+				
+				 // the size of the container (KB) 
+				int rate = Integer
+						.parseInt(appElement.getElementsByTagName("rate").item(0).getTextContent()); 
 
 				// save apps parameters
-				SimulationParameters.APPLICATIONS_TABLE[i][0] = max_delay; // max delay in seconds
-				SimulationParameters.APPLICATIONS_TABLE[i][1] = request_size; // avg request size (KB)
-				SimulationParameters.APPLICATIONS_TABLE[i][2] = results_size; // avg downloaded results size (KB)
-				SimulationParameters.APPLICATIONS_TABLE[i][3] = task_length; // avg task length (MI)
-				SimulationParameters.APPLICATIONS_TABLE[i][4] = required_core; // required # of core
-				SimulationParameters.APPLICATIONS_TABLE[i][5] = container_size; // the size of the container (KB) 
+				SimulationParameters.APPLICATIONS_LIST.add(new Application (i,rate,max_delay,container_size,request_size,results_size,task_length,required_cores));
+			
 			}
 
 		} catch (Exception e) {

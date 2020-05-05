@@ -20,6 +20,7 @@ import org.knowm.xchart.style.Styler.LegendPosition;
 import org.knowm.xchart.style.markers.Marker;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 import com.mechalikh.pureedgesim.MainApplication;
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
 
@@ -121,13 +122,13 @@ public class SimulationVisualizer {
 
 		wanUsage.add(wan);
 
-		while (wanUsage.size() > 300 / SimulationParameters.UPDATE_INTERVAL) {
+		while (wanUsage.size() > 300 / SimulationParameters.CHARTS_UPDATE_INTERVAL) {
 			wanUsage.remove(0);
 		}
 		double[] time = new double[wanUsage.size()];
 		double currentTime = simulationManager.getSimulation().clock() - SimulationParameters.INITIALIZATION_TIME;
 		for (int i = wanUsage.size() - 1; i > 0; i--)
-			time[i] = currentTime - ((wanUsage.size() - i) * SimulationParameters.UPDATE_INTERVAL);
+			time[i] = currentTime - ((wanUsage.size() - i) * SimulationParameters.CHARTS_UPDATE_INTERVAL);
 
 		updateStyle(networkUtilizationChart,
 				new Double[] { currentTime - 200, currentTime, 0.0, SimulationParameters.WAN_BANDWIDTH / 1000.0 });
@@ -136,6 +137,7 @@ public class SimulationVisualizer {
 
 	private void edgeDevicesMapAndCpu() {
 		double msUsage = 0;
+		int sensors = 0;
 		// Initialize the X and Y series that will be used to draw the map
 		// Dead devices series
 		List<Double> x_deadEdgeDevicesList = new ArrayList<>();
@@ -146,41 +148,33 @@ public class SimulationVisualizer {
 		// Active devices series
 		List<Double> x_activeEdgeDevicesList = new ArrayList<>();
 		List<Double> y_activeEdgeDevicesList = new ArrayList<>();
-
+		DataCenter datacenter;
 		// Browse all devices and create the series
 		// Skip the first items (cloud data centers + edge data centers)
 		for (int i = SimulationParameters.NUM_OF_EDGE_DATACENTERS
 				+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS; i < simulationManager.getServersManager()
 						.getDatacenterList().size(); i++) {
 			// If it is an edge device
-			if (simulationManager.getServersManager().getDatacenterList().get(i)
-					.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
+			datacenter = simulationManager.getServersManager().getDatacenterList().get(i);
+			if (datacenter.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
 
-				if (simulationManager.getServersManager().getDatacenterList().get(i).isDead()) {
-					x_deadEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
-							.getMobilityManager().getCurrentLocation().getXPos());
-					y_deadEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
-							.getMobilityManager().getCurrentLocation().getYPos());
-
-				} else if (simulationManager.getServersManager().getDatacenterList().get(i).getResources().isIdle()) {
-					x_idleEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
-							.getMobilityManager().getCurrentLocation().getXPos());
-					y_idleEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
-							.getMobilityManager().getCurrentLocation().getYPos());
-
+				if (datacenter.isDead()) {
+					x_deadEdgeDevicesList.add(datacenter.getMobilityManager().getCurrentLocation().getXPos());
+					y_deadEdgeDevicesList.add(datacenter.getMobilityManager().getCurrentLocation().getYPos());
+				} else if (datacenter.getResources().isIdle()) {
+					x_idleEdgeDevicesList.add(datacenter.getMobilityManager().getCurrentLocation().getXPos());
+					y_idleEdgeDevicesList.add(datacenter.getMobilityManager().getCurrentLocation().getYPos());
 				} else { // If the device is busy
-
-					x_activeEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
-							.getMobilityManager().getCurrentLocation().getXPos());
-					y_activeEdgeDevicesList.add(simulationManager.getServersManager().getDatacenterList().get(i)
-							.getMobilityManager().getCurrentLocation().getYPos());
+					x_activeEdgeDevicesList.add(datacenter.getMobilityManager().getCurrentLocation().getXPos());
+					y_activeEdgeDevicesList.add(datacenter.getMobilityManager().getCurrentLocation().getYPos());
 				}
 			}
-			msUsage += simulationManager.getServersManager().getDatacenterList().get(i).getResources()
-					.getAvgCpuUtilization();
+			msUsage += datacenter.getResources().getAvgCpuUtilization();
+			if (datacenter.getVmList().size() == 0)
+				sensors++;
 		}
 
-		mistUsage.add(msUsage / simulationManager.getScenario().getDevicesCount());
+		mistUsage.add(msUsage / (simulationManager.getScenario().getDevicesCount() - sensors));
 		updateSeries(cpuUtilizationChart, "Mist", toArray(currentTime), toArray(mistUsage), SeriesMarkers.NONE,
 				Color.BLACK);
 		updateSeries(mapChart, "Idle devices", toArray(x_idleEdgeDevicesList), toArray(y_idleEdgeDevicesList),

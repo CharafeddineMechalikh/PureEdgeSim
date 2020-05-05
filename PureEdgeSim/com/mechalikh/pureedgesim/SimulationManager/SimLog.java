@@ -162,7 +162,7 @@ public class SimLog {
 				+ decimalFormat.format(totalExecutionTime / executedTasksCount) + ","
 				+ decimalFormat.format(totalWaitingTime) + ","
 				+ decimalFormat.format(totalWaitingTime / executedTasksCount) + "," + generatedTasksCount + ","
-				+ (tasksSent - tasksFailed) + "," + tasksFailed + "," + tasksFailedLatency + ","
+				+ (tasksSent - tasksFailed) + "," + tasksFailedRessourcesUnavailable + "," + tasksFailedLatency + ","
 				+ tasksFailedBeacauseDeviceDead + "," + tasksFailedMobility + "," + notGeneratedBecDeviceDead + ","
 				+ tasksExecutedOnCloud + "," + (tasksExecutedOnCloud - tasksFailedCloud) + "," + tasksExecutedOnEdge
 				+ "," + (tasksExecutedOnEdge - tasksFailedEdge) + "," + tasksExecutedOnMist + ","
