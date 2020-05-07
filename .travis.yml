@@ -1,7 +1,0 @@
-language: java
-jdk:
-  - openjdk12
-install: mvn clean install
-
-ignore:
-  - PureEdgeSim/examples/*
