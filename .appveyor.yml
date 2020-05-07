@@ -9,12 +9,12 @@ branches:
 init:
   - git config --global core.autocrlf true
   
- build_script:
+build_script:
   - mvn clean package --batch-mode -DskipTest
   
 test_script:
   - mvn clean verify --batch-mode
-  
+
 cache:
   - C:\maven\
   - C:\Users\appveyor\.m2
