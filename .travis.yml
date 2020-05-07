@@ -3,6 +3,6 @@ jdk:
   - openjdk12
   
 before_install:
-  - crm -r /home/travis/build/CharafeddineMechalikh/PureEdgeSim/PureEdgeSim/examples/
+  - rm -r /home/travis/build/CharafeddineMechalikh/PureEdgeSim/PureEdgeSim/examples/
   
 install: mvn clean install
