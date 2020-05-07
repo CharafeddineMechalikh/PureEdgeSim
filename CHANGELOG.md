@@ -1,6 +1,16 @@
 # Changelog
 
-## Version 3.0 (mai 5th 2020)
+## Version 3.1 (may 7th 2020)
+
+*   Fixed Bugs (CPU utilization when update interval is high >= 1).
+
+*   Improved performance, up to 25% shorter simulation time.
+
+*   New parameter (realitic_network_model) in order to decrease simulation time.
+
+*   New example  "Example9" to show how to make decisions on Edge/ Fog Data Centers.
+
+## Version 3.0 (may 5th 2020)
 
 *   Added MinTimeBetweenEvents to MainApplication.java .
 
