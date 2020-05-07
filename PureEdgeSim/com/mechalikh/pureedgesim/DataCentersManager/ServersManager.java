@@ -149,12 +149,13 @@ public class ServersManager {
 
 		int x_position = -1;
 		int y_position = -1;
-
-		List<Host> hostList = createHosts(datacenterElement, type);
+		List<Vm> list = new ArrayList<>();
+		List<Host> hostList = createHosts(datacenterElement, type, list);
 
 		Location datacenterLocation = null;
-		Constructor<?> datacenterConstructor = edgeDataCenterType.getConstructor(SimulationManager.class, List.class);
-		DataCenter datacenter = (DataCenter) datacenterConstructor.newInstance(getSimulationManager(), hostList);
+		Constructor<?> datacenterConstructor = edgeDataCenterType.getConstructor(SimulationManager.class, List.class,
+				List.class);
+		DataCenter datacenter = (DataCenter) datacenterConstructor.newInstance(getSimulationManager(), hostList, list);
 		double idleConsumption = Double
 				.parseDouble(datacenterElement.getElementsByTagName("idleConsumption").item(0).getTextContent());
 		double maxConsumption = Double
@@ -185,14 +186,13 @@ public class ServersManager {
 		}
 
 		datacenter.setType(type);
-
 		Constructor<?> mobilityConstructor = mobilityManager.getConstructor(Location.class);
 		datacenter.setMobilityManager(mobilityConstructor.newInstance(datacenterLocation));
 		datacenter.getMobilityManager().setMobile(mobile);
 		return datacenter;
 	}
 
-	private List<Host> createHosts(Element datacenterElement, SimulationParameters.TYPES type) {
+	private List<Host> createHosts(Element datacenterElement, SimulationParameters.TYPES type, List<Vm> list) {
 
 		// Here are the steps needed to create a hosts and vms for that datacenter.
 		List<Host> hostList = new ArrayList<>();
@@ -228,14 +228,14 @@ public class ServersManager {
 			host.setRamProvisioner(ramProvisioner).setBwProvisioner(bwProvisioner).setVmScheduler(vmScheduler);
 
 			// Load host virtual machines
-			loadVms(host, hostElement, bandwidth);
+			loadVms(host, hostElement, bandwidth, list);
 			hostList.add(host);
 		}
 
 		return hostList;
 	}
 
-	private void loadVms(Host host, Element hostElement, long bandwidth) {
+	private void loadVms(Host host, Element hostElement, long bandwidth, List<Vm> list) {
 		NodeList vmNodeList = hostElement.getElementsByTagName("VM");
 		for (int k = 0; k < vmNodeList.getLength(); k++) {
 			Node vmNode = vmNodeList.item(k);
@@ -257,10 +257,10 @@ public class ServersManager {
 					: new CloudletSchedulerTimeShared();
 
 			Vm vm = new VmSimple(vmList.size(), vmMips, vmNumOfCores);
-			vm.setRam(vmRam).setBw(vmBandwidth).setSize(vmStorage).setCloudletScheduler(tasksScheduler);
-			vm.getUtilizationHistory().enable();
+			vm.setRam(vmRam).setBw(vmBandwidth).setSize(vmStorage).setCloudletScheduler(tasksScheduler); 
 			vm.setHost(host);
 			vmList.add(vm);
+			list.add(vm);
 		}
 	}
 

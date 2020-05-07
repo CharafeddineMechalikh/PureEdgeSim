@@ -8,7 +8,7 @@ import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.vms.Vm;
 
 import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.Network.NetworkModel;
+import com.mechalikh.pureedgesim.Network.NetworkModelAbstract;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
@@ -71,7 +71,8 @@ public class SimulationManager extends SimulationManagerAbstract {
 		schedule(this, SimulationParameters.SIMULATION_TIME, PRINT_LOG);
 
 		// Updating real time charts
-		if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL)
+		if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS 
+				&& !SimulationParameters.PARALLEL)
 			schedule(this, SimulationParameters.INITIALIZATION_TIME, UPDATE_REAL_TIME_CHARTS);
 
 		// Show simulation progress
@@ -99,10 +100,12 @@ public class SimulationManager extends SimulationManagerAbstract {
 			if (taskFailed(task, 2))
 				return;
 			broker.submitCloudlet(task);
+			((DataCenter)task.getVm().getHost().getDatacenter()).getResources().addCpuUtilization(task);
 			break;
 
 		case TRANSFER_RESULTS_TO_ORCH:
 			// Transfer the results to the orchestrator
+			((DataCenter)task.getVm().getHost().getDatacenter()).getResources().removeCpuUtilization(task);
 			sendResultsToOchestrator(task);
 			break;
 
@@ -155,7 +158,8 @@ public class SimulationManager extends SimulationManagerAbstract {
 
 			simLog.printSameLine(" 100% ]", "red");
 
-			if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL) {
+			if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS
+					&& !SimulationParameters.PARALLEL) {
 				// Close real time charts after the end of the simulation
 				if (SimulationParameters.AUTO_CLOSE_REAL_TIME_CHARTS)
 					simulationVisualizer.close();
@@ -166,7 +170,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			} 
+			}
 			// Show results and stop the simulation
 			simLog.showIterationResults(finishedTasks);
 
@@ -185,7 +189,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 			return;
 		// If the task was offloaded
 		if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()) {
-			scheduleNow(networkModel, NetworkModel.SEND_RESULT_TO_ORCH, task);
+			scheduleNow(networkModel, NetworkModelAbstract.SEND_RESULT_TO_ORCH, task);
 
 		} else { // The task has been executed locally / no offloading
 			scheduleNow(this, RESULT_RETURN_FINISHED, task);
@@ -215,7 +219,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 		// and the orchestrator is not the offloading destination
 		if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()
 				&& task.getOrchestrator() != ((DataCenter) task.getVm().getHost().getDatacenter())) {
-			scheduleNow(networkModel, NetworkModel.SEND_REQUEST_FROM_ORCH_TO_DESTINATION, task);
+			scheduleNow(networkModel, NetworkModelAbstract.SEND_REQUEST_FROM_ORCH_TO_DESTINATION, task);
 
 		} else { // The task will be executed locally / no offloading or will be executed where
 					// the orchestrator is deployed (no network usage)
@@ -258,7 +262,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 			task.setOrchestrator(orchestratorsList.get(selected));
 		}
 
-		scheduleNow(networkModel, NetworkModel.SEND_REQUEST_FROM_DEVICE_TO_ORCH, task);
+		scheduleNow(networkModel, NetworkModelAbstract.SEND_REQUEST_FROM_DEVICE_TO_ORCH, task);
 	}
 
 	private CustomBroker createBroker() {
@@ -303,7 +307,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 			simLog.incrementFailedBeacauseDeviceDead(task);
 			return setFailed(task);
 		}
-		
+
 		// A simple representation of task failure due to
 		// device mobility, if the vm location doesn't match
 		// the edge device location (that generated this task)

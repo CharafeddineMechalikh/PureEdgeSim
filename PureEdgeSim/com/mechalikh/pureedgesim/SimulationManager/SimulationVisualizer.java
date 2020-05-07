@@ -169,11 +169,11 @@ public class SimulationVisualizer {
 					y_activeEdgeDevicesList.add(datacenter.getMobilityManager().getCurrentLocation().getYPos());
 				}
 			}
-			msUsage += datacenter.getResources().getAvgCpuUtilization();
-			if (datacenter.getVmList().size() == 0)
-				sensors++;
+			msUsage += datacenter.getResources().getAvgCpuUtilization(); 
+			if (datacenter.getVmList().size() == 0) {
+				sensors++;  
+			}
 		}
-
 		mistUsage.add(msUsage / (simulationManager.getScenario().getDevicesCount() - sensors));
 		updateSeries(cpuUtilizationChart, "Mist", toArray(currentTime), toArray(mistUsage), SeriesMarkers.NONE,
 				Color.BLACK);

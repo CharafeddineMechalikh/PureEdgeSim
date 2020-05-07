@@ -9,8 +9,8 @@ import com.mechalikh.pureedgesim.DataCentersManager.DefaultEnergyModel;
 import com.mechalikh.pureedgesim.DataCentersManager.EnergyModel;
 import com.mechalikh.pureedgesim.LocationManager.DefaultMobilityModel;
 import com.mechalikh.pureedgesim.LocationManager.Mobility;
-import com.mechalikh.pureedgesim.Network.DefaultNetworkModel;
 import com.mechalikh.pureedgesim.Network.NetworkModel;
+import com.mechalikh.pureedgesim.Network.NetworkModelAbstract;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
 import com.mechalikh.pureedgesim.SimulationManager.SimLog;
 import com.mechalikh.pureedgesim.TasksGenerator.DefaultTasksGenerator;
@@ -41,7 +41,7 @@ public abstract class MainApplicationAbstract {
 	protected static Class<? extends TasksGenerator> tasksGenerator = DefaultTasksGenerator.class;
 	protected static Class<? extends Orchestrator> orchestrator = DefaultEdgeOrchestrator.class;
 	protected static Class<? extends EnergyModel> energyModel = DefaultEnergyModel.class;
-	protected static Class<? extends NetworkModel> networkModel = DefaultNetworkModel.class;
+	protected static Class<? extends NetworkModelAbstract> networkModel = NetworkModel.class;
 
 	public static String getOutputFolder() {
 		return outputFolder;
@@ -67,7 +67,7 @@ public abstract class MainApplicationAbstract {
 		energyModel = energyModel2;
 	}
 
-	protected static void setCustomNetworkModel(Class<? extends NetworkModel> networkModel2) {
+	protected static void setCustomNetworkModel(Class<? extends NetworkModelAbstract> networkModel2) {
 		networkModel = networkModel2;
 	}
 

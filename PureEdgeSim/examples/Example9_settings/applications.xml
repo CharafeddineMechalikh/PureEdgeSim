@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<applications>
+	<application name="Health">	
+	    <rate>5</rate>
+		<max_delay>10</max_delay> <!-- latency in seconds -->
+		<container_size>20</container_size><!--application/container size in kilobytes -->
+		<request_size>20</request_size><!-- the offloading request that will be sent to the orchestrator and then to the device where the task will be offloaded in kilobytes -->
+		<results_size>20</results_size><!-- the results of the offlaoded task in kilobytes -->
+		<task_length>5000</task_length><!--MI: million instructions -->
+		<required_core>1</required_core>
+	</application>
+	<application name="Augmented reality">
+		<rate>5</rate>
+		<max_delay>10</max_delay>
+		<container_size>1500</container_size>
+		<request_size>1500</request_size>
+		<results_size>50</results_size>
+		<task_length>20000</task_length>
+		<required_core>1</required_core>
+	</application>
+	<application name="HEAVY_COMP_APP"> 
+		<rate>1</rate>
+		<max_delay>300</max_delay> <!-- a great number represents no latency-sensitivity -->
+		<container_size>2200</container_size>
+		<request_size>2500</request_size>
+		<results_size>200</results_size>
+		<task_length>50000</task_length>
+		<required_core>1</required_core>
+	</application> 
+		<application name="infotainement"> 
+		<rate>3</rate>
+		<max_delay>300</max_delay> 
+		<container_size>1000</container_size>
+		<request_size>50</request_size>
+		<results_size>50</results_size>
+		<task_length>10000</task_length>
+		<required_core>1</required_core>
+	</application> 
+</applications>

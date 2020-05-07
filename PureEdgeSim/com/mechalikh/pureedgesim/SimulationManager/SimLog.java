@@ -14,8 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-
+import java.util.Locale; 
 import org.cloudbus.cloudsim.vms.Vm;
 
 import com.mechalikh.pureedgesim.MainApplication;
@@ -98,7 +97,8 @@ public class SimLog {
 	public void showIterationResults(List<Task> finishedTasks) {
 		printTasksRelatedResults();
 		printNetworkRelatedResults();
-		printResourcesUsageResults(finishedTasks);
+		printCPUutilizationResults();
+		printPowerConsumptionResults(finishedTasks);
 		StringBuilder s = new StringBuilder("\n");
 		for (String value : log) {
 			s.append(value).append("\n");
@@ -106,6 +106,53 @@ public class SimLog {
 		System.out.print(s);
 		// update the log
 		saveLog();
+	}
+
+	private void printCPUutilizationResults() {
+		int edgeDevicesCount = 0;
+		double averageCpuUtilization = 0;
+		double averageCloudCpuUtilization = 0;
+		double averageMistCpuUtilization = 0;
+		double averageEdgeCpuUtilization = 0; 
+		List<? extends DataCenter> datacentersList = simulationManager.getServersManager().getDatacenterList();
+		for (DataCenter dc : datacentersList) {
+			if (dc.getType() == SimulationParameters.TYPES.CLOUD) { 
+				averageCloudCpuUtilization += dc.getResources().getAvgCpuUtilization();
+			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DATACENTER) { 
+				averageEdgeCpuUtilization += dc.getResources().getAvgCpuUtilization();
+			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DEVICE) { 
+				if (dc.getVmList().size() > 0) {
+					// only devices with computing capability
+					// the devices that have no VM are considered simple sensors, and will not be
+					// counted here
+					averageMistCpuUtilization += dc.getResources().getAvgCpuUtilization();
+					edgeDevicesCount++;
+				}
+			}
+		}
+	
+		averageCpuUtilization = (averageCloudCpuUtilization + averageMistCpuUtilization + averageEdgeCpuUtilization)
+				/ (edgeDevicesCount + SimulationParameters.NUM_OF_EDGE_DATACENTERS
+						+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS);  
+		
+		averageCloudCpuUtilization = averageCloudCpuUtilization / SimulationParameters.NUM_OF_CLOUD_DATACENTERS;
+		averageEdgeCpuUtilization = averageEdgeCpuUtilization / SimulationParameters.NUM_OF_EDGE_DATACENTERS;
+		averageMistCpuUtilization = averageMistCpuUtilization / edgeDevicesCount;
+
+		print("SimLog- Average vm CPU utilization                                              :"
+				+ padLeftSpaces(decimalFormat.format(averageCpuUtilization), 20) + " %");
+		print("SimLog- Average vm CPU utilization per level                                    : Cloud= "
+				+ padLeftSpaces(decimalFormat.format(averageCloudCpuUtilization), 12) + " %");
+		print("                                                                                  Edge= "
+				+ padLeftSpaces(decimalFormat.format(averageEdgeCpuUtilization), 13) + " %");
+		print("                                                                                  Mist= "
+				+ padLeftSpaces(decimalFormat.format(averageMistCpuUtilization), 13) + " %");
+
+		resultsList.set(resultsList.size() - 1,
+				resultsList.get(resultsList.size() - 1) + decimalFormat.format(averageCpuUtilization) + ","
+						+ decimalFormat.format(averageCloudCpuUtilization) + ","
+						+ decimalFormat.format(averageEdgeCpuUtilization) + ","
+						+ decimalFormat.format(averageMistCpuUtilization) + ",");
 	}
 
 	public void printTasksRelatedResults() {
@@ -151,8 +198,8 @@ public class SimLog {
 				+ padLeftSpaces("" + tasksExecutedOnCloud, 13) + " tasks (where "
 				+ (tasksExecutedOnCloud - tasksFailedCloud) + " were successfully executed )");
 		print("                                                                                 " + " Edge="
-				+ padLeftSpaces("" + tasksExecutedOnEdge, 14) + " tasks (where " + (tasksExecutedOnEdge - tasksFailedEdge)
-				+ " were successfully executed )");
+				+ padLeftSpaces("" + tasksExecutedOnEdge, 14) + " tasks (where "
+				+ (tasksExecutedOnEdge - tasksFailedEdge) + " were successfully executed )");
 		print("                                                                                 " + " Mist="
 				+ padLeftSpaces("" + tasksExecutedOnMist, 14) + " tasks (where "
 				+ (tasksExecutedOnMist - tasksFailedMist) + " were successfully executed )");
@@ -192,12 +239,7 @@ public class SimLog {
 						+ (totalBandwidth / transfersCount) + ",");
 	}
 
-	public void printResourcesUsageResults(List<Task> finishedTasks) {
-		int edgeDevicesCount = 0;
-		double averageCpuUtilization = 0;
-		double averageCloudCpuUtilization = 0;
-		double averageMistCpuUtilization = 0;
-		double averageEdgeCpuUtilization = 0;
+	public void printPowerConsumptionResults(List<Task> finishedTasks) {
 		int deadEdgeDevicesCount = 0;
 		double energyConsumption = 0;
 		double cloudEnConsumption = 0;
@@ -215,19 +257,11 @@ public class SimLog {
 		for (DataCenter dc : datacentersList) {
 			if (dc.getType() == SimulationParameters.TYPES.CLOUD) {
 				cloudEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
-				averageCloudCpuUtilization += dc.getResources().getAvgCpuUtilization();
 			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DATACENTER) {
 				edgeEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
-				averageEdgeCpuUtilization += dc.getResources().getAvgCpuUtilization();
 			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
 				mistEnConsumption += dc.getEnergyModel().getTotalEnergyConsumption();
-				if (dc.getVmList().size() > 0) {
-					// only devices with computing capability
-					// the devices that have no VM are considered simple sensors, and will not be
-					// counted here
-					averageMistCpuUtilization += dc.getResources().getAvgCpuUtilization();
-					edgeDevicesCount++;
-				}
+
 				if (dc.isDead()) {
 					devicesDeathTime.add(dc.getDeathTime());
 					remainingPower.add(0.0);
@@ -246,17 +280,10 @@ public class SimLog {
 				}
 			}
 		}
-		averageCpuUtilization = (averageCloudCpuUtilization + averageMistCpuUtilization + averageEdgeCpuUtilization)
-				/ (edgeDevicesCount + SimulationParameters.NUM_OF_EDGE_DATACENTERS
-						+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS);
 		batteryPoweredDevicesCount = aliveBatteryPoweredDevicesCount + deadEdgeDevicesCount;
 		// escape from devision by 0
 		if (aliveBatteryPoweredDevicesCount == 0)
 			aliveBatteryPoweredDevicesCount = 1;
-		averageCloudCpuUtilization = averageCloudCpuUtilization / SimulationParameters.NUM_OF_CLOUD_DATACENTERS;
-		averageEdgeCpuUtilization = averageEdgeCpuUtilization / SimulationParameters.NUM_OF_EDGE_DATACENTERS;
-		averageMistCpuUtilization = averageMistCpuUtilization / edgeDevicesCount;
-
 		energyConsumption = cloudEnConsumption + edgeEnConsumption + mistEnConsumption;
 		averageRemainingPower = averageRemainingPower / (double) aliveBatteryPoweredDevicesCount;
 		averageRemainingPowerWh = averageRemainingPowerWh / (double) aliveBatteryPoweredDevicesCount;
@@ -264,14 +291,6 @@ public class SimLog {
 		double averageEdgeEnConsumption = edgeEnConsumption / SimulationParameters.NUM_OF_EDGE_DATACENTERS;
 		double averageMistEnConsumption = mistEnConsumption / simulationManager.getScenario().getDevicesCount();
 
-		print("SimLog- Average vm CPU utilization                                              :"
-				+ padLeftSpaces(decimalFormat.format(averageCpuUtilization), 20) + " %");
-		print("SimLog- Average vm CPU utilization per level                                    : Cloud= "
-				+ padLeftSpaces(decimalFormat.format(averageCloudCpuUtilization), 12) + " %");
-		print("                                                                                  Edge= "
-				+ padLeftSpaces(decimalFormat.format(averageEdgeCpuUtilization), 13) + " %");
-		print("                                                                                  Mist= "
-				+ padLeftSpaces(decimalFormat.format(averageMistCpuUtilization), 13) + " %");
 		print("SimLog- Energy consumption                                                      :"
 				+ padLeftSpaces(decimalFormat.format(energyConsumption), 20) + " W (Average: "
 				+ decimalFormat.format(energyConsumption / datacentersList.size()) + " W/data center(or device))");
@@ -303,9 +322,7 @@ public class SimLog {
 
 		// Add these values to the las item of the results list
 		resultsList.set(resultsList.size() - 1, resultsList.get(resultsList.size() - 1)
-				+ decimalFormat.format(averageCpuUtilization) + "," + decimalFormat.format(averageCloudCpuUtilization)
-				+ "," + decimalFormat.format(averageEdgeCpuUtilization) + ","
-				+ decimalFormat.format(averageMistCpuUtilization) + "," + decimalFormat.format(energyConsumption) + ","
+				+ decimalFormat.format(energyConsumption) + ","
 				+ decimalFormat.format(energyConsumption / datacentersList.size()) + ","
 				+ decimalFormat.format(cloudEnConsumption) + "," + decimalFormat.format(averageCloudEnConsumption) + ","
 				+ decimalFormat.format(edgeEnConsumption) + "," + decimalFormat.format(averageEdgeEnConsumption) + ","
@@ -484,7 +501,7 @@ public class SimLog {
 		if (task.getVm() == Vm.NULL)
 			return;
 		SimulationParameters.TYPES type = ((DataCenter) task.getVm().getHost().getDatacenter()).getType();
-		
+
 		if (type == SimulationParameters.TYPES.CLOUD) {
 			this.tasksFailedCloud++;
 		} else if (type == SimulationParameters.TYPES.EDGE_DATACENTER) {

@@ -3,6 +3,8 @@ package examples;
 import java.util.List;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.hosts.Host;
+import org.cloudbus.cloudsim.vms.Vm;
+
 import com.mechalikh.pureedgesim.DataCentersManager.DefaultDataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
@@ -18,8 +20,9 @@ import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 public class CustomDataCenter extends DefaultDataCenter {
 	private static final int DO_SOMETHING = 12000; // Avoid conflicting with CloudSim Plus Tags
 
-	public CustomDataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
-		super(simulationManager, hostList);
+	public CustomDataCenter(SimulationManager simulationManager, List<? extends Host> hostList,
+			List<? extends Vm> vmList) {
+		super(simulationManager, hostList, vmList);
 	}
 
 	/*

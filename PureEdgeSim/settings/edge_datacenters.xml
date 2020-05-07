@@ -17,13 +17,13 @@
 				<VMs>
 					<VM>
 						<core>4</core>
-						<mips>100000</mips>
+						<mips>200000</mips>
 						<ram>4000</ram>
 						<storage>20000</storage>
 					</VM>
 					<VM>
 						<core>4</core>
-						<mips>100000</mips>
+						<mips>200000</mips>
 						<ram>4000</ram>
 						<storage>20000</storage>
 					</VM> 
@@ -37,13 +37,13 @@
 				<VMs>
 					<VM>
 						<core>4</core>
-						<mips>100000</mips>
+						<mips>200000</mips>
 						<ram>4000</ram>
 						<storage>20000</storage>
 					</VM>
 					<VM>
 						<core>4</core>
-						<mips>100000</mips>
+						<mips>200000</mips>
 						<ram>4000</ram>
 						<storage>20000</storage>
 					</VM> 

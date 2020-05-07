@@ -8,7 +8,7 @@ import org.cloudbus.cloudsim.core.events.SimEvent;
 
 import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
-import com.mechalikh.pureedgesim.Network.NetworkModel;
+import com.mechalikh.pureedgesim.Network.NetworkModelAbstract;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker;
@@ -25,7 +25,7 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 	protected int iteration;
 	protected SimLog simLog;
 	protected CustomBroker broker;
-	protected NetworkModel networkModel;
+	protected NetworkModelAbstract networkModel;
 	protected List<? extends DataCenter> orchestratorsList;
 	protected Scenario scenario;
 
@@ -66,7 +66,7 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 
 	}
 
-	public void setNetworkModel(NetworkModel networkModel) {
+	public void setNetworkModel(NetworkModelAbstract networkModel) {
 		this.networkModel = networkModel;
 	}
 
@@ -78,7 +78,7 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 		return this.iteration;
 	}
 
-	public NetworkModel getNetworkModel() {
+	public NetworkModelAbstract getNetworkModel() {
 		return this.networkModel;
 	}
 

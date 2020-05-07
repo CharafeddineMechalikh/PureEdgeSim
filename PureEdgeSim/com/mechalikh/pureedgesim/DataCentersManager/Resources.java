@@ -1,17 +1,24 @@
 package com.mechalikh.pureedgesim.DataCentersManager;
 
+import org.cloudbus.cloudsim.core.Simulation;
+ 
+import com.mechalikh.pureedgesim.TasksGenerator.Task;
+
 public class Resources {
 	private long storageMemory;
-	private long availableStorageMemory;
-	private double totalCpuUtilization = 0;
-	private int utilizationFrequency = 0;
-	private long ramMemory;
-	private double currentCpuUtilization = 0;
+	private long availableStorageMemory; 
+	private long ramMemory; 
 	private boolean isIdle = true;
+	private double tasks = 0;
+	private double totalTasks = 0;
+	private long totalMips = 0;
+	private Simulation simulation;
 
-	public Resources(long ram, long storage) {
+	public Resources(long ram, long storage, long mips, Simulation simulation) {
 		setStorageMemory(storage);
 		setRamMemory(ram);
+		setTotalMips(mips); 
+		this.simulation = simulation;
 	}
 
 	public long getStorageMemory() {
@@ -40,19 +47,15 @@ public class Resources {
 	}
 
 	public double getAvgCpuUtilization() {
-		if (utilizationFrequency == 0)
-			utilizationFrequency = 1;
-		return totalCpuUtilization * 100 / utilizationFrequency;
-	}
-	public double getTotalCpuUtilization() { 
-		return totalCpuUtilization;
-	}
-	public double getCurrentCpuUtilization() {
-		return currentCpuUtilization * 100;
+		if (totalMips == 0)
+			return 0;
+		return totalTasks / (totalMips * simulation.clock()) > 1 ? 100 : totalTasks / (totalMips * simulation.clock()) * 100;
 	}
 
-	public void setCurrentCpuUtilization(double cpuUtilization) {
-		currentCpuUtilization = cpuUtilization;
+	public double getCurrentCpuUtilization() {
+		if (totalMips == 0)
+			return 0;
+		return tasks / totalMips > 1 ? 100 : tasks / totalMips * 100;
 	}
 
 	public boolean isIdle() {
@@ -63,14 +66,21 @@ public class Resources {
 		this.isIdle = isIdle;
 	}
 
-	public void setTotalCpuUtilization(double totalCpuUsage) {
-		totalCpuUtilization = totalCpuUsage;
-
+	public void addCpuUtilization(Task task) {
+		tasks += task.getLength();
+		totalTasks += task.getLength();
 	}
 
-	public void incrementUtilizationFrequency() {
-		utilizationFrequency++;
+	public void removeCpuUtilization(Task task) {
+		tasks -= task.getLength();
+	}
 
+	public double getTotalMips() {
+		return totalMips;
+	}
+
+	public void setTotalMips(long totalMips) { 
+		this.totalMips = totalMips;
 	}
 
 }

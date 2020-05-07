@@ -1,14 +1,13 @@
 package com.mechalikh.pureedgesim.DataCentersManager;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicyFirstFit;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
+
 import com.mechalikh.pureedgesim.LocationManager.Mobility;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
@@ -27,21 +26,23 @@ public abstract class DataCenter extends DatacenterSimple {
 	private Resources resources;
 	protected boolean isDead = false;
 	protected double deathTime;
+	private List<? extends Vm> vmList;
 
-	public DataCenter(SimulationManager simulationManager, List<? extends Host> hostList) {
+	public DataCenter(SimulationManager simulationManager, List<? extends Host> hostList, List<? extends Vm> vmList) {
 		super(simulationManager.getSimulation(), hostList, new VmAllocationPolicyFirstFit());
 		this.simulationManager = simulationManager;
 		vmTaskMap = new ArrayList<>();
 		long storage = 0;
 		long ram = 0;
-		for (Host host : hostList) {
-			storage += host.getStorage().getAvailableResource();
-			ram += host.getRam().getCapacity();
+		long mips = 0;
+		this.vmList = vmList;
+		for (Vm vm : vmList) {
+			storage += vm.getStorage().getAvailableResource();
+			ram += vm.getRam().getCapacity();
+			mips += vm.getMips();
 		}
-		this.resources = new Resources(ram, storage);
+		this.resources = new Resources(ram, storage, mips, simulationManager.getSimulation());
 	}
-
-	protected abstract void updateCpuUtilization();
 
 	public EnergyModel getEnergyModel() {
 		return energyModel;
@@ -53,7 +54,7 @@ public abstract class DataCenter extends DatacenterSimple {
 
 	public void setType(SimulationParameters.TYPES type) {
 		this.deviceType = type;
-	} 
+	}
 
 	public List<VmTaskMapItem> getVmTaskMap() {
 		return vmTaskMap;
@@ -99,9 +100,8 @@ public abstract class DataCenter extends DatacenterSimple {
 		return this.generateTasks;
 	}
 
-	public List<Vm> getVmList() {
-		return (List<Vm>) Collections.unmodifiableList(
-				getHostList().stream().flatMap(h -> h.getVmList().stream()).collect(Collectors.toList()));
+	public List<? extends Vm> getVmList() {
+		return this.vmList;
 	}
 
 	public Resources getResources() {
@@ -119,5 +119,9 @@ public abstract class DataCenter extends DatacenterSimple {
 	public void setDeath(Boolean dead, double deathTime2) {
 		isDead = dead;
 		deathTime = deathTime2;
+	}
+
+	public void setVmList(List<? extends Vm> vmList) {
+		this.vmList = vmList;
 	}
 }

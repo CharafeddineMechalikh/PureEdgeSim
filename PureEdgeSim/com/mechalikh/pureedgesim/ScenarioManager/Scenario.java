@@ -8,7 +8,7 @@ public class Scenario {
 	public Scenario(int devicesCount,  int orchAlgorithm, int orchArchitecture) {
 		this.orchAlgorithm = orchAlgorithm;
 		this.devicesCount = devicesCount;
-		this.orchArchitecture = orchArchitecture; 
+		this.orchArchitecture = orchArchitecture;
 	}
 
 	public int getOrchAlgorithm() {
@@ -48,6 +48,4 @@ public class Scenario {
 	public String toString() {
 		return getStringOrchAlgorithm()+"-"+getStringOrchArchitecture()+ "-"+getDevicesCount();
 	}
-	
-
 }

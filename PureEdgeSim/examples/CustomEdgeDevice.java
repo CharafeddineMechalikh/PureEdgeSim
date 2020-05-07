@@ -26,8 +26,9 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 	public List<double[]> Remotecache = new ArrayList<double[]>();
 	public List<double[]> probability = new ArrayList<double[]>();
 
-	public CustomEdgeDevice(SimulationManager simulationManager, List<? extends Host> hostList) {
-		super(simulationManager, hostList);
+	public CustomEdgeDevice(SimulationManager simulationManager, List<? extends Host> hostList,
+			List<? extends Vm> vmList) {
+		super(simulationManager, hostList, vmList);
 		cluster = new ArrayList<CustomEdgeDevice>();
 	}
 

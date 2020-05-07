@@ -51,6 +51,7 @@ public class SimulationParameters {
 	public static int EDGE_DATACENTERS_RANGE;     // The range of edge servers (in meters)
 	public static double NETWORK_UPDATE_INTERVAL; // Network model update interval (in seconds) 
 	public static double WAN_PROPAGATION_DELAY;   // Wan propagation delay (in seconds)
+	public static boolean REALISTIC_NETWORK_MODEL;// Enabling this will give more accurate results, but also will increase the simulation duration
 	
 	// Energy model parameters
 	public static double AMPLIFIER_DISSIPATION_FREE_SPACE; // The power consumption for each transferred bit (in joul per bit :  J/bit)
@@ -69,4 +70,6 @@ public class SimulationParameters {
 	public static boolean WAIT_FOR_TASKS;                // After the end of the simulation time, some tasks may still not be executed yet,
                                                          // this variable will allow the user to wait for the execution of all tasks or to 
                                                          // end the simulation when the predifined time ends.
+	
+	
 }

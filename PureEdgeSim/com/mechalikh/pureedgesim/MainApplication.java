@@ -9,7 +9,7 @@ import java.util.List;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudsimplus.util.Log;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
-import com.mechalikh.pureedgesim.Network.NetworkModel;
+import com.mechalikh.pureedgesim.Network.NetworkModelAbstract;
 import com.mechalikh.pureedgesim.ScenarioManager.FilesParser;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
@@ -115,7 +115,7 @@ public class MainApplication extends MainApplicationAbstract{
 				isFirstIteration = false;
 
 				// New simulation instance
-				CloudSim simulation = new CloudSim(0.01);
+				CloudSim simulation = new CloudSim(0.00001);
 
 				// Initialize the simulation manager
 				simulationManager = new SimulationManager(simLog, simulation, simulationId, iteration,
@@ -182,7 +182,7 @@ public class MainApplication extends MainApplicationAbstract{
 
 		// Initialize the network model
 		Constructor<?> networkConstructor = networkModel.getConstructor(SimulationManager.class);
-		NetworkModel networkModel = (NetworkModel) networkConstructor.newInstance(simulationManager);
+		NetworkModelAbstract networkModel = (NetworkModelAbstract) networkConstructor.newInstance(simulationManager);
 		simulationManager.setNetworkModel(networkModel);
 	}
 
