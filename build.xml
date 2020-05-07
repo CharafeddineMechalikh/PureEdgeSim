@@ -82,12 +82,6 @@
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
-        <copy includeemptydirs="false" todir="target/test-classes">
-            <fileset dir="src/test/java">
-                <exclude name="**/*.launch"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
     </target>
     <target name="clean">
         <delete dir="target/classes"/>
@@ -156,7 +150,12 @@
         <java classname="examples.Example7" failonerror="true" fork="yes">
             <classpath refid="run.Example7.classpath"/>
         </java>
-    </target> 
+    </target>
+    <target name="Example8 (2)">
+        <java classname="examples.Example8" failonerror="true" fork="yes">
+            <classpath refid="run.Example8 (2).classpath"/>
+        </java>
+    </target>
     <target name="Example9">
         <java classname="examples.Example9" failonerror="true" fork="yes">
             <classpath refid="run.Example9.classpath"/>
