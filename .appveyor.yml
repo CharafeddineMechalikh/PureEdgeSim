@@ -14,7 +14,7 @@ init:
   - git config --global core.autocrlf true
   
 build_script:
-  - RD /S /Q "C:\Users\Mechalikh\pes\PureEdgeSim\examples"
+  - RD /S /Q "C:\projects\PureEdgeSim\examples"
   - mvn clean package --batch-mode -DskipTest
   
 test_script:
