@@ -1,0 +1,8 @@
+language: java
+jdk:
+  - openjdk12
+  
+cript:
+  - crm -r directoryname  /home/travis/build/CharafeddineMechalikh/PureEdgeSim/PureEdgeSim/examples/
+  
+install: mvn clean install
