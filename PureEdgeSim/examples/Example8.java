@@ -12,8 +12,7 @@ import com.mechalikh.pureedgesim.MainApplication;
  * Computing," in IEEE Transactions on Network and Service Management, vol. 16,
  * no. 2, pp. 769-782, June 2019.
  * 
- * To use it you must download JFuzzy_Logic jar file from here
- * http://jfuzzylogic.sourceforge.net/html/index.html
+ * To use it you must add JFuzzy_Logic jar file  PureEdgeSim/Libs/ folder
  */
 public class Example8 extends MainApplication {
 

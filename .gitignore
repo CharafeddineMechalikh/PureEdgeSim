@@ -17,3 +17,8 @@ bin/
 #NetBeans project files
 nbproject/
 **/nb-configuration.xml
+
+#Windows files
+Thumbs.db
+ehthumbs.db
+Desktop.ini

@@ -6,31 +6,113 @@
 		<isOrchestrator>true</isOrchestrator>   <!-- it has a task orchestrator or not  --> 
 		<hosts>
 		    <host>
-				<core>1</core>
-				<mips>250000</mips>
+				<core>8</core>
+				<mips>2000000</mips>
 				<ram>16000</ram>
 				<storage>1000000</storage>
 				<VMs>
 					<VM>
 						<core>1</core>
-						<mips>250000</mips>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 
+					<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 
+						<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 
+					<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 	<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 
+					<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 
+						<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 
+					<VM>
+						<core>1</core>
+						<mips>120000</mips>
 						<ram>2000</ram>
 						<storage>20000</storage>
 					</VM> 
 				</VMs>
 			</host> 
 			<host>
-				<core>1</core>
-				<mips>250000</mips>
+				<core>8</core>
+				<mips>2000000</mips>
 				<ram>16000</ram>
 				<storage>1000000</storage>
 				<VMs>
 					<VM>
 						<core>1</core>
-						<mips>250000</mips>
+						<mips>120000</mips>
 						<ram>2000</ram>
 						<storage>20000</storage>
-					</VM>  
+					</VM> 
+					<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 
+						<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 
+					<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 	<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 
+					<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 
+						<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 
+					<VM>
+						<core>1</core>
+						<mips>120000</mips>
+						<ram>2000</ram>
+						<storage>20000</storage>
+					</VM> 
 				</VMs>
 			</host>
 		</hosts>
