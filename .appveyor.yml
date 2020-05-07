@@ -26,14 +26,7 @@ build_script:
 
 test_script:
   - ant unit-tests
-
-on_finish:
-  - ps: |
-      $url = "https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)"
-      $file = '.\junit\TESTS-TestSuites.xml'
-      $webclient = New-Object 'System.Net.WebClient'
-      # uploads currently fail because of many tests (https://github.com/appveyor/ci/issues/2084)
-      try { $webclient.UploadFile($url, (Resolve-Path $file)) } catch { $_ }
+ 
 cache:
   - C:\ant
   - C:\ivy
