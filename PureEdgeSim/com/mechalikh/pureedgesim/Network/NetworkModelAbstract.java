@@ -1,3 +1,23 @@
+/**
+ *     PureEdgeSim:  A Simulation Framework for Performance Evaluation of Cloud, Edge and Mist Computing Environments 
+ *
+ *     This file is part of PureEdgeSim Project.
+ *
+ *     PureEdgeSim is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     PureEdgeSim is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
+ *     
+ *     @author Mechalikh
+ **/
 package com.mechalikh.pureedgesim.Network;
 
 import java.util.ArrayList;
@@ -70,15 +90,17 @@ public abstract class NetworkModelAbstract extends CloudSimEntity {
 
 	protected boolean wanIsUsed(FileTransferProgress fileTransferProgress) {
 		return ((fileTransferProgress.getTransferType() == FileTransferProgress.Type.TASK
-				&& ((DataCenter) fileTransferProgress.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD))
+				&& ((DataCenter) fileTransferProgress.getTask().getVm().getHost().getDatacenter()).getType()
+						.equals(TYPES.CLOUD))
 				// If the offloading destination is the cloud
 
 				|| (fileTransferProgress.getTransferType() == FileTransferProgress.Type.CONTAINER
-						&& (fileTransferProgress.getTask().getRegistry()== null || fileTransferProgress.getTask().getRegistry().getType() == TYPES.CLOUD))
+						&& (fileTransferProgress.getTask().getRegistry() == null
+								|| fileTransferProgress.getTask().getRegistry().getType() == TYPES.CLOUD))
 				// Or if containers will be downloaded from registry
 
 				|| (fileTransferProgress.getTask().getOrchestrator().getType() == SimulationParameters.TYPES.CLOUD));
-	         	// Or if the orchestrator is deployed in the cloud
+		// Or if the orchestrator is deployed in the cloud
 
 	}
 
@@ -120,8 +142,8 @@ public abstract class NetworkModelAbstract extends CloudSimEntity {
 				bwUsage += fileTransferProgress.getRemainingFileSize();
 			}
 		}
-		bwUsage = (wanTasks > 0 ? bwUsage / wanTasks : 0) / 1000;
-		return Math.min(bwUsage, SimulationParameters.WAN_BANDWIDTH/1000);
+		bwUsage = (wanTasks > 0 ? bwUsage / (wanTasks * 1000) : 0);
+		return Math.min(bwUsage, SimulationParameters.WAN_BANDWIDTH / 1000);
 	}
 
 }

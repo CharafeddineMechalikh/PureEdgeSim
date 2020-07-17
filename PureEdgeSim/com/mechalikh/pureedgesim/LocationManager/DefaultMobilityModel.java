@@ -1,3 +1,23 @@
+/**
+ *     PureEdgeSim:  A Simulation Framework for Performance Evaluation of Cloud, Edge and Mist Computing Environments 
+ *
+ *     This file is part of PureEdgeSim Project.
+ *
+ *     PureEdgeSim is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     PureEdgeSim is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
+ *     
+ *     @author Mechalikh
+ **/
 package com.mechalikh.pureedgesim.LocationManager;
 
 import java.util.Random;
@@ -7,11 +27,15 @@ import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 public class DefaultMobilityModel extends Mobility {
 	private boolean pause = false;
 	private double pauseDuration = -1;
-	private double mobilityDuration = new Random().nextInt(100);
+	private double mobilityDuration = (maxMobilityDuration - minMobilityDuration) > 0
+			? new Random().nextInt((int) (maxMobilityDuration - minMobilityDuration)) + minMobilityDuration
+			: 0;
 	private int orientationAngle = new Random().nextInt(359);
 
-	public DefaultMobilityModel(Location currentLocation) {
-		super(currentLocation);
+	public DefaultMobilityModel(Location currentLocation, boolean mobile, double speed, double minPauseDuration,
+			double maxPauseDuration, double minMobilityDuration, double maxMobilityDuration) {
+		super(currentLocation, mobile, speed, minPauseDuration, maxPauseDuration, minMobilityDuration,
+				maxMobilityDuration);
 	}
 
 	public DefaultMobilityModel() {
@@ -20,7 +44,7 @@ public class DefaultMobilityModel extends Mobility {
 
 	@Override
 	public Location getNextLocation() {
-		if (SimulationParameters.SPEED <= 0 || !isMobile)
+		if (speed <= 0 || !isMobile)
 			return currentLocation; // The speed must be > 0 in order to move/change the location
 
 		double X_position = currentLocation.getXPos(); // Get the initial X coordinate assigned to this device
@@ -49,7 +73,7 @@ public class DefaultMobilityModel extends Mobility {
 	}
 
 	private Location updateLocation(double X_position, double Y_position) {
-		double distance = SimulationParameters.SPEED * SimulationParameters.UPDATE_INTERVAL;
+		double distance = speed * SimulationParameters.UPDATE_INTERVAL;
 		double X_distance = Math.cos(Math.toRadians(orientationAngle)) * distance;
 		double Y_distance = Math.sin(Math.toRadians(orientationAngle)) * distance;
 		// Update the X_position
@@ -68,7 +92,7 @@ public class DefaultMobilityModel extends Mobility {
 
 	private void pause() {
 		// Pickup random duration from 50 to 200 seconds
-		pauseDuration = 50 + new Random().nextInt(100);
+		pauseDuration = minPauseDuration + new Random().nextInt((int) (maxPauseDuration - minPauseDuration));
 		// Pause mobility (the device will stay in its location for the randomly
 		// generated duration
 		pause = true;

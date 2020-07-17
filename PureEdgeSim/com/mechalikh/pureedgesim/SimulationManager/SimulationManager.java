@@ -1,3 +1,23 @@
+/**
+ *     PureEdgeSim:  A Simulation Framework for Performance Evaluation of Cloud, Edge and Mist Computing Environments 
+ *
+ *     This file is part of PureEdgeSim Project.
+ *
+ *     PureEdgeSim is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     PureEdgeSim is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
+ *     
+ *     @author Mechalikh
+ **/
 package com.mechalikh.pureedgesim.SimulationManager;
 
 import java.io.IOException;
@@ -71,8 +91,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 		schedule(this, SimulationParameters.SIMULATION_TIME, PRINT_LOG);
 
 		// Updating real time charts
-		if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS 
-				&& !SimulationParameters.PARALLEL)
+		if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL)
 			schedule(this, SimulationParameters.INITIALIZATION_TIME, UPDATE_REAL_TIME_CHARTS);
 
 		// Show simulation progress
@@ -100,12 +119,15 @@ public class SimulationManager extends SimulationManagerAbstract {
 			if (taskFailed(task, 2))
 				return;
 			broker.submitCloudlet(task);
-			((DataCenter)task.getVm().getHost().getDatacenter()).getResources().addCpuUtilization(task);
+			((DataCenter) task.getVm().getHost().getDatacenter()).getResources().addCpuUtilization(task);
+			((DataCenter) task.getVm().getHost().getDatacenter()).getEnergyModel()
+					.updateCpuEnergyConsumption(task.getLength()
+							/ ((DataCenter) task.getVm().getHost().getDatacenter()).getResources().getTotalMips());
 			break;
 
 		case TRANSFER_RESULTS_TO_ORCH:
 			// Transfer the results to the orchestrator
-			((DataCenter)task.getVm().getHost().getDatacenter()).getResources().removeCpuUtilization(task);
+			((DataCenter) task.getVm().getHost().getDatacenter()).getResources().removeCpuUtilization(task);
 			sendResultsToOchestrator(task);
 			break;
 
@@ -158,8 +180,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 
 			simLog.printSameLine(" 100% ]", "red");
 
-			if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS
-					&& !SimulationParameters.PARALLEL) {
+			if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL) {
 				// Close real time charts after the end of the simulation
 				if (SimulationParameters.AUTO_CLOSE_REAL_TIME_CHARTS)
 					simulationVisualizer.close();
@@ -284,12 +305,19 @@ public class SimulationManager extends SimulationManagerAbstract {
 	}
 
 	public boolean taskFailed(Task task, int phase) {
+		// The task is failed due to long delay
+		if ((task.getSimulation().clock() - task.getTime()) > task.getMaxLatency()) {
+			task.setFailureReason(Task.Status.FAILED_DUE_TO_LATENCY);
+			simLog.incrementTasksFailedLatency(task);
+			return setFailed(task);
+		}
 		// task not generated because device died
 		if (phase == 0 && task.getEdgeDevice().isDead()) {
 			simLog.incrementNotGeneratedBeacuseDeviceDead();
 			task.setFailureReason(Task.Status.NOT_GENERATED_BECAUSE_DEVICE_DEAD);
 			return setFailed(task);
-		} // Set the task as failed if the device is dead
+		}
+		// Set the task as failed if the device is dead
 		if (phase != 0 && task.getEdgeDevice().isDead()) {
 			simLog.incrementFailedBeacauseDeviceDead(task);
 			task.setFailureReason(Task.Status.FAILED_BECAUSE_DEVICE_DEAD);
@@ -307,7 +335,6 @@ public class SimulationManager extends SimulationManagerAbstract {
 			simLog.incrementFailedBeacauseDeviceDead(task);
 			return setFailed(task);
 		}
-
 		// A simple representation of task failure due to
 		// device mobility, if the vm location doesn't match
 		// the edge device location (that generated this task)
@@ -323,12 +350,6 @@ public class SimulationManager extends SimulationManagerAbstract {
 				&& !sameLocation(task.getEdgeDevice(), ((DataCenter) task.getVm().getHost().getDatacenter()))) {
 			task.setFailureReason(Task.Status.FAILED_DUE_TO_DEVICE_MOBILITY);
 			simLog.incrementTasksFailedMobility(task);
-			return setFailed(task);
-		}
-		// The task is failed due to long delay
-		if ((task.getSimulation().clock() - task.getTime()) > task.getMaxLatency()) {
-			task.setFailureReason(Task.Status.FAILED_DUE_TO_LATENCY);
-			simLog.incrementTasksFailedLatency(task);
 			return setFailed(task);
 		}
 		return false;

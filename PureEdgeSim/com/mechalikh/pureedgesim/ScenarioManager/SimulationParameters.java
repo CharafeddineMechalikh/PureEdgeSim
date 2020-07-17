@@ -1,3 +1,23 @@
+/**
+ *     PureEdgeSim:  A Simulation Framework for Performance Evaluation of Cloud, Edge and Mist Computing Environments 
+ *
+ *     This file is part of PureEdgeSim Project.
+ *
+ *     PureEdgeSim is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     PureEdgeSim is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
+ *     
+ *     @author Mechalikh
+ **/
 package com.mechalikh.pureedgesim.ScenarioManager;
  
 import java.util.ArrayList;
@@ -32,8 +52,7 @@ public class SimulationParameters {
 	public static int NUM_OF_CLOUD_DATACENTERS;   // Number of Cloud data centers
 	public static int MIN_NUM_OF_EDGE_DEVICES;    // Min number of edge devices
 	public static int MAX_NUM_OF_EDGE_DEVICES;    // Max number of edge devices  
-	public static int EDGE_DEVICE_COUNTER_STEP;   // Edge devices growing rate   
-	public static double SPEED;                   // Speed of mobile devices in meters per seconds m/s
+	public static int EDGE_DEVICE_COUNTER_STEP;   // Edge devices growing rate    
 	public static enum TYPES {                    // Types of resources  
 		CLOUD, EDGE_DATACENTER, EDGE_DEVICE
 	};

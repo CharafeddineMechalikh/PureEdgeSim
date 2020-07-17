@@ -6,8 +6,12 @@
 		is defined here <percentage> -->
 		
 	<device arch="x86" os="linux" vmm="xen"> <!-- this is a smartphone, for example -->
-	
 		<mobility>true</mobility><!-- the device is mobile or fixed -->
+		<speed>1.4</speed><!-- the speed of the device in meters per second : 1.4m/s equals 5km/h, 0 = non mobile-->
+		<minPauseDuration>100</minPauseDuration><!-- the minimum delay before moving to a new location-->
+		<maxPauseDuration>400</maxPauseDuration><!-- the maximum delay before moving to a new location-->
+		<minMobilityDuration>60</minMobilityDuration><!-- the minimum delay before stopping-->
+		<maxMobilityDuration>100</maxMobilityDuration><!-- the maximum delay before stopping-->
 		<battery>true</battery> <!-- relies on battery? -->
 		<percentage>30</percentage> <!-- percentage of this device type -->
 		<batteryCapacity>18.75</batteryCapacity> <!-- battery capacity in Watt-Hour -->
@@ -36,13 +40,18 @@
 	</device>
 	<device arch="x86" os="linux" vmm="xen"> <!-- this is a raspberry pi model B+-->
 		<mobility>false</mobility>
+		<speed>0</speed> 
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
 		<battery>false</battery>
 		<percentage>10</percentage>
 		<batteryCapacity>0</batteryCapacity>
 		<idleConsumption>1.6</idleConsumption>
 		<maxConsumption>5.1</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
-		<generateTasks>true</generateTasks>
+		<generateTasks>false</generateTasks>
 		<hosts>
 			<host>
 				<core>4</core>
@@ -62,13 +71,18 @@
 	</device>
 	<device arch="x86" os="linux" vmm="xen"> <!--  this is a laptop for example -->
 		<mobility>false</mobility>
+		<speed>0</speed> 
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
 		<battery>true</battery>
 		<percentage>20</percentage>
 		<batteryCapacity>56.2</batteryCapacity>
 		<idleConsumption>1.7</idleConsumption>
 		<maxConsumption>23.6</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
-		<generateTasks>true</generateTasks>
+		<generateTasks>false</generateTasks>
 		<hosts>
 			<host>
 				<core>8</core>
@@ -88,6 +102,11 @@
 	</device>
 	<device arch="x86" os="linux" vmm="xen">
 		<mobility>false</mobility>
+		<speed>0</speed> 
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
 		<battery>false</battery>
 		<percentage>40</percentage>
 		<batteryCapacity>0</batteryCapacity>

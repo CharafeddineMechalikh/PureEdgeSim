@@ -1,17 +1,32 @@
 # PureEdgeSim: A simulation toolkit for performance evaluation of Edge and Mist computing environments
 
-[![DOI](https://zenodo.org/badge/163447483.svg)](https://zenodo.org/badge/latestdoi/163447483)  [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Build Status](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim.svg?branch=master)](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim) [![Build status](https://ci.appveyor.com/api/projects/status/u6hwmktmbji8utnf?svg=true)](https://ci.appveyor.com/project/CharafeddineMechalikh/pureedgesim)  [![Codacy Badge](https://api.codacy.com/project/badge/Grade/25ee278611014a9bb242297480703cf9)](https://www.codacy.com/manual/CharafeddineMechalikh/PureEdgeSim?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CharafeddineMechalikh/PureEdgeSim&amp;utm_campaign=Badge_Grade)   [![Maintainability](https://api.codeclimate.com/v1/badges/a1ffecb5230fc5771b93/maintainability)](https://codeclimate.com/github/CharafeddineMechalikh/PureEdgeSim/maintainability)   [![codebeat badge](https://codebeat.co/badges/bbe172a2-1169-4bbe-b6a6-0505631babc6)](https://codebeat.co/projects/github-com-charafeddinemechalikh-pureedgesim-master)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Build Status](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim.svg?branch=master)](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim) [![Build status](https://ci.appveyor.com/api/projects/status/u6hwmktmbji8utnf?svg=true)](https://ci.appveyor.com/project/CharafeddineMechalikh/pureedgesim)  [![Codacy Badge](https://api.codacy.com/project/badge/Grade/25ee278611014a9bb242297480703cf9)](https://www.codacy.com/manual/CharafeddineMechalikh/PureEdgeSim?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CharafeddineMechalikh/PureEdgeSim&amp;utm_campaign=Badge_Grade)   [![Maintainability](https://api.codeclimate.com/v1/badges/a1ffecb5230fc5771b93/maintainability)](https://codeclimate.com/github/CharafeddineMechalikh/PureEdgeSim/maintainability)   [![codebeat badge](https://codebeat.co/badges/bbe172a2-1169-4bbe-b6a6-0505631babc6)](https://codebeat.co/projects/github-com-charafeddinemechalikh-pureedgesim-master)
 
-## For more information read the wiki here: [PureEdgeSim WIKI](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki) 
+## Authors : Charafeddine MECHALIKH, Hajer TAKTAK, Faouzi MOUSSA
+
+## Please cite it as 
+
+Mechalikh, C., Taktak, H., Moussa, F.: PureEdgeSim: A Simulation Toolkit for Performance Evaluation of Cloud, Fog, and Pure Edge Computing Environments. The 2019 International Conference on High Performance Computing & Simulation (2019) 700-707
+
+## For more information 
+
+Read the wiki here: [PureEdgeSim WIKI](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki) 
+
 A simulation tutorial can be found [here](https://drive.google.com/open?id=1Qg7UTop7Wa7TZQ8MOrXZkyo1Rga455Qm)  
 
-## A new example "Example 8" with a Fuzzy Logic orchestration algorithm.
+Other publication using PureEdgeSim can be found [here](https://www.researchgate.net/profile/Charafeddine_Mechalikh/research)
+
+*For any questions, contact me at charafeddine.mechalikh@gmail.com*   
+
+## Works that are based on PureEdgeSim and extensions:
+
+*   SatEdgeSim: A Toolkit for Modeling and Simulation of Performance Evaluation in Satellite Edge Computing Environments, read more about it [here](https://github.com/wjy491156866/SatEdgeSim).
 
 ## 1. Background
 
 Edge and Mist (Extreme Edge) computing, two emerging computing paradigms that aim to overcome the Cloud computing limitations by bringing its applications at the Edge of the network. Thus, reducing both the latency and the Cloud workload and leading to a more scalable network. Nevertheless, in these distributed environments where many devices need to offload their tasks to one another (either to increase their lifetime or to minimize the task completion delay) many issues such as resources management strategies has to be solved. Instead of testing them on a real distributed system, the simulation makes it possible to evaluate the proposed strategies and algorithms in a repeatable, controllable and cost-effective way before their actual deployment. However, when it comes to simulation tools, Mist computing still did not get the attention they deserve (with only few simulators for Edge computing such as iFogSim, EdgeCloudSim).
 
-We introduce PureEdgeSim, a new simulator based on [CloudSim Plus](http://Cloudsimplus.org) that is designed to simulate Cloud, Edge, and Mist computing environments. It allows to evaluate the performance of resources management strategies in terms of network usage, latency, resources utilization, energy consumption, etc. and enables the simulation of several scenarios such as the Internet of Things (IoT), connected vehicles/ VANETs/MANET, Mist computing environments (peer-to peer networks such as mobile devices Cloud), and mobile Edge computing. 
+We introduce PureEdgeSim, a new simulator based on [CloudSim Plus](http://Cloudsimplus.org) that is designed to simulate Cloud, Edge, and Mist computing environments. It allows to evaluate the performance of resources management strategies in terms of network usage, latency, resources utilization, energy consumption, etc. and enables the simulation of several scenarios such as the Internet of Things (IoT), connected vehicles, Mist computing environments (peer-to peer networks such as mobile devices Cloud), and mobile Edge computing. 
    
 ## 2. PureEdgeSim Architecture
 
@@ -25,13 +40,13 @@ It provides a task orchestrator module that orchestrates the tasks and enables t
 
 It consists of the following 7 modules:
 
-*   Scenario Manager, that loads  the simulation parameters and the user scenario from the input files (`.xml` and `.prop` files in `/settings/` folder) where the user specifies. It consists of two classes, the File Parser that  checks the input files and loads the  the simulation parameters, and the Simulation Parameters class which represents a placeholder for the different parameters.
+*   Scenario Manager, that loads the simulation parameters and the user scenario from the input files (`.xml` and `.prop` files in `/settings/` folder). It consists of two classes, the File Parser that checks the input files and loads the simulation parameters, and the Simulation Parameters class which represents a placeholder for the different parameters.
 
 
-*   Simulation Manager, that initiates the simulation environment, schedules all the events and generates the output. It consists of two important classes, the Simulation Manager class which manages the simulation, schedules the tasks generation, etc. The Simulation Logger class that generates the simulation output saves it in comma-separated value (CSV) format in order to easily exploit them later using any spreadsheet editor (e.g. Microsoft Excel...).
+*   Simulation Manager, that initiates the simulation environment, schedules all the events and generates the output. It consists of two important classes, the Simulation Manager class which manages the simulation, schedules the tasks generation, etc. The Simulation Logger class that generates the simulation output saves it in comma-separated value (CSV) format in order to easily exploit them later using any spreadsheet editor (e.g., Microsoft Excel...).
 
 
-*   Data Centers Manager: it generates and manages all the data centers and devices (i.e. Cloud, Edge or Mist). It consists of two classes: the Data Center class, that contains the specific properties of Edge devices such as the location, the mobility, the energy source, and the capacity/ remaining energy if it is battery-powered. The second class is the Server Manager which generates the needed servers and Edge devices, their hosts and their virtual machines.
+*   Data Centers Manager: it generates and manages all the data centers and devices (i.e., Cloud, Edge or Mist). It consists of two classes: the Data Center class, that contains the specific properties of Edge devices such as the location, the mobility, the energy source, and the capacity/remaining energy if it is battery-powered. The second class is the Server Manager which generates the needed servers and Edge devices, their hosts and their virtual machines.
 
 
 *   Tasks Generator which is behind the tasks generation, -currently- it assigns an application such as e-health, smart-home, and augmented-reality (that can be defined in `settings/applications.xml` file) to each Edge device. Then, it will generates the needed tasks according to the assigned type, which guarantees the heterogeneity of applications.  
@@ -53,9 +68,9 @@ PureEdgeSim architecture
 
 *   Cloud, Edge, and Mist computing scenarios
 
-*   And basicaly, any scenario that involves computing on distributed nodes or mobility, for example:
+*   And basically, any scenario that involves computing on distributed nodes or mobility, for example:
 
-VANETs/MANET networks, IoT applications, Mobile Devices Clouds, Mobile Edge Computing,... 
+IoT applications, Mobile Devices Clouds, Mobile Edge Computing,... 
   
 ## 4. PureEdgeSim features
 
@@ -74,17 +89,16 @@ The mobility model will assign a random location to each device.
 Then the mobile devices will change their location according to the model in use.
 *   The support for devices heterogeneity:
 
-The user can define heterogenous Edge device, Edge data centers, and Cloud Data Centers in the corresponding `.xml` files. 
+The user can define heterogeneous Edge device, Edge data centers, and Cloud Data Centers in the corresponding `.xml` files. 
 
-He will decide whether and Edge device is mobile or not, whether it is battery-powered or not ( and the size of its battery), 
+He or She will decide whether and Edge device is mobile or not, whether it is battery-powered or not (and the size of its battery), 
 
 and how much computing capacity it has.
 
 The devices without computing capacity are considered as simple sensors that only generate data/tasks. 
 
-The user can also define the applications that are in use, their cpu utilization, their files sizes and their latency. requirements. 
+The user can also define the applications that are in use, their CPU utilization, their files sizes and their latency. requirements. 
 *   The scalability, generate hundreds of devices, with a single click. 
-
 
 *   A rich collection of metrics:
 
@@ -110,15 +124,15 @@ The support for many devices and applications types...
 
 Various simulation parameters that meet the requirement of any scenario...
 
-The user can implement new orchestration algorithms(machine learning algorithms: fuzzy decision trees for example)
+The user can implement new orchestration algorithms (machine learning algorithms for example)
 
-He can also implement new network, energy, mobility, or tasks generation models. 
+He or She can also implement new network, energy, mobility, or tasks generation models. 
 
-He can groupe Edge devices into clusters, deploy the orchestrator node in the cluster head for example,
+He or She can group Edge devices into clusters, deploy the orchestrator node in the cluster head for example,
 
 and form a sort of Edge devices Cloud.
 
-He can also solve the registry scalability issue by mirroring the containers images close to the Edge,
+He or She can also solve the registry scalability issue by mirroring the containers images close to the Edge,
 
 and so on...   
 
@@ -136,12 +150,3 @@ Example of real time charts :
 
 Real time analysis of simulation environment
 
-## Authors : Charafeddine MECHALIKH, Hajer TAKTAK, Faouzi MOUSSA
-
-## Please cite it as 
-
-Mechalikh, C., Taktak, H., Moussa, F.: PureEdgeSim: A Simulation Toolkit for Performance Evaluation of Cloud, Fog, and Pure Edge Computing Environments. The 2019 International Conference on High Performance Computing & Simulation (2019) 700-707
-
-Other publication using PureEdgeSim can be found [here](https://www.researchgate.net/profile/Charafeddine_Mechalikh/research)
-
-*For any questions, contact me at charafeddine.mechalikh@gmail.com*   

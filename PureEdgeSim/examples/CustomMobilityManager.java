@@ -1,3 +1,23 @@
+/**
+ *     PureEdgeSim:  A Simulation Framework for Performance Evaluation of Cloud, Edge and Mist Computing Environments 
+ *
+ *     This file is part of PureEdgeSim Project.
+ *
+ *     PureEdgeSim is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     PureEdgeSim is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
+ *     
+ *     @author Mechalikh
+ **/
 package examples;
 
 import com.mechalikh.pureedgesim.LocationManager.Location;
@@ -12,10 +32,12 @@ import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 
 public class CustomMobilityManager extends Mobility {
 
-	public CustomMobilityManager(Location location) {
-		super(location);
+	public CustomMobilityManager(Location currentLocation, boolean mobile, double speed, double minPauseDuration,
+			double maxPauseDuration, double minMobilityDuration, double maxMobilityDuration) {
+		super(currentLocation, mobile, speed, minPauseDuration, maxPauseDuration, minMobilityDuration,
+				maxMobilityDuration);
 	}
-
+	
 	public Location getNextLocation() {
 		// add 1 to the previous X_position
 		Double x_position = this.currentLocation.getXPos() + 1;

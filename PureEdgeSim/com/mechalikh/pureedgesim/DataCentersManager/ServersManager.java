@@ -1,3 +1,23 @@
+/**
+ *     PureEdgeSim:  A Simulation Framework for Performance Evaluation of Cloud, Edge and Mist Computing Environments 
+ *
+ *     This file is part of PureEdgeSim Project.
+ *
+ *     PureEdgeSim is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     PureEdgeSim is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
+ *     
+ *     @author Mechalikh
+ **/
 package com.mechalikh.pureedgesim.DataCentersManager;
 
 import java.io.File;
@@ -165,6 +185,7 @@ public class ServersManager {
 		Constructor<?> energyConstructor = energyModel.getConstructor(double.class, double.class);
 		datacenter.setEnergyModel(energyConstructor.newInstance(maxConsumption, idleConsumption));
 		Boolean mobile = false;
+		double speed = 0, minPauseDuration = 0, maxPauseDuration = 0, minMobilityDuration = 0, maxMobilityDuration = 0;
 		if (type == SimulationParameters.TYPES.EDGE_DATACENTER) {
 			Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
 			x_position = Integer.parseInt(location.getElementsByTagName("x_pos").item(0).getTextContent());
@@ -172,6 +193,16 @@ public class ServersManager {
 			datacenterLocation = new Location(x_position, y_position);
 		} else if (type == SimulationParameters.TYPES.EDGE_DEVICE) {
 			mobile = Boolean.parseBoolean(datacenterElement.getElementsByTagName("mobility").item(0).getTextContent());
+			speed = Double
+					.parseDouble(datacenterElement.getElementsByTagName("speed").item(0).getTextContent());
+			minPauseDuration = Double
+					.parseDouble(datacenterElement.getElementsByTagName("minPauseDuration").item(0).getTextContent());
+			maxPauseDuration = Double
+					.parseDouble(datacenterElement.getElementsByTagName("maxPauseDuration").item(0).getTextContent());
+			minMobilityDuration = Double.parseDouble(
+					datacenterElement.getElementsByTagName("minMobilityDuration").item(0).getTextContent());
+			maxMobilityDuration = Double.parseDouble(
+					datacenterElement.getElementsByTagName("maxMobilityDuration").item(0).getTextContent());
 			datacenter.getEnergyModel().setBattery(
 					Boolean.parseBoolean(datacenterElement.getElementsByTagName("battery").item(0).getTextContent()));
 			datacenter.getEnergyModel().setBatteryCapacity(Double
@@ -184,11 +215,11 @@ public class ServersManager {
 			getSimulationManager().getSimulationLogger().deepLog("ServersManager- Edge device:" + datacentersList.size()
 					+ "    location: ( " + datacenterLocation.getXPos() + "," + datacenterLocation.getYPos() + " )");
 		}
-
 		datacenter.setType(type);
-		Constructor<?> mobilityConstructor = mobilityManager.getConstructor(Location.class);
-		datacenter.setMobilityManager(mobilityConstructor.newInstance(datacenterLocation));
-		datacenter.getMobilityManager().setMobile(mobile);
+		Constructor<?> mobilityConstructor = mobilityManager.getConstructor(Location.class, boolean.class, double.class,double.class,
+				double.class, double.class, double.class);
+		datacenter.setMobilityManager(mobilityConstructor.newInstance(datacenterLocation, mobile, speed, minPauseDuration,
+				maxPauseDuration, minMobilityDuration, maxMobilityDuration));
 		return datacenter;
 	}
 
@@ -257,7 +288,7 @@ public class ServersManager {
 					: new CloudletSchedulerTimeShared();
 
 			Vm vm = new VmSimple(vmList.size(), vmMips, vmNumOfCores);
-			vm.setRam(vmRam).setBw(vmBandwidth).setSize(vmStorage).setCloudletScheduler(tasksScheduler); 
+			vm.setRam(vmRam).setBw(vmBandwidth).setSize(vmStorage).setCloudletScheduler(tasksScheduler);
 			vm.setHost(host);
 			vmList.add(vm);
 			list.add(vm);

@@ -1,3 +1,23 @@
+/**
+ *     PureEdgeSim:  A Simulation Framework for Performance Evaluation of Cloud, Edge and Mist Computing Environments 
+ *
+ *     This file is part of PureEdgeSim Project.
+ *
+ *     PureEdgeSim is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     PureEdgeSim is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
+ *     
+ *     @author Mechalikh
+ **/
 package examples;
 
 import com.mechalikh.pureedgesim.MainApplication; 
@@ -12,7 +32,9 @@ import com.mechalikh.pureedgesim.MainApplication;
  * Computing," in IEEE Transactions on Network and Service Management, vol. 16,
  * no. 2, pp. 769-782, June 2019.
  * 
- * To use it you must add JFuzzy_Logic jar file  PureEdgeSim/Libs/ folder
+ * We also started with stage 2 and then stage 1, as this decreases the algorithm complexity. Hence, shorter simulation time.
+ * 
+ * To use it you must add JFuzzy_Logic jar file PureEdgeSim/Libs/ folder
  */
 public class Example8 extends MainApplication {
 

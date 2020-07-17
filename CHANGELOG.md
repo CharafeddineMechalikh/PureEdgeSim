@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 3.2 (jun 18th 2020)
+
+*   Improved mobility model (new attributes added in edge_devices.xml file).
+
+*   Fixed an energy model bug.
+
+*   Fixed a live charts bug.
+
+*   Fixed minor network model bug.
+
 ## Version 3.1 (may 7th 2020)
 
 *   Fixed Bugs (CPU utilization when update interval is high >= 1).

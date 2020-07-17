@@ -1,3 +1,23 @@
+/**
+ *     PureEdgeSim:  A Simulation Framework for Performance Evaluation of Cloud, Edge and Mist Computing Environments 
+ *
+ *     This file is part of PureEdgeSim Project.
+ *
+ *     PureEdgeSim is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     PureEdgeSim is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
+ *     
+ *     @author Mechalikh
+ **/
 package com.mechalikh.pureedgesim.SimulationManager;
 
 import java.awt.BasicStroke;
@@ -169,14 +189,20 @@ public class SimulationVisualizer {
 					y_activeEdgeDevicesList.add(datacenter.getMobilityManager().getCurrentLocation().getYPos());
 				}
 			}
-			msUsage += datacenter.getResources().getAvgCpuUtilization(); 
+			msUsage += datacenter.getResources().getAvgCpuUtilization();
 			if (datacenter.getVmList().size() == 0) {
-				sensors++;  
+				sensors++;
 			}
 		}
-		mistUsage.add(msUsage / (simulationManager.getScenario().getDevicesCount() - sensors));
-		updateSeries(cpuUtilizationChart, "Mist", toArray(currentTime), toArray(mistUsage), SeriesMarkers.NONE,
-				Color.BLACK);
+		// Only if Mist computing is used
+		if (simulationManager.getScenario().getStringOrchArchitecture().contains("MIST")
+				|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL")) {
+			
+			mistUsage.add(msUsage / (simulationManager.getScenario().getDevicesCount() - sensors));
+			updateSeries(cpuUtilizationChart, "Mist", toArray(currentTime), toArray(mistUsage), SeriesMarkers.NONE,
+					Color.BLACK);
+		}
+		
 		updateSeries(mapChart, "Idle devices", toArray(x_idleEdgeDevicesList), toArray(y_idleEdgeDevicesList),
 				SeriesMarkers.CIRCLE, Color.blue);
 
