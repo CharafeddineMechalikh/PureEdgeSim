@@ -1,6 +1,10 @@
 # Changelog
 
-## Version 3.2 (jun 18th 2020)
+## Version 3.3 (jul 21st 2020)
+
+*   Improved code quality
+
+## Version 3.2 (jul 18th 2020)
 
 *   Improved mobility model (new attributes added in edge_devices.xml file).
 

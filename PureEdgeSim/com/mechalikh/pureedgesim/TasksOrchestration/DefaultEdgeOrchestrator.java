@@ -70,11 +70,12 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 				}
 				new_min = (orchestrationHistory.get(i).size() + 1) * weight * task.getLength()
 						/ vmList.get(i).getMips();
-				if (min == -1 || min > new_min) { // if it is the first iteration, or if this vm has more cpu mips and less waiting tasks
+				if (min == -1 || min > new_min) { // if it is the first iteration, or if this vm has more cpu mips and
+													// less waiting tasks
 					min = new_min;
 					// set the first vm as thebest one
-					vm = i; 
-				} 
+					vm = i;
+				}
 			}
 		}
 		// assign the tasks to the found vm
@@ -86,14 +87,13 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 		int minTasksCount = -1; // vm with minimum assigned tasks;
 		// get best vm for this task
 		for (int i = 0; i < orchestrationHistory.size(); i++) {
-			if (offloadingIsPossible(task, vmList.get(i), architecture)) {
-				if (minTasksCount == -1 ||minTasksCount > orchestrationHistory.get(i).size()) {
-					minTasksCount = orchestrationHistory.get(i).size();
-					// if this is the first time, 
-					// or new min found, so we choose it as the best VM
-					// set the first vm as the best one
-					vm = i;
-				} 
+			if (offloadingIsPossible(task, vmList.get(i), architecture) && minTasksCount == -1
+					|| minTasksCount > orchestrationHistory.get(i).size()) {
+				minTasksCount = orchestrationHistory.get(i).size();
+				// if this is the first time,
+				// or new min found, so we choose it as the best VM
+				// set the first vm as the best one
+				vm = i;
 			}
 		}
 		// assign the tasks to the found vm

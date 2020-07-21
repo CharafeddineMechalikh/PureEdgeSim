@@ -41,7 +41,7 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 		} else {
 			SimLog.println("");
 			SimLog.println("Custom Orchestrator- Unknown orchestration algorithm '" + algorithm
-					+ "', please check the simulation parameters file...");
+					+ "', please check the 'settings/simulation_parameters.properties' file you are using");
 			// Cancel the simulation
 			SimulationParameters.STOP = true;
 			simulationManager.getSimulation().terminate();
@@ -49,7 +49,7 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 		return -1;
 	}
 
-	private int increseLifetime(String[] architecture, Task task) {
+	protected int increseLifetime(String[] architecture, Task task) {
 		int vm = -1;
 		double minTasksCount = -1; // vm with minimum assigned tasks;
 		double vmMips = 0;
@@ -61,10 +61,9 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 				weight = getWeight(task, ((DataCenter) vmList.get(i).getHost().getDatacenter()));
 
 				if (minTasksCount == -1) { // if it is the first iteration
+					// avoid devision by 0 (by adding 1)
 					minTasksCount = orchestrationHistory.get(i).size()
-							- vmList.get(i).getCloudletScheduler().getCloudletFinishedList().size() + 1; // avoid
-																											// devision
-																											// by 0
+							- vmList.get(i).getCloudletScheduler().getCloudletFinishedList().size() + 1; 
 					// if this is the first time, set the first vm as the
 					vm = i; // best one
 					vmMips = vmList.get(i).getMips();

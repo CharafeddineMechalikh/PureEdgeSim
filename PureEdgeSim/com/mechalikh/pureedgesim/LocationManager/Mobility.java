@@ -20,6 +20,8 @@
  **/
 package com.mechalikh.pureedgesim.LocationManager;
 
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
+
 public abstract class Mobility {
 
 	protected Location currentLocation;
@@ -31,7 +33,7 @@ public abstract class Mobility {
 	protected double speed;
 
 	public Mobility(Location location, boolean mobile, double speed, double minPauseDuration, double maxPauseDuration,
-			double minMobilityDuration, double maxMobilityDuration) { 
+			double minMobilityDuration, double maxMobilityDuration) {
 		this.currentLocation = location;
 		this.isMobile = mobile;
 		this.setMinPauseDuration(minPauseDuration);
@@ -96,5 +98,13 @@ public abstract class Mobility {
 
 	public void setSpeed(double speed) {
 		this.speed = speed;
+	}
+
+	public double distanceTo(DataCenter device2) {
+		return Math.abs(Math.sqrt(Math
+				.pow((getCurrentLocation().getXPos() - device2.getMobilityManager().getCurrentLocation().getXPos()), 2)
+				+ Math.pow(
+						(getCurrentLocation().getYPos() - device2.getMobilityManager().getCurrentLocation().getYPos()),
+						2)));
 	}
 }

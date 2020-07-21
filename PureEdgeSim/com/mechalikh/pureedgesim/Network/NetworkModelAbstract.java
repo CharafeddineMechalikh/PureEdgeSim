@@ -69,7 +69,7 @@ public abstract class NetworkModelAbstract extends CloudSimEntity {
 	protected abstract void transferFinished(FileTransferProgress transfer);
 
 	protected boolean sameLanIsUsed(Task task1, Task task2) {
-		// The trasfers share same Lan of they have one device in common
+		// The transfers share same Lan of they have one device in common
 		// Compare orchestrator
 		return ((task1.getOrchestrator() == task2.getOrchestrator())
 				|| (task1.getOrchestrator() == task2.getVm().getHost().getDatacenter())

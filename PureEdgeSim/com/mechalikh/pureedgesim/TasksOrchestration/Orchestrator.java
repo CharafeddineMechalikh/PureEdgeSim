@@ -144,12 +144,7 @@ public abstract class Orchestrator {
 	protected boolean sameLocation(DataCenter device1, DataCenter device2, int RANGE) {
 		if (device2.getType() == TYPES.CLOUD)
 			return true;
-		double distance = Math.abs(Math.sqrt(Math
-				.pow((device1.getMobilityManager().getCurrentLocation().getXPos()
-						- device2.getMobilityManager().getCurrentLocation().getXPos()), 2)
-				+ Math.pow((device1.getMobilityManager().getCurrentLocation().getYPos()
-						- device2.getMobilityManager().getCurrentLocation().getYPos()), 2)));
-
+		double distance = device1.getMobilityManager().distanceTo(device2);
 		return (distance < RANGE);
 	}
 

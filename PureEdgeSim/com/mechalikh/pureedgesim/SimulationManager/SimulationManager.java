@@ -32,6 +32,7 @@ import com.mechalikh.pureedgesim.Network.NetworkModelAbstract;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
+import com.mechalikh.pureedgesim.SimulationVisualizer.SimulationVisualizer;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker;
 
@@ -262,12 +263,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 
 			for (int i = 0; i < orchestratorsList.size(); i++) {
 				if (orchestratorsList.get(i).getType() != SimulationParameters.TYPES.CLOUD) {
-					distance = Math.abs(Math.sqrt(Math
-							.pow((task.getEdgeDevice().getMobilityManager().getCurrentLocation().getXPos()
-									- orchestratorsList.get(i).getMobilityManager().getCurrentLocation().getXPos()), 2)
-							+ Math.pow((task.getEdgeDevice().getMobilityManager().getCurrentLocation().getYPos()
-									- orchestratorsList.get(i).getMobilityManager().getCurrentLocation().getYPos()),
-									2)));
+					distance = orchestratorsList.get(i).getMobilityManager().distanceTo(task.getEdgeDevice());
 					if (min == -1 || min > distance) {
 						min = distance;
 						selected = i;
@@ -365,11 +361,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 	private boolean sameLocation(DataCenter Dev1, DataCenter Dev2) {
 		if (Dev1.getType() == TYPES.CLOUD || Dev2.getType() == TYPES.CLOUD)
 			return true;
-		double distance = Math.abs(Math.sqrt(Math
-				.pow((Dev1.getMobilityManager().getCurrentLocation().getXPos()
-						- Dev2.getMobilityManager().getCurrentLocation().getXPos()), 2)
-				+ Math.pow((Dev1.getMobilityManager().getCurrentLocation().getYPos()
-						- Dev2.getMobilityManager().getCurrentLocation().getYPos()), 2)));
+		double distance = Dev1.getMobilityManager().distanceTo(Dev2);
 		int RANGE = SimulationParameters.EDGE_DEVICES_RANGE;
 		if (Dev1.getType() != Dev2.getType()) // One of them is an edge data center and the other is an edge device
 			RANGE = SimulationParameters.EDGE_DATACENTERS_RANGE;

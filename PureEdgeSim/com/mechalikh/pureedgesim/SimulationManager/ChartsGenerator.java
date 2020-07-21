@@ -25,7 +25,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.ArrayList; 
 import java.util.List;
 
 import org.knowm.xchart.BitmapEncoder;
@@ -160,7 +160,7 @@ public class ChartsGenerator {
 		return results;
 	}
 
-	public void generate() {
+	public void generate() { 
 		generateTasksCharts();
 		generateNetworkCharts();
 		generateCpuCharts();

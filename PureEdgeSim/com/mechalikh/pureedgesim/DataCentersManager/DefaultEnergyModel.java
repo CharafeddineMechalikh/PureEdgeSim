@@ -59,19 +59,10 @@ public class DefaultEnergyModel extends EnergyModel {
 
 		double distance;
 		if (device1.getType() == TYPES.CLOUD || device2.getType() == TYPES.CLOUD
-				|| device1.getType() == TYPES.EDGE_DATACENTER || device2.getType() == TYPES.EDGE_DATACENTER) {
-			distance = 10;
-		} else {
-			distance = Math
-					.abs(Math
-							.sqrt(Math
-									.pow((device1.getMobilityManager().getCurrentLocation().getXPos()
-											- device2.getMobilityManager().getCurrentLocation().getXPos()), 2)
-									+ Math.pow(
-											(device1.getMobilityManager().getCurrentLocation().getYPos()
-													- device2.getMobilityManager().getCurrentLocation().getYPos()),
-											2)));
-		}
+				|| device1.getType() == TYPES.EDGE_DATACENTER || device2.getType() == TYPES.EDGE_DATACENTER)
+			distance = SimulationParameters.EDGE_DEVICES_RANGE;
+		else
+			distance = device1.getMobilityManager().distanceTo(device1);
 
 		int sizeInBits = (int) (file.getFileSize() * 1000);
 
@@ -102,6 +93,5 @@ public class DefaultEnergyModel extends EnergyModel {
 		double consumption = (E_elec * sizeInBits);
 		this.wirelessEnergyConsumption += joulToWattHour(consumption);
 	}
-
 
 }

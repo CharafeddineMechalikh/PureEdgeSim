@@ -1,0 +1,162 @@
+/**
+ *     PureEdgeSim:  A Simulation Framework for Performance Evaluation of Cloud, Edge and Mist Computing Environments 
+ *
+ *     This file is part of PureEdgeSim Project.
+ *
+ *     PureEdgeSim is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     PureEdgeSim is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
+ *     
+ *     @author Mechalikh
+ **/
+package com.mechalikh.pureedgesim.SimulationVisualizer;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
+import org.knowm.xchart.style.markers.SeriesMarkers;
+
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
+import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
+import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+
+public class CPUChart extends LineChart {
+
+	private List<Double> cloudUsage = new ArrayList<>();
+	private List<Double> mistUsage = new ArrayList<>();
+	private List<Double> edgeUsage = new ArrayList<>();
+	protected List<Double> currentTime = new ArrayList<>();
+
+	public CPUChart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
+		super(title, xAxisTitle, yAxisTitle, simulationManager);
+		getChart().getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
+		updateSize(SimulationParameters.INITIALIZATION_TIME, null, 0.0, null);
+	}
+
+	void update() {
+		currentTime.add(simulationManager.getSimulation().clock());
+		// Add edge devices to map and display their CPU utilization
+		edgeDevicesCpuUsage();
+		// Add edge data centers to the map and display their CPU utilization
+		edgeDataCentersCpuUsage();
+		// Display cloud CPU utilization
+		cloudCpuUsage();
+	}
+
+	private void edgeDevicesCpuUsage() {
+		double msUsage = 0;
+		int sensors = 0;
+		// Initialize the X and Y series that will be used to draw the map
+		// Dead devices series
+		List<Double> x_deadEdgeDevicesList = new ArrayList<>();
+		List<Double> y_deadEdgeDevicesList = new ArrayList<>();
+		// Idle devices series
+		List<Double> x_idleEdgeDevicesList = new ArrayList<>();
+		List<Double> y_idleEdgeDevicesList = new ArrayList<>();
+		// Active devices series
+		List<Double> x_activeEdgeDevicesList = new ArrayList<>();
+		List<Double> y_activeEdgeDevicesList = new ArrayList<>();
+		DataCenter datacenter;
+		// Browse all devices and create the series
+		// Skip the first items (cloud data centers + edge data centers)
+		for (int i = SimulationParameters.NUM_OF_EDGE_DATACENTERS
+				+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS; i < simulationManager.getServersManager()
+						.getDatacenterList().size(); i++) {
+			// If it is an edge device
+			datacenter = simulationManager.getServersManager().getDatacenterList().get(i);
+			if (datacenter.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
+				double Xpos = datacenter.getMobilityManager().getCurrentLocation().getXPos();
+				double Ypos = datacenter.getMobilityManager().getCurrentLocation().getYPos();
+				if (datacenter.isDead()) {
+					x_deadEdgeDevicesList.add(Xpos);
+					y_deadEdgeDevicesList.add(Ypos);
+				} else if (datacenter.getResources().isIdle()) {
+					x_idleEdgeDevicesList.add(Xpos);
+					y_idleEdgeDevicesList.add(Ypos);
+				} else { // If the device is busy
+					x_activeEdgeDevicesList.add(Xpos);
+					y_activeEdgeDevicesList.add(Ypos);
+				}
+			}
+			msUsage += datacenter.getResources().getAvgCpuUtilization();
+			if (datacenter.getVmList().size() == 0) {
+				sensors++;
+			}
+		}
+		// Only if Mist computing is used
+		if (simulationManager.getScenario().getStringOrchArchitecture().contains("MIST")
+				|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL")) {
+			mistUsage.add(msUsage / (simulationManager.getScenario().getDevicesCount() - sensors));
+			updateSeries(getChart(), "Mist", toArray(currentTime), toArray(mistUsage), SeriesMarkers.NONE, Color.BLACK);
+		}
+	}
+
+	private void edgeDataCentersCpuUsage() {
+
+		double edUsage = 0;
+		// Only if Edge computing is used
+		if (simulationManager.getScenario().getStringOrchArchitecture().contains("EDGE")
+				|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL")) {
+			// List of idle servers
+			List<Double> x_idleEdgeDataCentersList = new ArrayList<>();
+			List<Double> y_idleEdgeDataCentersList = new ArrayList<>();
+			// List of active servers
+			List<Double> x_activeEdgeDataCentersList = new ArrayList<>();
+			List<Double> y_activeEdgeDataCentersList = new ArrayList<>();
+
+			for (int j = SimulationParameters.NUM_OF_CLOUD_DATACENTERS; j < SimulationParameters.NUM_OF_EDGE_DATACENTERS
+					+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS; j++) {
+				// If it is an Edge data center
+				if ((simulationManager.getScenario().getStringOrchArchitecture().contains("EDGE")
+						|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL"))
+						&& simulationManager.getServersManager().getDatacenterList().get(j)
+								.getType() == SimulationParameters.TYPES.EDGE_DATACENTER
+						&& SimulationParameters.NUM_OF_EDGE_DATACENTERS != 0) {
+
+					double Xpos = simulationManager.getServersManager().getDatacenterList().get(j).getMobilityManager()
+							.getCurrentLocation().getXPos();
+					double Ypos = simulationManager.getServersManager().getDatacenterList().get(j).getMobilityManager()
+							.getCurrentLocation().getYPos();
+					if (simulationManager.getServersManager().getDatacenterList().get(j).getResources().isIdle()) {
+						x_idleEdgeDataCentersList.add(Xpos);
+						y_idleEdgeDataCentersList.add(Ypos);
+					} else {
+
+						x_activeEdgeDataCentersList.add(Xpos);
+						y_activeEdgeDataCentersList.add(Ypos);
+
+					}
+				}
+				edUsage += simulationManager.getServersManager().getDatacenterList().get(j).getResources()
+						.getAvgCpuUtilization();
+			}
+
+			edgeUsage.add(edUsage / SimulationParameters.NUM_OF_EDGE_DATACENTERS);
+			updateSeries(getChart(), "Edge", toArray(currentTime), toArray(edgeUsage), SeriesMarkers.NONE, Color.BLACK);
+		}
+	}
+
+	void cloudCpuUsage() {
+		double clUsage = 0;
+		for (DataCenter dc : simulationManager.getServersManager().getDatacenterList()) {
+			if (dc.getType() == TYPES.CLOUD) {
+				clUsage = dc.getResources().getAvgCpuUtilization();
+
+			}
+		}
+		cloudUsage.add(clUsage / SimulationParameters.NUM_OF_CLOUD_DATACENTERS);
+		updateSeries(getChart(), "Cloud", toArray(currentTime), toArray(cloudUsage), SeriesMarkers.NONE, Color.BLACK);
+	}
+}

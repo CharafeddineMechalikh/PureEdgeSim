@@ -81,7 +81,6 @@ public class ServersManager {
 		if (SimulationParameters.ENABLE_ORCHESTRATORS)
 			selectOrchestrators();
 		getSimulationManager().getSimulationLogger().print("ServersManager- Datacenters and devices were generated");
-
 	}
 
 	private void selectOrchestrators() {
@@ -193,8 +192,7 @@ public class ServersManager {
 			datacenterLocation = new Location(x_position, y_position);
 		} else if (type == SimulationParameters.TYPES.EDGE_DEVICE) {
 			mobile = Boolean.parseBoolean(datacenterElement.getElementsByTagName("mobility").item(0).getTextContent());
-			speed = Double
-					.parseDouble(datacenterElement.getElementsByTagName("speed").item(0).getTextContent());
+			speed = Double.parseDouble(datacenterElement.getElementsByTagName("speed").item(0).getTextContent());
 			minPauseDuration = Double
 					.parseDouble(datacenterElement.getElementsByTagName("minPauseDuration").item(0).getTextContent());
 			maxPauseDuration = Double
@@ -216,10 +214,10 @@ public class ServersManager {
 					+ "    location: ( " + datacenterLocation.getXPos() + "," + datacenterLocation.getYPos() + " )");
 		}
 		datacenter.setType(type);
-		Constructor<?> mobilityConstructor = mobilityManager.getConstructor(Location.class, boolean.class, double.class,double.class,
-				double.class, double.class, double.class);
-		datacenter.setMobilityManager(mobilityConstructor.newInstance(datacenterLocation, mobile, speed, minPauseDuration,
-				maxPauseDuration, minMobilityDuration, maxMobilityDuration));
+		Constructor<?> mobilityConstructor = mobilityManager.getConstructor(Location.class, boolean.class, double.class,
+				double.class, double.class, double.class, double.class);
+		datacenter.setMobilityManager(mobilityConstructor.newInstance(datacenterLocation, mobile, speed,
+				minPauseDuration, maxPauseDuration, minMobilityDuration, maxMobilityDuration));
 		return datacenter;
 	}
 

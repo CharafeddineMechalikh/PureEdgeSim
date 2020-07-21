@@ -25,7 +25,7 @@ public class Scenario {
 	private int orchArchitecture; // The used architecture/ computing paradigms
 	private int orchAlgorithm; // The tasks orchestration algorithm that will be used in this scenario
 
-	public Scenario(int devicesCount,  int orchAlgorithm, int orchArchitecture) {
+	public Scenario(int devicesCount, int orchAlgorithm, int orchArchitecture) {
 		this.orchAlgorithm = orchAlgorithm;
 		this.devicesCount = devicesCount;
 		this.orchArchitecture = orchArchitecture;
@@ -64,8 +64,8 @@ public class Scenario {
 
 		return SimulationParameters.ORCHESTRATION_AlGORITHMS[orchAlgorithm].trim();
 	}
-	
+
 	public String toString() {
-		return getStringOrchAlgorithm()+"-"+getStringOrchArchitecture()+ "-"+getDevicesCount();
+		return getStringOrchAlgorithm() + "-" + getStringOrchArchitecture() + "-" + getDevicesCount();
 	}
 }

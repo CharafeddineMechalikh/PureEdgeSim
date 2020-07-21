@@ -16,7 +16,7 @@ A simulation tutorial can be found [here](https://drive.google.com/open?id=1Qg7U
 
 Other publication using PureEdgeSim can be found [here](https://www.researchgate.net/profile/Charafeddine_Mechalikh/research)
 
-*For any questions, contact me at charafeddine.mechalikh@gmail.com*   
+*For any questions, contact me at <charafeddine.mechalikh@gmail.com>*   
 
 ## Works that are based on PureEdgeSim and extensions:
 
@@ -68,9 +68,7 @@ PureEdgeSim architecture
 
 *   Cloud, Edge, and Mist computing scenarios
 
-*   And basically, any scenario that involves computing on distributed nodes or mobility, for example:
-
-IoT applications, Mobile Devices Clouds, Mobile Edge Computing,... 
+*   And basically, any scenario that involves computing on distributed nodes or mobility, for example: IoT applications, Mobile Devices Clouds, Mobile Edge Computing,... 
   
 ## 4. PureEdgeSim features
 
@@ -149,4 +147,3 @@ Example of real time charts :
 ![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/PureEdgeSim/files/real%20time.gif)
 
 Real time analysis of simulation environment
-

@@ -34,7 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale; 
+import java.util.Locale;
 import org.cloudbus.cloudsim.vms.Vm;
 
 import com.mechalikh.pureedgesim.MainApplication;
@@ -133,28 +133,27 @@ public class SimLog {
 		double averageCpuUtilization = 0;
 		double averageCloudCpuUtilization = 0;
 		double averageMistCpuUtilization = 0;
-		double averageEdgeCpuUtilization = 0; 
+		double averageEdgeCpuUtilization = 0;
 		List<? extends DataCenter> datacentersList = simulationManager.getServersManager().getDatacenterList();
 		for (DataCenter dc : datacentersList) {
-			if (dc.getType() == SimulationParameters.TYPES.CLOUD) { 
+			if (dc.getType() == SimulationParameters.TYPES.CLOUD) {
 				averageCloudCpuUtilization += dc.getResources().getAvgCpuUtilization();
-			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DATACENTER) { 
+			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DATACENTER) {
 				averageEdgeCpuUtilization += dc.getResources().getAvgCpuUtilization();
-			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DEVICE) { 
-				if (dc.getVmList().size() > 0) {
-					// only devices with computing capability
-					// the devices that have no VM are considered simple sensors, and will not be
-					// counted here
-					averageMistCpuUtilization += dc.getResources().getAvgCpuUtilization();
-					edgeDevicesCount++;
-				}
+			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DEVICE && dc.getVmList().size() > 0) {
+				// only devices with computing capability
+				// the devices that have no VM are considered simple sensors, and will not be
+				// counted here
+				averageMistCpuUtilization += dc.getResources().getAvgCpuUtilization();
+				edgeDevicesCount++;
 			}
+
 		}
-	
+
 		averageCpuUtilization = (averageCloudCpuUtilization + averageMistCpuUtilization + averageEdgeCpuUtilization)
 				/ (edgeDevicesCount + SimulationParameters.NUM_OF_EDGE_DATACENTERS
-						+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS);  
-		
+						+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS);
+
 		averageCloudCpuUtilization = averageCloudCpuUtilization / SimulationParameters.NUM_OF_CLOUD_DATACENTERS;
 		averageEdgeCpuUtilization = averageEdgeCpuUtilization / SimulationParameters.NUM_OF_EDGE_DATACENTERS;
 		averageMistCpuUtilization = averageMistCpuUtilization / edgeDevicesCount;

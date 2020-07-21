@@ -30,6 +30,7 @@ import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
 import com.mechalikh.pureedgesim.Network.NetworkModelAbstract;
 import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
+import com.mechalikh.pureedgesim.SimulationVisualizer.SimulationVisualizer;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker;
 import com.mechalikh.pureedgesim.TasksOrchestration.Orchestrator;
@@ -64,7 +65,6 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 
 	@Override
 	protected void startEntity() {
-
 	}
 
 	public void setServersManager(ServersManager serversManager) {
