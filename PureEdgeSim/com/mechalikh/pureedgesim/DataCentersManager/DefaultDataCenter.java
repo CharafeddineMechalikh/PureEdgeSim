@@ -63,7 +63,7 @@ public class DefaultDataCenter extends DataCenter {
 	private void updateStatus() {
 
 		// Check if the device is dead
-		if (getEnergyModel().isBattery()
+		if (getEnergyModel().isBatteryPowered()
 				&& this.getEnergyModel().getTotalEnergyConsumption() > getEnergyModel().getBatteryCapacity()) {
 			setDeath(true, simulationManager.getSimulation().clock());
 		}

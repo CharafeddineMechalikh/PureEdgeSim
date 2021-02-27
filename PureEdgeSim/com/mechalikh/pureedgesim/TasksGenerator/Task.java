@@ -36,7 +36,8 @@ public class Task extends CloudletSimple {
 	private DataCenter registry;
 	private int applicationID;
 	private Status failureReason;
-
+    private Object metaData;
+    
 	public static enum Status {
 		FAILED_DUE_TO_LATENCY, FAILED_BECAUSE_DEVICE_DEAD, FAILED_DUE_TO_DEVICE_MOBILITY,
 		NOT_GENERATED_BECAUSE_DEVICE_DEAD, FAILED_NO_RESSOURCES, NULL
@@ -117,6 +118,13 @@ public class Task extends CloudletSimple {
 	public void setFailureReason(Status status) {
 		this.setStatus(Cloudlet.Status.FAILED);
 		this.failureReason = status;
+	}
+	public Object getMetaData() {
+		return metaData;
+	}
+
+	public void setMetaData(Object metaData) {
+		this.metaData = metaData;
 	}
 
 }

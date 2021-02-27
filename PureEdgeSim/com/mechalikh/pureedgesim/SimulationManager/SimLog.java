@@ -290,7 +290,7 @@ public class SimLog {
 					else if (firstDeviceDeathTime > dc.getDeathTime())
 						firstDeviceDeathTime = dc.getDeathTime();
 				} else {
-					if (dc.getEnergyModel().isBattery()) {
+					if (dc.getEnergyModel().isBatteryPowered()) {
 						averageRemainingPowerWh += dc.getEnergyModel().getBatteryLevel();
 						averageRemainingPower += dc.getEnergyModel().getBatteryLevelPercentage();
 						remainingPower.add(dc.getEnergyModel().getBatteryLevelPercentage());

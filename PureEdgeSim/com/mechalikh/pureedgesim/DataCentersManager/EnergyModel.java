@@ -77,7 +77,7 @@ public abstract class EnergyModel {
 	}
 
 	public double getBatteryLevel() {
-		if (!isBattery())
+		if (!isBatteryPowered())
 			return 100;
 		if (batteryCapacity < getTotalEnergyConsumption())
 			return 0;
@@ -88,7 +88,7 @@ public abstract class EnergyModel {
 		return getBatteryLevel() * 100 / batteryCapacity;
 	}
 
-	public boolean isBattery() {
+	public boolean isBatteryPowered() {
 		return isBatteryPowered;
 	}
 

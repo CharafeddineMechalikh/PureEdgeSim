@@ -87,7 +87,7 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 
 	private double getWeight(Task task, DataCenter dataCenter) {
 		double weight = 1;// if it is not battery powered
-		if (dataCenter.getEnergyModel().isBattery()) {
+		if (dataCenter.getEnergyModel().isBatteryPowered()) {
 			if (task.getEdgeDevice().getEnergyModel().getBatteryLevel() > dataCenter.getEnergyModel().getBatteryLevel())
 				weight = 20; // the destination device has lower remaining power than the task offloading
 								// device, in this case it is better not to offload

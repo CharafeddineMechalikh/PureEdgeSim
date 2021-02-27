@@ -102,7 +102,7 @@ public class CustomEdgeDevice extends DefaultDataCenter {
 		double mobility = 1;
 		if (getMobilityManager().isMobile())
 			mobility = 0;
-		if (getEnergyModel().isBattery())
+		if (getEnergyModel().isBatteryPowered())
 			battery = getEnergyModel().getBatteryLevel() / 100;
 		double mips = 0;
 		if (getVmList().size() > 0)
