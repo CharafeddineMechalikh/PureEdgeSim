@@ -1,6 +1,16 @@
 # Please cite it as:
 
 **Mechalikh, C., Taktak, H., Moussa, F.: PureEdgeSim: A Simulation Framework for Performance Evaluation of Cloud, Edge and Mist Computing Environments. Computer Science and Information Systems**
+<<<<<<< HEAD
+
+Or 
+
+**Mechalikh, C., Taktak, H., Moussa, F.: PureEdgeSim: A Simulation Toolkit for Performance Evaluation of Cloud, Fog, and Pure Edge Computing Environments. The 2019 International Conference on High Performance Computing & Simulation (2019) 700-707**
+
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Build Status](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim.svg?branch=master)](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim) [![Build status](https://ci.appveyor.com/api/projects/status/u6hwmktmbji8utnf?svg=true)](https://ci.appveyor.com/project/CharafeddineMechalikh/pureedgesim)  [![Codacy Badge](https://api.codacy.com/project/badge/Grade/25ee278611014a9bb242297480703cf9)](https://www.codacy.com/manual/CharafeddineMechalikh/PureEdgeSim?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CharafeddineMechalikh/PureEdgeSim&amp;utm_campaign=Badge_Grade)   [![Maintainability](https://api.codeclimate.com/v1/badges/a1ffecb5230fc5771b93/maintainability)](https://codeclimate.com/github/CharafeddineMechalikh/PureEdgeSim/maintainability)   [![codebeat badge](https://codebeat.co/badges/bbe172a2-1169-4bbe-b6a6-0505631babc6)](https://codebeat.co/projects/github-com-charafeddinemechalikh-pureedgesim-master)
+
+## For more information
+=======
 
 Or 
 
@@ -10,14 +20,22 @@ Or
 
 ## For more information
 
+The Fuzzy Decision Tree Based algorithm presented in 
+Mechalikh, C., Taktak, H., & Moussa, F. (2020, April). A Fuzzy Decision Tree Based Tasks Orchestration Algorithm for Edge Computing Environments. In International Conference on Advanced Information Networking and Applications (pp. 193-203). Springer, Cham.
+is now available in example 8.
+>>>>>>> dc61849eeaa9064615388a1cdf96023554086013
+
 **The Fuzzy Decision Tree Based algorithm presented in**
  
 ** Mechalikh, C., Taktak, H., & Moussa, F. (2020, April). A Fuzzy Decision Tree Based Tasks Orchestration Algorithm for Edge Computing Environments. In International Conference on Advanced Information Networking and Applications (pp. 193-203). Springer, Cham.**
 
+<<<<<<< HEAD
 ** is now available [Here](https://github.com/CharafeddineMechalikh/FDT_based_workload_orchestration).**
 
 Read the wiki here: [PureEdgeSim WIKI](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki) 
 
+=======
+>>>>>>> dc61849eeaa9064615388a1cdf96023554086013
 Other publication using PureEdgeSim can be found [here](https://www.researchgate.net/profile/Charafeddine_Mechalikh/research)
 
 *For any questions, contact me at <charafeddine.mechalikh@gmail.com>*   
