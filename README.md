@@ -10,7 +10,7 @@ Or
 
 ## For more information
 
-**The Fuzzy Decision Tree Based algorithm presented in **
+**The Fuzzy Decision Tree Based algorithm presented in**
 
 **Mechalikh, C., Taktak, H., & Moussa, F. (2020, April). A Fuzzy Decision Tree Based Tasks Orchestration Algorithm for Edge Computing Environments. In International Conference on Advanced Information Networking and Applications (pp. 193-203). Springer, Cham.**
 
