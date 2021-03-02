@@ -70,21 +70,16 @@ public abstract class NetworkModelAbstract extends CloudSimEntity {
 	protected boolean sameLanIsUsed(Task task1, Task task2) {
 		// The transfers share same Lan of they have one device in common
 		// Compare orchestrator
-		return ((task1.getOrchestrator() == task2.getOrchestrator())
-				|| (task1.getOrchestrator() == task2.getVm().getHost().getDatacenter())
-				|| (task1.getOrchestrator() == task2.getEdgeDevice())
-				|| (task1.getOrchestrator() == task2.getRegistry())
-
+		return (commonDevice(task1.getOrchestrator(), task2)
 				// Compare origin device
-				|| (task1.getEdgeDevice() == task2.getOrchestrator())
-				|| (task1.getEdgeDevice() == task2.getVm().getHost().getDatacenter())
-				|| (task1.getEdgeDevice() == task2.getEdgeDevice()) || (task1.getEdgeDevice() == task2.getRegistry())
-
+				|| commonDevice(task1.getEdgeDevice(), task2)
 				// Compare offloading destination
-				|| (task1.getVm().getHost().getDatacenter() == task2.getOrchestrator())
-				|| (task1.getVm().getHost().getDatacenter() == task2.getVm().getHost().getDatacenter())
-				|| (task1.getVm().getHost().getDatacenter() == task2.getEdgeDevice())
-				|| (task1.getVm().getHost().getDatacenter() == task2.getRegistry()));
+				|| commonDevice((DataCenter) task1.getVm().getHost().getDatacenter(), task2));
+	}
+
+	private boolean commonDevice(DataCenter device, Task task) {
+		return (device == task.getOrchestrator()) || (device == task.getVm().getHost().getDatacenter())
+				|| (device == task.getEdgeDevice()) || (device == task.getRegistry());
 	}
 
 	protected boolean wanIsUsed(FileTransferProgress fileTransferProgress) {

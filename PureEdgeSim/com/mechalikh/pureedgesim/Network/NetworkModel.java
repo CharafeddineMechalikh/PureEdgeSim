@@ -120,8 +120,9 @@ public class NetworkModel extends NetworkModelAbstract {
 					if (transferProgressList.get(j).getRemainingFileSize() > 0 && j != i && sameLanIsUsed(
 							transferProgressList.get(i).getTask(), transferProgressList.get(j).getTask())) {
 						// Both transfers use same Lan
-						remainingTransfersCount_Lan++;
+						remainingTransfersCount_Lan++; 
 					}
+					
 				}
 
 				// allocate bandwidths
