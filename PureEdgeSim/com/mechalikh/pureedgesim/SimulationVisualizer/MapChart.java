@@ -85,7 +85,7 @@ public class MapChart extends Chart {
 					SeriesMarkers.CIRCLE, Color.LIGHT_GRAY);
 	}
 
-	void update() {
+	public void update() {
 		// Add edge devices to map and display their CPU utilization
 		edgeDevices();
 		// Add edge data centers to the map and display their CPU utilization

@@ -40,7 +40,7 @@ public class WanChart extends LineChart {
 		updateSize(0.0, 0.0, 0.0, SimulationParameters.WAN_BANDWIDTH / 1000.0);// 0.0, clock, ...
 	}
 
-	void update() {
+	public void update() {
 		double wan = simulationManager.getNetworkModel().getWanUtilization();
 
 		wanUsage.add(wan);

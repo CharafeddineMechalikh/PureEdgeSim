@@ -57,21 +57,22 @@ public class CustomOrchestrator extends Orchestrator {
 			if (offloadingIsPossible(task, vmList.get(i), architecture)) {
 				// the weight below represent the priority, the less it is, the more it is
 				// suitable for offlaoding, you can change it as you want
-				double weight = 1; 
-				
+				double weight = 1;
+
 				if (((DataCenter) vmList.get(i).getHost().getDatacenter())
 						.getType() == SimulationParameters.TYPES.CLOUD) {
-					weight = 1.5; // this is the cloud, it consumes more energy and results in high latency, so
-									// better to avoid it
-				} 
-				
+					// this is the cloud, it consumes more energy and results in high latency, so
+					// better to avoid it
+					weight = 1.5;
+				}
+
 				new_min = (orchestrationHistory.get(i).size() + 1) * weight * task.getLength()
 						/ vmList.get(i).getMips();
-				if (min == -1|| min > new_min) { 
+				if (min == -1 || min > new_min) {
 					min = new_min;
 					// set the first vm as the best one
-					vm = i; 
-				}  
+					vm = i;
+				}
 			}
 		}
 		// assign the tasks to the found vm
@@ -80,6 +81,8 @@ public class CustomOrchestrator extends Orchestrator {
 
 	@Override
 	public void resultsReturned(Task task) {
+		// You can something here. e.g. if the task has not been successfully executed,
+		// etc.
 	}
 
 }

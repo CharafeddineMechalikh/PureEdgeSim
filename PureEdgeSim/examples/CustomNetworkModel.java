@@ -76,7 +76,7 @@ public class CustomNetworkModel extends NetworkModel {
 
 	private void keepReplica(Task task) {
 		// Check if there are enough replicas before keeping a new one
-		CustomEdgeDevice edgeDevice = (CustomEdgeDevice) task.getEdgeDevice();
+		CachingEdgeDevice edgeDevice = (CachingEdgeDevice) task.getEdgeDevice();
 		if (canKeepReplica(edgeDevice, task)) {
 			if (edgeDevice.getResources().getAvailableStorage() > task.getContainerSize()) {
 				saveImage(edgeDevice, task);
@@ -91,12 +91,12 @@ public class CustomNetworkModel extends NetworkModel {
 		}
 	}
 
-	private boolean canKeepReplica(CustomEdgeDevice edgeDevice, Task task) {
-		return ("CACHE".equals(SimulationParameters.registry_mode) && ((CustomEdgeDevice) edgeDevice.getOrchestrator())
+	private boolean canKeepReplica(CachingEdgeDevice edgeDevice, Task task) {
+		return ("CACHE".equals(SimulationParameters.registry_mode) && ((CachingEdgeDevice) edgeDevice.getOrchestrator())
 				.countContainer(task.getApplicationID()) < MAX_NUMBER_OF_REPLICAS);
 	}
 
-	private void freeStorage(CustomEdgeDevice edgeDevice, Task task) {
+	private void freeStorage(CachingEdgeDevice edgeDevice, Task task) {
 		// while the available storage is not enough
 		double min = 0;
 		while (storageIsEnough(edgeDevice, task)) {
@@ -110,23 +110,23 @@ public class CustomNetworkModel extends NetworkModel {
 		}
 	}
 
-	private boolean storageIsEnough(CustomEdgeDevice edgeDevice, Task task) {
+	private boolean storageIsEnough(CachingEdgeDevice edgeDevice, Task task) {
 		return (edgeDevice.getResources().getAvailableStorage() < task.getContainerSize()
 				&& edgeDevice.getResources().getStorageMemory() > task.getContainerSize());
 	}
 
-	private void saveImage(CustomEdgeDevice edgeDevice, Task task) {
+	private void saveImage(CachingEdgeDevice edgeDevice, Task task) {
 		edgeDevice.getResources()
 				.setAvailableMemory(edgeDevice.getResources().getAvailableStorage() - task.getContainerSize());
 		edgeDevice.cache.add(task);
 		double[] array = new double[2];
 		array[0] = task.getApplicationID();
 		array[1] = task.getEdgeDevice().getId();
-		((CustomEdgeDevice) edgeDevice.getOrchestrator()).Remotecache.add(array);
+		((CachingEdgeDevice) edgeDevice.getOrchestrator()).Remotecache.add(array);
 	}
 
 	private void pullContainer(Task task) {
-		if (!((CustomEdgeDevice) task.getEdgeDevice().getOrchestrator()).hasRemoteContainer(task.getApplicationID())) {
+		if (!((CachingEdgeDevice) task.getEdgeDevice().getOrchestrator()).hasRemoteContainer(task.getApplicationID())) {
 			// No replica found
 			scheduleNow(this, NetworkModelAbstract.DOWNLOAD_CONTAINER, task);
 		} else { // replica found
@@ -136,12 +136,12 @@ public class CustomNetworkModel extends NetworkModel {
 
 	private void pullFromCache(Task task) {
 
-		if (((CustomEdgeDevice) task.getVm().getHost().getDatacenter()).hasContainer(task.getApplicationID())
-				|| ((CustomEdgeDevice) task.getVm().getHost().getDatacenter()).getType() == TYPES.CLOUD) {
+		if (((CachingEdgeDevice) task.getVm().getHost().getDatacenter()).hasContainer(task.getApplicationID())
+				|| ((CachingEdgeDevice) task.getVm().getHost().getDatacenter()).getType() == TYPES.CLOUD) {
 			// This device has a replica in its cache, so execute a task directly
 			scheduleNow(simulationManager, SimulationManager.EXECUTE_TASK, task);
 		} else {
-			double from = ((CustomEdgeDevice) task.getEdgeDevice().getOrchestrator())
+			double from = ((CachingEdgeDevice) task.getEdgeDevice().getOrchestrator())
 					.findReplica(task.getApplicationID());
 			// The IDs are shifted by 3
 			task.setRegistry(simulationManager.getServersManager().getDatacenterList().get((int) from - 3));

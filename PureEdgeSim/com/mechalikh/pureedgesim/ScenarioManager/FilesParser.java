@@ -170,18 +170,18 @@ public class FilesParser {
 				Element datacenterElement = (Element) datacenterNode;
 				isElementPresent(datacenterElement, "idleConsumption");
 				isElementPresent(datacenterElement, "maxConsumption");
-				
+
 				if (type == TYPES.EDGE_DEVICE) {
 					if (!checkEdgeDevice(datacenterElement))
 						return false;
-					percentage += Double.parseDouble(
-								datacenterElement.getElementsByTagName("percentage").item(0).getTextContent());
+					percentage += Double
+							.parseDouble(datacenterElement.getElementsByTagName("percentage").item(0).getTextContent());
 					isElementPresent(datacenterElement, "batteryCapacity");
 					isElementPresent(datacenterElement, "generateTasks");
-					
+
 				} else if (type == TYPES.CLOUD) {
 					SimulationParameters.NUM_OF_CLOUD_DATACENTERS++;
-					
+
 				} else {
 					SimulationParameters.NUM_OF_EDGE_DATACENTERS++;
 					Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
@@ -237,7 +237,7 @@ public class FilesParser {
 		double speed = Double.parseDouble(datacenterElement.getElementsByTagName("speed").item(0).getTextContent());
 		double percentage = Double
 				.parseDouble(datacenterElement.getElementsByTagName("percentage").item(0).getTextContent());
-		if (percentage <= 0 || speed < 0 ) {
+		if (percentage <= 0 || speed < 0) {
 			SimLog.println(
 					"FilesParser- check the edge_devices.xml file!, the percentage must be > 0 and the speed must be >= 0");
 			return false;
@@ -281,6 +281,7 @@ public class FilesParser {
 				Element appElement = (Element) appNode;
 				isAttribtuePresent(appElement, "name");
 				isElementPresent(appElement, "max_delay");
+				isElementPresent(appElement, "usage_percentage");
 				isElementPresent(appElement, "container_size");
 				isElementPresent(appElement, "request_size");
 				isElementPresent(appElement, "results_size");
@@ -312,12 +313,16 @@ public class FilesParser {
 				int required_cores = Integer
 						.parseInt(appElement.getElementsByTagName("required_core").item(0).getTextContent());
 
-				// the size of the container (KB)
+				// the generation rate (tasks per minute)
 				int rate = Integer.parseInt(appElement.getElementsByTagName("rate").item(0).getTextContent());
 
+				// the percentage of devices using this type of applications
+				int usage_percentage = Integer
+						.parseInt(appElement.getElementsByTagName("usage_percentage").item(0).getTextContent());
+
 				// save apps parameters
-				SimulationParameters.APPLICATIONS_LIST.add(new Application(i, rate, max_delay, container_size,
-						request_size, results_size, task_length, required_cores));
+				SimulationParameters.APPLICATIONS_LIST.add(new Application(i, rate, usage_percentage, max_delay,
+						container_size, request_size, results_size, task_length, required_cores));
 
 			}
 
@@ -333,10 +338,7 @@ public class FilesParser {
 	private void isElementPresent(Element element, String key) {
 		try {
 			String value = element.getElementsByTagName(key).item(0).getTextContent();
-			if (value == null || value.isEmpty()) {
-				throw new IllegalArgumentException(
-						"Element '" + key + "' is not found in '" + element.getNodeName() + "'");
-			}
+			checkArgument("Element", key, element, value);
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Element '" + key + "' is not found in '" + element.getNodeName() + "'");
 		}
@@ -344,6 +346,11 @@ public class FilesParser {
 
 	private void isAttribtuePresent(Element element, String key) {
 		String value = element.getAttribute(key);
+		checkArgument("Attribure", key, element, value);
+
+	}
+
+	private void checkArgument(String name, String key, Element element, String value) {
 		if (value == null || value.isEmpty()) {
 			throw new IllegalArgumentException(
 					"Attribure '" + key + "' is not found in '" + element.getNodeName() + "'");

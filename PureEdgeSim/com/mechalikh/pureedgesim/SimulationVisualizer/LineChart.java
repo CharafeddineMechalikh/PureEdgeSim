@@ -24,17 +24,17 @@ import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
 public class LineChart extends Chart {
 
-	public LineChart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager ) {
-		super(title, xAxisTitle, yAxisTitle, simulationManager); 
-	}
-
 	protected double[] timeSteps;
+
+	public LineChart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
+		super(title, xAxisTitle, yAxisTitle, simulationManager);
+	}
 
 	protected void updateHeight(double height) {
 		chart.getStyler().setYAxisMax(height);
 	}
 
 	@Override
-	void update() { 
+	public void update() {
 	}
 }

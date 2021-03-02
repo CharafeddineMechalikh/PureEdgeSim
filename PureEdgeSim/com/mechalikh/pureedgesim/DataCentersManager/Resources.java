@@ -20,25 +20,32 @@
  **/
 package com.mechalikh.pureedgesim.DataCentersManager;
 
+import java.util.List;
+
 import org.cloudbus.cloudsim.core.Simulation;
- 
+import org.cloudbus.cloudsim.vms.Vm;
+
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
 public class Resources {
-	private long storageMemory;
-	private long availableStorageMemory; 
-	private long ramMemory; 
+	private long storageMemory=0;
+	private long availableStorageMemory=0;
+	private long ramMemory=0;
 	private boolean isIdle = true;
 	private double tasks = 0;
 	private double totalTasks = 0;
 	private long totalMips = 0;
 	private Simulation simulation;
+	private List<? extends Vm> vmList;
 
-	public Resources(long ram, long storage, long mips, Simulation simulation) {
-		setStorageMemory(storage);
-		setRamMemory(ram);
-		setTotalMips(mips); 
+	public Resources(List<? extends Vm> vmList, Simulation simulation) {
 		this.simulation = simulation;
+		this.setVmList(vmList); 
+		for (Vm vm : vmList) {
+			storageMemory += vm.getStorage().getAvailableResource();
+			ramMemory += vm.getRam().getCapacity();
+			totalMips += vm.getMips();
+		} 
 	}
 
 	public long getStorageMemory() {
@@ -69,7 +76,8 @@ public class Resources {
 	public double getAvgCpuUtilization() {
 		if (totalMips == 0)
 			return 0;
-		return totalTasks / (totalMips * simulation.clock()) > 1 ? 100 : totalTasks / (totalMips * simulation.clock()) * 100;
+		return totalTasks / (totalMips * simulation.clock()) > 1 ? 100
+				: totalTasks / (totalMips * simulation.clock()) * 100;
 	}
 
 	public double getCurrentCpuUtilization() {
@@ -99,8 +107,16 @@ public class Resources {
 		return totalMips;
 	}
 
-	public void setTotalMips(long totalMips) { 
+	public void setTotalMips(long totalMips) {
 		this.totalMips = totalMips;
+	}
+
+	public List<? extends Vm> getVmList() {
+		return vmList;
+	}
+
+	public void setVmList(List<? extends Vm> vmList) {
+		this.vmList = vmList;
 	}
 
 }

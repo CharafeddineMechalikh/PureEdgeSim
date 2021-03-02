@@ -33,7 +33,7 @@ public abstract class TasksGenerator {
 	public TasksGenerator(SimulationManager simulationManager) {
 		taskList = new ArrayList<>();
 		this.setSimulationManager(simulationManager);
-		this.datacentersList = this.getSimulationManager().getServersManager().getDatacenterList();
+		this.datacentersList = new ArrayList<>(this.getSimulationManager().getServersManager().getDatacenterList());
 	}
 
 	public List<Task> getTaskList() {

@@ -28,14 +28,13 @@ public class FileTransferProgress {
 	}
 
 	private Task task;
-	private double remainingFileSize; // in kbits
 	private double wanBandwidth;// kbits/s
-	private double lanBandwidth;// kbits/s
-	private double manBandwidth;// kbits/s
+	private double lanBandwidth;// kbits/s 
 	private double wanNetworkUsage = 0; // seconds
 	private double lanNetworkUsage = 0; // seconds
 	private Type transferType;
 	private double fileSize; // in kbits
+	private double remainingFileSize; // in kbits
 	private double currentBandwidth; // kbits/s
 	private double totalBandwidths = 0; // kbits/s
 	private int bwAllocationTimes = 0;
@@ -70,19 +69,11 @@ public class FileTransferProgress {
 	public double getLanBandwidth() {
 		return lanBandwidth;
 	}
-	
-	public double getManBandwidth() {
-		return manBandwidth;
-	}
 
 	public void setLanBandwidth(double lanBandwidth) {
 		this.lanBandwidth = lanBandwidth;
 	}
-
-	public void setManBandwidth(double manBandwidth) {
-		this.manBandwidth = manBandwidth;
-	}
-
+ 
 	public double getWanNetworkUsage() {
 		return wanNetworkUsage;
 	}

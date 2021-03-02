@@ -29,8 +29,7 @@ import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 import com.mechalikh.pureedgesim.TasksGenerator.Task;
 
-public class NetworkModel extends NetworkModelAbstract {
-
+public class NetworkModel extends NetworkModelAbstract { 
 	public NetworkModel(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
@@ -59,8 +58,8 @@ public class NetworkModel extends NetworkModelAbstract {
 			sendResultFromOrchToDev((Task) ev.getData());
 			break;
 		case UPDATE_PROGRESS:
-			// update the progress of the current transfers and their allocated bandwidth
-			updateTasksProgress();
+			// update the progress of the current transfers and their allocated bandwidth 
+			updateTasksProgress(); 
 			schedule(this, SimulationParameters.NETWORK_UPDATE_INTERVAL, UPDATE_PROGRESS);
 			break;
 		default:
@@ -108,7 +107,7 @@ public class NetworkModel extends NetworkModelAbstract {
 		// Ignore finished transfers, so we will start looping from the first index of
 		// the remaining transfers
 		int remainingTransfersCount_Lan;
-		int remainingTransfersCount_Wan;
+		int remainingTransfersCount_Wan; 
 		for (int i = 0; i < transferProgressList.size(); i++) {
 			if (transferProgressList.get(i).getRemainingFileSize() > 0) {
 				remainingTransfersCount_Lan = 0;
@@ -116,8 +115,7 @@ public class NetworkModel extends NetworkModelAbstract {
 				for (int j = 0; j < transferProgressList.size(); j++) {
 					if (transferProgressList.get(j).getRemainingFileSize() > 0 && j != i
 							&& wanIsUsed(transferProgressList.get(j))) {
-						remainingTransfersCount_Wan++;
-						bwUsage += transferProgressList.get(j).getRemainingFileSize();
+						remainingTransfersCount_Wan++; 
 					}
 					if (transferProgressList.get(j).getRemainingFileSize() > 0 && j != i && sameLanIsUsed(
 							transferProgressList.get(i).getTask(), transferProgressList.get(j).getTask())) {
@@ -279,5 +277,16 @@ public class NetworkModel extends NetworkModelAbstract {
 	protected void startEntity() {
 		schedule(this, SimulationParameters.NETWORK_UPDATE_INTERVAL, UPDATE_PROGRESS);
 	}
-
+	public double getWanUtilization() {
+		int wanTasks = 0;
+		double bwUsage = 0;
+		for (FileTransferProgress fileTransferProgress : transferProgressList) {
+			if (fileTransferProgress.getRemainingFileSize() > 0 && wanIsUsed(fileTransferProgress)) {
+				wanTasks++;
+				bwUsage += fileTransferProgress.getRemainingFileSize();
+			}
+		}
+		bwUsage = (wanTasks > 0 ? bwUsage / (wanTasks * 1000) : 0);
+		return Math.min(bwUsage, SimulationParameters.WAN_BANDWIDTH / 1000);
+	}
 }

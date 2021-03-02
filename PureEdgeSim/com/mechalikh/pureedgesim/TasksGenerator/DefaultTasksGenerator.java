@@ -26,6 +26,7 @@ import org.cloudbus.cloudsim.utilizationmodels.UtilizationModel;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelDynamic;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
 
+import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
 
@@ -34,42 +35,81 @@ public class DefaultTasksGenerator extends TasksGenerator {
 		super(simulationManager);
 	}
 
+	private double simulationTime;
+
 	public List<Task> generate() {
 		// get simulation time in minutes (excluding the initialization time)
-		double simulationTime = (SimulationParameters.SIMULATION_TIME - SimulationParameters.INITIALIZATION_TIME) / 60;
-		for (int dev = 0; dev < datacentersList.size(); dev++) { // for each device
-			if (datacentersList.get(dev).isGeneratingTasks()) {
-				int app = new Random().nextInt(SimulationParameters.APPLICATIONS_LIST.size()); // pickup a random
-																								// application type for
-																								// every device
-				datacentersList.get(dev).setApplication(app); // assign this application to that device
-				for (int st = 0; st < simulationTime; st++) { // for each minute
-					// generating tasks
-					// first get time in seconds
-					int time = st * 60;
+		simulationTime = (SimulationParameters.SIMULATION_TIME - SimulationParameters.INITIALIZATION_TIME) / 60;
 
-					// Then pick up random second in this minute "st"
-					// Shift the time by the defined value "INITIALIZATION_TIME"
-					// in order to start after generating all the resources
-					time += new Random().nextInt(15) + SimulationParameters.INITIALIZATION_TIME;
-					insert(time, app, dev);
-				}
+		// Remove devices that do not generate
+		int dev = 0;
+		while (dev < datacentersList.size()) {
+			if (!datacentersList.get(dev).isGeneratingTasks()) {
+				datacentersList.remove(dev);
+			} else
+				dev++;
+		}
+		int devices_count = datacentersList.size();
+		// Browse all applications
+		for (int app = 0; app < SimulationParameters.APPLICATIONS_LIST.size() - 1; app++) {
+			// get the number of devices that use the current application
+			int numberOfDevices = (int) SimulationParameters.APPLICATIONS_LIST.get(app).getUsagePercentage()
+					* devices_count / 100;
+
+			for (int i = 0; i < numberOfDevices; i++) {
+				// Pickup a random application type for every device
+				dev = new Random().nextInt(datacentersList.size());
+
+				// Assign this application to that device
+				datacentersList.get(dev).setApplicationType(app);
+
+				generateTasksForDevice(datacentersList.get(dev), app);
+
+				// Remove this device from the list
+				datacentersList.remove(dev);
 			}
 		}
+		for (int j = 0; j < datacentersList.size(); j++)
+			generateTasksForDevice(datacentersList.get(j), SimulationParameters.APPLICATIONS_LIST.size() - 1);
+
 		return this.getTaskList();
 	}
 
-	private void insert(int time, int app, int dev) {
+	private void generateTasksForDevice(DataCenter dev, int app) {
+		// Generating tasks that will be offloaded during simulation
+		for (int st = 0; st < simulationTime; st++) { // for each minute
+
+			// First get time in seconds
+			int time = st * 60;
+
+			// Then pick up random second in this minute "st". Shift the time by the defined
+			// value "INITIALIZATION_TIME" in order to start after generating all the
+			// resources
+			time += new Random().nextInt(15) + SimulationParameters.INITIALIZATION_TIME;
+			insert(time, app, dev);
+		}
+	}
+
+	private void insert(int time, int app, DataCenter dev) {
 		int time2 = time;
-		double maxLatency = SimulationParameters.APPLICATIONS_LIST.get(app).getLatency(); // Load length from
-																							// application file
-		long length = (long) SimulationParameters.APPLICATIONS_LIST.get(app).getTaskLength(); // Load length from
-																								// application file
+		// Get the task latency sensitivity (seconds)
+		double maxLatency = SimulationParameters.APPLICATIONS_LIST.get(app).getLatency();
+
+		// Get the task length (MI: million instructions)
+		long length = (long) SimulationParameters.APPLICATIONS_LIST.get(app).getTaskLength();
+
+		// Get the offloading request size (KB)
 		long requestSize = SimulationParameters.APPLICATIONS_LIST.get(app).getRequestSize();
+
+		// Get the size of the returned results (KB)
 		long outputSize = SimulationParameters.APPLICATIONS_LIST.get(app).getResultsSize();
+
+		// Get the number of required CPU cores
 		int pesNumber = SimulationParameters.APPLICATIONS_LIST.get(app).getNumberOfCores();
-		long containerSize = SimulationParameters.APPLICATIONS_LIST.get(app).getContainerSize(); // the size of the
-																									// container
+
+		// The size of the container (KB)
+		long containerSize = SimulationParameters.APPLICATIONS_LIST.get(app).getContainerSize();
+
 		Task[] task = new Task[SimulationParameters.APPLICATIONS_LIST.get(app).getRate()];
 		int id;
 
@@ -84,7 +124,7 @@ public class DefaultTasksGenerator extends TasksGenerator {
 			task[i].setTime(time2);
 			task[i].setContainerSize(containerSize);
 			task[i].setMaxLatency(maxLatency);
-			task[i].setEdgeDevice(datacentersList.get(dev)); // the device that generate this task (the origin)
+			task[i].setEdgeDevice(dev); // the device that generate this task (the origin)
 			task[i].setRegistry(datacentersList.get(0)); // set the cloud as registry
 			taskList.add(task[i]);
 			getSimulationManager().getSimulationLogger()

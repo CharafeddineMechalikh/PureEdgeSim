@@ -77,55 +77,46 @@ public abstract class Orchestrator {
 	// If the orchestration scenario is MIST_ONLY send Tasks only to edge devices
 	private void mistOnly(Task task) {
 		String[] Architecture = { "Mist" };
-		sendTask(task, findVM(Architecture, task));
+		assignTaskToVm(findVM(Architecture, task), task);
 	}
 
 	// If the orchestration scenario is ClOUD_ONLY send Tasks (cloudlets) only to
 	// cloud virtual machines (vms)
 	private void cloudOnly(Task task) {
 		String[] Architecture = { "Cloud" };
-		sendTask(task, findVM(Architecture, task));
+		assignTaskToVm(findVM(Architecture, task), task);
 	}
 
 	// If the orchestration scenario is EDGE_AND_CLOUD send Tasks only to edge data
 	// centers or cloud virtual machines (vms)
 	private void edgeAndCloud(Task task) {
 		String[] Architecture = { "Cloud", "Edge" };
-		sendTask(task, findVM(Architecture, task));
+		assignTaskToVm(findVM(Architecture, task), task);
 	}
 
 	// If the orchestration scenario is MIST_AND_CLOUD send Tasks only to edge
 	// devices or cloud virtual machines (vms)
 	private void mistAndCloud(Task task) {
 		String[] Architecture = { "Cloud", "Mist" };
-		sendTask(task, findVM(Architecture, task));
+		assignTaskToVm(findVM(Architecture, task), task);
 	}
 
 	// If the orchestration scenario is EDGE_ONLY send Tasks only to edge data
 	// centers
 	private void edgeOnly(Task task) {
 		String[] Architecture = { "Edge" };
-		sendTask(task, findVM(Architecture, task));
+		assignTaskToVm(findVM(Architecture, task), task);
 	}
 
 	// If the orchestration scenario is ALL send Tasks to any virtual machine (vm)
 	// or device
 	private void all(Task task) {
 		String[] Architecture = { "Cloud", "Edge", "Mist" };
-		sendTask(task, findVM(Architecture, task));
+		assignTaskToVm(findVM(Architecture, task), task);
 	}
 
 	protected abstract int findVM(String[] architecture, Task task);
-
-	protected void sendTask(Task task, int vm) {
-		// assign the tasks to the vm found
-		assignTaskToVm(vm, task);
-
-		// Offload it only if resources are available (i.e. the offloading destination
-		// is available)
-		if (task.getVm() != Vm.NULL) // Send the task to execute it
-			task.getEdgeDevice().getVmTaskMap().add(new VmTaskMapItem((Vm) task.getVm(), task));
-	}
+ 
 
 	protected void assignTaskToVm(int vmIndex, Task task) {
 		if (vmIndex == -1) {

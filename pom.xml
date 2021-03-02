@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mechalikh.pureedgesim</groupId>
 	<artifactId>PureEdgeSim</artifactId>
-	<version>3.3.0</version>
+	<version>4.0.0</version>
 	<build>
 		<sourceDirectory>PureEdgeSim</sourceDirectory>
 		<resources>

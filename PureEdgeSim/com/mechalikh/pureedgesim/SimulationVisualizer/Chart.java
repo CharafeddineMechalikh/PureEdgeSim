@@ -35,10 +35,10 @@ import java.util.List;
 public abstract class Chart {
 
 	protected XYChart chart;
-	static int height = 270;
-	static int width = 450;
+	protected static int height = 270;
+	protected static int width = 450;
 	protected int clock = -1;
-	SimulationManager simulationManager;
+	protected SimulationManager simulationManager;
 
 	public Chart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
 		chart = new XYChartBuilder().height(height).width(width).theme(ChartTheme.Matlab).title(title)
@@ -48,7 +48,7 @@ public abstract class Chart {
 		this.simulationManager = simulationManager;
 	}
 
-	abstract void update();
+	protected abstract void update();
 
 	void updateSize(Double minXValue, Double maxXValue, Double minYValue, Double maxYValue) {
 		chart.getStyler().setXAxisMin(minXValue);

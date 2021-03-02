@@ -10,8 +10,8 @@
 		<speed>1.4</speed><!-- the speed of the device in meters per second : 1.4m/s equals 5km/h, 0 = non mobile-->
 		<minPauseDuration>100</minPauseDuration><!-- the minimum delay before moving to a new location-->
 		<maxPauseDuration>400</maxPauseDuration><!-- the maximum delay before moving to a new location-->
-		<minMobilityDuration>60</minMobilityDuration><!-- the minimum delay before stopping-->
-		<maxMobilityDuration>100</maxMobilityDuration><!-- the maximum delay before stopping-->
+		<minMobilityDuration>10</minMobilityDuration><!-- the minimum delay before stopping-->
+		<maxMobilityDuration>60</maxMobilityDuration><!-- the maximum delay before stopping-->
 		<battery>true</battery> <!-- relies on battery? -->
 		<percentage>30</percentage> <!-- percentage of this device type -->
 		<batteryCapacity>18.75</batteryCapacity> <!-- battery capacity in Watt-Hour -->

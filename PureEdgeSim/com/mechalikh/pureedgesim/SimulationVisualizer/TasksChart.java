@@ -38,7 +38,7 @@ public class TasksChart extends LineChart {
 		updateSize(0.0, null, null, 100.0);
 	}
 
-	void update() {
+	public void update() {
 		if (((int) simulationManager.getSimulation().clockInMinutes()) != clock) {
 			clock = (int) simulationManager.getSimulation().clockInMinutes();
 			double tasksFailed = 100 - simulationManager.getFailureRate();

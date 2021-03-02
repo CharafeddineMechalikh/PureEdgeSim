@@ -140,7 +140,7 @@ public class SimLog {
 				averageCloudCpuUtilization += dc.getResources().getAvgCpuUtilization();
 			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DATACENTER) {
 				averageEdgeCpuUtilization += dc.getResources().getAvgCpuUtilization();
-			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DEVICE && dc.getVmList().size() > 0) {
+			} else if (dc.getType() == SimulationParameters.TYPES.EDGE_DEVICE && dc.getResources().getVmList().size() > 0) {
 				// only devices with computing capability
 				// the devices that have no VM are considered simple sensors, and will not be
 				// counted here

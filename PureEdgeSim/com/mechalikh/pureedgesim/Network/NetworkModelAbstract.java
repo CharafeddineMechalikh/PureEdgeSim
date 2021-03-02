@@ -44,7 +44,6 @@ public abstract class NetworkModelAbstract extends CloudSimEntity {
 	// transferred file are stored
 	protected List<FileTransferProgress> transferProgressList;
 	protected SimulationManager simulationManager;
-	protected double bwUsage = 0;
 
 	public NetworkModelAbstract(SimulationManager simulationManager) {
 		super(simulationManager.getSimulation());
@@ -134,16 +133,6 @@ public abstract class NetworkModelAbstract extends CloudSimEntity {
 		// process the scheduled events
 	}
 
-	public double getWanUtilization() {
-		int wanTasks = 0;
-		for (FileTransferProgress fileTransferProgress : transferProgressList) {
-			if (fileTransferProgress.getRemainingFileSize() > 0 && wanIsUsed(fileTransferProgress)) {
-				wanTasks++;
-				bwUsage += fileTransferProgress.getRemainingFileSize();
-			}
-		}
-		bwUsage = (wanTasks > 0 ? bwUsage / (wanTasks * 1000) : 0);
-		return Math.min(bwUsage, SimulationParameters.WAN_BANDWIDTH / 1000);
-	}
+	public abstract double getWanUtilization();
 
 }

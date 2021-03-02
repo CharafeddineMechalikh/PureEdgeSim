@@ -29,11 +29,13 @@ public class Application {
 	private long resultsSize;
 	private double taskLength;
 	private int numberOfCores;
+	private double usagePercentage;
 
-	public Application(int id, int rate, double latency, long containerSize, long requestSize, long resultsSize,
-			double taskLength, int numberOfCores) {
+	public Application(int id, int rate, double usagePercentage, double latency, long containerSize, long requestSize,
+			long resultsSize, double taskLength, int numberOfCores) {
 		this.setId(id);
 		this.rate = rate;
+		this.usagePercentage = usagePercentage;
 		this.latency = latency;
 		this.containerSize = containerSize;
 		this.requestSize = requestSize;
@@ -104,6 +106,14 @@ public class Application {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public double getUsagePercentage() {
+		return usagePercentage;
+	}
+
+	public void setUsagePercentage(double usagePercentage) {
+		this.usagePercentage = usagePercentage;
 	}
 
 }

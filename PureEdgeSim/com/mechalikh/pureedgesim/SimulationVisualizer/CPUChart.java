@@ -37,7 +37,7 @@ public class CPUChart extends LineChart {
 	private List<Double> cloudUsage = new ArrayList<>();
 	private List<Double> mistUsage = new ArrayList<>();
 	private List<Double> edgeUsage = new ArrayList<>();
-	protected List<Double> currentTime = new ArrayList<>();
+	private List<Double> currentTime = new ArrayList<>();
 
 	public CPUChart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
 		super(title, xAxisTitle, yAxisTitle, simulationManager);
@@ -45,7 +45,7 @@ public class CPUChart extends LineChart {
 		updateSize(SimulationParameters.INITIALIZATION_TIME, null, 0.0, null);
 	}
 
-	void update() {
+	public void update() {
 		currentTime.add(simulationManager.getSimulation().clock());
 		// Add edge devices to map and display their CPU utilization
 		edgeDevicesCpuUsage();
@@ -58,40 +58,16 @@ public class CPUChart extends LineChart {
 	private void edgeDevicesCpuUsage() {
 		double msUsage = 0;
 		int sensors = 0;
-		// Initialize the X and Y series that will be used to draw the map
-		// Dead devices series
-		List<Double> x_deadEdgeDevicesList = new ArrayList<>();
-		List<Double> y_deadEdgeDevicesList = new ArrayList<>();
-		// Idle devices series
-		List<Double> x_idleEdgeDevicesList = new ArrayList<>();
-		List<Double> y_idleEdgeDevicesList = new ArrayList<>();
-		// Active devices series
-		List<Double> x_activeEdgeDevicesList = new ArrayList<>();
-		List<Double> y_activeEdgeDevicesList = new ArrayList<>();
-		DataCenter datacenter;
+		DataCenter device;
 		// Browse all devices and create the series
 		// Skip the first items (cloud data centers + edge data centers)
 		for (int i = SimulationParameters.NUM_OF_EDGE_DATACENTERS
 				+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS; i < simulationManager.getServersManager()
 						.getDatacenterList().size(); i++) {
 			// If it is an edge device
-			datacenter = simulationManager.getServersManager().getDatacenterList().get(i);
-			if (datacenter.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
-				double Xpos = datacenter.getMobilityManager().getCurrentLocation().getXPos();
-				double Ypos = datacenter.getMobilityManager().getCurrentLocation().getYPos();
-				if (datacenter.isDead()) {
-					x_deadEdgeDevicesList.add(Xpos);
-					y_deadEdgeDevicesList.add(Ypos);
-				} else if (datacenter.getResources().isIdle()) {
-					x_idleEdgeDevicesList.add(Xpos);
-					y_idleEdgeDevicesList.add(Ypos);
-				} else { // If the device is busy
-					x_activeEdgeDevicesList.add(Xpos);
-					y_activeEdgeDevicesList.add(Ypos);
-				}
-			}
-			msUsage += datacenter.getResources().getAvgCpuUtilization();
-			if (datacenter.getVmList().size() == 0) {
+			device = simulationManager.getServersManager().getDatacenterList().get(i);
+			msUsage += device.getResources().getAvgCpuUtilization();
+			if (device.getResources().getTotalMips() == 0) {
 				sensors++;
 			}
 		}
@@ -109,36 +85,10 @@ public class CPUChart extends LineChart {
 		// Only if Edge computing is used
 		if (simulationManager.getScenario().getStringOrchArchitecture().contains("EDGE")
 				|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL")) {
-			// List of idle servers
-			List<Double> x_idleEdgeDataCentersList = new ArrayList<>();
-			List<Double> y_idleEdgeDataCentersList = new ArrayList<>();
-			// List of active servers
-			List<Double> x_activeEdgeDataCentersList = new ArrayList<>();
-			List<Double> y_activeEdgeDataCentersList = new ArrayList<>();
 
 			for (int j = SimulationParameters.NUM_OF_CLOUD_DATACENTERS; j < SimulationParameters.NUM_OF_EDGE_DATACENTERS
 					+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS; j++) {
-				// If it is an Edge data center
-				if ((simulationManager.getScenario().getStringOrchArchitecture().contains("EDGE")
-						|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL"))
-						&& simulationManager.getServersManager().getDatacenterList().get(j)
-								.getType() == SimulationParameters.TYPES.EDGE_DATACENTER
-						&& SimulationParameters.NUM_OF_EDGE_DATACENTERS != 0) {
 
-					double Xpos = simulationManager.getServersManager().getDatacenterList().get(j).getMobilityManager()
-							.getCurrentLocation().getXPos();
-					double Ypos = simulationManager.getServersManager().getDatacenterList().get(j).getMobilityManager()
-							.getCurrentLocation().getYPos();
-					if (simulationManager.getServersManager().getDatacenterList().get(j).getResources().isIdle()) {
-						x_idleEdgeDataCentersList.add(Xpos);
-						y_idleEdgeDataCentersList.add(Ypos);
-					} else {
-
-						x_activeEdgeDataCentersList.add(Xpos);
-						y_activeEdgeDataCentersList.add(Ypos);
-
-					}
-				}
 				edUsage += simulationManager.getServersManager().getDatacenterList().get(j).getResources()
 						.getAvgCpuUtilization();
 			}

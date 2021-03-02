@@ -165,9 +165,15 @@ public class ServersManager {
 	}
 
 	private DataCenter createDatacenter(Element datacenterElement, SimulationParameters.TYPES type) throws Exception {
-
+		Boolean mobile = false;
+		double speed = 0;
+		double minPauseDuration = 0;
+		double maxPauseDuration = 0;
+		double minMobilityDuration = 0;
+		double maxMobilityDuration = 0;
 		int x_position = -1;
 		int y_position = -1;
+
 		List<Vm> list = new ArrayList<>();
 		List<Host> hostList = createHosts(datacenterElement, type, list);
 
@@ -183,8 +189,7 @@ public class ServersManager {
 				.parseBoolean(datacenterElement.getElementsByTagName("isOrchestrator").item(0).getTextContent()));
 		Constructor<?> energyConstructor = energyModel.getConstructor(double.class, double.class);
 		datacenter.setEnergyModel(energyConstructor.newInstance(maxConsumption, idleConsumption));
-		Boolean mobile = false;
-		double speed = 0, minPauseDuration = 0, maxPauseDuration = 0, minMobilityDuration = 0, maxMobilityDuration = 0;
+
 		if (type == SimulationParameters.TYPES.EDGE_DATACENTER) {
 			Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
 			x_position = Integer.parseInt(location.getElementsByTagName("x_pos").item(0).getTextContent());

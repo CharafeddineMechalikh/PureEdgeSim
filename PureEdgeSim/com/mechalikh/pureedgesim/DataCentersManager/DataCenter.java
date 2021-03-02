@@ -20,23 +20,18 @@
  **/
 package com.mechalikh.pureedgesim.DataCentersManager;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicyFirstFit;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
-
 import com.mechalikh.pureedgesim.LocationManager.Mobility;
 import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
 import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
-import com.mechalikh.pureedgesim.TasksOrchestration.VmTaskMapItem;
 
 public abstract class DataCenter extends DatacenterSimple {
 	private SimulationParameters.TYPES deviceType;
 	private EnergyModel energyModel;
-	private List<VmTaskMapItem> vmTaskMap;
 	private int applicationType;
 	protected boolean isOrchestrator = false;
 	private Mobility mobilityManager;
@@ -46,22 +41,11 @@ public abstract class DataCenter extends DatacenterSimple {
 	private Resources resources;
 	protected boolean isDead = false;
 	protected double deathTime;
-	private List<? extends Vm> vmList;
 
 	public DataCenter(SimulationManager simulationManager, List<? extends Host> hostList, List<? extends Vm> vmList) {
 		super(simulationManager.getSimulation(), hostList, new VmAllocationPolicyFirstFit());
 		this.simulationManager = simulationManager;
-		vmTaskMap = new ArrayList<>();
-		long storage = 0;
-		long ram = 0;
-		long mips = 0;
-		this.vmList = vmList;
-		for (Vm vm : vmList) {
-			storage += vm.getStorage().getAvailableResource();
-			ram += vm.getRam().getCapacity();
-			mips += vm.getMips();
-		}
-		this.resources = new Resources(ram, storage, mips, simulationManager.getSimulation());
+		this.resources = new Resources(vmList, simulationManager.getSimulation());
 	}
 
 	public EnergyModel getEnergyModel() {
@@ -74,18 +58,6 @@ public abstract class DataCenter extends DatacenterSimple {
 
 	public void setType(SimulationParameters.TYPES type) {
 		this.deviceType = type;
-	}
-
-	public List<VmTaskMapItem> getVmTaskMap() {
-		return vmTaskMap;
-	}
-
-	public void setApplication(int app) {
-		this.applicationType = app;
-	}
-
-	public int getApplication() {
-		return applicationType;
 	}
 
 	public boolean isOrchestrator() {
@@ -120,10 +92,6 @@ public abstract class DataCenter extends DatacenterSimple {
 		return this.generateTasks;
 	}
 
-	public List<? extends Vm> getVmList() {
-		return this.vmList;
-	}
-
 	public Resources getResources() {
 		return resources;
 	}
@@ -141,7 +109,11 @@ public abstract class DataCenter extends DatacenterSimple {
 		deathTime = deathTime2;
 	}
 
-	public void setVmList(List<? extends Vm> vmList) {
-		this.vmList = vmList;
+	public int getApplicationType() {
+		return applicationType;
+	}
+
+	public void setApplicationType(int applicationType) {
+		this.applicationType = applicationType;
 	}
 }

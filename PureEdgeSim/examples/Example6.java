@@ -29,7 +29,7 @@ public class Example6 extends MainApplication {
 	/**
 	 * This is a simple example showing how to launch simulation using a custom
 	 * network model. The CustomNetworkModel.java is located under the
-	 * examples/CustomNetworkModel/ folder. As you can see, this class extends the
+	 * examples/f older. As you can see, this class extends the
 	 * MainApplication class provided by PureEdgeSim, which is required for this
 	 * example to work.
 	 * 
@@ -76,7 +76,7 @@ public class Example6 extends MainApplication {
 		 * this case.To use it we need to execute the following line.
 		 */
 
-		setCustomEdgeDataCenters(CustomEdgeDevice.class);
+		setCustomEdgeDataCenters(CachingEdgeDevice.class);
 
 		/*
 		 * After adding the clustering algorithm we can now implement the cooperative

@@ -87,8 +87,8 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 		int minTasksCount = -1; // vm with minimum assigned tasks;
 		// get best vm for this task
 		for (int i = 0; i < orchestrationHistory.size(); i++) {
-			if (offloadingIsPossible(task, vmList.get(i), architecture) && minTasksCount == -1
-					|| minTasksCount > orchestrationHistory.get(i).size()) {
+			if (offloadingIsPossible(task, vmList.get(i), architecture) && (minTasksCount == -1
+					|| minTasksCount > orchestrationHistory.get(i).size())) {
 				minTasksCount = orchestrationHistory.get(i).size();
 				// if this is the first time,
 				// or new min found, so we choose it as the best VM
@@ -102,6 +102,7 @@ public class DefaultEdgeOrchestrator extends Orchestrator {
 
 	@Override
 	public void resultsReturned(Task task) {
+		//Do something when the execution results are returned
 	}
 
 }

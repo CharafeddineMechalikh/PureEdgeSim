@@ -1,4 +1,4 @@
-# Please cite it as:
+# Please cite it as
 
 **Mechalikh, C., Taktak, H., Moussa, F.: PureEdgeSim: A Simulation Framework for Performance Evaluation of Cloud, Edge and Mist Computing Environments. Computer Science and Information Systems**
 
@@ -22,7 +22,7 @@ Other publication using PureEdgeSim can be found [here](https://www.researchgate
 
 *For any questions, contact me at <charafeddine.mechalikh@gmail.com>*   
 
-## Works that are based on PureEdgeSim and extensions:
+## Works that are based on PureEdgeSim and extensions
 
 *   SatEdgeSim: A Toolkit for Modeling and Simulation of Performance Evaluation in Satellite Edge Computing Environments, read more about it [here](https://github.com/wjy491156866/SatEdgeSim).
 
@@ -46,21 +46,15 @@ It consists of the following 7 modules:
 
 *   Scenario Manager, that loads the simulation parameters and the user scenario from the input files (`.xml` and `.prop` files in `/settings/` folder). It consists of two classes, the File Parser that checks the input files and loads the simulation parameters, and the Simulation Parameters class which represents a placeholder for the different parameters.
 
-
 *   Simulation Manager, that initiates the simulation environment, schedules all the events and generates the output. It consists of two important classes, the Simulation Manager class which manages the simulation, schedules the tasks generation, etc. The Simulation Logger class that generates the simulation output saves it in comma-separated value (CSV) format in order to easily exploit them later using any spreadsheet editor (e.g., Microsoft Excel...).
-
 
 *   Data Centers Manager: it generates and manages all the data centers and devices (i.e., Cloud, Edge or Mist). It consists of two classes: the Data Center class, that contains the specific properties of Edge devices such as the location, the mobility, the energy source, and the capacity/remaining energy if it is battery-powered. The second class is the Server Manager which generates the needed servers and Edge devices, their hosts and their virtual machines.
 
-
 *   Tasks Generator which is behind the tasks generation, -currently- it assigns an application such as e-health, smart-home, and augmented-reality (that can be defined in `settings/applications.xml` file) to each Edge device. Then, it will generates the needed tasks according to the assigned type, which guarantees the heterogeneity of applications.  
-
 
 *   The Network Module: that consists mainly of the Network Model class.which is behind the transfer of tasks/containers/ request... 
 
-
 *   The Tasks Orchestrator, which is the decision maker, where the user can define the orchestration algorithm. 
-
 
 *   The Location Manager, which generates the mobility path of mobile devices.
    
@@ -77,6 +71,7 @@ PureEdgeSim architecture
 ## 4. PureEdgeSim features
 
 *   Realistic network and energy models as compared to other simulators.
+
 
 *   Mobility support which is ignored by most simulators: 
 
