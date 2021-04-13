@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.SimulationVisualizer;
+package com.mechalikh.pureedgesim.simulationvisualizer;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -27,9 +27,9 @@ import java.util.List;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
-public class TasksChart extends LineChart {
+public class TasksChart extends Chart {
 
 	private List<Double> tasksFailedList = new ArrayList<>();
 	public TasksChart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
@@ -46,7 +46,7 @@ public class TasksChart extends LineChart {
 			for (int i = 0; i <= clock; i++)
 				time[i] = i;
 			tasksFailedList.add(tasksFailed);
-			updateSeries(getChart(), "Tasks failed", time, toArray(tasksFailedList),
+			updateSeries(getChart(), "Failed tasks", time, toArray(tasksFailedList),
 					SeriesMarkers.NONE, Color.BLACK);
 		}
 	}

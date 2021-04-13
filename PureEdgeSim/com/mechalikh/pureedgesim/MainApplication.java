@@ -28,17 +28,18 @@ import java.util.Date;
 import java.util.List;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudsimplus.util.Log;
-import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
-import com.mechalikh.pureedgesim.Network.NetworkModelAbstract;
-import com.mechalikh.pureedgesim.ScenarioManager.FilesParser;
-import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.SimulationManager.ChartsGenerator;
-import com.mechalikh.pureedgesim.SimulationManager.SimLog;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
-import com.mechalikh.pureedgesim.TasksGenerator.TasksGenerator;
-import com.mechalikh.pureedgesim.TasksOrchestration.Orchestrator;
+
+import com.mechalikh.pureedgesim.datacentersmanager.ServersManager;
+import com.mechalikh.pureedgesim.network.NetworkModelAbstract;
+import com.mechalikh.pureedgesim.scenariomanager.FilesParser;
+import com.mechalikh.pureedgesim.scenariomanager.Scenario;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationmanager.ChartsGenerator;
+import com.mechalikh.pureedgesim.simulationmanager.SimLog;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.tasksgenerator.Task;
+import com.mechalikh.pureedgesim.tasksgenerator.TasksGenerator;
+import com.mechalikh.pureedgesim.tasksorchestration.Orchestrator;
 
 import ch.qos.logback.classic.Level;
 

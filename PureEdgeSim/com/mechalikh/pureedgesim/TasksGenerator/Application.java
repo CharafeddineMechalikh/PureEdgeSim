@@ -18,10 +18,9 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.TasksGenerator;
+package com.mechalikh.pureedgesim.tasksgenerator;
 
-public class Application {
-	private int id;
+public class Application { 
 	private int rate;
 	private double latency;
 	private long containerSize;
@@ -31,17 +30,16 @@ public class Application {
 	private int numberOfCores;
 	private double usagePercentage;
 
-	public Application(int id, int rate, double usagePercentage, double latency, long containerSize, long requestSize,
-			long resultsSize, double taskLength, int numberOfCores) {
-		this.setId(id);
-		this.rate = rate;
-		this.usagePercentage = usagePercentage;
-		this.latency = latency;
-		this.containerSize = containerSize;
-		this.requestSize = requestSize;
-		this.resultsSize = resultsSize;
-		this.taskLength = taskLength;
-		this.numberOfCores = numberOfCores;
+	public Application(int rate, double usagePercentage, double latency, long containerSize, long requestSize,
+			long resultsSize, double taskLength, int numberOfCores) { 
+		setRate(rate);
+		setUsagePercentage(usagePercentage); 
+		setLatency(latency);
+		setContainerSize(containerSize);
+		setRequestSize(requestSize);
+		setResultsSize(resultsSize);
+		setTaskLength(taskLength);
+		setNumberOfCores(numberOfCores);
 	}
 
 	public int getRate() {
@@ -52,13 +50,6 @@ public class Application {
 		this.rate = rate;
 	}
 
-	public double getLatency() {
-		return latency;
-	}
-
-	public void setLatency(double latency) {
-		this.latency = latency;
-	}
 
 	public long getContainerSize() {
 		return containerSize;
@@ -100,20 +91,20 @@ public class Application {
 		this.numberOfCores = numberOfCores;
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
 	public double getUsagePercentage() {
 		return usagePercentage;
 	}
 
 	public void setUsagePercentage(double usagePercentage) {
 		this.usagePercentage = usagePercentage;
+	}
+
+	public double getLatency() {
+		return latency;
+	}
+
+	public void setLatency(double latency) {
+		this.latency = latency;
 	}
 
 }

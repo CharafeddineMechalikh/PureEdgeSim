@@ -18,11 +18,11 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.DataCentersManager;
+package com.mechalikh.pureedgesim.datacentersmanager;
 
-import com.mechalikh.pureedgesim.Network.FileTransferProgress;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
+import com.mechalikh.pureedgesim.network.FileTransferProgress;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
 
 /*
  * The adopted energy model can be found in the paper
@@ -48,10 +48,9 @@ public class DefaultEnergyModel extends EnergyModel {
 	}
 
 	public void updateCpuEnergyConsumption(double cpuUtilization) {
-		double consumption = (idleConsumption + ((maxActiveConsumption - idleConsumption) * cpuUtilization)) / 3600
+		cpuEnergyConsumption += (getIdleConsumption() + ((getMaxActiveConsumption() - getIdleConsumption()) * cpuUtilization)) / 3600
 				* SimulationParameters.UPDATE_INTERVAL; // the energy consumption value is for 1 hour, it will be
 														// divided by 3600 to get how much each second costs
-		this.cpuEnergyConsumption += consumption;
 	}
 
 	public void updatewirelessEnergyConsumption(FileTransferProgress file, DataCenter device1, DataCenter device2,
@@ -60,7 +59,7 @@ public class DefaultEnergyModel extends EnergyModel {
 		double distance;
 		if (device1.getType() == TYPES.CLOUD || device2.getType() == TYPES.CLOUD
 				|| device1.getType() == TYPES.EDGE_DATACENTER || device2.getType() == TYPES.EDGE_DATACENTER)
-			distance = SimulationParameters.EDGE_DEVICES_RANGE;
+			distance = SimulationParameters.EDGE_DATACENTERS_RANGE;
 		else
 			distance = device1.getMobilityManager().distanceTo(device1);
 
@@ -75,13 +74,13 @@ public class DefaultEnergyModel extends EnergyModel {
 	private void transmissionEnergyConsumption(int sizeInBits, double distance) {
 		double consumption = 0;
 
-		// distance threshold that determines the multipath and free space choices.
-		double D_0 = Math.sqrt(E_fs / E_mp);
-
+		// Distance threshold that determines the multipath and free space choices.
+		double D_0 = Math.sqrt(E_fs / E_mp); 
 		if (distance <= D_0)
 			consumption = (E_elec * sizeInBits) + (E_fs * Math.pow(distance, 2) * sizeInBits);
 		else if (distance > D_0)
 			consumption = (E_elec * sizeInBits) + (E_mp * Math.pow(distance, 4) * sizeInBits);
+		
 		this.wirelessEnergyConsumption += joulToWattHour(consumption);
 	}
 

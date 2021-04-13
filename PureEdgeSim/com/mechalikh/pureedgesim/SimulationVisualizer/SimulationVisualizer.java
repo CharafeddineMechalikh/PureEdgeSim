@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.SimulationVisualizer;
+package com.mechalikh.pureedgesim.simulationvisualizer;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,17 +33,17 @@ import org.knowm.xchart.BitmapEncoder.BitmapFormat;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 import com.mechalikh.pureedgesim.MainApplication;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public class SimulationVisualizer {
 	private JFrame simulationResultsFrame;
 	private SwingWrapper<XYChart> swingWrapper;
 	private SimulationManager simulationManager;
 	private Chart mapChart;
-	private LineChart cpuUtilizationChart;
+	private Chart cpuUtilizationChart;
 	private WanChart networkUtilizationChart;
-	private LineChart tasksSuccessChart;
+	private Chart tasksSuccessChart;
 	private List<Chart> charts = new ArrayList<Chart>();
 	private boolean firstTime = true;
 

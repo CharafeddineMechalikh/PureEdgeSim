@@ -18,12 +18,12 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.ScenarioManager;
+package com.mechalikh.pureedgesim.scenariomanager;
  
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mechalikh.pureedgesim.TasksGenerator.Application;
+import com.mechalikh.pureedgesim.tasksgenerator.Application;
 public class SimulationParameters { 
 
 	public static String EDGE_DEVICES_FILE="";     // Edge devices xml file path

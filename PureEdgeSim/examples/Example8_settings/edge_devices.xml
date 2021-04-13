@@ -110,8 +110,8 @@
 		<battery>false</battery>
 		<percentage>40</percentage>
 		<batteryCapacity>0</batteryCapacity>
-		<idleConsumption>0.036</idleConsumption>
-		<maxConsumption>0.0011</maxConsumption>
+		<idleConsumption>0.0011</idleConsumption>
+		<maxConsumption>0.036</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
 		<generateTasks>true</generateTasks>
 		<hosts>

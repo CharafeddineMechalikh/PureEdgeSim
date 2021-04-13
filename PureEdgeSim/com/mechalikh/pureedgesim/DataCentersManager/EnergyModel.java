@@ -18,9 +18,9 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.DataCentersManager;
+package com.mechalikh.pureedgesim.datacentersmanager;
 
-import com.mechalikh.pureedgesim.Network.FileTransferProgress;
+import com.mechalikh.pureedgesim.network.FileTransferProgress;
 
 public abstract class EnergyModel {
 	protected double maxActiveConsumption; // consumed energy per second when the cpu is operating at 100%
@@ -41,7 +41,7 @@ public abstract class EnergyModel {
 			DataCenter device2, int flag);
 
 	public double getTotalEnergyConsumption() {
-		return this.wirelessEnergyConsumption + this.cpuEnergyConsumption;
+		return getWirelessEnergyConsumption() + getCpuEnergyConsumption();
 	}
 
 	public double getMaxActiveConsumption() {
@@ -79,13 +79,13 @@ public abstract class EnergyModel {
 	public double getBatteryLevel() {
 		if (!isBatteryPowered())
 			return 100;
-		if (batteryCapacity < getTotalEnergyConsumption())
+		if (getBatteryCapacity() < getTotalEnergyConsumption())
 			return 0;
-		return batteryCapacity - getTotalEnergyConsumption();
+		return getBatteryCapacity() - getTotalEnergyConsumption();
 	}
 
 	public double getBatteryLevelPercentage() {
-		return getBatteryLevel() * 100 / batteryCapacity;
+		return getBatteryLevel() * 100 / getBatteryCapacity();
 	}
 
 	public boolean isBatteryPowered() {

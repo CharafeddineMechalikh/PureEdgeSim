@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.ScenarioManager;
+package com.mechalikh.pureedgesim.scenariomanager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,9 +32,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
-import com.mechalikh.pureedgesim.SimulationManager.SimLog;
-import com.mechalikh.pureedgesim.TasksGenerator.Application;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
+import com.mechalikh.pureedgesim.simulationmanager.SimLog;
+import com.mechalikh.pureedgesim.tasksgenerator.Application;
 
 public class FilesParser {
 
@@ -321,7 +321,7 @@ public class FilesParser {
 						.parseInt(appElement.getElementsByTagName("usage_percentage").item(0).getTextContent());
 
 				// save apps parameters
-				SimulationParameters.APPLICATIONS_LIST.add(new Application(i, rate, usage_percentage, max_delay,
+				SimulationParameters.APPLICATIONS_LIST.add(new Application(rate, usage_percentage, max_delay,
 						container_size, request_size, results_size, task_length, required_cores));
 
 			}
@@ -336,12 +336,8 @@ public class FilesParser {
 	}
 
 	private void isElementPresent(Element element, String key) {
-		try {
 			String value = element.getElementsByTagName(key).item(0).getTextContent();
 			checkArgument("Element", key, element, value);
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Element '" + key + "' is not found in '" + element.getNodeName() + "'");
-		}
 	}
 
 	private void isAttribtuePresent(Element element, String key) {
@@ -353,7 +349,7 @@ public class FilesParser {
 	private void checkArgument(String name, String key, Element element, String value) {
 		if (value == null || value.isEmpty()) {
 			throw new IllegalArgumentException(
-					"Attribure '" + key + "' is not found in '" + element.getNodeName() + "'");
+					name+ " " + key + "' is not found in '" + element.getNodeName() + "'");
 		}
 	}
 

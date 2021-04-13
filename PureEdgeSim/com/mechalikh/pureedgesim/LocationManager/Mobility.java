@@ -18,9 +18,9 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.LocationManager;
+package com.mechalikh.pureedgesim.locationmanager;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
 
 public abstract class Mobility {
 
@@ -35,15 +35,12 @@ public abstract class Mobility {
 	public Mobility(Location location, boolean mobile, double speed, double minPauseDuration, double maxPauseDuration,
 			double minMobilityDuration, double maxMobilityDuration) {
 		this.currentLocation = location;
-		this.isMobile = mobile;
-		this.setMinPauseDuration(minPauseDuration);
-		this.setMaxPauseDuration(maxPauseDuration);
-		this.setMinMobilityDuration(minMobilityDuration);
-		this.setMaxMobilityDuration(maxMobilityDuration);
-		this.setSpeed(speed);
-	}
-
-	public Mobility() {
+		setMobile(mobile);
+		setMinPauseDuration(minPauseDuration);
+		setMaxPauseDuration(maxPauseDuration);
+		setMinMobilityDuration(minMobilityDuration);
+		setMaxMobilityDuration(maxMobilityDuration);
+		setSpeed(speed);
 	}
 
 	public abstract Location getNextLocation();
@@ -107,4 +104,5 @@ public abstract class Mobility {
 						(getCurrentLocation().getYPos() - device2.getMobilityManager().getCurrentLocation().getYPos()),
 						2)));
 	}
+
 }

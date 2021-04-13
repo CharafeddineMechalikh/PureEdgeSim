@@ -20,8 +20,8 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.MainApplication; 
-import com.mechalikh.pureedgesim.TasksGenerator.DefaultTasksGenerator; 
+import com.mechalikh.pureedgesim.MainApplication;
+import com.mechalikh.pureedgesim.tasksgenerator.DefaultTasksGenerator; 
 
 public class Example1 extends MainApplication {
 	/**
@@ -34,11 +34,11 @@ public class Example1 extends MainApplication {
 	 */
 	public Example1(int fromIteration, int step_) {
 		super(fromIteration, step_);
-	}
+	} 
 
 	public static void main(String[] args) {
 		// To change the mobility model
-		//setCustomMobilityModel(CustomMobilityManager.class);
+		setCustomMobilityModel(CustomMobilityManager.class);
 
 		// To change the tasks orchestrator
 		setCustomEdgeOrchestrator(CustomEdgeOrchestrator.class);

@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.TasksGenerator;
+package com.mechalikh.pureedgesim.tasksgenerator;
 
 import java.util.List;
 import java.util.Random;
@@ -26,16 +26,17 @@ import org.cloudbus.cloudsim.utilizationmodels.UtilizationModel;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelDynamic;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public class DefaultTasksGenerator extends TasksGenerator {
+
+	private double simulationTime;
+	
 	public DefaultTasksGenerator(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
-
-	private double simulationTime;
 
 	public List<Task> generate() {
 		// get simulation time in minutes (excluding the initialization time)
@@ -91,7 +92,6 @@ public class DefaultTasksGenerator extends TasksGenerator {
 	}
 
 	private void insert(int time, int app, DataCenter dev) {
-		int time2 = time;
 		// Get the task latency sensitivity (seconds)
 		double maxLatency = SimulationParameters.APPLICATIONS_LIST.get(app).getLatency();
 
@@ -120,15 +120,16 @@ public class DefaultTasksGenerator extends TasksGenerator {
 			task[i] = new Task(id, length, pesNumber);
 			task[i].setFileSize(requestSize).setOutputSize(outputSize).setUtilizationModelBw(utilizationModeldynamic)
 					.setUtilizationModelRam(utilizationModeldynamic).setUtilizationModelCpu(new UtilizationModelFull());
-			time2 += 60 / SimulationParameters.APPLICATIONS_LIST.get(app).getRate();
-			task[i].setTime(time2);
+			time += 60 / SimulationParameters.APPLICATIONS_LIST.get(app).getRate();
+			task[i].setTime(time);
 			task[i].setContainerSize(containerSize);
+			task[i].setApplicationID(app);
 			task[i].setMaxLatency(maxLatency);
-			task[i].setEdgeDevice(dev); // the device that generate this task (the origin)
-			task[i].setRegistry(datacentersList.get(0)); // set the cloud as registry
+			task[i].setEdgeDevice(dev); // the device that generate this task (the origin) 
+			task[i].setRegistry(this.getSimulationManager().getServersManager().getDatacenterList().get(0)); // set the cloud as registry
 			taskList.add(task[i]);
 			getSimulationManager().getSimulationLogger()
-					.deepLog("BasicTasksGenerator, Task " + id + " with execution time " + time2 + " (s) generated.");
+					.deepLog("BasicTasksGenerator, Task " + id + " with execution time " + time + " (s) generated.");
 		}
 	}
 

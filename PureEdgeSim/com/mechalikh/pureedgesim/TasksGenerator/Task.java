@@ -18,18 +18,18 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.TasksGenerator;
+package com.mechalikh.pureedgesim.tasksgenerator;
 
 import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
 
 public class Task extends CloudletSimple {
 	private double offloadingTime;
 	private double maxLatency;
 	private DataCenter device;
-	private long containerSize;
+	private long containerSize; // in KBytes
 	private DataCenter orchestrator;
 	private double receptionTime = -1; // the time when the task, or the corresponding container has been received by
 										// the offloading destination

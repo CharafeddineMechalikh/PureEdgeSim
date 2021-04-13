@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.SimulationVisualizer;
+package com.mechalikh.pureedgesim.simulationvisualizer;
 
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
@@ -27,7 +27,7 @@ import org.knowm.xchart.style.Styler.ChartTheme;
 import org.knowm.xchart.style.Styler.LegendPosition;
 import org.knowm.xchart.style.markers.Marker;
 
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 import java.awt.*; 
 import java.util.List;
@@ -50,7 +50,7 @@ public abstract class Chart {
 
 	protected abstract void update();
 
-	void updateSize(Double minXValue, Double maxXValue, Double minYValue, Double maxYValue) {
+	protected void updateSize(Double minXValue, Double maxXValue, Double minYValue, Double maxYValue) {
 		chart.getStyler().setXAxisMin(minXValue);
 		chart.getStyler().setXAxisMax(maxXValue);
 		chart.getStyler().setYAxisMin(minYValue);
@@ -70,10 +70,6 @@ public abstract class Chart {
 
 	public XYChart getChart() {
 		return chart;
-	}
-
-	public void setChart(XYChart chart) {
-		this.chart = chart;
 	}
 
 	protected double[] toArray(List<Double> list) {

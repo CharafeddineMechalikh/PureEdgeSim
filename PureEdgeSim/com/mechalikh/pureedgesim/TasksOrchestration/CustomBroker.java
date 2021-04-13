@@ -18,18 +18,19 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.TasksOrchestration;
+package com.mechalikh.pureedgesim.tasksorchestration;
 
 import org.cloudbus.cloudsim.brokers.DatacenterBrokerSimple;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManagerAbstract;
 
 public class CustomBroker extends DatacenterBrokerSimple {
 
-	private SimulationManager simulationManager;
+	private SimulationManagerAbstract simulationManager;
 
 	public CustomBroker(CloudSim simulation) {
 		super(simulation);
@@ -47,8 +48,8 @@ public class CustomBroker extends DatacenterBrokerSimple {
 		}
 	}
 
-	public void setSimulationManager(SimulationManager simulationManager) {
-		this.simulationManager = simulationManager;
+	public <SM extends SimulationManagerAbstract> void setSimulationManager(SM simulationManagerAbstract) {
+		this.simulationManager = simulationManagerAbstract;
 
 	}
 

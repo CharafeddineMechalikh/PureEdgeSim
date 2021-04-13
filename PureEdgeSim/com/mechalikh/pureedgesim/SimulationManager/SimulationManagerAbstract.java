@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.SimulationManager;
+package com.mechalikh.pureedgesim.simulationmanager;
 
 import java.util.List;
 
@@ -26,14 +26,14 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimEntity;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.DataCentersManager.ServersManager;
-import com.mechalikh.pureedgesim.Network.NetworkModelAbstract;
-import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
-import com.mechalikh.pureedgesim.SimulationVisualizer.SimulationVisualizer;
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
-import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker;
-import com.mechalikh.pureedgesim.TasksOrchestration.Orchestrator;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.datacentersmanager.ServersManager;
+import com.mechalikh.pureedgesim.network.NetworkModelAbstract;
+import com.mechalikh.pureedgesim.scenariomanager.Scenario;
+import com.mechalikh.pureedgesim.simulationvisualizer.SimulationVisualizer;
+import com.mechalikh.pureedgesim.tasksgenerator.Task;
+import com.mechalikh.pureedgesim.tasksorchestration.CustomBroker;
+import com.mechalikh.pureedgesim.tasksorchestration.Orchestrator;
 
 public class SimulationManagerAbstract extends CloudSimEntity {
 
@@ -50,13 +50,31 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 	protected List<? extends DataCenter> orchestratorsList;
 	protected Scenario scenario;
 
-	public SimulationManagerAbstract(SimLog simLog, CloudSim simulation, int simulationId, int iteration, Scenario scenario) {
+	public SimulationManagerAbstract(SimLog simLog, CloudSim simulation, int simulationId, int iteration,
+			Scenario scenario) {
 		super(simulation);
+
 		this.simulation = simulation;
 		this.simLog = simLog;
 		this.scenario = scenario;
 		this.simulationId = simulationId;
 		this.iteration = iteration;
+		
+
+		// Create the broker
+		broker = createBroker();
+	}
+
+	private CustomBroker createBroker() {
+		CustomBroker broker;
+		try {
+			broker = new CustomBroker(simulation);
+			broker.setSimulationManager(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return broker;
 	}
 
 	@Override
@@ -64,7 +82,7 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 	}
 
 	@Override
-	protected void startEntity() {
+	protected void startInternal() {
 	}
 
 	public void setServersManager(ServersManager serversManager) {
@@ -90,20 +108,16 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 		this.networkModel = networkModel;
 	}
 
-	public List<Task> getTasksList() {
-		return tasksList;
-	}
-
 	public int getIterationId() {
-		return this.iteration;
+		return iteration;
 	}
 
 	public NetworkModelAbstract getNetworkModel() {
-		return this.networkModel;
+		return networkModel;
 	}
 
 	public int getSimulationId() {
-		return this.simulationId;
+		return simulationId;
 	}
 
 	public SimLog getSimulationLogger() {
@@ -115,10 +129,10 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 	}
 
 	public Scenario getScenario() {
-		return this.scenario;
+		return scenario;
 	}
 
 	public CustomBroker getBroker() {
-		return this.broker;
+		return broker;
 	}
 }

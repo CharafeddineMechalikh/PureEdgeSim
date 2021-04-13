@@ -20,13 +20,13 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.Network.NetworkModel;
-import com.mechalikh.pureedgesim.Network.FileTransferProgress;
-import com.mechalikh.pureedgesim.Network.NetworkModelAbstract;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
+import com.mechalikh.pureedgesim.network.FileTransferProgress;
+import com.mechalikh.pureedgesim.network.NetworkModel;
+import com.mechalikh.pureedgesim.network.NetworkModelAbstract;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
 public class CustomNetworkModel extends NetworkModel {
 
@@ -78,14 +78,14 @@ public class CustomNetworkModel extends NetworkModel {
 		// Check if there are enough replicas before keeping a new one
 		CachingEdgeDevice edgeDevice = (CachingEdgeDevice) task.getEdgeDevice();
 		if (canKeepReplica(edgeDevice, task)) {
-			if (edgeDevice.getResources().getAvailableStorage() > task.getContainerSize()) {
+			if (edgeDevice.getResources().getAvailableStorage() >= (task.getContainerSize()/1024)) {
 				saveImage(edgeDevice, task);
 			} else {
 				// while the storage is not enough
 				freeStorage(edgeDevice, task);
 			}
 			// if the memory is enough
-			if (edgeDevice.getResources().getAvailableStorage() > task.getContainerSize()) {
+			if (edgeDevice.getResources().getAvailableStorage() >= (task.getContainerSize()/1024)) {
 				saveImage(edgeDevice, task);
 			}
 		}
@@ -101,7 +101,7 @@ public class CustomNetworkModel extends NetworkModel {
 		double min = 0;
 		while (storageIsEnough(edgeDevice, task)) {
 			min = edgeDevice.getMinContainerCost();
-			if (edgeDevice.getCost(task) < min || min == -1) {
+			if (edgeDevice.getCost(task) <= min || min == -1) {
 				// delete the app with the highest cost
 				edgeDevice.deleteMinAapp();
 			} else {
@@ -110,14 +110,14 @@ public class CustomNetworkModel extends NetworkModel {
 		}
 	}
 
-	private boolean storageIsEnough(CachingEdgeDevice edgeDevice, Task task) {
-		return (edgeDevice.getResources().getAvailableStorage() < task.getContainerSize()
-				&& edgeDevice.getResources().getStorageMemory() > task.getContainerSize());
+	private boolean storageIsEnough(CachingEdgeDevice edgeDevice, Task task) { 
+		return (edgeDevice.getResources().getAvailableStorage() < (task.getContainerSize()/1024)
+				&& edgeDevice.getResources().getStorageMemory() >= (task.getContainerSize()/1024));
 	}
 
 	private void saveImage(CachingEdgeDevice edgeDevice, Task task) {
 		edgeDevice.getResources()
-				.setAvailableMemory(edgeDevice.getResources().getAvailableStorage() - task.getContainerSize());
+				.setAvailableMemory(edgeDevice.getResources().getAvailableStorage() - (task.getContainerSize()/1024));
 		edgeDevice.cache.add(task);
 		double[] array = new double[2];
 		array[0] = task.getApplicationID();
@@ -127,7 +127,7 @@ public class CustomNetworkModel extends NetworkModel {
 
 	private void pullContainer(Task task) {
 		if (!((CachingEdgeDevice) task.getEdgeDevice().getOrchestrator()).hasRemoteContainer(task.getApplicationID())) {
-			// No replica found
+			// No replica found  
 			scheduleNow(this, NetworkModelAbstract.DOWNLOAD_CONTAINER, task);
 		} else { // replica found
 			pullFromCache(task);

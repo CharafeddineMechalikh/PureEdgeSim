@@ -23,77 +23,63 @@ package examples;
 import com.mechalikh.pureedgesim.MainApplication;
 
 public class Example6 extends MainApplication {
-
-	/** you must read this to understand **/
-
 	/**
-	 * This is a simple example showing how to launch simulation using a custom
-	 * network model. The CustomNetworkModel.java is located under the
-	 * examples/f older. As you can see, this class extends the
-	 * MainApplication class provided by PureEdgeSim, which is required for this
-	 * example to work.
+	 * This example shows how to use other simulation parameters files. The files
+	 * used in this example are located in the examples/Example7_settings/ folder.
+	 * By default, if the user doesn't specify the simulation settings folder,
+	 * PureEdgeSim will use the default ones located in settings/ folder.
 	 * 
-	 * In this example, we will implement the cooperative caching algorithm
-	 * presented in the following paper: Mechalikh, C., Taktak, H., Moussa, F.:
-	 * Towards a Scalable and QoS-Aware Load Balancing Platform for Edge Computing
-	 * Environments. The 2019 International Conference on High Performance Computing
-	 * & Simulation (2019) 684-691
+	 * in the simulation parameters file that is used in this example
+	 * ("PureEdgeSim/examples/Example6_settings/"), the simulation time is set to 60
+	 * minutes and the update intervals to 0.1 seconds.
 	 */
+	// Below is the path for the settings folder of this example
+	private static String settingsPath = "PureEdgeSim/examples/Example6_settings/";
 
-	/**
-	 * Before running this example you need to
-	 * 
-	 * 1/ enable the registry in the simulation parameters file by setting
-	 * enable_registry=true registry_mode=CACHE
-	 * 
-	 * 2/ enable orchestrators in the simulation parameters file by setting
-	 * enable_orchestrators=true deploy_orchestrator=CLUSTER
-	 * 
-	 * you can then compare between registry_mode=CLOUD in which the containers are
-	 * downloaded from the cloud everytime and registry_mode=CACHE in which the
-	 * frequently needed containers are cached in edge devices. Same for
-	 * deploy_orchestrator=CLUSTER and deploy_orchestrator=CLOUD. where the
-	 * orchestrators are deployed on the cluster heads or on the cloud
-	 * 
-	 * Try to use the MIST_ONLY architecture, in order to see clearly the difference
-	 * in WAN usage (no tasks offloading to the cloud, so the wan will only be used
-	 * by containers). To see the effect, try with 60 minutes simulation time.
-	 * 
-	 * You will see that the cooperative caching algorithm decreases the WAN usage
-	 * remarkably.
-	 */
+	// The custom output folder is
+	private static String outputPath = "PureEdgeSim/examples/Example6_output/";
+
+	// If we want only to use files one by one
+	private static String simConfigfile = settingsPath + "simulation_parameters.properties";
+	private static String applicationsFile = settingsPath + "applications.xml";
+	private static String edgeDataCentersFile = settingsPath + "edge_datacenters.xml";
+	private static String edgeDevicesFile = settingsPath + "edge_devices.xml";
+	private static String cloudFile = settingsPath + "cloud.xml";
 
 	public Example6(int fromIteration, int step_) {
 		super(fromIteration, step_);
 	}
 
 	public static void main(String[] args) {
-		/*
-		 * Before implementing the cooperative caching algorithm (which will require a
-		 * custom network model) we need to implement a clustering algorithm in order to
-		 * group edge devices in clusters. The clustering algorithm is implemented in
-		 * the CustomEdgeDevice.java. We extended the DefaultEdgeDataCenter class in
-		 * this case.To use it we need to execute the following line.
+
+		// changing the default output folder
+		setCustomOutputFolder(outputPath);
+
+		/** if we want to change the path of all configuration files at once : */
+
+		// changing the simulation settings folder
+		setCustomSettingsFolder(settingsPath);
+
+		/**
+		 * if we want to change the path of only one file, while keeping the default one
+		 * for the others :
 		 */
 
-		setCustomEdgeDataCenters(CachingEdgeDevice.class);
+		// To change the simulation_parameters.properties path only
+		setCustomFilePath(simConfigfile, Files.SIMULATION_PARAMETERS);
+		// To change the applications.xml path only
+		setCustomFilePath(applicationsFile, Files.APPLICATIONS_FILE);
+		// To change the edge_datacenters.xml path only
+		setCustomFilePath(edgeDataCentersFile, Files.EDGE_DATACENTERS_FILE);
+		// To change the edge_devices.xml path only
+		setCustomFilePath(edgeDevicesFile, Files.EDGE_DEVICES_FILE);
+		// To change the cloud.xml path only
+		setCustomFilePath(cloudFile, Files.CLOUD_FILE);
 
-		/*
-		 * After adding the clustering algorithm we can now implement the cooperative
-		 * caching algorithm in the CustomNetworkModel class. This custom class can be
-		 * used using the following line. However, in this example instead of extending
-		 * the NetworkModel, we extended the DefaultNetworkModel, because we only want
-		 * to add the cooperative caching algorithm and the DefaultNetworkModel is
-		 * realistic enough, so need to change it with another one.
-		 */
-
-		setCustomNetworkModel(CustomNetworkModel.class);
-
-		/*
-		 * To use the PureEdgeSim default network model you can also uncomment this:
-		 */
-		// setCustomNetworkModel(DefaultNetworkModel.class);
-
+		/**
+		 * In addition to showcasing how to set custom file paths, the energy consumption rate has been
+		 * increased to show the death of devices on runtime
+		 **/
 		// Start the simulation
 		launchSimulation();
 	}

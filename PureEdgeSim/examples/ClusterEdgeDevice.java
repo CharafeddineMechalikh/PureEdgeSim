@@ -27,11 +27,11 @@ import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.DataCentersManager.DefaultDataCenter;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.datacentersmanager.DefaultDataCenter;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
 public class ClusterEdgeDevice extends DefaultDataCenter {
 	private static final int UPDATE_CLUSTERS = 11000; // Avoid conflicting with CloudSim Plus Tags
@@ -39,7 +39,7 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 	private ClusterEdgeDevice parent;
 	protected ClusterEdgeDevice Orchestrator;
 	private double originalWeight = 0;
-	private double weightDrop = 0.7;
+	private double weightDrop = 0.1;
 	private int time = 0;
 	public List<Task> cache = new ArrayList<Task>();
 	public List<ClusterEdgeDevice> cluster;
@@ -53,11 +53,11 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 	}
 
 	// The clusters update will be done by scheduling events, the first event has to
-	// be scheduled within the startEntity() method:
+	// be scheduled within the startInternal() method:
 	@Override
-	public void startEntity() {
-		schedule(this, SimulationParameters.INITIALIZATION_TIME + 1, UPDATE_CLUSTERS); // must be 0.1 because we are
-		super.startEntity();
+	public void startInternal() {
+		schedule(this, SimulationParameters.INITIALIZATION_TIME + 1, UPDATE_CLUSTERS); 
+		super.startInternal();
 	}
 
 	// The scheduled event will be processed in processEvent(). To update the
@@ -74,7 +74,7 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 				time = (int) getSimulation().clock();
 				cluster();
 				// schedule the next update
-				schedule(this, 3, UPDATE_CLUSTERS);
+				schedule(this, 1, UPDATE_CLUSTERS);
 			}
 			break;
 		default:
@@ -85,16 +85,13 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 
 	public double getOriginalWeight() {
 		int neighbors = 0;
-		double distance = 0;
-		double avg_distance = 0;
+		double distance = 0; 
 		for (int i = 0; i < simulationManager.getServersManager().getDatacenterList().size(); i++) {
 			if (simulationManager.getServersManager().getDatacenterList().get(i)
 					.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
-				distance = getDistance(this, simulationManager.getServersManager().getDatacenterList().get(i));
-				if (distance < SimulationParameters.EDGE_DEVICES_RANGE) {
+			 	if (distance <= SimulationParameters.EDGE_DEVICES_RANGE) {
 					// neighbor
-					neighbors++;
-					avg_distance += distance;
+					neighbors++; 
 				}
 			}
 		}
@@ -106,9 +103,7 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 			battery = getEnergyModel().getBatteryLevel() / 100;
 		double mips = 0;
 		if (getResources().getVmList().size() > 0)
-			mips = getResources().getVmList().get(0).getMips();
-		if (neighbors > 0)
-			avg_distance = avg_distance / neighbors / SimulationParameters.EDGE_DEVICES_RANGE;
+			mips = getResources().getVmList().get(0).getMips(); 
 
 		// mips is divided by 200000 to normalize it, it is out of the parenthesis so
 		// the weight becomes 0 when mips = 0
@@ -125,13 +120,11 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 	}
 
 	private double getOrchestratorWeight() {
-		if (this.isOrchestrator)
-			return this.originalWeight;
-		if (this.Orchestrator == null)
-			return 0;
-		if (!this.Orchestrator.isOrchestrator)
-			return this.originalWeight;
-		return this.getOrchestrator().getOrchestratorWeight();
+		if (this.isOrchestrator())
+			return originalWeight;
+		if (this.Orchestrator == null || !this.Orchestrator.isOrchestrator())
+			return 0; 
+		return getOrchestrator().getOrchestratorWeight();
 	}
 
 	public void setOrchestrator(ClusterEdgeDevice newOrchestrator) {
@@ -142,23 +135,25 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 		// If the new orchestrator is another device (not this one)
 		if (this != newOrchestrator) {
 			//if this device is no more an orchestrator, its cluster will be joined with the cluster of the new orchestrator
-			if (isOrchestrator) {
+			if (isOrchestrator()) {
 				newOrchestrator.cluster.addAll(this.cluster);
 			}
 			// now remove it cluster after
 			cluster.clear();
 			//remove this device from orchestrators list
 			simulationManager.getServersManager().getOrchestratorsList().remove(this);
+			System.err.println(simulationManager.getServersManager().getOrchestratorsList().size());
 			//set the new orchestrator as the parent node ( a tree-like topology)
 			parent = newOrchestrator;
 			// this device is no more an orchestrator so set it to false
-			isOrchestrator = false;
+			this.setAsOrchestrator(false);
+			
 			//in case the cluster doesn't has this device as member
 			if (!newOrchestrator.cluster.contains(this))
 				newOrchestrator.cluster.add(this);
 		}
         // configure the new orchestrator (it can be another device, or this device)
-		newOrchestrator.isOrchestrator = true;
+		newOrchestrator.setAsOrchestrator(true);
 		newOrchestrator.Orchestrator = newOrchestrator;
 		newOrchestrator.parent = null;
 		//in case the cluster doesn't has the orchestrator as member
@@ -172,10 +167,10 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 
 	private void cluster() {
 		originalWeight = getOriginalWeight();
-		if ((this.getOrchestratorWeight() < originalWeight) || ((this.parent != null)
-				&& (getDistance(this, this.parent) > SimulationParameters.EDGE_DEVICES_RANGE))) {
+		System.out.println(originalWeight);
+		if ((getOrchestratorWeight() < originalWeight) || ((parent != null) && (getDistance(this, parent) > SimulationParameters.EDGE_DEVICES_RANGE))) {
 			setOrchestrator(this);
-			this.weight = originalWeight;
+			weight = getOrchestratorWeight();
 		}
 
 		compareWeightWithNeighbors();
@@ -189,29 +184,21 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 					&& getDistance(this, simulationManager.getServersManager().getDatacenterList()
 							.get(i)) <= SimulationParameters.EDGE_DEVICES_RANGE
 					// neighbors
-					&& (this.weight < ((ClusterEdgeDevice) simulationManager.getServersManager().getDatacenterList()
+					&& (weight < ((ClusterEdgeDevice) simulationManager.getServersManager().getDatacenterList()
 							.get(i)).weight)) {
+ 
+				setOrchestrator((ClusterEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i));
+				weight =  getOrchestratorWeight()
+						* weightDrop;
 
-				setOrchestrator((ClusterEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i)
-						.getOrchestrator());
-				this.parent = (ClusterEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i);
-				this.weight = ((ClusterEdgeDevice) simulationManager.getServersManager().getDatacenterList()
-						.get(i)).weight
-						* ((ClusterEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i)
-								.getOrchestrator()).weightDrop;
 			}
 
 		}
 	}
 
-	public ClusterEdgeDevice getOrchestrator() {
-		if (Orchestrator == null)
-			Orchestrator = this;
+	public ClusterEdgeDevice getOrchestrator() { 
 		return Orchestrator;
 	}
-
-	public Vm getVM() {
-		return getResources().getVmList().get(0);
-	}
+ 
 
 }

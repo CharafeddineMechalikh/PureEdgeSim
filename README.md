@@ -4,7 +4,7 @@
 
 Or
 
-**Mechalikh, C., Taktak, H., Moussa, F.: PureEdgeSim: A Simulation Toolkit for Performance Evaluation of Cloud, Fog, and Pure Edge Computing Environments. The 2019 International Conference on High Performance Computing & Simulation (2019) 700-707**
+Mechalikh, C., Taktak, H., Moussa, F.: PureEdgeSim: A Simulation Toolkit for Performance Evaluation of Cloud, Fog, and Pure Edge Computing Environments. The 2019 International Conference on High Performance Computing & Simulation (2019) 700-707
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Build Status](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim.svg?branch=master)](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim) [![Build status](https://ci.appveyor.com/api/projects/status/u6hwmktmbji8utnf?svg=true)](https://ci.appveyor.com/project/CharafeddineMechalikh/pureedgesim)  [![Codacy Badge](https://api.codacy.com/project/badge/Grade/25ee278611014a9bb242297480703cf9)](https://www.codacy.com/manual/CharafeddineMechalikh/PureEdgeSim?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CharafeddineMechalikh/PureEdgeSim&amp;utm_campaign=Badge_Grade)   [![Maintainability](https://api.codeclimate.com/v1/badges/a1ffecb5230fc5771b93/maintainability)](https://codeclimate.com/github/CharafeddineMechalikh/PureEdgeSim/maintainability)   [![codebeat badge](https://codebeat.co/badges/bbe172a2-1169-4bbe-b6a6-0505631babc6)](https://codebeat.co/projects/github-com-charafeddinemechalikh-pureedgesim-master)
 
@@ -12,9 +12,9 @@ Or
 
 **The Fuzzy Decision Tree Based algorithm presented in**
 
-**Mechalikh, C., Taktak, H., & Moussa, F. (2020, April). A Fuzzy Decision Tree Based Tasks Orchestration Algorithm for Edge Computing Environments. In International Conference on Advanced Information Networking and Applications (pp. 193-203). Springer, Cham.**
+Mechalikh, C., Taktak, H., & Moussa, F. (2020, April). A Fuzzy Decision Tree Based Tasks Orchestration Algorithm for Edge Computing Environments. In International Conference on Advanced Information Networking and Applications (pp. 193-203). Springer, Cham.
 
-**is now available [Here](https://github.com/CharafeddineMechalikh/FDT_based_workload_orchestration).**
+is now available [Here](https://github.com/CharafeddineMechalikh/FDT_based_workload_orchestration).
 
 Read the wiki here: [PureEdgeSim WIKI](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki) 
 
@@ -46,15 +46,21 @@ It consists of the following 7 modules:
 
 *   Scenario Manager, that loads the simulation parameters and the user scenario from the input files (`.xml` and `.prop` files in `/settings/` folder). It consists of two classes, the File Parser that checks the input files and loads the simulation parameters, and the Simulation Parameters class which represents a placeholder for the different parameters.
 
+
 *   Simulation Manager, that initiates the simulation environment, schedules all the events and generates the output. It consists of two important classes, the Simulation Manager class which manages the simulation, schedules the tasks generation, etc. The Simulation Logger class that generates the simulation output saves it in comma-separated value (CSV) format in order to easily exploit them later using any spreadsheet editor (e.g., Microsoft Excel...).
+
 
 *   Data Centers Manager: it generates and manages all the data centers and devices (i.e., Cloud, Edge or Mist). It consists of two classes: the Data Center class, that contains the specific properties of Edge devices such as the location, the mobility, the energy source, and the capacity/remaining energy if it is battery-powered. The second class is the Server Manager which generates the needed servers and Edge devices, their hosts and their virtual machines.
 
+
 *   Tasks Generator which is behind the tasks generation, -currently- it assigns an application such as e-health, smart-home, and augmented-reality (that can be defined in `settings/applications.xml` file) to each Edge device. Then, it will generates the needed tasks according to the assigned type, which guarantees the heterogeneity of applications.  
+
 
 *   The Network Module: that consists mainly of the Network Model class.which is behind the transfer of tasks/containers/ request... 
 
+
 *   The Tasks Orchestrator, which is the decision maker, where the user can define the orchestration algorithm. 
+
 
 *   The Location Manager, which generates the mobility path of mobile devices.
    
@@ -66,12 +72,12 @@ PureEdgeSim architecture
 
 *   Cloud, Edge, and Mist computing scenarios
 
+
 *   And basically, any scenario that involves computing on distributed nodes or mobility, for example: IoT applications, Mobile Devices Clouds, Mobile Edge Computing,... 
   
 ## 4. PureEdgeSim features
 
 *   Realistic network and energy models as compared to other simulators.
-
 
 *   Mobility support which is ignored by most simulators: 
 
@@ -96,7 +102,6 @@ The devices without computing capacity are considered as simple sensors that onl
 
 The user can also define the applications that are in use, their CPU utilization, their files sizes and their latency. requirements. 
 *   The scalability, generate hundreds of devices, with a single click. 
-
 *   A rich collection of metrics:
 
 The simulation output  (the `.csv` file) includes + 40 metrics ready to be plotted.

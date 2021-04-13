@@ -18,19 +18,19 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.DataCentersManager;
+package com.mechalikh.pureedgesim.datacentersmanager;
 
 import java.util.List;
 
 import org.cloudbus.cloudsim.core.Simulation;
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
+import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
 public class Resources {
-	private long storageMemory=0;
-	private long availableStorageMemory=0;
-	private long ramMemory=0;
+	private long storageMemory = 0;
+	private long availableStorageMemory = 0;
+	private long ramMemory = 0;
 	private boolean isIdle = true;
 	private double tasks = 0;
 	private double totalTasks = 0;
@@ -40,12 +40,13 @@ public class Resources {
 
 	public Resources(List<? extends Vm> vmList, Simulation simulation) {
 		this.simulation = simulation;
-		this.setVmList(vmList); 
+		this.setVmList(vmList);
 		for (Vm vm : vmList) {
 			storageMemory += vm.getStorage().getAvailableResource();
 			ramMemory += vm.getRam().getCapacity();
 			totalMips += vm.getMips();
-		} 
+		}
+		availableStorageMemory = storageMemory;
 	}
 
 	public long getStorageMemory() {
@@ -97,18 +98,17 @@ public class Resources {
 	public void addCpuUtilization(Task task) {
 		tasks += task.getLength();
 		totalTasks += task.getLength();
+		setIdle(false);
 	}
 
 	public void removeCpuUtilization(Task task) {
 		tasks -= task.getLength();
+		if(tasks<=0)
+			setIdle(true);
 	}
 
 	public double getTotalMips() {
 		return totalMips;
-	}
-
-	public void setTotalMips(long totalMips) {
-		this.totalMips = totalMips;
 	}
 
 	public List<? extends Vm> getVmList() {

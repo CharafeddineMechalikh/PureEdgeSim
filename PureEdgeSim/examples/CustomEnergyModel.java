@@ -20,10 +20,10 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.DataCentersManager.EnergyModel;
-import com.mechalikh.pureedgesim.Network.FileTransferProgress;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.datacentersmanager.EnergyModel;
+import com.mechalikh.pureedgesim.network.FileTransferProgress;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 
 public class CustomEnergyModel extends EnergyModel {
 

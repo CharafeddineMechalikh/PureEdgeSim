@@ -18,16 +18,17 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.DataCentersManager;
+package com.mechalikh.pureedgesim.datacentersmanager;
 
 import java.util.List;
 import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicyFirstFit;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
-import com.mechalikh.pureedgesim.LocationManager.Mobility;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+
+import com.mechalikh.pureedgesim.locationmanager.Mobility;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public abstract class DataCenter extends DatacenterSimple {
 	private SimulationParameters.TYPES deviceType;
@@ -64,7 +65,7 @@ public abstract class DataCenter extends DatacenterSimple {
 		return isOrchestrator;
 	}
 
-	public void setOrchestrator(boolean isOrchestrator) {
+	public void setAsOrchestrator(boolean isOrchestrator) {
 		this.isOrchestrator = isOrchestrator;
 	}
 
@@ -81,7 +82,7 @@ public abstract class DataCenter extends DatacenterSimple {
 	}
 
 	public DataCenter getOrchestrator() {
-		return this.orchestrator;
+		return orchestrator;
 	}
 
 	public void setTasksGeneration(boolean generateTasks) {

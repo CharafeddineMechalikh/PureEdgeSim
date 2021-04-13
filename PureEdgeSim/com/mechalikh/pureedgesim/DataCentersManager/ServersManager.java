@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.DataCentersManager;
+package com.mechalikh.pureedgesim.datacentersmanager;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -48,10 +48,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.mechalikh.pureedgesim.LocationManager.Location;
-import com.mechalikh.pureedgesim.LocationManager.Mobility;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+import com.mechalikh.pureedgesim.locationmanager.Location;
+import com.mechalikh.pureedgesim.locationmanager.Mobility;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public class ServersManager {
 	private List<DataCenter> datacentersList;
@@ -88,15 +88,15 @@ public class ServersManager {
 			if ("".equals(SimulationParameters.DEPLOY_ORCHESTRATOR)
 					|| ("CLOUD".equals(SimulationParameters.DEPLOY_ORCHESTRATOR)
 							&& edgeDataCenter.getType() == SimulationParameters.TYPES.CLOUD)) {
-				edgeDataCenter.setOrchestrator(true);
+				edgeDataCenter.setAsOrchestrator(true);
 				orchestratorsList.add(edgeDataCenter);
 			} else if ("EDGE".equals(SimulationParameters.DEPLOY_ORCHESTRATOR)
 					&& edgeDataCenter.getType() == SimulationParameters.TYPES.EDGE_DATACENTER) {
-				edgeDataCenter.setOrchestrator(true);
+				edgeDataCenter.setAsOrchestrator(true);
 				orchestratorsList.add(edgeDataCenter);
 			} else if ("MIST".equals(SimulationParameters.DEPLOY_ORCHESTRATOR)
 					&& edgeDataCenter.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
-				edgeDataCenter.setOrchestrator(true);
+				edgeDataCenter.setAsOrchestrator(true);
 				orchestratorsList.add(edgeDataCenter);
 			}
 		}
@@ -185,7 +185,7 @@ public class ServersManager {
 				.parseDouble(datacenterElement.getElementsByTagName("idleConsumption").item(0).getTextContent());
 		double maxConsumption = Double
 				.parseDouble(datacenterElement.getElementsByTagName("maxConsumption").item(0).getTextContent());
-		datacenter.setOrchestrator(Boolean
+		datacenter.setAsOrchestrator(Boolean
 				.parseBoolean(datacenterElement.getElementsByTagName("isOrchestrator").item(0).getTextContent()));
 		Constructor<?> energyConstructor = energyModel.getConstructor(double.class, double.class);
 		datacenter.setEnergyModel(energyConstructor.newInstance(maxConsumption, idleConsumption));

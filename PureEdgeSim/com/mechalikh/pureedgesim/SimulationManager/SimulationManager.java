@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.SimulationManager;
+package com.mechalikh.pureedgesim.simulationmanager;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,14 +27,13 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.Network.NetworkModelAbstract;
-import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
-import com.mechalikh.pureedgesim.SimulationVisualizer.SimulationVisualizer;
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
-import com.mechalikh.pureedgesim.TasksOrchestration.CustomBroker;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.network.NetworkModelAbstract;
+import com.mechalikh.pureedgesim.scenariomanager.Scenario;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
+import com.mechalikh.pureedgesim.simulationvisualizer.SimulationVisualizer;
+import com.mechalikh.pureedgesim.tasksgenerator.Task; 
 
 public class SimulationManager extends SimulationManagerAbstract {
 	public static final int Base = 1000; // avoid conflict with CloudSim Plus tags
@@ -54,9 +53,6 @@ public class SimulationManager extends SimulationManagerAbstract {
 	public SimulationManager(SimLog simLog, CloudSim simulation, int simulationId, int iteration, Scenario scenario) {
 		super(simLog, simulation, simulationId, iteration, scenario);
 
-		// Create Broker
-		broker = createBroker();
-
 		// Show real time results during the simulation
 		if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL)
 			simulationVisualizer = new SimulationVisualizer(this);
@@ -64,20 +60,18 @@ public class SimulationManager extends SimulationManagerAbstract {
 
 	// Start simulation
 	public void startSimulation() {
-		simLog.print("SimulationManager-  Orchestration algorithm= " + scenario.getStringOrchAlgorithm()
-				+ "-  Architechitecture= " + scenario.getStringOrchArchitecture() + " -  number of edge devices= "
-				+ scenario.getDevicesCount());
+		simLog.print("SimulationManager-  "+ scenario.toString());
 		simulation.start();
 	}
 
 	@Override
-	public void startEntity() {
+	public void startInternal() {
 
 		// Initialize logger variables
 		simLog.setGeneratedTasks(tasksList.size());
 		simLog.setCurrentOrchPolicy(scenario.getStringOrchArchitecture());
 
-		simLog.print("SimulationManager- Simulation: " + this.simulationId + "  , iteration: " + this.iteration);
+		simLog.print("SimulationManager- Simulation: " + getSimulationId() + "  , iteration: " + getIterationId());
 
 		// Tasks scheduling
 		for (Task task : tasksList) {
@@ -119,7 +113,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 			// Execute the task
 			if (taskFailed(task, 2))
 				return;
-			broker.submitCloudlet(task);
+			getBroker().submitCloudlet(task);
 			((DataCenter) task.getVm().getHost().getDatacenter()).getResources().addCpuUtilization(task);
 			((DataCenter) task.getVm().getHost().getDatacenter()).getEnergyModel()
 					.updateCpuEnergyConsumption(task.getLength()
@@ -211,7 +205,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 			return;
 		// If the task was offloaded
 		if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()) {
-			scheduleNow(networkModel, NetworkModelAbstract.SEND_RESULT_TO_ORCH, task);
+			scheduleNow(getNetworkModel(), NetworkModelAbstract.SEND_RESULT_TO_ORCH, task);
 
 		} else { // The task has been executed locally / no offloading
 			scheduleNow(this, RESULT_RETURN_FINISHED, task);
@@ -241,7 +235,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 		// and the orchestrator is not the offloading destination
 		if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()
 				&& task.getOrchestrator() != ((DataCenter) task.getVm().getHost().getDatacenter())) {
-			scheduleNow(networkModel, NetworkModelAbstract.SEND_REQUEST_FROM_ORCH_TO_DESTINATION, task);
+			scheduleNow(getNetworkModel(), NetworkModelAbstract.SEND_REQUEST_FROM_ORCH_TO_DESTINATION, task);
 
 		} else { // The task will be executed locally / no offloading or will be executed where
 					// the orchestrator is deployed (no network usage)
@@ -282,17 +276,6 @@ public class SimulationManager extends SimulationManagerAbstract {
 		scheduleNow(networkModel, NetworkModelAbstract.SEND_REQUEST_FROM_DEVICE_TO_ORCH, task);
 	}
 
-	private CustomBroker createBroker() {
-		CustomBroker broker;
-		try {
-			broker = new CustomBroker(simulation);
-			broker.setSimulationManager(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		return broker;
-	}
 
 	public double getFailureRate() {
 		double result = (failedTasksCount * 100) / tasksList.size();

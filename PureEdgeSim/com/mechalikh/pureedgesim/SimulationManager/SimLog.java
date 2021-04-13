@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.SimulationManager;
+package com.mechalikh.pureedgesim.simulationmanager;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -38,10 +38,10 @@ import java.util.Locale;
 import org.cloudbus.cloudsim.vms.Vm;
 
 import com.mechalikh.pureedgesim.MainApplication;
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.Network.FileTransferProgress;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.network.FileTransferProgress;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
 public class SimLog {
 	public static final int NO_TIME = 0;
@@ -243,7 +243,7 @@ public class SimLog {
 				+ padLeftSpaces(decimalFormat.format(totalWanUsage), 15) + " seconds ("
 				+ decimalFormat.format(totalWanUsage * 100 / totalLanUsage)
 				+ " % of total usage, WAN used when downloading containers="
-				+ decimalFormat.format(containersWanUsage * 100 / totalWanUsage) + " % of WAN usage )");
+				+ decimalFormat.format(totalWanUsage==0 ? 0 :containersWanUsage * 100 / totalWanUsage) + " % of WAN usage )");
 		print("                                                                                 " + " Lan="
 				+ padLeftSpaces(decimalFormat.format(totalLanUsage), 15) + " seconds ("
 				+ decimalFormat.format(totalLanUsage * 100 / totalLanUsage)

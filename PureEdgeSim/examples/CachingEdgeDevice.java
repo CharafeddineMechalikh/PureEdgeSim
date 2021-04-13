@@ -24,9 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
  
 import org.cloudbus.cloudsim.hosts.Host;
-import org.cloudbus.cloudsim.vms.Vm; 
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
+import org.cloudbus.cloudsim.vms.Vm;
+
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
 public class CachingEdgeDevice extends ClusterEdgeDevice {
 	 
@@ -84,11 +85,11 @@ public class CachingEdgeDevice extends ClusterEdgeDevice {
 	public double getCost(Task task) {
 		double maxSize = 1;
 		double T = 3;
-		double MaxP = 1;
+		double MaxP = 0;
 		for (int i = 0; i < cache.size(); i++) {
 			if (cache.get(i).getContainerSize() > maxSize)
 				maxSize = cache.get(i).getContainerSize();
-			if (getProbability(cache.get(i).getApplicationID()) > MaxP)
+			if (getProbability(cache.get(i).getApplicationID()) >= MaxP)
 				MaxP = getProbability(cache.get(i).getApplicationID());
 		}
 

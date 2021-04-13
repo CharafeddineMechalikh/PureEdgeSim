@@ -23,20 +23,20 @@ package com.mechalikh.pureedgesim;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.DataCentersManager.DefaultDataCenter;
-import com.mechalikh.pureedgesim.DataCentersManager.DefaultEnergyModel;
-import com.mechalikh.pureedgesim.DataCentersManager.EnergyModel;
-import com.mechalikh.pureedgesim.LocationManager.DefaultMobilityModel;
-import com.mechalikh.pureedgesim.LocationManager.Mobility;
-import com.mechalikh.pureedgesim.Network.NetworkModel;
-import com.mechalikh.pureedgesim.Network.NetworkModelAbstract;
-import com.mechalikh.pureedgesim.ScenarioManager.Scenario;
-import com.mechalikh.pureedgesim.SimulationManager.SimLog;
-import com.mechalikh.pureedgesim.TasksGenerator.DefaultTasksGenerator;
-import com.mechalikh.pureedgesim.TasksGenerator.TasksGenerator;
-import com.mechalikh.pureedgesim.TasksOrchestration.DefaultEdgeOrchestrator;
-import com.mechalikh.pureedgesim.TasksOrchestration.Orchestrator;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.datacentersmanager.DefaultDataCenter;
+import com.mechalikh.pureedgesim.datacentersmanager.DefaultEnergyModel;
+import com.mechalikh.pureedgesim.datacentersmanager.EnergyModel;
+import com.mechalikh.pureedgesim.locationmanager.DefaultMobilityModel;
+import com.mechalikh.pureedgesim.locationmanager.Mobility;
+import com.mechalikh.pureedgesim.network.NetworkModel;
+import com.mechalikh.pureedgesim.network.NetworkModelAbstract;
+import com.mechalikh.pureedgesim.scenariomanager.Scenario;
+import com.mechalikh.pureedgesim.simulationmanager.SimLog;
+import com.mechalikh.pureedgesim.tasksgenerator.DefaultTasksGenerator;
+import com.mechalikh.pureedgesim.tasksgenerator.TasksGenerator;
+import com.mechalikh.pureedgesim.tasksorchestration.DefaultEdgeOrchestrator;
+import com.mechalikh.pureedgesim.tasksorchestration.Orchestrator;
 
 public abstract class MainApplicationAbstract {
 	public static enum Files {

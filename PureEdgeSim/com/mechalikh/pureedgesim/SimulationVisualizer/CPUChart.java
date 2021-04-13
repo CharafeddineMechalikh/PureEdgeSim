@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.SimulationVisualizer;
+package com.mechalikh.pureedgesim.simulationvisualizer;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -27,12 +27,12 @@ import java.util.List;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
-public class CPUChart extends LineChart {
+public class CPUChart extends Chart {
 
 	private List<Double> cloudUsage = new ArrayList<>();
 	private List<Double> mistUsage = new ArrayList<>();
@@ -98,7 +98,7 @@ public class CPUChart extends LineChart {
 		}
 	}
 
-	void cloudCpuUsage() {
+	private void cloudCpuUsage() {
 		double clUsage = 0;
 		for (DataCenter dc : simulationManager.getServersManager().getDatacenterList()) {
 			if (dc.getType() == TYPES.CLOUD) {

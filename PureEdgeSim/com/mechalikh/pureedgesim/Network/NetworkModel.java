@@ -18,16 +18,16 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.Network;
+package com.mechalikh.pureedgesim.network;
 
-import java.util.List;
 import org.cloudbus.cloudsim.core.events.SimEvent;
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.DataCentersManager.DefaultEnergyModel;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
+
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.datacentersmanager.DefaultEnergyModel;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
 public class NetworkModel extends NetworkModelAbstract { 
 	public NetworkModel(SimulationManager simulationManager) {
@@ -45,7 +45,7 @@ public class NetworkModel extends NetworkModelAbstract {
 			// Forward the offloading request from orchestrator to offloading destination
 			sendRequestFromOrchToDest((Task) ev.getData());
 			break;
-		case DOWNLOAD_CONTAINER:
+		case DOWNLOAD_CONTAINER: 
 			// Pull the container from the registry
 			addContainer((Task) ev.getData());
 			break;
@@ -67,9 +67,6 @@ public class NetworkModel extends NetworkModelAbstract {
 		}
 	}
 
-	public List<FileTransferProgress> getTransferProgressList() {
-		return transferProgressList;
-	}
 
 	public void sendRequestFromOrchToDest(Task task) {
 		transferProgressList
@@ -120,9 +117,8 @@ public class NetworkModel extends NetworkModelAbstract {
 					if (transferProgressList.get(j).getRemainingFileSize() > 0 && j != i && sameLanIsUsed(
 							transferProgressList.get(i).getTask(), transferProgressList.get(j).getTask())) {
 						// Both transfers use same Lan
-						remainingTransfersCount_Lan++; 
+						remainingTransfersCount_Lan++;
 					}
-					
 				}
 
 				// allocate bandwidths
@@ -150,7 +146,7 @@ public class NetworkModel extends NetworkModelAbstract {
 		transfer.setLanNetworkUsage(transfer.getLanNetworkUsage()
 				+ (oldRemainingSize - transfer.getRemainingFileSize()) / transfer.getCurrentBandwidth());
 
-		// Update WAN network usage delay
+		// Update WAN network usage delay 
 		if (wanIsUsed(transfer))
 			transfer.setWanNetworkUsage(transfer.getWanNetworkUsage()
 					+ (oldRemainingSize - transfer.getRemainingFileSize()) / transfer.getCurrentBandwidth());
@@ -202,14 +198,14 @@ public class NetworkModel extends NetworkModelAbstract {
 			offloadingRequestRecievedByOrchestrator(transfer);
 			updateEnergyConsumption(transfer, "Orchestrator");
 		}
-		// If it is an task (or offloading request) that is sent to the destination
+		// If it is a task (or offloading request) that is sent to the destination
 		else if (transfer.getTransferType() == FileTransferProgress.Type.TASK) {
 			transfer.getTask().setReceptionTime(simulationManager.getSimulation().clock());
 			executeTaskOrDownloadContainer(transfer);
 			updateEnergyConsumption(transfer, "Destination");
 		}
 		// If the container has been downloaded, then execute the task now
-		else if (transfer.getTransferType() == FileTransferProgress.Type.CONTAINER) {
+		else if (transfer.getTransferType() == FileTransferProgress.Type.CONTAINER) { 
 			transfer.getTask().setReceptionTime(simulationManager.getSimulation().clock());
 			containerDownloadFinished(transfer);
 			updateEnergyConsumption(transfer, "Container");
@@ -247,7 +243,7 @@ public class NetworkModel extends NetworkModelAbstract {
 
 	}
 
-	protected void executeTaskOrDownloadContainer(FileTransferProgress transfer) {
+	protected void executeTaskOrDownloadContainer(FileTransferProgress transfer) { 
 		if (SimulationParameters.ENABLE_REGISTRY && "CLOUD".equals(SimulationParameters.registry_mode)
 				&& !((DataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD)) {
 			// if the registry is enabled and the task is offloaded to the edge data centers
@@ -275,7 +271,7 @@ public class NetworkModel extends NetworkModelAbstract {
 	}
 
 	@Override
-	protected void startEntity() {
+	protected void startInternal() {
 		schedule(this, SimulationParameters.NETWORK_UPDATE_INTERVAL, UPDATE_PROGRESS);
 	}
 	public double getWanUtilization() {

@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.ScenarioManager;
+package com.mechalikh.pureedgesim.scenariomanager;
 
 public class Scenario {
 	private int devicesCount; // The number of edge devices in this scenario
@@ -26,9 +26,9 @@ public class Scenario {
 	private int orchAlgorithm; // The tasks orchestration algorithm that will be used in this scenario
 
 	public Scenario(int devicesCount, int orchAlgorithm, int orchArchitecture) {
-		this.orchAlgorithm = orchAlgorithm;
-		this.devicesCount = devicesCount;
-		this.orchArchitecture = orchArchitecture;
+		this.setOrchAlgorithm(orchAlgorithm);
+		this.setDevicesCount(devicesCount);
+		this.setOrchArchitecture(orchArchitecture);
 	}
 
 	public int getOrchAlgorithm() {
@@ -66,6 +66,8 @@ public class Scenario {
 	}
 
 	public String toString() {
-		return getStringOrchAlgorithm() + "-" + getStringOrchArchitecture() + "-" + getDevicesCount();
+		return "Orchestration algorithm= " + getStringOrchAlgorithm()
+				+ " -  Architechitecture= " + getStringOrchArchitecture() + " -  number of edge devices= "
+				+ getDevicesCount();
 	}
 }

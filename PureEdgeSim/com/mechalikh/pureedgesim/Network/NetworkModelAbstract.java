@@ -18,18 +18,19 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.Network;
+package com.mechalikh.pureedgesim.network;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.cloudbus.cloudsim.core.CloudSimEntity;
 import org.cloudbus.cloudsim.core.events.SimEvent;
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
+
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
 public abstract class NetworkModelAbstract extends CloudSimEntity {
 	public static final int base = 4000;
@@ -55,10 +56,6 @@ public abstract class NetworkModelAbstract extends CloudSimEntity {
 		this.simulationManager = simulationManager;
 	}
 
-	public List<FileTransferProgress> getTransferProgressList() {
-		return transferProgressList;
-	}
-
 	protected abstract void updateTasksProgress();
 
 	protected abstract void updateTransfer(FileTransferProgress transfer);
@@ -70,16 +67,21 @@ public abstract class NetworkModelAbstract extends CloudSimEntity {
 	protected boolean sameLanIsUsed(Task task1, Task task2) {
 		// The transfers share same Lan of they have one device in common
 		// Compare orchestrator
-		return (commonDevice(task1.getOrchestrator(), task2)
-				// Compare origin device
-				|| commonDevice(task1.getEdgeDevice(), task2)
-				// Compare offloading destination
-				|| commonDevice((DataCenter) task1.getVm().getHost().getDatacenter(), task2));
-	}
+		return ((task1.getOrchestrator() == task2.getOrchestrator())
+				|| (task1.getOrchestrator() == task2.getVm().getHost().getDatacenter())
+				|| (task1.getOrchestrator() == task2.getEdgeDevice())
+				|| (task1.getOrchestrator() == task2.getRegistry())
 
-	private boolean commonDevice(DataCenter device, Task task) {
-		return (device == task.getOrchestrator()) || (device == task.getVm().getHost().getDatacenter())
-				|| (device == task.getEdgeDevice()) || (device == task.getRegistry());
+				// Compare origin device
+				|| (task1.getEdgeDevice() == task2.getOrchestrator())
+				|| (task1.getEdgeDevice() == task2.getVm().getHost().getDatacenter())
+				|| (task1.getEdgeDevice() == task2.getEdgeDevice()) || (task1.getEdgeDevice() == task2.getRegistry())
+
+				// Compare offloading destination
+				|| (task1.getVm().getHost().getDatacenter() == task2.getOrchestrator())
+				|| (task1.getVm().getHost().getDatacenter() == task2.getVm().getHost().getDatacenter())
+				|| (task1.getVm().getHost().getDatacenter() == task2.getEdgeDevice())
+				|| (task1.getVm().getHost().getDatacenter() == task2.getRegistry()));
 	}
 
 	protected boolean wanIsUsed(FileTransferProgress fileTransferProgress) {
@@ -119,13 +121,11 @@ public abstract class NetworkModelAbstract extends CloudSimEntity {
 	}
 
 	@Override
-	protected void startEntity() {
-		// do something or schedule events
+	protected void startInternal() {
 	}
 
 	@Override
 	public void processEvent(SimEvent ev) {
-		// process the scheduled events
 	}
 
 	public abstract double getWanUtilization();

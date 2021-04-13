@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.SimulationManager;
+package com.mechalikh.pureedgesim.simulationmanager;
 
 import java.awt.BasicStroke;
 import java.io.BufferedReader;
@@ -36,7 +36,7 @@ import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.style.Styler.ChartTheme;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 
 public class ChartsGenerator {
 
@@ -62,15 +62,6 @@ public class ChartsGenerator {
 		}
 	}
 
-	public double[] getColumn(String name) {
-		double[] results = new double[records.size() - 1];
-		int column = getColumnIndex(name);
-		for (int line = 1; line < records.size(); line++) {
-			results[line - 1] = Double.parseDouble(records.get(line)[column]);
-		}
-		return results;
-	}
-
 	private int getColumnIndex(String name) {
 		for (int j = 0; j < records.get(0).length; j++) {
 			if (records.get(0)[j].trim().equals(name.trim())) {
@@ -83,13 +74,10 @@ public class ChartsGenerator {
 	public void displayChart(String x_series, String y_series, String y_series_label, String folder) {
 		this.folder = folder;
 		// Create the charts filtered by algorithms (byAlgorithm = true), in order to
-		// compare the orchestration algorithms
+		// ompare the orchestration algorithms
 		generateChart(x_series, y_series, y_series_label, true);
 		// Create charts that are filtered by architectures (byAlgorithm = false)
 		generateChart(x_series, y_series, y_series_label, false);
-
-		// byAlgorithms(x_series, y_series, y_series_label, folder);
-		// byArchitectures(x_series, y_series, y_series_label, folder);
 
 	}
 

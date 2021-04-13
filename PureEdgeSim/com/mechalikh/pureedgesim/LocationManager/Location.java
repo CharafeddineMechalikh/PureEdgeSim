@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.LocationManager;
+package com.mechalikh.pureedgesim.locationmanager;
 
 public class Location {
 	private double xPos;
@@ -27,11 +27,6 @@ public class Location {
 	public Location(double _xPos, double _yPos) {
 		xPos = _xPos;
 		yPos = _yPos;
-	}
-
-	public boolean equals(Location otherLocation) {
-		return ((otherLocation == this)|| (this.xPos == otherLocation.xPos && this.yPos == otherLocation.yPos));
-
 	}
 
 	public double getXPos() {

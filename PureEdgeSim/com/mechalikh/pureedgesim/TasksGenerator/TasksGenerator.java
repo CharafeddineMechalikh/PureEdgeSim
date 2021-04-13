@@ -18,12 +18,13 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.TasksGenerator;
+package com.mechalikh.pureedgesim.tasksgenerator;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public abstract class TasksGenerator {
 	protected List<Task> taskList;
@@ -32,8 +33,8 @@ public abstract class TasksGenerator {
 
 	public TasksGenerator(SimulationManager simulationManager) {
 		taskList = new ArrayList<>();
-		this.setSimulationManager(simulationManager);
-		this.datacentersList = new ArrayList<>(this.getSimulationManager().getServersManager().getDatacenterList());
+		setSimulationManager(simulationManager);
+		datacentersList = new ArrayList<>(this.getSimulationManager().getServersManager().getDatacenterList());
 	}
 
 	public List<Task> getTaskList() {

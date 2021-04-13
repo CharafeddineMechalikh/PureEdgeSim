@@ -18,15 +18,15 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.DataCentersManager;
+package com.mechalikh.pureedgesim.datacentersmanager;
 
 import java.util.List;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public class DefaultDataCenter extends DataCenter {
 	protected static final int UPDATE_STATUS = 2000; // Avoid conflicting with CloudSim Plus Tags
@@ -37,8 +37,8 @@ public class DefaultDataCenter extends DataCenter {
 	}
 
 	@Override
-	public void startEntity() {
-		super.startEntity();
+	public void startInternal() {
+		super.startInternal();
 		schedule(this, SimulationParameters.INITIALIZATION_TIME, UPDATE_STATUS);
 	}
 
@@ -61,7 +61,6 @@ public class DefaultDataCenter extends DataCenter {
 	}
 
 	private void updateStatus() {
-
 		// Check if the device is dead
 		if (getEnergyModel().isBatteryPowered()
 				&& this.getEnergyModel().getTotalEnergyConsumption() > getEnergyModel().getBatteryCapacity()) {
@@ -74,5 +73,4 @@ public class DefaultDataCenter extends DataCenter {
 		}
 	}
 
- 
 }

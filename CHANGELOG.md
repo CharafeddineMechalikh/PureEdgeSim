@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 4.1 (April 10th 2021)
+
+*   Upgraded to CloudSim Plus 6.1.4
+*   Fixed minor bugs (example 6, map chart)
+*   Improved code quality
+*   Improved examples
+
 ## Version 4.0 (march 1st 2021)
 
 *   Updated task generator

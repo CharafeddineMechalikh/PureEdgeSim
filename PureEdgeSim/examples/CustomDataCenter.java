@@ -25,9 +25,9 @@ import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DefaultDataCenter;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+import com.mechalikh.pureedgesim.datacentersmanager.DefaultDataCenter;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 /*
  * To create your own custom edge device/data center class, you need to extend the DataCenter class first.
@@ -53,8 +53,8 @@ public class CustomDataCenter extends DefaultDataCenter {
 	 * history.
 	 */
 	@Override
-	public void startEntity() {
-		super.startEntity();
+	public void startInternal() {
+		super.startInternal();
 		schedule(this, SimulationParameters.INITIALIZATION_TIME, UPDATE_STATUS);
 
 	}

@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.SimulationVisualizer;
+package com.mechalikh.pureedgesim.simulationvisualizer;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -27,10 +27,10 @@ import java.util.List;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
-public class WanChart extends LineChart {
+public class WanChart extends Chart {
 
 	private List<Double> wanUsage = new ArrayList<>();
 

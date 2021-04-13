@@ -10,14 +10,14 @@
 		<speed>1.4</speed><!-- the speed of the device in meters per second : 1.4m/s equals 5km/h, 0 = non mobile-->
 		<minPauseDuration>100</minPauseDuration><!-- the minimum delay before moving to a new location-->
 		<maxPauseDuration>400</maxPauseDuration><!-- the maximum delay before moving to a new location-->
-		<minMobilityDuration>10</minMobilityDuration><!-- the minimum delay before stopping-->
-		<maxMobilityDuration>60</maxMobilityDuration><!-- the maximum delay before stopping-->
+		<minMobilityDuration>60</minMobilityDuration><!-- the minimum delay before stopping-->
+		<maxMobilityDuration>100</maxMobilityDuration><!-- the maximum delay before stopping-->
 		<battery>true</battery> <!-- relies on battery? -->
 		<percentage>30</percentage> <!-- percentage of this device type -->
 		<batteryCapacity>18.75</batteryCapacity> <!-- battery capacity in Watt-Hour -->
-		<idleConsumption>0.078</idleConsumption><!-- idle energy consumption/ 
+		<idleConsumption>1.78</idleConsumption><!-- idle energy consumption/ 
 			second, default=0 .000010975 -->
-		<maxConsumption>3.3</maxConsumption><!-- max energy consumption/second, 
+		<maxConsumption>5.3</maxConsumption><!-- max energy consumption/second, 
 			when device cpu is use at 100% , default=0 .0011 -->
 		<isOrchestrator>false</isOrchestrator> <!-- it has a task orchestrator or not -->
 		<generateTasks>true</generateTasks> <!-- it generates data/tasks or not -->
@@ -32,7 +32,7 @@
 						<core>8</core>
 						<mips>25000</mips>
 						<ram>4000</ram>
-						<storage>128000</storage> <!--128GB of storage --> 
+						<storage>256</storage> <!--256MB of caching memory used in example 6 --> 
 					</VM>
 				</VMs>
 			</host>
@@ -63,7 +63,7 @@
 						<core>4</core>
 						<mips>16000</mips>
 						<ram>4000</ram>
-						<storage>32000</storage>  
+						<storage>128</storage>  <!--128MB of caching memory used in example 6 --> 
 					</VM>
 				</VMs>
 			</host>
@@ -79,7 +79,7 @@
 		<battery>true</battery>
 		<percentage>20</percentage>
 		<batteryCapacity>56.2</batteryCapacity>
-		<idleConsumption>1.7</idleConsumption>
+		<idleConsumption>5.7</idleConsumption>
 		<maxConsumption>23.6</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
 		<generateTasks>false</generateTasks>
@@ -94,7 +94,7 @@
 						<core>8</core>
 						<mips>110000</mips>
 						<ram>8000</ram>
-						<storage>1024000</storage>
+						<storage>256</storage><!--256MB of caching memory used in example 6 --> 
 					</VM>
 				</VMs>
 			</host>
@@ -110,8 +110,8 @@
 		<battery>false</battery>
 		<percentage>40</percentage>
 		<batteryCapacity>0</batteryCapacity>
-		<idleConsumption>0.0011</idleConsumption>
-		<maxConsumption>0.036</maxConsumption>
+		<idleConsumption>0.11</idleConsumption>
+		<maxConsumption>3.6</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
 		<generateTasks>true</generateTasks>
 		<hosts>

@@ -18,17 +18,17 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.LocationManager;
+package com.mechalikh.pureedgesim.locationmanager;
 
 import java.util.Random;
 
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 
 public class DefaultMobilityModel extends Mobility {
 	private boolean pause = false;
 	private double pauseDuration = -1;
-	private double mobilityDuration = (maxMobilityDuration - minMobilityDuration) > 0
-			? new Random().nextInt((int) (maxMobilityDuration - minMobilityDuration)) + minMobilityDuration
+	private double mobilityDuration = (getMaxMobilityDuration() - getMinMobilityDuration()) > 0
+			? new Random().nextInt((int) (getMaxMobilityDuration() - getMinMobilityDuration())) + getMinMobilityDuration()
 			: 0;
 	private int orientationAngle = new Random().nextInt(359);
 
@@ -38,15 +38,9 @@ public class DefaultMobilityModel extends Mobility {
 				maxMobilityDuration);
 	}
 
-	public DefaultMobilityModel() {
-		super();
-	}
 
 	@Override
-	public Location getNextLocation() {
-		if (speed <= 0 || !isMobile)
-			return currentLocation; // The speed must be > 0 in order to move/change the location
-
+	public Location getNextLocation() { 
 		double X_position = currentLocation.getXPos(); // Get the initial X coordinate assigned to this device
 		double Y_position = currentLocation.getYPos(); // Get the initial y coordinate assigned to this device
 
@@ -73,7 +67,7 @@ public class DefaultMobilityModel extends Mobility {
 	}
 
 	private Location updateLocation(double X_position, double Y_position) {
-		double distance = speed * SimulationParameters.UPDATE_INTERVAL;
+		double distance = getSpeed() * SimulationParameters.UPDATE_INTERVAL;
 		double X_distance = Math.cos(Math.toRadians(orientationAngle)) * distance;
 		double Y_distance = Math.sin(Math.toRadians(orientationAngle)) * distance;
 		// Update the X_position
@@ -92,7 +86,7 @@ public class DefaultMobilityModel extends Mobility {
 
 	private void pause() {
 		// Pickup random duration from 50 to 200 seconds
-		pauseDuration = minPauseDuration + new Random().nextInt((int) (maxPauseDuration - minPauseDuration));
+		pauseDuration = getMinPauseDuration() + new Random().nextInt((int) (getMaxPauseDuration() - getMinPauseDuration()));
 		// Pause mobility (the device will stay in its location for the randomly
 		// generated duration
 		pause = true;
@@ -113,7 +107,4 @@ public class DefaultMobilityModel extends Mobility {
 			orientationAngle = new Random().nextInt(180);
 	}
 
-	public Location getCurrentLocation() {
-		return this.currentLocation;
-	}
 }

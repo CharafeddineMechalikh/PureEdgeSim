@@ -18,19 +18,18 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.TasksOrchestration;
+package com.mechalikh.pureedgesim.tasksorchestration;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.DataCentersManager.DataCenter;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters;
-import com.mechalikh.pureedgesim.ScenarioManager.SimulationParameters.TYPES;
-import com.mechalikh.pureedgesim.SimulationManager.SimLog;
-import com.mechalikh.pureedgesim.SimulationManager.SimulationManager;
-import com.mechalikh.pureedgesim.TasksGenerator.Task;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationmanager.SimLog;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
 public abstract class Orchestrator {
 	protected List<List<Integer>> orchestrationHistory;
@@ -133,7 +132,7 @@ public abstract class Orchestrator {
 	}
 
 	protected boolean sameLocation(DataCenter device1, DataCenter device2, int RANGE) {
-		if (device2.getType() == TYPES.CLOUD)
+		if (device2.getType() == SimulationParameters.TYPES.CLOUD)
 			return true;
 		double distance = device1.getMobilityManager().distanceTo(device2);
 		return (distance < RANGE);
