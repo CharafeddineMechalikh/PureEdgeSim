@@ -123,8 +123,8 @@ public abstract class SimulationAbstract {
 	 * 
 	 * @param edgedatacenter the custom data center class to use
 	 */
-	public void setCustomEdgeDataCenters(Class<? extends DataCenter> edgedatacenter2) {
-		edgedatacenter = edgedatacenter2;
+	public void setCustomEdgeDataCenters(Class<? extends DataCenter> edgedatacenter) {
+		this.edgedatacenter = edgedatacenter;
 	}
 
 	/**
@@ -133,8 +133,8 @@ public abstract class SimulationAbstract {
 	 * 
 	 * @param tasksGenerator the custom task generator class to use
 	 */
-	public void setCustomTasksGenerator(Class<? extends TasksGenerator> tasksGenerator2) {
-		tasksGenerator = tasksGenerator2;
+	public void setCustomTasksGenerator(Class<? extends TasksGenerator> tasksGenerator) {
+		this.tasksGenerator = tasksGenerator;
 	}
 
 	/**
@@ -143,8 +143,8 @@ public abstract class SimulationAbstract {
 	 * 
 	 * @param orchestrator the custom orchestrator class to use
 	 */
-	public void setCustomEdgeOrchestrator(Class<? extends Orchestrator> orchestrator2) {
-		orchestrator = orchestrator2;
+	public void setCustomEdgeOrchestrator(Class<? extends Orchestrator> orchestrator) {
+		this.orchestrator = orchestrator;
 	}
 
 	/**
@@ -153,8 +153,8 @@ public abstract class SimulationAbstract {
 	 * 
 	 * @param mobilityModel the custom mobility model class to use
 	 */
-	public void setCustomMobilityModel(Class<? extends MobilityModel> mobilityModel2) {
-		mobilityModel = mobilityModel2;
+	public void setCustomMobilityModel(Class<? extends MobilityModel> mobilityModel) {
+		this.mobilityModel = mobilityModel;
 	}
 
 	/**
@@ -163,8 +163,8 @@ public abstract class SimulationAbstract {
 	 * 
 	 * @param energyModel the custom energy model class to use
 	 */
-	public void setCustomEnergyModel(Class<? extends EnergyModel> energyModel2) {
-		energyModel = energyModel2;
+	public void setCustomEnergyModel(Class<? extends EnergyModel> energyModel) {
+		this.energyModel = energyModel;
 	}
 
 	/**
@@ -173,8 +173,8 @@ public abstract class SimulationAbstract {
 	 * 
 	 * @param networkModel the custom network model class to use
 	 */
-	public void setCustomNetworkModel(Class<? extends NetworkModel> networkModel2) {
-		networkModel = networkModel2;
+	public void setCustomNetworkModel(Class<? extends NetworkModel> networkModel) {
+		this.networkModel = networkModel;
 	}
 
 	/**
@@ -182,8 +182,8 @@ public abstract class SimulationAbstract {
 	 * 
 	 * @param outputFolder the output folder to set
 	 */
-	public void setCustomOutputFolder(String outputFolder2) {
-		outputFolder = outputFolder2;
+	public void setCustomOutputFolder(String outputFolder) {
+		this.outputFolder = outputFolder;
 	}
 
 	/**

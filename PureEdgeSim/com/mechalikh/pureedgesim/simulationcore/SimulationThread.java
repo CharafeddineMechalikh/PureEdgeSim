@@ -46,13 +46,12 @@ public class SimulationThread {
 	 * This division is done by splitting the loop that launches the different
 	 * scenarios.
 	 * 
-	 * @param simulation
-	 * 
-	 * @see #launchParallelSimulations()
+	 * @see com.mechalikh.pureedgesim.simulationcore.Simulation#launchParallelSimulations()
 	 * @see #startSimulation()
 	 * 
-	 * @param fromIteration the iteration from which loop will start
-	 * @param step_         the iteration steps
+	 * @param simulation PureEdgeSim simulation object.
+	 * @param fromIteration the iteration from which loop will start.
+	 * @param step the iteration steps.
 	 */
 	public SimulationThread(Simulation simulation, int fromIteration, int step) {
 		this.simulation= simulation;
