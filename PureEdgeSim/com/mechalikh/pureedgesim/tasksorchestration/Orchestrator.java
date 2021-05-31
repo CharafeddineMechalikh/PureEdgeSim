@@ -43,7 +43,7 @@ public abstract class Orchestrator {
 		this.simulationManager = simulationManager;
 		simLog = simulationManager.getSimulationLogger();
 		orchestrationHistory = new ArrayList<>();
-		vmList = simulationManager.getServersManager().getVmList();
+		vmList = simulationManager.getDataCentersManager().getVmList();
 		algorithm = simulationManager.getScenario().getStringOrchAlgorithm();
 		architecture = simulationManager.getScenario().getStringOrchArchitecture();
 		initHistoryList(vmList.size());

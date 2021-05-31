@@ -26,7 +26,7 @@ import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.locationmanager.Mobility;
+import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 
@@ -35,7 +35,7 @@ public abstract class DataCenter extends DatacenterSimple {
 	private EnergyModel energyModel;
 	private int applicationType;
 	protected boolean isOrchestrator = false;
-	private Mobility mobilityManager;
+	private MobilityModel mobilityManager;
 	private DataCenter orchestrator;
 	protected SimulationManager simulationManager;
 	private boolean generateTasks = false;
@@ -69,12 +69,12 @@ public abstract class DataCenter extends DatacenterSimple {
 		this.isOrchestrator = isOrchestrator;
 	}
 
-	public Mobility getMobilityManager() {
+	public MobilityModel getMobilityManager() {
 		return mobilityManager;
 	}
 
 	public void setMobilityManager(Object mobilityManager) {
-		this.mobilityManager = (Mobility) mobilityManager;
+		this.mobilityManager = (MobilityModel) mobilityManager;
 	}
 
 	public void setEnergyModel(Object energyModel) {

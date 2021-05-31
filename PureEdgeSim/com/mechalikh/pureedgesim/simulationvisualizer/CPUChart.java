@@ -62,10 +62,10 @@ public class CPUChart extends Chart {
 		// Browse all devices and create the series
 		// Skip the first items (cloud data centers + edge data centers)
 		for (int i = SimulationParameters.NUM_OF_EDGE_DATACENTERS
-				+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS; i < simulationManager.getServersManager()
+				+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS; i < simulationManager.getDataCentersManager()
 						.getDatacenterList().size(); i++) {
 			// If it is an edge device
-			device = simulationManager.getServersManager().getDatacenterList().get(i);
+			device = simulationManager.getDataCentersManager().getDatacenterList().get(i);
 			msUsage += device.getResources().getAvgCpuUtilization();
 			if (device.getResources().getTotalMips() == 0) {
 				sensors++;
@@ -89,7 +89,7 @@ public class CPUChart extends Chart {
 			for (int j = SimulationParameters.NUM_OF_CLOUD_DATACENTERS; j < SimulationParameters.NUM_OF_EDGE_DATACENTERS
 					+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS; j++) {
 
-				edUsage += simulationManager.getServersManager().getDatacenterList().get(j).getResources()
+				edUsage += simulationManager.getDataCentersManager().getDatacenterList().get(j).getResources()
 						.getAvgCpuUtilization();
 			}
 
@@ -100,7 +100,7 @@ public class CPUChart extends Chart {
 
 	private void cloudCpuUsage() {
 		double clUsage = 0;
-		for (DataCenter dc : simulationManager.getServersManager().getDatacenterList()) {
+		for (DataCenter dc : simulationManager.getDataCentersManager().getDatacenterList()) {
 			if (dc.getType() == TYPES.CLOUD) {
 				clUsage = dc.getResources().getAvgCpuUtilization();
 

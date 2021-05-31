@@ -86,8 +86,8 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 	public double getOriginalWeight() {
 		int neighbors = 0;
 		double distance = 0; 
-		for (int i = 0; i < simulationManager.getServersManager().getDatacenterList().size(); i++) {
-			if (simulationManager.getServersManager().getDatacenterList().get(i)
+		for (int i = 0; i < simulationManager.getDataCentersManager().getDatacenterList().size(); i++) {
+			if (simulationManager.getDataCentersManager().getDatacenterList().get(i)
 					.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
 			 	if (distance <= SimulationParameters.EDGE_DEVICES_RANGE) {
 					// neighbor
@@ -141,8 +141,8 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 			// now remove it cluster after
 			cluster.clear();
 			//remove this device from orchestrators list
-			simulationManager.getServersManager().getOrchestratorsList().remove(this);
-			System.err.println(simulationManager.getServersManager().getOrchestratorsList().size());
+			simulationManager.getDataCentersManager().getOrchestratorsList().remove(this);
+			System.err.println(simulationManager.getDataCentersManager().getOrchestratorsList().size());
 			//set the new orchestrator as the parent node ( a tree-like topology)
 			parent = newOrchestrator;
 			// this device is no more an orchestrator so set it to false
@@ -160,8 +160,8 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 		if (!newOrchestrator.cluster.contains(newOrchestrator))
 			newOrchestrator.cluster.add(newOrchestrator);
 		//add the new orchestrator to the list
-		if (!simulationManager.getServersManager().getOrchestratorsList().contains(newOrchestrator))
-			simulationManager.getServersManager().getOrchestratorsList().add(newOrchestrator);
+		if (!simulationManager.getDataCentersManager().getOrchestratorsList().contains(newOrchestrator))
+			simulationManager.getDataCentersManager().getOrchestratorsList().add(newOrchestrator);
 
 	}
 
@@ -178,16 +178,16 @@ public class ClusterEdgeDevice extends DefaultDataCenter {
 	}
 
 	private void compareWeightWithNeighbors() {
-		for (int i = 2; i < simulationManager.getServersManager().getDatacenterList().size(); i++) {
-			if (simulationManager.getServersManager().getDatacenterList().get(i)
+		for (int i = 2; i < simulationManager.getDataCentersManager().getDatacenterList().size(); i++) {
+			if (simulationManager.getDataCentersManager().getDatacenterList().get(i)
 					.getType() == SimulationParameters.TYPES.EDGE_DEVICE
-					&& getDistance(this, simulationManager.getServersManager().getDatacenterList()
+					&& getDistance(this, simulationManager.getDataCentersManager().getDatacenterList()
 							.get(i)) <= SimulationParameters.EDGE_DEVICES_RANGE
 					// neighbors
-					&& (weight < ((ClusterEdgeDevice) simulationManager.getServersManager().getDatacenterList()
+					&& (weight < ((ClusterEdgeDevice) simulationManager.getDataCentersManager().getDatacenterList()
 							.get(i)).weight)) {
  
-				setOrchestrator((ClusterEdgeDevice) simulationManager.getServersManager().getDatacenterList().get(i));
+				setOrchestrator((ClusterEdgeDevice) simulationManager.getDataCentersManager().getDatacenterList().get(i));
 				weight =  getOrchestratorWeight()
 						* weightDrop;
 

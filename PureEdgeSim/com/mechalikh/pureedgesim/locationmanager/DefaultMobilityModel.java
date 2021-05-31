@@ -24,7 +24,7 @@ import java.util.Random;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 
-public class DefaultMobilityModel extends Mobility {
+public class DefaultMobilityModel extends MobilityModel {
 	private boolean pause = false;
 	private double pauseDuration = -1;
 	private double mobilityDuration = (getMaxMobilityDuration() - getMinMobilityDuration()) > 0

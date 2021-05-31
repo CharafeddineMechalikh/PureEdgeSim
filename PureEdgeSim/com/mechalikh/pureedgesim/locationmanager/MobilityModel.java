@@ -22,7 +22,7 @@ package com.mechalikh.pureedgesim.locationmanager;
 
 import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
 
-public abstract class Mobility {
+public abstract class MobilityModel {
 
 	protected Location currentLocation;
 	protected boolean isMobile = false;
@@ -32,7 +32,7 @@ public abstract class Mobility {
 	protected double minMobilityDuration;
 	protected double speed;
 
-	public Mobility(Location location, boolean mobile, double speed, double minPauseDuration, double maxPauseDuration,
+	public MobilityModel(Location location, boolean mobile, double speed, double minPauseDuration, double maxPauseDuration,
 			double minMobilityDuration, double maxMobilityDuration) {
 		this.currentLocation = location;
 		setMobile(mobile);

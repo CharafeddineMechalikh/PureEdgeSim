@@ -28,7 +28,7 @@ import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.vms.Vm;
 
 import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
-import com.mechalikh.pureedgesim.network.NetworkModelAbstract;
+import com.mechalikh.pureedgesim.network.NetworkModel;
 import com.mechalikh.pureedgesim.scenariomanager.Scenario;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
@@ -205,7 +205,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 			return;
 		// If the task was offloaded
 		if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()) {
-			scheduleNow(getNetworkModel(), NetworkModelAbstract.SEND_RESULT_TO_ORCH, task);
+			scheduleNow(getNetworkModel(), NetworkModel.SEND_RESULT_TO_ORCH, task);
 
 		} else { // The task has been executed locally / no offloading
 			scheduleNow(this, RESULT_RETURN_FINISHED, task);
@@ -235,7 +235,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 		// and the orchestrator is not the offloading destination
 		if (task.getEdgeDevice().getId() != task.getVm().getHost().getDatacenter().getId()
 				&& task.getOrchestrator() != ((DataCenter) task.getVm().getHost().getDatacenter())) {
-			scheduleNow(getNetworkModel(), NetworkModelAbstract.SEND_REQUEST_FROM_ORCH_TO_DESTINATION, task);
+			scheduleNow(getNetworkModel(), NetworkModel.SEND_REQUEST_FROM_ORCH_TO_DESTINATION, task);
 
 		} else { // The task will be executed locally / no offloading or will be executed where
 					// the orchestrator is deployed (no network usage)
@@ -273,7 +273,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 			task.setOrchestrator(orchestratorsList.get(selected));
 		}
 
-		scheduleNow(networkModel, NetworkModelAbstract.SEND_REQUEST_FROM_DEVICE_TO_ORCH, task);
+		scheduleNow(networkModel, NetworkModel.SEND_REQUEST_FROM_DEVICE_TO_ORCH, task);
 	}
 
 

@@ -27,8 +27,8 @@ import org.cloudbus.cloudsim.core.CloudSimEntity;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 
 import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
-import com.mechalikh.pureedgesim.datacentersmanager.ServersManager;
-import com.mechalikh.pureedgesim.network.NetworkModelAbstract;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCentersManager;
+import com.mechalikh.pureedgesim.network.NetworkModel;
 import com.mechalikh.pureedgesim.scenariomanager.Scenario;
 import com.mechalikh.pureedgesim.simulationvisualizer.SimulationVisualizer;
 import com.mechalikh.pureedgesim.tasksgenerator.Task;
@@ -39,14 +39,14 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 
 	protected List<Task> tasksList;
 	protected Orchestrator edgeOrchestrator;
-	protected ServersManager serversManager;
+	protected DataCentersManager dataCentersManager;
 	protected SimulationVisualizer simulationVisualizer;
 	protected CloudSim simulation;
 	protected int simulationId;
 	protected int iteration;
 	protected SimLog simLog;
 	protected CustomBroker broker;
-	protected NetworkModelAbstract networkModel;
+	protected NetworkModel networkModel;
 	protected List<? extends DataCenter> orchestratorsList;
 	protected Scenario scenario;
 
@@ -85,14 +85,14 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 	protected void startInternal() {
 	}
 
-	public void setServersManager(ServersManager serversManager) {
+	public void setDataCentersManager(DataCentersManager dataCentersManager) {
 		// Get orchestrators list from the server manager
-		orchestratorsList = serversManager.getOrchestratorsList();
-		this.serversManager = serversManager;
+		orchestratorsList = dataCentersManager.getOrchestratorsList();
+		this.dataCentersManager = dataCentersManager;
 
 		// Submit vm list to the broker
 		simLog.deepLog("SimulationManager- Submitting VM list to the broker");
-		broker.submitVmList(serversManager.getVmList());
+		broker.submitVmList(dataCentersManager.getVmList());
 	}
 
 	public void setTasksList(List<Task> tasksList) {
@@ -108,7 +108,7 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 
 	}
 
-	public void setNetworkModel(NetworkModelAbstract networkModel) {
+	public void setNetworkModel(NetworkModel networkModel) {
 		this.networkModel = networkModel;
 	}
 
@@ -116,7 +116,7 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 		return iteration;
 	}
 
-	public NetworkModelAbstract getNetworkModel() {
+	public NetworkModel getNetworkModel() {
 		return networkModel;
 	}
 
@@ -128,8 +128,8 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 		return simLog;
 	}
 
-	public ServersManager getServersManager() {
-		return serversManager;
+	public DataCentersManager getDataCentersManager() {
+		return dataCentersManager;
 	}
 
 	public Scenario getScenario() {

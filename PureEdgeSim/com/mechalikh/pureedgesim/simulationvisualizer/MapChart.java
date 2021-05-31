@@ -56,10 +56,10 @@ public class MapChart extends Chart {
 		// Browse all devices and create the series
 		// Skip the first items (cloud data centers + edge data centers)
 		for (int i = SimulationParameters.NUM_OF_EDGE_DATACENTERS
-				+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS; i < simulationManager.getServersManager()
+				+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS; i < simulationManager.getDataCentersManager()
 						.getDatacenterList().size(); i++) {
 			// If it is an edge device
-			datacenter = simulationManager.getServersManager().getDatacenterList().get(i);
+			datacenter = simulationManager.getDataCentersManager().getDatacenterList().get(i);
 			if (datacenter.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
 				double Xpos = datacenter.getMobilityManager().getCurrentLocation().getXPos();
 				double Ypos = datacenter.getMobilityManager().getCurrentLocation().getYPos();
@@ -110,15 +110,15 @@ public class MapChart extends Chart {
 				// If it is an Edge data center
 				if ((simulationManager.getScenario().getStringOrchArchitecture().contains("EDGE")
 						|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL"))
-						&& simulationManager.getServersManager().getDatacenterList().get(j)
+						&& simulationManager.getDataCentersManager().getDatacenterList().get(j)
 								.getType() == SimulationParameters.TYPES.EDGE_DATACENTER
 						&& SimulationParameters.NUM_OF_EDGE_DATACENTERS != 0) {
 
-					double Xpos = simulationManager.getServersManager().getDatacenterList().get(j).getMobilityManager()
+					double Xpos = simulationManager.getDataCentersManager().getDatacenterList().get(j).getMobilityManager()
 							.getCurrentLocation().getXPos();
-					double Ypos = simulationManager.getServersManager().getDatacenterList().get(j).getMobilityManager()
+					double Ypos = simulationManager.getDataCentersManager().getDatacenterList().get(j).getMobilityManager()
 							.getCurrentLocation().getYPos();
-					if (simulationManager.getServersManager().getDatacenterList().get(j).getResources().isIdle()) {
+					if (simulationManager.getDataCentersManager().getDatacenterList().get(j).getResources().isIdle()) {
 						x_idleEdgeDataCentersList.add(Xpos);
 						y_idleEdgeDataCentersList.add(Ypos);
 					} else {

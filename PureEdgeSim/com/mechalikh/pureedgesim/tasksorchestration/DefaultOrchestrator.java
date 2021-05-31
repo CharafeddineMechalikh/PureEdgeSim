@@ -26,8 +26,8 @@ import com.mechalikh.pureedgesim.simulationcore.SimLog;
 import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
-public class DefaultEdgeOrchestrator extends Orchestrator {
-	public DefaultEdgeOrchestrator(SimulationManager simulationManager) {
+public class DefaultOrchestrator extends Orchestrator {
+	public DefaultOrchestrator(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
 

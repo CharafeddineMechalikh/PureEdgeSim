@@ -25,12 +25,12 @@ import com.mechalikh.pureedgesim.datacentersmanager.DefaultDataCenter;
 import com.mechalikh.pureedgesim.datacentersmanager.DefaultEnergyModel;
 import com.mechalikh.pureedgesim.datacentersmanager.EnergyModel;
 import com.mechalikh.pureedgesim.locationmanager.DefaultMobilityModel;
-import com.mechalikh.pureedgesim.locationmanager.Mobility;
+import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
+import com.mechalikh.pureedgesim.network.DefaultNetworkModel;
 import com.mechalikh.pureedgesim.network.NetworkModel;
-import com.mechalikh.pureedgesim.network.NetworkModelAbstract;
 import com.mechalikh.pureedgesim.tasksgenerator.DefaultTasksGenerator;
 import com.mechalikh.pureedgesim.tasksgenerator.TasksGenerator;
-import com.mechalikh.pureedgesim.tasksorchestration.DefaultEdgeOrchestrator;
+import com.mechalikh.pureedgesim.tasksorchestration.DefaultOrchestrator;
 import com.mechalikh.pureedgesim.tasksorchestration.Orchestrator;
 
 /**
@@ -81,7 +81,7 @@ public abstract class SimulationAbstract {
 	/**
 	 * @see #setCustomMobilityModel(Class)
 	 */
-	protected  Class<? extends Mobility> mobilityModel = DefaultMobilityModel.class;
+	protected  Class<? extends MobilityModel> mobilityModel = DefaultMobilityModel.class;
 	
 	/**
 	 * @see #setCustomEdgeDataCenters(Class)
@@ -96,7 +96,7 @@ public abstract class SimulationAbstract {
 	/**
 	 * @see #setCustomEdgeOrchestrator(Class)
 	 */
-	protected  Class<? extends Orchestrator> orchestrator = DefaultEdgeOrchestrator.class;
+	protected  Class<? extends Orchestrator> orchestrator = DefaultOrchestrator.class;
 	
 	/**
 	 * @see #setCustomEnergyModel(Class)
@@ -106,7 +106,7 @@ public abstract class SimulationAbstract {
 	/**
 	 * @see #setCustomNetworkModel(Class)
 	 */
-	protected  Class<? extends NetworkModelAbstract> networkModel = NetworkModel.class;
+	protected  Class<? extends NetworkModel> networkModel = DefaultNetworkModel.class;
 
 	/**
 	 * Returns the path where the simulation results are saved.
@@ -149,11 +149,11 @@ public abstract class SimulationAbstract {
 
 	/**
 	 * Allows to use a custom mobility model in the simulation.
-	 * The class must extend the {@link Mobility}  provided in PureEdgeSim.
+	 * The class must extend the {@link MobilityModel}  provided in PureEdgeSim.
 	 * 
 	 * @param mobilityModel the custom mobility model class to use
 	 */
-	public void setCustomMobilityModel(Class<? extends Mobility> mobilityModel2) {
+	public void setCustomMobilityModel(Class<? extends MobilityModel> mobilityModel2) {
 		mobilityModel = mobilityModel2;
 	}
 
@@ -169,11 +169,11 @@ public abstract class SimulationAbstract {
 
 	/**
 	 * Allows to use a network model in the simulation.
-	 * The class must extend the {@link NetworkModelAbstract}  provided by PureEdgeSim.
+	 * The class must extend the {@link NetworkModel}  provided by PureEdgeSim.
 	 * 
 	 * @param networkModel the custom network model class to use
 	 */
-	public void setCustomNetworkModel(Class<? extends NetworkModelAbstract> networkModel2) {
+	public void setCustomNetworkModel(Class<? extends NetworkModel> networkModel2) {
 		networkModel = networkModel2;
 	}
 

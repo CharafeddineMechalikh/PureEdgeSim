@@ -21,14 +21,14 @@
 package examples;
 
 import com.mechalikh.pureedgesim.network.FileTransferProgress;
+import com.mechalikh.pureedgesim.network.DefaultNetworkModel;
 import com.mechalikh.pureedgesim.network.NetworkModel;
-import com.mechalikh.pureedgesim.network.NetworkModelAbstract;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
-public class CustomNetworkModel extends NetworkModel {
+public class CustomNetworkModel extends DefaultNetworkModel {
 
 	private static final int MAX_NUMBER_OF_REPLICAS = 8;
 
@@ -128,7 +128,7 @@ public class CustomNetworkModel extends NetworkModel {
 	private void pullContainer(Task task) {
 		if (!((CachingEdgeDevice) task.getEdgeDevice().getOrchestrator()).hasRemoteContainer(task.getApplicationID())) {
 			// No replica found  
-			scheduleNow(this, NetworkModelAbstract.DOWNLOAD_CONTAINER, task);
+			scheduleNow(this, NetworkModel.DOWNLOAD_CONTAINER, task);
 		} else { // replica found
 			pullFromCache(task);
 		}
@@ -144,9 +144,9 @@ public class CustomNetworkModel extends NetworkModel {
 			double from = ((CachingEdgeDevice) task.getEdgeDevice().getOrchestrator())
 					.findReplica(task.getApplicationID());
 			// The IDs are shifted by 3
-			task.setRegistry(simulationManager.getServersManager().getDatacenterList().get((int) from - 3));
+			task.setRegistry(simulationManager.getDataCentersManager().getDatacenterList().get((int) from - 3));
 			// Pull container from another edge device
-			scheduleNow(this, NetworkModelAbstract.DOWNLOAD_CONTAINER, task);
+			scheduleNow(this, NetworkModel.DOWNLOAD_CONTAINER, task);
 		}
 
 	}

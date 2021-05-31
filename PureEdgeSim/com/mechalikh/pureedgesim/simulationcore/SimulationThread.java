@@ -27,8 +27,8 @@ import java.util.List;
 
 import org.cloudbus.cloudsim.core.CloudSim;
 
-import com.mechalikh.pureedgesim.datacentersmanager.ServersManager;
-import com.mechalikh.pureedgesim.network.NetworkModelAbstract;
+import com.mechalikh.pureedgesim.datacentersmanager.DataCentersManager;
+import com.mechalikh.pureedgesim.network.NetworkModel;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.tasksgenerator.Task;
 import com.mechalikh.pureedgesim.tasksgenerator.TasksGenerator;
@@ -147,10 +147,10 @@ public class SimulationThread {
 	private void loadModels(SimulationManager simulationManager) throws Exception {
 
 		// Generate all data centers, servers, an devices
-		ServersManager serversManager = new ServersManager(simulationManager, simulation.mobilityModel, simulation.energyModel,
+		DataCentersManager dataCentersManager = new DataCentersManager(simulationManager, simulation.mobilityModel, simulation.energyModel,
 				simulation.edgedatacenter);
-		serversManager.generateDatacentersAndDevices();
-		simulationManager.setServersManager(serversManager);
+		dataCentersManager.generateDatacentersAndDevices();
+		simulationManager.setDataCentersManager(dataCentersManager);
 
 		// Generate tasks list
 		Constructor<?> TasksGeneratorConstructor = simulation.tasksGenerator.getConstructor(SimulationManager.class);
@@ -165,7 +165,7 @@ public class SimulationThread {
 
 		// Initialize the network model
 		Constructor<?> networkConstructor = simulation.networkModel.getConstructor(SimulationManager.class);
-		NetworkModelAbstract networkModel = (NetworkModelAbstract) networkConstructor.newInstance(simulationManager);
+		NetworkModel networkModel = (NetworkModel) networkConstructor.newInstance(simulationManager);
 		simulationManager.setNetworkModel(networkModel);
 	}
 

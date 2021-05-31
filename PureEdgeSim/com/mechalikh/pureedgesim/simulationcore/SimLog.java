@@ -133,7 +133,7 @@ public class SimLog {
 		double averageCloudCpuUtilization = 0;
 		double averageMistCpuUtilization = 0;
 		double averageEdgeCpuUtilization = 0;
-		List<? extends DataCenter> datacentersList = simulationManager.getServersManager().getDatacenterList();
+		List<? extends DataCenter> datacentersList = simulationManager.getDataCentersManager().getDatacenterList();
 		for (DataCenter dc : datacentersList) {
 			if (dc.getType() == SimulationParameters.TYPES.CLOUD) {
 				averageCloudCpuUtilization += dc.getResources().getAvgCpuUtilization();
@@ -270,7 +270,7 @@ public class SimLog {
 		List<Double> devicesDeathTime = new ArrayList<>();
 		int batteryPoweredDevicesCount = 0;
 		int aliveBatteryPoweredDevicesCount = 0;
-		List<? extends DataCenter> datacentersList = simulationManager.getServersManager().getDatacenterList();
+		List<? extends DataCenter> datacentersList = simulationManager.getDataCentersManager().getDatacenterList();
 
 		for (DataCenter dc : datacentersList) {
 			if (dc.getType() == SimulationParameters.TYPES.CLOUD) {

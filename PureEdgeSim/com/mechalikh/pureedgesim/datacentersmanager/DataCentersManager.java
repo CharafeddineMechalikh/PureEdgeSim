@@ -49,20 +49,20 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.mechalikh.pureedgesim.locationmanager.Location;
-import com.mechalikh.pureedgesim.locationmanager.Mobility;
+import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 
-public class ServersManager {
+public class DataCentersManager {
 	private List<DataCenter> datacentersList;
 	private List<Vm> vmList;
 	private List<DataCenter> orchestratorsList;
 	private SimulationManager simulationManager;
-	private Class<? extends Mobility> mobilityManager;
+	private Class<? extends MobilityModel> mobilityManager;
 	private Class<? extends EnergyModel> energyModel;
 	private Class<? extends DataCenter> edgeDataCenterType;
 
-	public ServersManager(SimulationManager simulationManager, Class<? extends Mobility> mobilityManager,
+	public DataCentersManager(SimulationManager simulationManager, Class<? extends MobilityModel> mobilityManager,
 			Class<? extends EnergyModel> energyModel, Class<? extends DataCenter> edgedatacenter) {
 		datacentersList = new ArrayList<>();
 		orchestratorsList = new ArrayList<>();

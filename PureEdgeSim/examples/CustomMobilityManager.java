@@ -21,7 +21,7 @@
 package examples;
 
 import com.mechalikh.pureedgesim.locationmanager.Location;
-import com.mechalikh.pureedgesim.locationmanager.Mobility;
+import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 
 /* A simple custom mobility model that increase the X and Y coordinates by 1 (meter) every time.
@@ -30,7 +30,7 @@ import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
  * you can create amore realistic model, or use the "MobilityManager" model provided by pureEdgeSim.  
  */
 
-public class CustomMobilityManager extends Mobility {
+public class CustomMobilityManager extends MobilityModel {
 
 	public CustomMobilityManager(Location currentLocation, boolean mobile, double speed, double minPauseDuration,
 			double maxPauseDuration, double minMobilityDuration, double maxMobilityDuration) {
