@@ -32,9 +32,10 @@ import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.BitmapEncoder.BitmapFormat;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
-import com.mechalikh.pureedgesim.MainApplication;
+
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationcore.Simulation;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 
 public class SimulationVisualizer {
 	private JFrame simulationResultsFrame;
@@ -88,7 +89,7 @@ public class SimulationVisualizer {
 	}
 
 	public void saveCharts() throws IOException {
-		String folderName = MainApplication.getOutputFolder() + "/"
+		String folderName = Simulation.getOutputFolder() + "/"
 				+ simulationManager.getSimulationLogger().getSimStartTime() + "/simulation_"
 				+ simulationManager.getSimulationId() + "/iteration_" + simulationManager.getIterationId() + "__"
 				+ simulationManager.getScenario().toString();

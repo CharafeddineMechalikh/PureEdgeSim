@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.simulationmanager;
+package com.mechalikh.pureedgesim.simulationcore;
 
 import java.util.List;
 
@@ -99,6 +99,10 @@ public class SimulationManagerAbstract extends CloudSimEntity {
 		this.tasksList = tasksList;
 	}
 
+	public List<Task> getTasksList() {
+		return this.tasksList;
+	}
+	
 	public void setOrchestrator(Orchestrator edgeOrchestrator) {
 		this.edgeOrchestrator = edgeOrchestrator;
 

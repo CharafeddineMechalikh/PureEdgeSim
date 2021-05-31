@@ -27,7 +27,7 @@ import java.util.List;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 
 public class TasksChart extends Chart {
 

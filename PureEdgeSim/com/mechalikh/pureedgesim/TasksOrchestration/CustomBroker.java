@@ -25,8 +25,8 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManagerAbstract;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManagerAbstract;
 
 public class CustomBroker extends DatacenterBrokerSimple {
 

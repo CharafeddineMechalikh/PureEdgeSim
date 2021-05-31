@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.simulationmanager;
+package com.mechalikh.pureedgesim.simulationcore;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Locale;
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.MainApplication;
 import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
 import com.mechalikh.pureedgesim.network.FileTransferProgress;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
@@ -412,7 +411,7 @@ public class SimLog {
 	}
 
 	public String getFileName(String extension) {
-		String outputFilesName = MainApplication.getOutputFolder() + "/" + simStartTime;
+		String outputFilesName = Simulation.getOutputFolder() + "/" + simStartTime;
 		new File(outputFilesName).mkdirs();
 		if (SimulationParameters.PARALLEL)
 			outputFilesName += "/Parallel_simulation_" + simulationManager.getSimulationId();

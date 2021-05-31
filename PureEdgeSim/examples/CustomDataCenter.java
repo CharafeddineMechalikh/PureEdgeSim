@@ -27,7 +27,7 @@ import org.cloudbus.cloudsim.vms.Vm;
 
 import com.mechalikh.pureedgesim.datacentersmanager.DefaultDataCenter;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 
 /*
  * To create your own custom edge device/data center class, you need to extend the DataCenter class first.

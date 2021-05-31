@@ -29,7 +29,7 @@ import org.knowm.xchart.style.markers.SeriesMarkers;
 
 import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 
 public class MapChart extends Chart {
 

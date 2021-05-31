@@ -20,9 +20,10 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.MainApplication;
+import com.mechalikh.pureedgesim.simulationcore.Simulation;
+import com.mechalikh.pureedgesim.simulationcore.SimulationAbstract.Files;
 
-public class Example6 extends MainApplication {
+public class Example6 {
 	/**
 	 * This example shows how to use other simulation parameters files. The files
 	 * used in this example are located in the examples/Example7_settings/ folder.
@@ -46,19 +47,19 @@ public class Example6 extends MainApplication {
 	private static String edgeDevicesFile = settingsPath + "edge_devices.xml";
 	private static String cloudFile = settingsPath + "cloud.xml";
 
-	public Example6(int fromIteration, int step_) {
-		super(fromIteration, step_);
-	}
 
 	public static void main(String[] args) {
 
+		// Create a PureEdgeSim simulation
+		Simulation sim = new Simulation();
+
 		// changing the default output folder
-		setCustomOutputFolder(outputPath);
+		sim.setCustomOutputFolder(outputPath);
 
 		/** if we want to change the path of all configuration files at once : */
 
 		// changing the simulation settings folder
-		setCustomSettingsFolder(settingsPath);
+		sim.setCustomSettingsFolder(settingsPath);
 
 		/**
 		 * if we want to change the path of only one file, while keeping the default one
@@ -66,22 +67,23 @@ public class Example6 extends MainApplication {
 		 */
 
 		// To change the simulation_parameters.properties path only
-		setCustomFilePath(simConfigfile, Files.SIMULATION_PARAMETERS);
+		sim.setCustomFilePath(simConfigfile, Files.SIMULATION_PARAMETERS);
 		// To change the applications.xml path only
-		setCustomFilePath(applicationsFile, Files.APPLICATIONS_FILE);
+		sim.setCustomFilePath(applicationsFile, Files.APPLICATIONS_FILE);
 		// To change the edge_datacenters.xml path only
-		setCustomFilePath(edgeDataCentersFile, Files.EDGE_DATACENTERS_FILE);
+		sim.setCustomFilePath(edgeDataCentersFile, Files.EDGE_DATACENTERS_FILE);
 		// To change the edge_devices.xml path only
-		setCustomFilePath(edgeDevicesFile, Files.EDGE_DEVICES_FILE);
+		sim.setCustomFilePath(edgeDevicesFile, Files.EDGE_DEVICES_FILE);
 		// To change the cloud.xml path only
-		setCustomFilePath(cloudFile, Files.CLOUD_FILE);
+		sim.setCustomFilePath(cloudFile, Files.CLOUD_FILE);
 
 		/**
-		 * In addition to showcasing how to set custom file paths, the energy consumption rate has been
-		 * increased to show the death of devices on runtime
+		 * In addition to showcasing how to set custom file paths, the energy
+		 * consumption rate has been increased to show the death of devices on runtime
 		 **/
+
 		// Start the simulation
-		launchSimulation();
+		sim.launchSimulation();
 	}
 
 }

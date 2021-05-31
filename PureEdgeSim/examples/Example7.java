@@ -20,9 +20,9 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.MainApplication;
+import com.mechalikh.pureedgesim.simulationcore.Simulation;
 
-public class Example7 extends MainApplication {
+public class Example7 {
 
 	/** you must read this to understand **/
 
@@ -68,11 +68,11 @@ public class Example7 extends MainApplication {
 	// The custom output folder is
 	private static String outputPath = "PureEdgeSim/examples/Example7_output/";
 
-	public Example7(int fromIteration, int step_) {
-		super(fromIteration, step_);
-	}
-
 	public static void main(String[] args) {
+
+		// Create a PureEdgeSim simulation
+		Simulation sim = new Simulation();
+		
 		/**
 		 * Before implementing the cooperative caching algorithm (which will require a
 		 * custom network model) we need to implement a clustering algorithm in order to
@@ -81,7 +81,7 @@ public class Example7 extends MainApplication {
 		 * this case.To use it we need to execute the following line.
 		 **/
 
-		setCustomEdgeDataCenters(CachingEdgeDevice.class);
+		sim.setCustomEdgeDataCenters(CachingEdgeDevice.class);
 
 		/**
 		 * After adding the clustering algorithm we can now implement the cooperative
@@ -92,7 +92,7 @@ public class Example7 extends MainApplication {
 		 * realistic enough, so need to change it with another one.
 		 **/
 
-		setCustomNetworkModel(CustomNetworkModel.class);
+		sim.setCustomNetworkModel(CustomNetworkModel.class);
 
 		/**
 		 * To use the PureEdgeSim default network model you can also uncomment this:
@@ -100,15 +100,15 @@ public class Example7 extends MainApplication {
 		// setCustomNetworkModel(DefaultNetworkModel.class);
 
 		// changing the default output folder
-		setCustomOutputFolder(outputPath);
+		sim.setCustomOutputFolder(outputPath);
 
 		/** if we want to change the path of all configuration files at once : */
 
 		// changing the simulation settings folder
-		setCustomSettingsFolder(settingsPath);
+		sim.setCustomSettingsFolder(settingsPath);
 
 		// Start the simulation
-		launchSimulation();
+		sim.launchSimulation();
 	}
 
 }

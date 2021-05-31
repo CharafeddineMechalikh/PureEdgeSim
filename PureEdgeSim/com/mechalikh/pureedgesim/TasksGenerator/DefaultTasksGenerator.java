@@ -28,7 +28,7 @@ import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
 
 import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 
 public class DefaultTasksGenerator extends TasksGenerator {
 

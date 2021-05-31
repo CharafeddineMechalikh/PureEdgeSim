@@ -18,7 +18,7 @@
  *     
  *     @author Mechalikh
  **/
-package com.mechalikh.pureedgesim.simulationmanager;
+package com.mechalikh.pureedgesim.simulationcore;
 
 import java.io.IOException;
 import java.util.List;

@@ -30,7 +30,7 @@ import org.cloudbus.cloudsim.vms.Vm;
 import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
 import com.mechalikh.pureedgesim.datacentersmanager.DefaultDataCenter;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
 public class ClusterEdgeDevice extends DefaultDataCenter {

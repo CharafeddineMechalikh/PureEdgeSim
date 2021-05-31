@@ -19,11 +19,10 @@
  *     @author Mechalikh
  **/
 package examples;
+import com.mechalikh.pureedgesim.simulationcore.Simulation;
+import com.mechalikh.pureedgesim.tasksgenerator.DefaultTasksGenerator;
 
-import com.mechalikh.pureedgesim.MainApplication;
-import com.mechalikh.pureedgesim.tasksgenerator.DefaultTasksGenerator; 
-
-public class Example1 extends MainApplication {
+public class Example1 {
 	/**
 	 * This is a simple example showing how to launch simulation using custom
 	 * mobility model, energy model, custom edge orchestrator, custom tasks
@@ -32,30 +31,33 @@ public class Example1 extends MainApplication {
 	 * the Main class provided by PureEdgeSim, which is required for this example to
 	 * work.
 	 */
-	public Example1(int fromIteration, int step_) {
-		super(fromIteration, step_);
-	} 
+	public Example1() {	
+		//Create a PureEdgeSim simulation
+		Simulation sim = new Simulation();
 
-	public static void main(String[] args) {
 		// To change the mobility model
-		setCustomMobilityModel(CustomMobilityManager.class);
+		sim.setCustomMobilityModel(CustomMobilityManager.class);
 
 		// To change the tasks orchestrator
-		setCustomEdgeOrchestrator(CustomEdgeOrchestrator.class);
+		sim.setCustomEdgeOrchestrator(CustomEdgeOrchestrator.class);
 
 		// To change the tasks generator
-		setCustomTasksGenerator(DefaultTasksGenerator.class);
+		sim.setCustomTasksGenerator(DefaultTasksGenerator.class);
 
 		// To use a custom edge device/datacenters class
-		setCustomEdgeDataCenters(CustomDataCenter.class);
+		sim.setCustomEdgeDataCenters(CustomDataCenter.class);
 
 		// To use a custom energy model
-		setCustomEnergyModel(CustomEnergyModel.class);
+		sim.setCustomEnergyModel(CustomEnergyModel.class);
 
 		/* to use the default one you can simply delete or comment those lines */
 
 		// Finally,you can launch the simulation
-		launchSimulation();
+		sim.launchSimulation();
+	}
+
+	public static void main(String[] args) {
+		new Example1();
 	}
 
 }

@@ -26,7 +26,7 @@ import java.util.List;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
 
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
 public class CachingEdgeDevice extends ClusterEdgeDevice {

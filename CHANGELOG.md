@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 4.2 (May 31st 2021)
+
+*   Upgraded to CloudSim Plus 6.2.7
+*   Updated dependencies 
+*   Improved code quality 
+
 ## Version 4.1 (April 10th 2021)
 
 *   Upgraded to CloudSim Plus 6.1.4

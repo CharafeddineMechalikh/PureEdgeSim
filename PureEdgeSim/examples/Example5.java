@@ -20,26 +20,25 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.MainApplication;
+import com.mechalikh.pureedgesim.simulationcore.Simulation;
 
-public class Example5 extends MainApplication {
+public class Example5 {
 	/**
 	 * This is a simple example showing how to launch simulation using a custom task
 	 * orchesrator. The CustomEdgeOrchestrator.java is located under the examples/
 	 * folder. As you can see, this class extends the Main class provided by
 	 * PureEdgeSim, which is required for this example to work.
 	 */
-	public Example5(int fromIteration, int step_) {
-		super(fromIteration, step_);
-	}
-
 	public static void main(String[] args) {
+
+		// Create a PureEdgeSim simulation
+		Simulation sim = new Simulation();
 		/*
 		 * To use your custom Edge orchestrator class, do this: The custom orchestrator
 		 * class can be found in the examples folder. by removing this line, pureEdgeSim
 		 * will use the default orchestrator class.
 		 */
-		setCustomEdgeOrchestrator(CustomEdgeOrchestrator.class);
+		sim.setCustomEdgeOrchestrator(CustomEdgeOrchestrator.class);
 
 		/*
 		 * This custom class uses another orchestrator algorithm called
@@ -56,7 +55,7 @@ public class Example5 extends MainApplication {
 		// setCustomEdgeOrchestrator(DefaultEdgeOrchestrator.class);
 
 		// Start the simulation
-		launchSimulation();
+		sim.launchSimulation();
 	}
 
 }

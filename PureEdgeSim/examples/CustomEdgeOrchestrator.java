@@ -24,8 +24,8 @@ import org.cloudbus.cloudsim.cloudlets.Cloudlet.Status;
 
 import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationmanager.SimLog;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationcore.SimLog;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 import com.mechalikh.pureedgesim.tasksgenerator.Task;
 import com.mechalikh.pureedgesim.tasksorchestration.Orchestrator;
 
@@ -40,7 +40,7 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 			return increseLifetime(architecture, task);
 		} else {
 			SimLog.println("");
-			SimLog.println("Custom Orchestrator- Unknown orchestration algorithm '" + algorithm
+			SimLog.println("CustomEdgeOrchestrator- Unknown orchestration algorithm '" + algorithm
 					+ "', please check the 'settings/simulation_parameters.properties' file you are using");
 			// Cancel the simulation
 			SimulationParameters.STOP = true;
@@ -89,12 +89,12 @@ public class CustomEdgeOrchestrator extends Orchestrator {
 		double weight = 1;// if it is not battery powered
 		if (dataCenter.getEnergyModel().isBatteryPowered()) {
 			if (task.getEdgeDevice().getEnergyModel().getBatteryLevel() > dataCenter.getEnergyModel().getBatteryLevel())
-				weight = 20; // the destination device has lower remaining power than the task offloading
-								// device, in this case it is better not to offload
-								// that's why the weight is high (20)
+				weight = 20;// the destination device has lower remaining power than the task offloading
+							// device, in this case it is better not to offload
+							// that's why the weight is high (20)
 			else
-				weight = 15; // in this case the destination has higher remaining power, so it is okey to
-								// offload tasks for it, if the cloud and the edge data centers are absent.
+				weight = 15;// in this case the destination has higher remaining power, so it is okey to
+							// offload tasks for it, if the cloud and the edge data centers are absent.
 		}
 		return weight;
 	}

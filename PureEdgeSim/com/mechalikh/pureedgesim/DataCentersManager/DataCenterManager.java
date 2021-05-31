@@ -53,7 +53,7 @@ import com.mechalikh.pureedgesim.locationmanager.Mobility;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 
-public class ServersManager {
+public class DataCenterManager {
 	private List<DataCenter> datacentersList;
 	private List<Vm> vmList;
 	private List<DataCenter> orchestratorsList;
@@ -62,7 +62,7 @@ public class ServersManager {
 	private Class<? extends EnergyModel> energyModel;
 	private Class<? extends DataCenter> edgeDataCenterType;
 
-	public ServersManager(SimulationManager simulationManager, Class<? extends Mobility> mobilityManager,
+	public DataCenterManager(SimulationManager simulationManager, Class<? extends Mobility> mobilityManager,
 			Class<? extends EnergyModel> energyModel, Class<? extends DataCenter> edgedatacenter) {
 		datacentersList = new ArrayList<>();
 		orchestratorsList = new ArrayList<>();

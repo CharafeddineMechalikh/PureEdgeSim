@@ -26,7 +26,7 @@ import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.vms.Vm;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 
 public class DefaultDataCenter extends DataCenter {
 	protected static final int UPDATE_STATUS = 2000; // Avoid conflicting with CloudSim Plus Tags

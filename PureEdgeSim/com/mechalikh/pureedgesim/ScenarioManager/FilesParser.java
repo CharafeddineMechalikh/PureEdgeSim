@@ -33,7 +33,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
-import com.mechalikh.pureedgesim.simulationmanager.SimLog;
+import com.mechalikh.pureedgesim.simulationcore.SimLog;
 import com.mechalikh.pureedgesim.tasksgenerator.Application;
 
 public class FilesParser {

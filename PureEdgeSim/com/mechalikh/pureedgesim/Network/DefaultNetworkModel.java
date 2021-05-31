@@ -29,8 +29,8 @@ import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
-public class NetworkModel extends NetworkModelAbstract { 
-	public NetworkModel(SimulationManager simulationManager) {
+public class DefaultNetworkModel extends NetworkModel { 
+	public DefaultNetworkModel(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
 
@@ -83,7 +83,7 @@ public class NetworkModel extends NetworkModelAbstract {
 			transferProgressList.add(new FileTransferProgress(task, task.getOutputSize() * 8,
 					FileTransferProgress.Type.RESULTS_TO_ORCH));
 		else
-			scheduleNow(this, NetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV, task);
+			scheduleNow(this, DefaultNetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV, task);
 	}
 
 	public void addContainer(Task task) {
@@ -236,10 +236,10 @@ public class NetworkModel extends NetworkModelAbstract {
 		// delay
 		if (transfer.getTask().getOrchestrator().getType().equals(TYPES.CLOUD)
 				|| ((DataCenter) transfer.getTask().getVm().getHost().getDatacenter()).getType().equals(TYPES.CLOUD))
-			schedule(this, SimulationParameters.WAN_PROPAGATION_DELAY, NetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV,
+			schedule(this, SimulationParameters.WAN_PROPAGATION_DELAY, DefaultNetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV,
 					transfer.getTask());
 		else
-			scheduleNow(this, NetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV, transfer.getTask());
+			scheduleNow(this, DefaultNetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV, transfer.getTask());
 
 	}
 
@@ -249,7 +249,7 @@ public class NetworkModel extends NetworkModelAbstract {
 			// if the registry is enabled and the task is offloaded to the edge data centers
 			// or the mist nodes (edge devices),
 			// then download the container
-			scheduleNow(this, NetworkModel.DOWNLOAD_CONTAINER, transfer.getTask());
+			scheduleNow(this, DefaultNetworkModel.DOWNLOAD_CONTAINER, transfer.getTask());
 
 		} else {// if the registry is disabled, execute directly the request, as it represents
 				// the offloaded task in this case

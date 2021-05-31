@@ -28,7 +28,7 @@ import org.cloudbus.cloudsim.vms.Vm;
 
 import com.mechalikh.pureedgesim.locationmanager.Mobility;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 
 public abstract class DataCenter extends DatacenterSimple {
 	private SimulationParameters.TYPES deviceType;

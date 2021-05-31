@@ -20,9 +20,9 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.MainApplication;
+import com.mechalikh.pureedgesim.simulationcore.Simulation;
 
-public class Example9 extends MainApplication {
+public class Example9 {
 	/**
 	 * This example we propose a simulation scenario where a Edge data
 	 * centers/servers work cooperatively.
@@ -52,26 +52,23 @@ public class Example9 extends MainApplication {
 	// The custom output folder is
 	private static String outputPath = "PureEdgeSim/examples/Example9_output/";
 
-
-	public Example9(int fromIteration, int step_) {
-		super(fromIteration, step_);
-	}
-
 	public static void main(String[] args) {
+		// Create a PureEdgeSim simulation
+		Simulation sim = new Simulation();
 
 		// changing the default output folder
-		setCustomOutputFolder(outputPath);
+		sim.setCustomOutputFolder(outputPath);
 
 		/** if we want to change the path of all configuration files at once : */
 
 		// changing the simulation settings folder
-		setCustomSettingsFolder(settingsPath);
+		sim.setCustomSettingsFolder(settingsPath);
 
-        // tell PureEdgeSim to use this custom orchestrator and orchestration algorithm
-	    setCustomEdgeOrchestrator(CustomOrchestrator.class);
+		// tell PureEdgeSim to use this custom orchestrator and orchestration algorithm
+		sim.setCustomEdgeOrchestrator(CustomOrchestrator.class);
 
 		// Start the simulation
-		launchSimulation();
+		sim.launchSimulation();
 	}
 
 }

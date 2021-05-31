@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
 
 public abstract class TasksGenerator {
 	protected List<Task> taskList;
