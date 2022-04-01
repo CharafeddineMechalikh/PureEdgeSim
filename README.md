@@ -107,70 +107,55 @@ intervals are, but it will also last longer.
 ## ⚠️ Important
 ---
 *   The development and maintenance of this project requires a considerable effort. Thus, any form of contribution is encouraged. 
-
 *   If you are willing to use the framework to implement your own project on top of it, creating a fork is a bad solution. You are not supposed to modify the code base to implement your project, but extend it by creating some subclasses. Unless you plan to redistribute your changes, you will end up with an incompatible and obsolete version of the framework. The project is constantly evolving and bug fixes are a priority. Your fork with personal changes will miss these updates and high performance improvements.
-
 *   If you just came across this project and want to check it out later, don't forget to add a star :star: :wink:.
-
 
 ---
 ## 🧰 Exclusive Features
 
 PureEdgeSim offers many exclusive features: 
 
-1.   Realistic modeling of edge computing scenarios (and its related computing paradigms).
+1.    Realistic modeling of edge computing scenarios (and its related computing paradigms).
 
 *   It supports devices heterogeneity (sensors, mobile devices, battery-powered..).
-
 *   It supports the heterogeneity of their means of communication (WiFi, 5G, 4G, Ethernet..).
-
 *   Realistic modeling of computing infrastructure (modeling computational tasks, infrastructure topology...).
-
 *   Realistic network model (Latency, bandwidth allocation, support for peer to peer communications, routing..).
-
 *   Realistic mobility model.
-
 *   Realistic energy model.
 
-2.   The support for online decision making (tasks orchestration, scheduling, etc.).
+2.    The support for online decision making (tasks orchestration, scheduling, etc.).
 
-3.   The study of QoS-aware architectures and topologies.
+3.    The study of QoS-aware architectures and topologies.
 
-4.   Efficiency and Scalability.
+4.    Efficiency and Scalability.
 
 *   PureEdgeSim supports the simulation of thousands of devices (even +10000 devices).
-
 *   PureEdgeSim supports scenarios with longer simualtion time (even +24 hours).
 
-5.   A wide collection of metrics
+5.    A wide collection of metrics
 
 *   Delays: execution time, waiting time, network time.
-
 *   CPU utilization.
-
 *   Network utilization: Average bandwidth, total traffic...
-
 *   Energy consumption: The energy consumption of computing nodes (Cloud, edge/fog servers,edge devices), the remaining energy of battery-powered devices, the energy consumption of WAN, MAN, and LAN networks, and the enrgy consumption of WiFi, Cellular (5G, 4G,..) and Ethernet.
-
 *   Task success rate and reason of failure (the rate of tasks failed due to the lack of resources, due to mobility, due to latency, or due to the death of edge devices when they run out of battery).
-
 *   and many others.
 
-6.   The vizualisation of the simulation environement (which helps to debug and understand the course of the simualtion, refer to the figure below).
+6.    The vizualisation of the simulation environement (which helps to debug and understand the course of the simualtion, refer to the figure below).
 
-7.   Extensibility: Users can implement their scenarios and integrate their models without modeifying PureEdgeSim codebase.
+7.    Extensibility: Users can implement their scenarios and integrate their models without modeifying PureEdgeSim codebase.
 
-8.   Wide Applicability
+8.    Wide Applicability
 
 *   Mist computing scenarios, mobile ad hoc edge computing, fog computing,...
-
 *   Worklaod orchestration, scheduling, caching...
 
-9.   Ease of use.
+9.    Ease of use.
 
-10.   Reliability.
+10.    Reliability.
 
-11.   Correctness.
+11.    Correctness.
 
 ![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/PureEdgeSim/files/real%20time.gif)
 The live vizualisation of the simulated environement
@@ -179,11 +164,9 @@ The live vizualisation of the simulated environement
 A system is said to be efficient when it can maintain a specified level of proficiency without utilizing an excessive amount of resources, i.e., execution time and memory (Kleuker, 2011). Determining the theoretical time complexity of the given simulation is not trivial because the execution time depends entirely on the user scenario (i.e., the devices and tasks count, the mobility model, the types of resources, etc.) and the number of events that occur during the simulation. Furthermore, some parameters strongly influence the number of simulations and, obviously, the number of runs also directly influences the execution time.
 To demonstrate the scalability of PureEdgeSim, a few experiments were conducted on a single Intel Core i7-8550U.
 
-1.   A 10-minute simulation scenario with 10000 devices (ten thousand, which generated 1015000 tasks) took 72 seconds. 
-
-2.   A 24-hour simulation scenario with 200 devices (total of 2110706 tasks generated) took 91 seconds. 
-
-3.   A 60-minute scenario with 100 devices took only 3 seconds, meaning that the simulator was able to run through as much as 1200 seconds of simulated time in just one second of real time. 
+1.  A 10-minute simulation scenario with 10000 devices (ten thousand, which generated 1015000 tasks) took 72 seconds. 
+2.  A 24-hour simulation scenario with 200 devices (total of 2110706 tasks generated) took 91 seconds. 
+3.  A 60-minute scenario with 100 devices took only 3 seconds, meaning that the simulator was able to run through as much as 1200 seconds of simulated time in just one second of real time. 
 
 Of course, this time is highly dependent on the complexity of the decision making algorithm itself and the number of generated events  (as more devices = more tasks = more events), which is why it took longer with 10,000 devices. That said, it is still faster than real-time and outperforms all CloudSim/ CloudSim plus based simulators that either struggle to start due to the large number of devices or run out of memory due to the large number of events generated.
 
@@ -212,22 +195,16 @@ There are several ways to use PureEdgeSim; however, it is strongly advisable to 
 
 The simplest and recommended method to run this project is to use an IDE like Eclipse, IntelliJ IDEA, or NetBeans. The required steps to get started with the project are listed below:
 
-1.   Downloading and extracting the project source code archive from the project repository : This can be done using the web browser or the command line “git clone https://github.com/CharafeddineMechalikh/PureEdgeSim.git”
-
-2.   Importing the project to the IDE:
+1.    Downloading and extracting the project source code archive from the project repository : This can be done using the web browser or the command line “git clone https://github.com/CharafeddineMechalikh/PureEdgeSim.git”
+2.    Importing the project to the IDE:
 
 *   In NetBeans, simply select the "Open project" option and chose the project directory.
-
 *   In Eclipse or IntelliJ IDEA, the project must be imported by selecting the location where it was extracted or cloned .
 
-3.   The imported project consists of ten packages: the main application package, the above-mentioned modules, and the examples package. The main application and the modules are the simulator source code that normally should not be modified. The examples, however, are where the users can start.
-
-4.   It is necessary to convert the project into a Maven project in order to download all the required libraries.
-
-5.   Once all the necessary libraries are downloaded, users can start with the most basic examples by running any of the classes located in the “examples” package.
-
-6.   To build a new simulation scenario, the simplest way is to create another class in this package.
-
+3.    The imported project consists of ten packages: the main application package, the above-mentioned modules, and the examples package. The main application and the modules are the simulator source code that normally should not be modified. The examples, however, are where the users can start.
+4.    It is necessary to convert the project into a Maven project in order to download all the required libraries.
+5.    Once all the necessary libraries are downloaded, users can start with the most basic examples by running any of the classes located in the “examples” package.
+6.    To build a new simulation scenario, the simplest way is to create another class in this package.
 
 ![Environment](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/PureEdgeSim/files/importingproject.gif)
 Importing PureEdgeSim project
@@ -253,37 +230,25 @@ dependencies {
 ### Via Command Line
 
 Assuming that git  and maven  are already installed, PureEdgeSim can be run from the command line as follows:
-1.    First, the project source code must be downloaded by cloning the repository via the command `git clone https://github.com/CharafeddineMechalikh/PureEdgeSim.git`. 
-
-2.    Now that the project is cloned, it can be built using Maven by executing the  `mvn clean install ` command in the directory where it was cloned.
-
-3.    Now, the examples can be executed on Windows, Linux, or Mac operating systems, using the command  `mvn exec:java -Dexec.mainClass="package.Class_Name" `. For instance, to execute “Example1”, the command is  `mvn exec:java -Dexec.mainClass="examples.Example1" `
+1.     First, the project source code must be downloaded by cloning the repository via the command `git clone https://github.com/CharafeddineMechalikh/PureEdgeSim.git`. 
+2.     Now that the project is cloned, it can be built using Maven by executing the  `mvn clean install ` command in the directory where it was cloned.
+3.     Now, the examples can be executed on Windows, Linux, or Mac operating systems, using the command  `mvn exec:java -Dexec.mainClass="package.Class_Name" `. For instance, to execute “Example1”, the command is  `mvn exec:java -Dexec.mainClass="examples.Example1" `
 
 ## 🧩 Works that are based on PureEdgeSim
 
 Here are some works that are based on PureEdgeSim to give an idea about its wider applicability and the possibilities it offers. Feel free to edit the readme file and add yours!.
 
-1.    Mechalikh, C., Taktak, H., & Moussa, F. (2019, June). A scalable and adaptive tasks orchestration platform for IoT. In 2019 15th International Wireless Communications & Mobile Computing Conference (IWCMC) (pp. 1557-1563). IEEE.
-
-2.    Mechalikh, C., Taktak, H., & Moussa, F. (2019, June). A scalable and adaptive tasks orchestration platform for IoT. In 2019 15th International Wireless Communications & Mobile Computing Conference (IWCMC) (pp. 1557-1563). IEEE.
-
-3.    Mechalikh, C., Taktak, H., & Moussa, F. (2019, July). Towards a scalable and QoS-aware load balancing platform for edge computing environments. In 2019 International Conference on High Performance Computing & Simulation (HPCS) (pp. 684-691). IEEE.
-
-4.    Safavifar, Z., Ghanadbashi, S., & Golpayegani, F. (2021, November). Adaptive Workload Orchestration in Pure Edge Computing: A Reinforcement-Learning Model. In 2021 IEEE 33rd International Conference on Tools with Artificial Intelligence (ICTAI) (pp. 856-860). IEEE.
-
-5.    Wei, J., Cao, S., Pan, S., Han, J., Yan, L., & Zhang, L. (2020, June). SatEdgeSim: A toolkit for modeling and simulation of performance evaluation in satellite edge computing environments. In 2020 12th International Conference on Communication Software and Networks (ICCSN) (pp. 307-313). IEEE.
-
-6.    Khosroabadi, F., Fotouhi-Ghazvini, F., & Fotouhi, H. (2021). SCATTER: service placement in real-time fog-assisted IoT networks. Journal of Sensor and Actuator Networks, 10(2), 26.
-
-7.    Ferrucci, L., Mordacchini, M., Coppola, M., Carlini, E., Kavalionak, H., & Dazzi, P. (2020, June). Latency preserving self-optimizing placement at the edge. In Proceedings of the 1st Workshop on Flexible Resource and Application Management on the Edge (pp. 3-8).
-
-9.    Iftikhar, S., Golec, M., Chowdhury, D., Gill, S. S., & Uhlig, S. (2022). FogDLearner: A Deep Learning-based Cardiac Health Diagnosis Framework using Fog Computing. In Australasian Computer Science Week 2022 (pp. 136-144).
-
-10.    Mordacchini, M., Ferrucci, L., Carlini, E., Kavalionak, H., Coppola, M., & Dazzi, P. (2021, September). Self-organizing Energy-Minimization Placement of QoE-Constrained Services at the Edge. In International Conference on the Economics of Grids, Clouds, Systems, and Services (pp. 133-142). Springer, Cham.
-
-11.    Javaid, H., Saleem, S., Wajid, B., & Khan, U. G. (2021, May). Diagnose a Disease: A Fog Assisted Disease Diagnosis Framework with Bidirectional LSTM. In 2021 International Conference on Digital Futures and Transformative Technologies (ICoDT2) (pp. 1-6). IEEE.
-
-12.    Teramoto, K., Kishimoto, T., & Saito, T. (2020, September). A Microservice-Based Industrial Control System Architecture Using Cloud and MEC. In Edge Computing–EDGE 2020: 4th International Conference, Held as Part of the Services Conference Federation, SCF 2020, Honolulu, HI, USA, September 18-20, 2020, Proceedings (Vol. 12407, p. 18). Springer Nature.
+1.     Mechalikh, C., Taktak, H., & Moussa, F. (2019, June). A scalable and adaptive tasks orchestration platform for IoT. In 2019 15th International Wireless Communications & Mobile Computing Conference (IWCMC) (pp. 1557-1563). IEEE.
+2.     Mechalikh, C., Taktak, H., & Moussa, F. (2019, June). A scalable and adaptive tasks orchestration platform for IoT. In 2019 15th International Wireless Communications & Mobile Computing Conference (IWCMC) (pp. 1557-1563). IEEE.
+3.     Mechalikh, C., Taktak, H., & Moussa, F. (2019, July). Towards a scalable and QoS-aware load balancing platform for edge computing environments. In 2019 International Conference on High Performance Computing & Simulation (HPCS) (pp. 684-691). IEEE.
+4.     Safavifar, Z., Ghanadbashi, S., & Golpayegani, F. (2021, November). Adaptive Workload Orchestration in Pure Edge Computing: A Reinforcement-Learning Model. In 2021 IEEE 33rd International Conference on Tools with Artificial Intelligence (ICTAI) (pp. 856-860). IEEE.
+5.     Wei, J., Cao, S., Pan, S., Han, J., Yan, L., & Zhang, L. (2020, June). SatEdgeSim: A toolkit for modeling and simulation of performance evaluation in satellite edge computing environments. In 2020 12th International Conference on Communication Software and Networks (ICCSN) (pp. 307-313). IEEE.
+6.     Khosroabadi, F., Fotouhi-Ghazvini, F., & Fotouhi, H. (2021). SCATTER: service placement in real-time fog-assisted IoT networks. Journal of Sensor and Actuator Networks, 10(2), 26.
+7.     Ferrucci, L., Mordacchini, M., Coppola, M., Carlini, E., Kavalionak, H., & Dazzi, P. (2020, June). Latency preserving self-optimizing placement at the edge. In Proceedings of the 1st Workshop on Flexible Resource and Application Management on the Edge (pp. 3-8).
+9.     Iftikhar, S., Golec, M., Chowdhury, D., Gill, S. S., & Uhlig, S. (2022). FogDLearner: A Deep Learning-based Cardiac Health Diagnosis Framework using Fog Computing. In Australasian Computer Science Week 2022 (pp. 136-144).
+10.     Mordacchini, M., Ferrucci, L., Carlini, E., Kavalionak, H., Coppola, M., & Dazzi, P. (2021, September). Self-organizing Energy-Minimization Placement of QoE-Constrained Services at the Edge. In International Conference on the Economics of Grids, Clouds, Systems, and Services (pp. 133-142). Springer, Cham.
+11.     Javaid, H., Saleem, S., Wajid, B., & Khan, U. G. (2021, May). Diagnose a Disease: A Fog Assisted Disease Diagnosis Framework with Bidirectional LSTM. In 2021 International Conference on Digital Futures and Transformative Technologies (ICoDT2) (pp. 1-6). IEEE.
+12.     Teramoto, K., Kishimoto, T., & Saito, T. (2020, September). A Microservice-Based Industrial Control System Architecture Using Cloud and MEC. In Edge Computing–EDGE 2020: 4th International Conference, Held as Part of the Services Conference Federation, SCF 2020, Honolulu, HI, USA, September 18-20, 2020, Proceedings (Vol. 12407, p. 18). Springer Nature.
 
 ## ⚖️ License
 
