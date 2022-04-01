@@ -96,7 +96,7 @@ public class PureEdgeSim {
 	 * @see #terminate()
 	 */
 	public void start() {
-		Environment.entitiesList.forEach(e -> e.startInternal());
+		EnvironmentConstants.entitiesList.forEach(e -> e.startInternal());
 
 		while (runClockTickAndProcessFutureEvents(Double.MAX_VALUE) && isRunning) {
 			// All the processing happens inside the method called above
@@ -199,7 +199,7 @@ public class PureEdgeSim {
 	 * @see SimEntity#startInternal()
 	 */
 	public void addEntity(SimEntity simEntity) {
-		Environment.entitiesList.add(simEntity);
+		EnvironmentConstants.entitiesList.add(simEntity);
 	}
 
 	/**

@@ -43,50 +43,25 @@ public class ChartsGenerator {
 	private List<String[]> records = new ArrayList<>(50);
 	private String fileName;
 	private String folder;
-	private List<String[]> energyChartsList = List.of(
-			new String[] { "Energy consumption of computing nodes (Wh)", "Consumed energy (Wh)" },
-			new String[] { "Average energy consumption (Wh/Computing node)", "Consumed energy (Wh)" },
-			new String[] { "Cloud energy consumption (Wh)", "Consumed energy (Wh)" },
-			new String[] { "Average Cloud energy consumption (Wh/Data center)", "Consumed energy (Wh)" },
-			new String[] { "Edge energy consumption (Wh)", "Consumed energy (Wh)" },
-			new String[] { "Average Edge energy consumption (Wh/Data center)", "Consumed energy (Wh)", },
-			new String[] { "Mist energy consumption (Wh)", "Consumed energy (Wh)" },
-			new String[] { "Average Mist energy consumption (Wh/Device)", "Consumed energy (Wh)" },
-			new String[] { "WAN energy consumption (Wh)", "Consumed energy (Wh)" },
-			new String[] { "MAN energy consumption (Wh)", "Consumed energy (Wh)" },
-			new String[] { "LAN energy consumption (Wh)", "Consumed energy (Wh)" },
-			new String[] { "WiFi energy consumption (Wh)", "Consumed energy (Wh)" },
-			new String[] { "LTE energy consumption (Wh)", "Consumed energy (Wh)" },
-			new String[] { "Ethernet energy consumption (Wh)", "Consumed energy (Wh)" },
-            new String[] { "Dead devices count", "Count" },
-			new String[] { "Average remaining power (Wh)", "Remaining energy (Wh)" },
-			new String[] { "Average remaining power (%)", "Remaining energy (%)" },
-			new String[] { "First edge device death time (s)", "Time (s)" });
+	private List<String> energyChartsList = List.of("Energy consumption of computing nodes (Wh)",
+			"Average energy consumption (Wh/Computing node)", "Cloud energy consumption (Wh)",
+			"Average Cloud energy consumption (Wh/Data center)", "Edge energy consumption (Wh)",
+			"Average Edge energy consumption (Wh/Data center)", "Mist energy consumption (Wh)",
+			"Average Mist energy consumption (Wh/Device)", "WAN energy consumption (Wh)", "MAN energy consumption (Wh)",
+			"LAN energy consumption (Wh)", "WiFi energy consumption (Wh)", "LTE energy consumption (Wh)",
+			"Ethernet energy consumption (Wh)");
 
-	private List<String[]> cpuChartsList = List.of(new String[] { "Average CPU usage (%)", "CPU utilization (%)" },
-			new String[] { "Average CPU usage (Cloud) (%)", "CPU utilization (%)" },
-			new String[] { "Average CPU usage (Edge) (%)", "CPU utilization (%)" },
-			new String[] { "Average CPU usage (Mist) (%)", "CPU utilization (%)" });
+	private List<String> cpuChartsList = List.of("Average CPU usage (%)", "Average CPU usage (Cloud) (%)",
+			"Average CPU usage (Edge) (%)", "Average CPU usage (Mist) (%)");
 
-	private List<String[]> tasksChartsList = List.of(new String[] { "Tasks successfully executed", "Number of tasks" },
-			new String[] { "Tasks failed (delay)", "Number of tasks" },
-			new String[] { "Tasks failed (device dead)", "Number of tasks" },
-			new String[] { "Tasks failed (mobility)", "Number of tasks" },
-			new String[] { "Tasks not generated due to the death of devices", "Number of tasks" },
-			new String[] { "Total tasks executed (Cloud)", "Number of tasks" },
-			new String[] { "Tasks successfully executed (Cloud)", "Number of tasks" },
-			new String[] { "Total tasks executed (Edge)", "Number of tasks" },
-			new String[] { "Tasks successfully executed (Edge)", "Number of tasks" },
-			new String[] { "Total tasks executed (Mist)", "Number of tasks" },
-			new String[] { "Tasks successfully executed (Mist)", "Number of tasks" },
-			new String[] { "Average waiting time (s)", "Time (s)" },
-			new String[] { "Average execution delay (s)", "Time (s)" });
+	private List<String> tasksChartsList = List.of("Tasks successfully executed", "Tasks failed (delay)",
+			"Tasks failed (device dead)", "Tasks failed (mobility)", "Tasks not generated due to the death of devices",
+			"Total tasks executed (Cloud)", "Tasks successfully executed (Cloud)", "Total tasks executed (Edge)",
+			"Tasks successfully executed (Edge)", "Total tasks executed (Mist)", "Tasks successfully executed (Mist)");
+	private List<String> delaysChartsList = List.of("Average waiting time (s)", "Average execution delay (s)");
 
-	private List<String[]> networkChartsList = List.of(new String[] { "Network usage (s)", "Time (s)" },
-			new String[] { "Wan usage (s)", "Time (s)" },
-			new String[] { "Average bandwidth per task (Mbps)", "Bandwidth (Mbps)" },
-			new String[] { "Containers wan usage (s)", "Time (s)" },
-			new String[] { "Containers lan usage (s)", "Time (s)" });
+	private List<String> networkChartsList = List.of("Network usage (s)", "Wan usage (s)", "Containers wan usage (s)",
+			"Containers lan usage (s)");
 
 	public ChartsGenerator(String fileName) {
 		this.fileName = fileName;
@@ -200,23 +175,26 @@ public class ChartsGenerator {
 	}
 
 	private void generateEnergyCharts() {
-		for (String[] values : energyChartsList)
-			displayChart(values[0], values[1], "/Energy");
+		for (String value : energyChartsList)
+			displayChart(value, "Consumed energy (Wh)", "/Energy");
 	}
 
 	private void generateCpuCharts() {
-		for (String[] values : cpuChartsList)
-			displayChart(values[0], values[1], "/CPU Utilization");
+		for (String value : cpuChartsList)
+			displayChart(value, "CPU utilization (%)", "/CPU Utilization");
 	}
 
 	private void generateNetworkCharts() {
-		for (String[] values : networkChartsList)
-			displayChart(values[0], values[1], "/Network");
+		for (String value : networkChartsList)
+			displayChart(value, "Utilization (s)", "/Network");
 	}
 
 	private void generateTasksCharts() {
-		for (String[] values : tasksChartsList)
-			displayChart(values[0], values[1], "/Tasks");
+		for (String value : tasksChartsList)
+			displayChart(value, "Number of tasks", "/Tasks");
+
+		for (String value : delaysChartsList)
+			displayChart(value, "Time (s)", "/Tasks");
 	}
 
 }

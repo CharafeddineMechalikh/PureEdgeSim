@@ -8,7 +8,7 @@ public abstract class SimEntity {
 
 	public SimEntity(PureEdgeSim simulator) {
 		setSimulator(simulator);
-		id = Environment.entitiesList.stream().filter(getClass()::isInstance).collect(Collectors.toList()).size();
+		id = EnvironmentConstants.entitiesList.stream().filter(getClass()::isInstance).collect(Collectors.toList()).size();
 		setId(id);
 		simulator.addEntity(this); 
 	}

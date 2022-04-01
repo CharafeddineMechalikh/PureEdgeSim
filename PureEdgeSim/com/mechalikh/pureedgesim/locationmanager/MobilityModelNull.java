@@ -4,10 +4,6 @@ import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 
 public class MobilityModelNull extends MobilityModel {
 
-	public MobilityModelNull() {
-		super();
-	}
-
 	public Location getCurrentLocation() {
 		return new Location(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 	}

@@ -66,6 +66,7 @@ public class DefaultComputingNode extends LocationAwareNode {
 			break;
 		default:
 			super.processEvent(e);
+			break;
 		}
 	}
 
