@@ -16,11 +16,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.locationmanager;
 
-import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+
+/**
+ * The main class of the Mobility Manager module, that generates the mobility
+ * path for different edge devices.
+ *
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 1.0
+ */
 
 public abstract class MobilityModel {
 
@@ -31,19 +45,32 @@ public abstract class MobilityModel {
 	protected double maxMobilityDuration;
 	protected double minMobilityDuration;
 	protected double speed;
+	protected SimulationManager simulationManager;
+	protected ComputingNode closestEdgeDataCenter;
+	Map<Integer, Location> path = new HashMap<Integer, Location>();
+	Map<Integer, ComputingNode> datacentersMap = new HashMap<Integer, ComputingNode>();
 
-	public MobilityModel(Location location, boolean mobile, double speed, double minPauseDuration, double maxPauseDuration,
-			double minMobilityDuration, double maxMobilityDuration) {
-		this.currentLocation = location;
-		setMobile(mobile);
-		setMinPauseDuration(minPauseDuration);
-		setMaxPauseDuration(maxPauseDuration);
-		setMinMobilityDuration(minMobilityDuration);
-		setMaxMobilityDuration(maxMobilityDuration);
-		setSpeed(speed);
+	/**
+	 * An attribute that implements the Null Object Design Pattern to avoid
+	 * NullPointerException when using the NULL object instead of attributing null
+	 * to EnergyModelNetworkLink variables.
+	 */
+	public static MobilityModel NULL = new MobilityModelNull();
+
+	public MobilityModel(SimulationManager simulationManager, Location location) {
+		currentLocation = location;
+		setSimulationManager(simulationManager); 
 	}
 
-	public abstract Location getNextLocation();
+	public MobilityModel() {
+	}
+
+	protected abstract Location getNextLocation(Location location);
+
+	public Location updateLocation(double time) {
+		return time <= SimulationParameters.SIMULATION_TIME ? (currentLocation = path.get((int) time * 1000))
+				: currentLocation;
+	}
 
 	public Location getCurrentLocation() {
 		return currentLocation;
@@ -53,56 +80,107 @@ public abstract class MobilityModel {
 		return isMobile;
 	}
 
-	public void setMobile(boolean mobile) {
+	public MobilityModel setMobile(boolean mobile) {
 		isMobile = mobile;
+		return this;
 	}
 
 	public double getMinPauseDuration() {
 		return minPauseDuration;
 	}
 
-	public void setMinPauseDuration(double minPauseDuration) {
+	public MobilityModel setMinPauseDuration(double minPauseDuration) {
 		this.minPauseDuration = minPauseDuration;
+		return this;
 	}
 
 	public double getMaxPauseDuration() {
 		return maxPauseDuration;
 	}
 
-	public void setMaxPauseDuration(double maxPauseDuration) {
+	public MobilityModel setMaxPauseDuration(double maxPauseDuration) {
 		this.maxPauseDuration = maxPauseDuration;
+		return this;
 	}
 
 	public double getMinMobilityDuration() {
 		return minMobilityDuration;
 	}
 
-	public void setMinMobilityDuration(double minMobilityDuration) {
+	public MobilityModel setMinMobilityDuration(double minMobilityDuration) {
 		this.minMobilityDuration = minMobilityDuration;
+		return this;
 	}
 
 	public double getMaxMobilityDuration() {
 		return maxMobilityDuration;
 	}
 
-	public void setMaxMobilityDuration(double maxMobilityDuration) {
+	public MobilityModel setMaxMobilityDuration(double maxMobilityDuration) {
 		this.maxMobilityDuration = maxMobilityDuration;
+		return this;
 	}
 
 	public double getSpeed() {
 		return speed;
 	}
 
-	public void setSpeed(double speed) {
+	public MobilityModel setSpeed(double speed) {
 		this.speed = speed;
+		return this;
 	}
 
-	public double distanceTo(DataCenter device2) {
+	public double distanceTo(ComputingNode device2) {
 		return Math.abs(Math.sqrt(Math
-				.pow((getCurrentLocation().getXPos() - device2.getMobilityManager().getCurrentLocation().getXPos()), 2)
-				+ Math.pow(
-						(getCurrentLocation().getYPos() - device2.getMobilityManager().getCurrentLocation().getYPos()),
+				.pow((getCurrentLocation().getXPos() - device2.getMobilityModel().getCurrentLocation().getXPos()), 2)
+				+ Math.pow((getCurrentLocation().getYPos() - device2.getMobilityModel().getCurrentLocation().getYPos()),
 						2)));
+	}
+
+	public SimulationManager getSimulationManager() {
+		return simulationManager;
+	}
+
+	public void setSimulationManager(SimulationManager simulationManager) {
+		this.simulationManager = simulationManager;
+	}
+
+	public void generatePath() {
+
+		closestEdgeDataCenter = getDataCenter(currentLocation);
+		
+		if (!isMobile())
+			return;
+		Location newLocation = currentLocation;
+
+		// Working around the double imprecision
+		int interval = (int) (SimulationParameters.UPDATE_INTERVAL * 1000);
+		int simulationTime = (int) (SimulationParameters.SIMULATION_TIME * 1000);
+
+		for (int i = 0; i <= simulationTime; i = i + interval) {
+			path.put(i, newLocation);
+			newLocation = getNextLocation(newLocation);
+			datacentersMap.put(i, getDataCenter(newLocation));
+		}
+
+	}
+
+	private ComputingNode getDataCenter(Location newLocation) {
+		List<? extends ComputingNode> list = getSimulationManager().getDataCentersManager().getEdgeDatacenterList();
+		double range = SimulationParameters.EDGE_DATACENTERS_RANGE;
+		ComputingNode closestDC = null;
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).isPeripheral() && distanceTo(list.get(i)) <= range) {
+				range = distanceTo(list.get(i));
+				closestDC = list.get(i);
+			}
+		} 
+		return closestDC;
+	}
+
+	public ComputingNode getClosestEdgeDataCenter() {
+		return isMobile ? datacentersMap.get((int) (getSimulationManager().getSimulation().clock() * 1000))
+				: closestEdgeDataCenter;
 	}
 
 }

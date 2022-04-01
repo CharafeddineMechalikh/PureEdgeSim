@@ -20,7 +20,7 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.simulationcore.Simulation;
+import com.mechalikh.pureedgesim.simulationmanager.Simulation;
 
 public class Example5 {
 	/**
@@ -29,7 +29,7 @@ public class Example5 {
 	 * folder. As you can see, this class extends the Main class provided by
 	 * PureEdgeSim, which is required for this example to work.
 	 */
-	public static void main(String[] args) {
+	public Example5() {
 
 		// Create a PureEdgeSim simulation
 		Simulation sim = new Simulation();
@@ -38,7 +38,7 @@ public class Example5 {
 		 * class can be found in the examples folder. by removing this line, pureEdgeSim
 		 * will use the default orchestrator class.
 		 */
-		sim.setCustomEdgeOrchestrator(CustomEdgeOrchestrator.class);
+		sim.setCustomEdgeOrchestrator(Example8FuzzyLogicOrchestrator.class);
 
 		/*
 		 * This custom class uses another orchestrator algorithm called
@@ -56,6 +56,10 @@ public class Example5 {
 
 		// Start the simulation
 		sim.launchSimulation();
+	}
+
+	public static void main(String[] args) {
+		new Example5();
 	}
 
 }

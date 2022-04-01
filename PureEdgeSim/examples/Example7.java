@@ -20,11 +20,11 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.simulationcore.Simulation;
+import com.mechalikh.pureedgesim.simulationmanager.Simulation;
 
 public class Example7 {
 
-	/** you must read this to understand **/
+	/** You must read this to understand **/
 
 	/**
 	 * This is a simple example showing how to launch simulation using a custom
@@ -52,7 +52,7 @@ public class Example7 {
 	 * downloaded from the cloud everytime and registry_mode=CACHE in which the
 	 * frequently needed containers are cached in edge devices. Same for
 	 * deploy_orchestrator=CLUSTER and deploy_orchestrator=CLOUD. where the
-	 * orchestrators are deployed on the cluster heads or on the cloud
+	 * orchestrators are deployed on the cluster heads or on the cloud.
 	 * 
 	 * Try to use the MIST_ONLY architecture, in order to see clearly the difference
 	 * in WAN usage (no tasks offloading to the cloud, so the wan will only be used
@@ -68,11 +68,10 @@ public class Example7 {
 	// The custom output folder is
 	private static String outputPath = "PureEdgeSim/examples/Example7_output/";
 
-	public static void main(String[] args) {
-
+	public Example7() {
 		// Create a PureEdgeSim simulation
 		Simulation sim = new Simulation();
-		
+
 		/**
 		 * Before implementing the cooperative caching algorithm (which will require a
 		 * custom network model) we need to implement a clustering algorithm in order to
@@ -81,7 +80,7 @@ public class Example7 {
 		 * this case.To use it we need to execute the following line.
 		 **/
 
-		sim.setCustomEdgeDataCenters(CachingEdgeDevice.class);
+		sim.setCustomEdgeDataCenters(Example7CachingDevice.class);
 
 		/**
 		 * After adding the clustering algorithm we can now implement the cooperative
@@ -92,7 +91,7 @@ public class Example7 {
 		 * realistic enough, so need to change it with another one.
 		 **/
 
-		sim.setCustomNetworkModel(CustomNetworkModel.class);
+		sim.setCustomNetworkModel(Example7CustomNetworkModel.class);
 
 		/**
 		 * To use the PureEdgeSim default network model you can also uncomment this:
@@ -109,6 +108,11 @@ public class Example7 {
 
 		// Start the simulation
 		sim.launchSimulation();
+	}
+
+	public static void main(String[] args) {
+		new Example7();
+
 	}
 
 }

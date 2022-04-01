@@ -20,32 +20,57 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.simulationcore.Simulation;
+import com.mechalikh.pureedgesim.simulationmanager.Simulation;
 
 public class Example3 {
 	/**
-	 * This is a simple example showing how to launch simulation using a custom
-	 * energy model. by removing it, pureEdgeSim will use the default model. As you
-	 * can see, this class extends the Main class provided by PureEdgeSim, which is
-	 * required for this example to work
+	 * This example we propose a simulation scenario where a Edge data
+	 * centers/servers work cooperatively.
+	 * 
+	 * To do this, first, we defined the Edge data centers characteristics in the
+	 * edge_datacenters.xml file (in PureEdgeSim\examples\Example9_settings\)
+	 * 
+	 * Then, in the simulation_parameters.properties file, we used the
+	 * Edge_and_Cloud architecture, which means the tasks will be offloaded to the
+	 * Edge data centers or to the Cloud. Edge data centers are linked, the topology
+	 * is given in edge_datacenters.xml file.
+	 * 
+	 * We also enabled the deployment of orchestrators on physical devices by
+	 * setting: enable_orchestrators=true
+	 * 
+	 * An orchestrator will be deployed on each Edge dat cetner:
+	 * deploy_orchestrator=EDGE
+	 * 
+	 * By doing so, the tasks will be sent to the nearest orchestrator (which is the
+	 * nearest edge data center). This orchestrator will decide whether to offlaod the
+	 * tasks to the cloud , to another edge data center, or to execute them locally,
+	 * depending on the orchestration algorithm
+	 * 
 	 */
-	public static void main(String[] args) {
-		
-		//Create a PureEdgeSim simulation
-		Simulation sim = new Simulation();
-		
-		/*
-		 * To use your custom Energy model, do this: The custom energy model class can
-		 * be found in the examples folder as well. by removing this line, pureEdgeSim
-		 * will use the default energy model. *
-		 */
-		sim.setCustomEnergyModel(CustomEnergyModel.class);
+	// Below is the path for the settings folder of this example
+	private static String settingsPath = "PureEdgeSim/examples/Example3_settings/";
 
-		// To use the PureEdgeSim default Energy Model you can also uncomment this:
-		// setCustomEnergyModel(DefaultEnergyModel.class);
+	// The custom output folder is
+	private static String outputPath = "PureEdgeSim/examples/Example3_output/";
+
+	public Example3() {
+		// Create a PureEdgeSim simulation
+		Simulation sim = new Simulation();
+
+		// changing the default output folder
+		sim.setCustomOutputFolder(outputPath);
+
+		/** if we want to change the path of all configuration files at once : */
+
+		// changing the simulation settings folder
+		sim.setCustomSettingsFolder(settingsPath);
 
 		// Start the simulation
 		sim.launchSimulation();
+	}
+
+	public static void main(String[] args) {
+		new Example3();
 	}
 
 }

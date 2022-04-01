@@ -16,118 +16,66 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.network;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.cloudbus.cloudsim.core.CloudSimEntity;
-import org.cloudbus.cloudsim.core.events.SimEvent;
-
-import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
-import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
-import com.mechalikh.pureedgesim.tasksgenerator.Task;
+import com.mechalikh.pureedgesim.simulationengine.SimEntity;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
-public abstract class NetworkModel extends CloudSimEntity {
-	public static final int base = 4000;
-	public static final int SEND_REQUEST_FROM_ORCH_TO_DESTINATION = base + 1;
-	protected static final int UPDATE_PROGRESS = base + 2;
-	public static final int DOWNLOAD_CONTAINER = base + 3;
-	public static final int SEND_REQUEST_FROM_DEVICE_TO_ORCH = base + 4;
-	public static final int SEND_RESULT_FROM_ORCH_TO_DEV = base + 5;
-	public static final int SEND_UPDATE_FROM_DEVICE_TO_ORCH = base + 6;
-	public static final int SEND_RESULT_TO_ORCH = base + 7;
+/**
+ * The main class of the Network module, that handles all network events, and
+ * updates the network topology status.
+ *
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 5.0
+ */
+public abstract class NetworkModel extends SimEntity {
+	public static final int SEND_REQUEST_FROM_ORCH_TO_DESTINATION = 1;
+	protected static final int TRANSFER_FINISHED = 2;
+	public static final int DOWNLOAD_CONTAINER = 3;
+	public static final int SEND_REQUEST_FROM_DEVICE_TO_ORCH = 4;
+	public static final int SEND_RESULT_TO_ORCH = 6;
+	public static final int SEND_RESULT_FROM_ORCH_TO_DEV = 7;
 	// the list where the current (and the previous)
-	// transferred file are stored
-	protected List<FileTransferProgress> transferProgressList;
+	// transferred files are stored
 	protected SimulationManager simulationManager;
+	protected NetworkLinkWanUp wanUp;
+	protected NetworkLinkWanDown wanDown;
 
 	public NetworkModel(SimulationManager simulationManager) {
 		super(simulationManager.getSimulation());
 		setSimulationManager(simulationManager);
-		transferProgressList = new ArrayList<>();
 	}
 
 	private void setSimulationManager(SimulationManager simulationManager) {
 		this.simulationManager = simulationManager;
 	}
 
-	protected abstract void updateTasksProgress();
+	protected abstract void updateEdgeDevicesRemainingEnergy(TransferProgress transfer, ComputingNode origin,
+			ComputingNode destination);
 
-	protected abstract void updateTransfer(FileTransferProgress transfer);
+	protected abstract void transferFinished(TransferProgress transfer);
 
-	protected abstract void updateEnergyConsumption(FileTransferProgress transfer, String type);
-
-	protected abstract void transferFinished(FileTransferProgress transfer);
-
-	protected boolean sameLanIsUsed(Task task1, Task task2) {
-		// The transfers share same Lan of they have one device in common
-		// Compare orchestrator
-		return ((task1.getOrchestrator() == task2.getOrchestrator())
-				|| (task1.getOrchestrator() == task2.getVm().getHost().getDatacenter())
-				|| (task1.getOrchestrator() == task2.getEdgeDevice())
-				|| (task1.getOrchestrator() == task2.getRegistry())
-
-				// Compare origin device
-				|| (task1.getEdgeDevice() == task2.getOrchestrator())
-				|| (task1.getEdgeDevice() == task2.getVm().getHost().getDatacenter())
-				|| (task1.getEdgeDevice() == task2.getEdgeDevice()) || (task1.getEdgeDevice() == task2.getRegistry())
-
-				// Compare offloading destination
-				|| (task1.getVm().getHost().getDatacenter() == task2.getOrchestrator())
-				|| (task1.getVm().getHost().getDatacenter() == task2.getVm().getHost().getDatacenter())
-				|| (task1.getVm().getHost().getDatacenter() == task2.getEdgeDevice())
-				|| (task1.getVm().getHost().getDatacenter() == task2.getRegistry()));
+	public void setWanLinks(NetworkLinkWanUp wanUp, NetworkLinkWanDown wanDown) {
+		this.wanUp = wanUp;
+		this.wanDown = wanDown;
 	}
 
-	protected boolean wanIsUsed(FileTransferProgress fileTransferProgress) {
-		return ((fileTransferProgress.getTransferType() == FileTransferProgress.Type.TASK
-				&& ((DataCenter) fileTransferProgress.getTask().getVm().getHost().getDatacenter()).getType()
-						.equals(TYPES.CLOUD))
-				// If the offloading destination is the cloud
-
-				|| (fileTransferProgress.getTransferType() == FileTransferProgress.Type.CONTAINER
-						&& (fileTransferProgress.getTask().getRegistry() == null
-								|| fileTransferProgress.getTask().getRegistry().getType() == TYPES.CLOUD))
-				// Or if containers will be downloaded from registry
-
-				|| (fileTransferProgress.getTask().getOrchestrator().getType() == SimulationParameters.TYPES.CLOUD));
-		// Or if the orchestrator is deployed in the cloud
-
+	public double getWanUpUtilization() {
+		if (!SimulationParameters.ONE_SHARED_WAN_NETWORK)
+			throw new IllegalArgumentException(getClass().getSimpleName()
+					+ " - The \"one_shared_wan_network\" option needs to be enabled in simulation_parameters.properties file in  in order to call \"getWanUpUtilization()\"");
+		return wanUp.getUsedBandwidth();
 	}
 
-	protected void updateBandwidth(FileTransferProgress transfer) {
-		double bandwidth;
-		if (wanIsUsed(transfer)) {
-			// The bandwidth will be limited by the minimum value
-			// If the lan bandwidth is 1 mbps and the wan bandwidth is 4 mbps
-			// It will be limited by the lan, so we will choose the minimum
-			bandwidth = Math.min(transfer.getLanBandwidth(), transfer.getWanBandwidth());
-		} else
-			bandwidth = transfer.getLanBandwidth();
-		transfer.setCurrentBandwidth(bandwidth);
+	public double getWanDownUtilization() {
+		if (!SimulationParameters.ONE_SHARED_WAN_NETWORK)
+			throw new IllegalArgumentException(getClass().getSimpleName()
+					+ " - The \"one_shared_wan_network\" option needs to be enabled in simulation_parameters.properties file in order to call \"getWanDownUtilization()\"");
+		return wanDown.getUsedBandwidth();
 	}
-
-	protected double getLanBandwidth(double remainingTasksCount_Lan) {
-		return (SimulationParameters.BANDWIDTH_WLAN / (remainingTasksCount_Lan > 0 ? remainingTasksCount_Lan : 1));
-	}
-
-	protected double getWanBandwidth(double remainingTasksCount_Wan) {
-		return (SimulationParameters.WAN_BANDWIDTH / (remainingTasksCount_Wan > 0 ? remainingTasksCount_Wan : 1));
-	}
-
-	@Override
-	protected void startInternal() {
-	}
-
-	@Override
-	public void processEvent(SimEvent ev) {
-	}
-
-	public abstract double getWanUtilization();
 
 }

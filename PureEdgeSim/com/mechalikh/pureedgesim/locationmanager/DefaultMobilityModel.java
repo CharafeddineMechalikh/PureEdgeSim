@@ -16,38 +16,34 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.locationmanager;
-
+ 
 import java.util.Random;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public class DefaultMobilityModel extends MobilityModel {
 	private boolean pause = false;
 	private double pauseDuration = -1;
-	private double mobilityDuration = (getMaxMobilityDuration() - getMinMobilityDuration()) > 0
-			? new Random().nextInt((int) (getMaxMobilityDuration() - getMinMobilityDuration())) + getMinMobilityDuration()
-			: 0;
+	private double mobilityDuration ;
 	private int orientationAngle = new Random().nextInt(359);
 
-	public DefaultMobilityModel(Location currentLocation, boolean mobile, double speed, double minPauseDuration,
-			double maxPauseDuration, double minMobilityDuration, double maxMobilityDuration) {
-		super(currentLocation, mobile, speed, minPauseDuration, maxPauseDuration, minMobilityDuration,
-				maxMobilityDuration);
+	public DefaultMobilityModel(SimulationManager simulationManager, Location currentLocation) {
+		super(simulationManager, currentLocation);
 	}
 
-
 	@Override
-	public Location getNextLocation() { 
-		double X_position = currentLocation.getXPos(); // Get the initial X coordinate assigned to this device
-		double Y_position = currentLocation.getYPos(); // Get the initial y coordinate assigned to this device
+	protected Location getNextLocation(Location newLocation) {
+		double X_position = newLocation.getXPos(); // Get the initial X coordinate assigned to this device
+		double Y_position = newLocation.getYPos(); // Get the initial y coordinate assigned to this device
 
 		if (pause && pauseDuration > 0) {
 			// The device mobility is paused until that random delay finishes
 			pauseDuration -= SimulationParameters.UPDATE_INTERVAL;
-			return currentLocation;
+			return newLocation;
 		}
 
 		// Make sure that the device stay in the simulation area
@@ -61,8 +57,8 @@ public class DefaultMobilityModel extends MobilityModel {
 			resume();
 		}
 
-		// update the currentLocation of this device
-		return currentLocation = updateLocation(X_position, Y_position);
+		// Update the currentLocation of this device
+		return updateLocation(X_position, Y_position);
 
 	}
 
@@ -86,14 +82,16 @@ public class DefaultMobilityModel extends MobilityModel {
 
 	private void pause() {
 		// Pickup random duration from 50 to 200 seconds
-		pauseDuration = getMinPauseDuration() + new Random().nextInt((int) (getMaxPauseDuration() - getMinPauseDuration()));
+		pauseDuration = getMinPauseDuration()
+				+ new Random().nextInt((int) (getMaxPauseDuration() - getMinPauseDuration()));
 		// Pause mobility (the device will stay in its location for the randomly
 		// generated duration
 		pause = true;
 		// Reorientate the device to a new direction
 		orientationAngle = new Random().nextInt(359);
 		// The mobility will be resumed for the following period of time
-		mobilityDuration = new Random().nextInt(100);
+		mobilityDuration = new Random().nextInt((int) (getMaxMobilityDuration() - getMinMobilityDuration()))
+				+ getMinMobilityDuration();
 	}
 
 	private void reoriontate(double x_position, double y_position) {

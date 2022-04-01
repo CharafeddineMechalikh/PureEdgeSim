@@ -20,8 +20,8 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.simulationcore.Simulation;
-import com.mechalikh.pureedgesim.simulationcore.SimulationAbstract.Files;
+import com.mechalikh.pureedgesim.simulationmanager.Simulation;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract.Files;
 
 public class Example6 {
 	/**
@@ -47,8 +47,7 @@ public class Example6 {
 	private static String edgeDevicesFile = settingsPath + "edge_devices.xml";
 	private static String cloudFile = settingsPath + "cloud.xml";
 
-
-	public static void main(String[] args) {
+	public Example6() {
 
 		// Create a PureEdgeSim simulation
 		Simulation sim = new Simulation();
@@ -84,6 +83,10 @@ public class Example6 {
 
 		// Start the simulation
 		sim.launchSimulation();
+	}
+
+	public static void main(String[] args) {
+		new Example6();
 	}
 
 }

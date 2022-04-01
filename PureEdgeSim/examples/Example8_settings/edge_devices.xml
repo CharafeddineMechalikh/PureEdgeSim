@@ -6,39 +6,29 @@
 		is defined here <percentage> -->
 		
 	<device arch="x86" os="linux" vmm="xen"> <!-- this is a smartphone, for example -->
+		<connectivity>4g</connectivity><!-- the type of network connection -->
 		<mobility>true</mobility><!-- the device is mobile or fixed -->
 		<speed>1.4</speed><!-- the speed of the device in meters per second : 1.4m/s equals 5km/h, 0 = non mobile-->
 		<minPauseDuration>100</minPauseDuration><!-- the minimum delay before moving to a new location-->
 		<maxPauseDuration>400</maxPauseDuration><!-- the maximum delay before moving to a new location-->
-		<minMobilityDuration>60</minMobilityDuration><!-- the minimum delay before stopping-->
-		<maxMobilityDuration>100</maxMobilityDuration><!-- the maximum delay before stopping-->
+		<minMobilityDuration>10</minMobilityDuration><!-- the minimum delay before stopping-->
+		<maxMobilityDuration>60</maxMobilityDuration><!-- the maximum delay before stopping-->
 		<battery>true</battery> <!-- relies on battery? -->
 		<percentage>30</percentage> <!-- percentage of this device type -->
 		<batteryCapacity>18.75</batteryCapacity> <!-- battery capacity in Watt-Hour -->
-		<idleConsumption>0.078</idleConsumption><!-- idle energy consumption/ 
+		<idleConsumption>1</idleConsumption><!-- idle energy consumption/ 
 			second, default=0 .000010975 -->
 		<maxConsumption>3.3</maxConsumption><!-- max energy consumption/second, 
 			when device cpu is use at 100% , default=0 .0011 -->
 		<isOrchestrator>false</isOrchestrator> <!-- it has a task orchestrator or not -->
 		<generateTasks>true</generateTasks> <!-- it generates data/tasks or not -->
-		<hosts>
-			<host>
-				<core>8</core>
-				<mips>25000</mips>
-				<ram>4000</ram>
-				<storage>128000</storage>
-				<VMs>
-					<VM>
-						<core>8</core>
-						<mips>25000</mips>
-						<ram>4000</ram>
-						<storage>256</storage> <!--256MB of caching memory used in example 6 --> 
-					</VM>
-				</VMs>
-			</host>
-		</hosts>
+	    <cores>8</cores>
+		<mips>25000</mips>
+	    <ram>4000</ram>
+		<storage>128000</storage>
 	</device>
 	<device arch="x86" os="linux" vmm="xen"> <!-- this is a raspberry pi model B+-->
+		<connectivity>wifi</connectivity>
 		<mobility>false</mobility>
 		<speed>0</speed> 
 		<minPauseDuration>0</minPauseDuration>
@@ -51,25 +41,14 @@
 		<idleConsumption>1.6</idleConsumption>
 		<maxConsumption>5.1</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
-		<generateTasks>false</generateTasks>
-		<hosts>
-			<host>
-				<core>4</core>
-				<mips>16000</mips>
-				<ram>4000</ram>
-				<storage>32000</storage>
-				<VMs>
-					<VM>
-						<core>4</core>
-						<mips>16000</mips>
-						<ram>4000</ram>
-						<storage>128</storage>  <!--128MB of caching memory used in example 6 --> 
-					</VM>
-				</VMs>
-			</host>
-		</hosts>
+		<generateTasks>true</generateTasks>
+		<cores>4</cores>
+		<mips>16000</mips>
+		<ram>4000</ram>
+		<storage>32000</storage>
 	</device>
 	<device arch="x86" os="linux" vmm="xen"> <!--  this is a laptop for example -->
+		<connectivity>wifi</connectivity>
 		<mobility>false</mobility>
 		<speed>0</speed> 
 		<minPauseDuration>0</minPauseDuration>
@@ -82,25 +61,14 @@
 		<idleConsumption>1.7</idleConsumption>
 		<maxConsumption>23.6</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
-		<generateTasks>false</generateTasks>
-		<hosts>
-			<host>
-				<core>8</core>
-				<mips>110000</mips>
-				<ram>8000</ram>
-				<storage>1024000</storage>
-				<VMs>
-					<VM>
-						<core>8</core>
-						<mips>110000</mips>
-						<ram>8000</ram>
-						<storage>256</storage><!--256MB of caching memory used in example 6 --> 
-					</VM>
-				</VMs>
-			</host>
-		</hosts>
+		<generateTasks>true</generateTasks>
+		<cores>8</cores>
+		<mips>110000</mips>
+		<ram>8000</ram>
+		<storage>1024000</storage>
 	</device>
 	<device arch="x86" os="linux" vmm="xen">
+		<connectivity>wifi</connectivity>
 		<mobility>false</mobility>
 		<speed>0</speed> 
 		<minPauseDuration>0</minPauseDuration>
@@ -110,20 +78,13 @@
 		<battery>false</battery>
 		<percentage>40</percentage>
 		<batteryCapacity>0</batteryCapacity>
-		<idleConsumption>0.0011</idleConsumption>
-		<maxConsumption>0.036</maxConsumption>
+		<idleConsumption>1</idleConsumption>
+		<maxConsumption>2</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
 		<generateTasks>true</generateTasks>
-		<hosts>
-			<host>
-				<core>2</core>
-				<mips>70000</mips>
-				<ram>4000</ram>
-				<storage>0</storage> 
-				<VMs> 
-						<!-- this is a simple sensor that has no computing capacity --> 
-				</VMs>
-			</host>
-		</hosts>
+		<cores>1</cores>
+		<mips>0</mips>
+		<ram>8000</ram>
+		<storage>1024000</storage>
 	</device>
 </edge_devices>

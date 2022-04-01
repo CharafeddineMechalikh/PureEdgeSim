@@ -1,5 +1,28 @@
 # Changelog
 
+## Version 5.0 (MAJOR UPDATE - Mar 30th 2022)
+ 
+*   Removed CloudSim Plus (Just by doing this, the time complexity has been reduced by more than 10 times. But, we are still relying on their efficient implementation of Events Queue).
+*   Support of scenarios involving tens of thousands of devices. Compared to the previous version, the same simulation scenario (10 minutes simulation time, 10 000 devices, yes 10 thousands) took  1 minutes and 12 seconds on version 5.0 vs ... well the simulation didn't even start after more than 10 minutes, so I just canceled it. This is due to CloudSim Plus huge number of events, especially the broker and the vm allocation policy ones. A scenario of 10 minutes simulation time with 2000 devices, on the other hand, took 8 seconds on version 5.0 vs 2 minutes, 54 seconds on version 4.2. Even though the new version introduces many new features.
+*   Support for scenarios with longer simulation time. A scenario of 24 hours with 200 edge devices (2110706 generated task), took 1 minutes and 31 seconds on version 5.0 vs "not possible" on version 4.2 due to out of memory exception.
+*   Updated dependencies (...and removed some).
+*   Improved code quality and JavaDoc.
+*   More refactoring to improve extensibility even more.
+*   Reduced simulation time further by adding more parallel operations.
+*   Improved orchestrator task placement which had also an important impact on the simulation complexity. 
+*   Added Wan Up link and Down link bandwidths.
+*   Added a graph topology, now the user can link the data centers as he wants.
+*   A topology will also mean that the user can incorporate a routing algorithm of his choice.
+*   Now, energy consumption of WAN, LAN, and MAN networks is measured, in addition to that of edge devices and data centers.
+*   Now, we can define the type of connectivity (Ethernet, 5G, 4G, WiFi) of each device (in terms of latency, bandwidth, and energy consumption rates).
+*   Now, energy consumption of Ethernet, WiFi, Cellular (5G, 4G,..) networks is also measured.
+*   The network model is more realistic than ever before.
+*   Latency is now more realistic and dependent of the update interval (The latency-sensitivity can be defined in milliseconds, and the update interval has no effect on the failure rate of latency-sensitive tasks).
+*   Similarly, energy measurement is now dependent of the update interval, no need to decrease the update interval (which increases simulation time) to get precise energy measurement.
+*   This independence from the update interval means that it can be set to high, which decreased the simulation time further, without reducing its accuracy.
+*   Improved reliability (More exceptions handling + proper guidance).
+*   Implemented the Null Object Design Pattern in order to avoid NullPointerException.
+
 ## Version 4.2 (May 31st 2021)
 
 *   Upgraded to CloudSim Plus 6.2.7
@@ -92,11 +115,10 @@
 
 ## Version 2.0.0 (oct 24th 2019)
 
-*   The code has been revisited and cleaned, now it is more readable  
 *   New mobility model and new parameters for mobility update: Now it uses speed in m/s instead of intervals. The new mobility model works on demand, instead of generating a list for each device containing all its location changes (from the beginning of the simulation). The egde devices will request the next location only when needed (which reduces the use of memory)
 *   New and more realistic energy model and new energy parameters 
 *   Added initialization time to simulation parameters (in order to ignore the time when the resources are being generated)
-*   Some bugs here and there has been fixed 
+*   Some bugs here and there have been fixed 
 *   Added ram as a property to EdgeDataCenter class
 *   Added real time simulation map (now you can verify and check how your mobility model is working)  
 *   Added some real time charts showing the CPU utilization of Cloud, Fog and Edge resources, the WAN utilization, and the tasks success rate

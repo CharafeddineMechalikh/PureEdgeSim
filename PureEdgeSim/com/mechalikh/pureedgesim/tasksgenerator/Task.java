@@ -16,35 +16,38 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.tasksgenerator;
 
-import org.cloudbus.cloudsim.cloudlets.Cloudlet;
-import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
+import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 
-import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
-
-public class Task extends CloudletSimple {
+public class Task extends LatencySensitiveTask {
 	private double offloadingTime;
-	private double maxLatency;
-	private DataCenter device;
-	private long containerSize; // in KBytes
-	private DataCenter orchestrator;
-	private double receptionTime = -1; // the time when the task, or the corresponding container has been received by
-										// the offloading destination
-	private DataCenter registry;
+	private ComputingNode device;
+	private long containerSize; // in KBytes 
+	private ComputingNode registry;
 	private int applicationID;
-	private Status failureReason;
-    private Object metaData;
-    
-	public static enum Status {
+	private FailureReason failureReason;
+	private Status status = Status.SUCCESS;
+	private Object metaData;
+	private long fileSize;
+	private ComputingNode computingNode;
+	private double outputSize;
+	private double length;
+
+	public static enum FailureReason {
 		FAILED_DUE_TO_LATENCY, FAILED_BECAUSE_DEVICE_DEAD, FAILED_DUE_TO_DEVICE_MOBILITY,
-		NOT_GENERATED_BECAUSE_DEVICE_DEAD, FAILED_NO_RESSOURCES, NULL
+		NOT_GENERATED_BECAUSE_DEVICE_DEAD, FAILED_NO_RESSOURCES
 	}
 
-	public Task(int id, long cloudletLength, long pesNumber) {
-		super(id, cloudletLength, pesNumber);
+	public static enum Status {
+		SUCCESS, FAILED
+	}
+
+	public Task(int id, long length) {
+		super(id);
+		this.length = length;
 	}
 
 	public void setTime(double time) {
@@ -55,20 +58,12 @@ public class Task extends CloudletSimple {
 		return offloadingTime;
 	}
 
-	public double getMaxLatency() {
-		return maxLatency;
-	}
-
-	public void setMaxLatency(double maxLatency) {
-		this.maxLatency = maxLatency;
-	}
-
-	public DataCenter getEdgeDevice() {
+	public ComputingNode getEdgeDevice() {
 		return device;
 	}
 
-	public void setEdgeDevice(DataCenter dev) {
-		this.device = dev;
+	public void setEdgeDevice(ComputingNode device) {
+		this.device = device; 
 	}
 
 	public void setContainerSize(long containerSize) {
@@ -79,27 +74,15 @@ public class Task extends CloudletSimple {
 		return containerSize;
 	}
 
-	public void setOrchestrator(DataCenter orch) {
-		this.orchestrator = orch;
+	public ComputingNode getOrchestrator() {
+		return device.getOrchestrator();
 	}
 
-	public DataCenter getOrchestrator() {
-		return orchestrator;
-	}
-
-	public double getReceptionTime() {
-		return receptionTime;
-	}
-
-	public void setReceptionTime(double time) {
-		receptionTime = time;
-	}
-
-	public DataCenter getRegistry() {
+	public ComputingNode getRegistry() {
 		return registry;
 	}
 
-	public void setRegistry(DataCenter registry) {
+	public void setRegistry(ComputingNode registry) {
 		this.registry = registry;
 	}
 
@@ -111,20 +94,59 @@ public class Task extends CloudletSimple {
 		this.applicationID = applicationID;
 	}
 
-	public Status getFailureReason() {
+	public FailureReason getFailureReason() {
 		return failureReason;
 	}
 
-	public void setFailureReason(Status status) {
-		this.setStatus(Cloudlet.Status.FAILED);
-		this.failureReason = status;
+	public void setFailureReason(FailureReason reason) {
+		this.setStatus(Task.Status.FAILED);
+		this.failureReason = reason;
 	}
+
 	public Object getMetaData() {
 		return metaData;
 	}
 
 	public void setMetaData(Object metaData) {
 		this.metaData = metaData;
+	}
+
+	public ComputingNode getOffloadingDestination() {
+		return computingNode;
+	}
+
+	public void setComputingNode(ComputingNode applicationPlacementLocation) {
+		this.computingNode = applicationPlacementLocation;
+	}
+
+	public Task setFileSize(long requestSize) {
+		this.fileSize = requestSize;
+		return this;
+	}
+
+	public Task setOutputSize(long outputSize) {
+		this.outputSize = outputSize;
+		return this;
+	}
+
+	public double getLength() {
+		return this.length;
+	}
+
+	public double getFileSize() {
+		return fileSize;
+	}
+
+	public double getOutputSize() {
+		return this.outputSize;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public Status getStatus() {
+		return status;
 	}
 
 }

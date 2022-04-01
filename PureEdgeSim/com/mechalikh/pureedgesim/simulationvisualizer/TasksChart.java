@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.simulationvisualizer;
 
@@ -27,7 +27,7 @@ import java.util.List;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
-import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public class TasksChart extends Chart {
 

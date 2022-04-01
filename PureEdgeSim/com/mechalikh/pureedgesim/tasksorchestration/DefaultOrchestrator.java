@@ -16,93 +16,92 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.tasksorchestration;
 
-import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
+import java.util.HashMap;
+import java.util.Map;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationcore.SimLog;
-import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 import com.mechalikh.pureedgesim.tasksgenerator.Task;
 
 public class DefaultOrchestrator extends Orchestrator {
+	protected Map<Integer, Integer> historyMap = new HashMap<>();
+
 	public DefaultOrchestrator(SimulationManager simulationManager) {
 		super(simulationManager);
+		// Initialize the history map
+		for (int i = 0; i < nodeList.size(); i++)
+			historyMap.put(i, 0);
 	}
 
-	protected int findVM(String[] architecture, Task task) {
+	protected int findComputingNode(String[] architecture, Task task) {
 		if ("ROUND_ROBIN".equals(algorithm)) {
 			return roundRobin(architecture, task);
 		} else if ("TRADE_OFF".equals(algorithm)) {
 			return tradeOff(architecture, task);
 		} else {
-			SimLog.println("");
-			SimLog.println("Default Orchestrator- Unknown orchestration algorithm '" + algorithm
-					+ "', please check the simulation parameters file...");
-			// Cancel the simulation
-			SimulationParameters.STOP = true;
-			simulationManager.getSimulation().terminate();
+			throw new IllegalArgumentException(getClass().getSimpleName() + " - Unknown orchestration algorithm '"
+					+ algorithm + "', please check the simulation parameters file...");
 		}
-		return -1;
 	}
 
-	private int tradeOff(String[] architecture, Task task) {
-		int vm = -1;
+	protected int tradeOff(String[] architecture, Task task) {
+		int selected = -1;
 		double min = -1;
-		double new_min;// vm with minimum assigned tasks;
+		double new_min;// the computing node with minimum weight;
 
-		// get best vm for this task
-		for (int i = 0; i < orchestrationHistory.size(); i++) {
-			if (offloadingIsPossible(task, vmList.get(i), architecture)) {
+		// get best computing node for this task
+		for (int i = 0; i < nodeList.size(); i++) {
+			if (offloadingIsPossible(task, nodeList.get(i), architecture)) {
 				// the weight below represent the priority, the less it is, the more it is
 				// suitable for offlaoding, you can change it as you want
 				double weight = 1.2; // this is an edge server 'cloudlet', the latency is slightly high then edge
 										// devices
-				if (((DataCenter) vmList.get(i).getHost().getDatacenter())
-						.getType() == SimulationParameters.TYPES.CLOUD) {
+				if (nodeList.get(i).getType() == SimulationParameters.TYPES.CLOUD) {
 					weight = 1.8; // this is the cloud, it consumes more energy and results in high latency, so
 									// better to avoid it
-				} else if (((DataCenter) vmList.get(i).getHost().getDatacenter())
-						.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
+				} else if (nodeList.get(i).getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
 					weight = 1.3;// this is an edge device, it results in an extremely low latency, but may
 									// consume more energy.
 				}
-				new_min = (orchestrationHistory.get(i).size() + 1) * weight * task.getLength()
-						/ vmList.get(i).getMips();
-				if (min == -1 || min > new_min) { // if it is the first iteration, or if this vm has more cpu mips and
+				new_min = (historyMap.get(i) + 1) * weight * task.getLength() / nodeList.get(i).getMipsCapacity();
+				if (min == -1 || min > new_min) { // if it is the first iteration, or if this computing node has more
+													// cpu mips and
 													// less waiting tasks
 					min = new_min;
-					// set the first vm as thebest one
-					vm = i;
+					// set the first computing node as the best one
+					selected = i;
 				}
 			}
 		}
+		if (selected != -1)
+			historyMap.put(selected, historyMap.get(selected) + 1);
 		// assign the tasks to the found vm
-		return vm;
+		return selected;
 	}
 
-	private int roundRobin(String[] architecture, Task task) {
-		int vm = -1;
-		int minTasksCount = -1; // vm with minimum assigned tasks;
-		// get best vm for this task
-		for (int i = 0; i < orchestrationHistory.size(); i++) {
-			if (offloadingIsPossible(task, vmList.get(i), architecture) && (minTasksCount == -1
-					|| minTasksCount > orchestrationHistory.get(i).size())) {
-				minTasksCount = orchestrationHistory.get(i).size();
+	protected int roundRobin(String[] architecture, Task task) {
+		int selected = -1;
+		int minTasksCount = -1; // Computing node with minimum assigned tasks.
+		for (int i = 0; i < nodeList.size(); i++) {
+			if (offloadingIsPossible(task, nodeList.get(i), architecture)
+					&& (minTasksCount == -1 || minTasksCount > historyMap.get(i))) {
+				minTasksCount = historyMap.get(i);
 				// if this is the first time,
-				// or new min found, so we choose it as the best VM
-				// set the first vm as the best one
-				vm = i;
+				// or new min found, so we choose it as the best computing node.
+				selected = i;
 			}
 		}
-		// assign the tasks to the found vm
-		return vm;
+		// Assign the tasks to the obtained computing node.
+		historyMap.put(selected, minTasksCount + 1);
+		return selected;
 	}
 
 	@Override
 	public void resultsReturned(Task task) {
-		//Do something when the execution results are returned
+		// Do something when the execution results are returned
 	}
 
 }

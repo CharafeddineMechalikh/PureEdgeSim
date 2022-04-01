@@ -16,22 +16,22 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.simulationcore.Simulation;
+import com.mechalikh.pureedgesim.simulationmanager.Simulation;
 
 public class Example2 {
 	/**
 	 * This is a simple example showing how to launch simulation using a custom
-	 * mobility model. by removing it, pureEdgeSim will use the default model. As
-	 * you can see, this class extends the Main class provided by PureEdgeSim, which
-	 * is required for this example to work
+	 * mobility model. by removing it, pureEdgeSim will use the default model.
+	 * 
+	 * @author Charafeddine Mechalikh
+	 * @since PureEdgeSim 5.0
 	 */
-
-	public static void main(String[] args) {		
-		//Create a PureEdgeSim simulation
+	public Example2() {
+		// Create a PureEdgeSim simulation
 		Simulation sim = new Simulation();
 
 		/*
@@ -39,13 +39,17 @@ public class Example2 {
 		 * can be found in the examples folder as well. by removing this line,
 		 * pureEdgeSim will use the default mobility model.
 		 */
-		sim.setCustomMobilityModel(CustomMobilityManager.class);
+		sim.setCustomMobilityModel(Example2CustomMobilityModel.class);
 
 		// To use the PureEdgeSim default Mobility Manager you can also uncomment this:
 		// setCustomMobilityModel(MobilityManager.class);
 
 		// Start the simulation
 		sim.launchSimulation();
+	}
+
+	public static void main(String[] args) {
+		new Example2();
 	}
 
 }

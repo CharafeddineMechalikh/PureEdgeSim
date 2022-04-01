@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.simulationvisualizer;
 
@@ -27,7 +27,7 @@ import org.knowm.xchart.style.Styler.ChartTheme;
 import org.knowm.xchart.style.Styler.LegendPosition;
 import org.knowm.xchart.style.markers.Marker;
 
-import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 import java.awt.*; 
 import java.util.List;

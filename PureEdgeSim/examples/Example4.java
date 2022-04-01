@@ -20,27 +20,28 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.simulationcore.Simulation;
+import com.mechalikh.pureedgesim.simulationmanager.Simulation;
 
 public class Example4 {
 	/**
 	 * This is a simple example showing how to launch simulation using a custom Edge
-	 * device/ datacenter class . by removing it, PureEdgeSim will use the default
-	 * one. As you can see, this class extends the Main class provided by
-	 * PureEdgeSim, which is required for this example to work
+	 * device/ data center class . by removing it, PureEdgeSim will use the default
+	 * one.
+	 * 
+	 * @author Charafeddine Mechalikh
+	 * @since PureEdgeSim 5.0
 	 */
+	public Example4() {
 
-	public static void main(String[] args) {
-		
-		//Create a PureEdgeSim simulation
+		// Create a PureEdgeSim simulation
 		Simulation sim = new Simulation();
-		
+
 		/*
-		 * To use your custom Edge datacenters/ devices class, do this: The custom edge
-		 * data center class can be found in the examples folder as well. by removing
-		 * this line, pureEdgeSim will use the default datacenters/devices class.
+		 * To use your custom class to update the computing nodes classes, do this: The
+		 * custom nodes status updater class can be found in the examples folder as
+		 * well. by removing this line, PureEdgeSim will use its default class.
 		 */
-		sim.setCustomEdgeDataCenters(CustomDataCenter.class);
+		sim.setCustomEdgeDataCenters(Example4CustomComputingNode.class);
 
 		// To use the PureEdgeSim default edge data centers class you can also uncomment
 		// this:
@@ -48,6 +49,10 @@ public class Example4 {
 
 		// Start the simulation
 		sim.launchSimulation();
+	}
+
+	public static void main(String[] args) {
+		new Example4();
 	}
 
 }

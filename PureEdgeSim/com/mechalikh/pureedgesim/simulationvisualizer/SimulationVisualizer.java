@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.simulationvisualizer;
 
@@ -28,43 +28,40 @@ import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
+
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.BitmapEncoder.BitmapFormat;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationcore.Simulation;
-import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public class SimulationVisualizer {
 	private JFrame simulationResultsFrame;
-	private SwingWrapper<XYChart> swingWrapper;
 	private SimulationManager simulationManager;
-	private Chart mapChart;
-	private Chart cpuUtilizationChart;
-	private WanChart networkUtilizationChart;
-	private Chart tasksSuccessChart;
-	private List<Chart> charts = new ArrayList<Chart>();
+	private List<Chart> charts = new ArrayList<Chart>(4);
 	private boolean firstTime = true;
 
 	public SimulationVisualizer(SimulationManager simulationManager) {
 		this.simulationManager = simulationManager;
-		mapChart = new MapChart("Simulation map", "Width (meters)", "Length (meters)", simulationManager);
-		cpuUtilizationChart = new CPUChart("CPU utilization", "Time (s)", "Utilization (%)", simulationManager);
-		networkUtilizationChart = new WanChart("Network utilization", "Time (s)", "Utilization (Mbps)",
+		Chart mapChart = new MapChart("Simulation map", "Width (meters)", "Length (meters)", simulationManager);
+		Chart cpuUtilizationChart = new CPUChart("CPU utilization", "Time (s)", "Utilization (%)", simulationManager);
+		Chart tasksSuccessChart = new TasksChart("Tasks success rate", "Time (minutes)", "Success rate (%)",
 				simulationManager);
-		tasksSuccessChart = new TasksChart("Tasks success rate", "Time (minutes)", "Success rate (%)",
-				simulationManager);
-		charts.add(mapChart);
-		charts.add(cpuUtilizationChart);
-		charts.add(networkUtilizationChart);
-		charts.add(tasksSuccessChart);
+		charts.addAll(List.of(mapChart, cpuUtilizationChart, tasksSuccessChart));
+
+		if (SimulationParameters.ONE_SHARED_WAN_NETWORK) {
+			Chart networkUtilizationChart = new WanChart("Network utilization", "Time (s)", "Utilization (Mbps)",
+					simulationManager);
+			charts.add(networkUtilizationChart);
+		}
 	}
 
 	public void updateCharts() {
 		if (firstTime) {
-			swingWrapper = new SwingWrapper<>(charts.stream().map(Chart::getChart).collect(Collectors.toList()));
+			SwingWrapper<XYChart> swingWrapper = new SwingWrapper<>(
+					charts.stream().map(Chart::getChart).collect(Collectors.toList()));
 			simulationResultsFrame = swingWrapper.displayChartMatrix(); // Display charts
 			simulationResultsFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		}
@@ -72,7 +69,7 @@ public class SimulationVisualizer {
 		repaint();
 
 		// Display simulation time
-		double time = this.simulationManager.getSimulation().clock() - SimulationParameters.INITIALIZATION_TIME;
+		double time = simulationManager.getSimulation().clock();
 		simulationResultsFrame.setTitle("Simulation time = " + ((int) time / 60) + " min : " + ((int) time % 60)
 				+ " seconds  -  number of edge devices = " + simulationManager.getScenario().getDevicesCount()
 				+ " -  Architecture = " + simulationManager.getScenario().getStringOrchArchitecture()
@@ -89,18 +86,16 @@ public class SimulationVisualizer {
 	}
 
 	public void saveCharts() throws IOException {
-		String folderName = Simulation.getOutputFolder() + "/"
+		String folderName = SimulationParameters.OUTPUT_FOLDER + "/"
 				+ simulationManager.getSimulationLogger().getSimStartTime() + "/simulation_"
-				+ simulationManager.getSimulationId() + "/iteration_" + simulationManager.getIterationId() + "__"
+				+ simulationManager.getSimulationId() + "/iteration_" + simulationManager.getIteration() + "__"
 				+ simulationManager.getScenario().toString();
 		new File(folderName).mkdirs();
-		BitmapEncoder.saveBitmapWithDPI(mapChart.getChart(), folderName + "/map_chart", BitmapFormat.PNG, 300);
-		BitmapEncoder.saveBitmapWithDPI(networkUtilizationChart.getChart(), folderName + "/network_usage",
-				BitmapFormat.PNG, 300);
-		BitmapEncoder.saveBitmapWithDPI(cpuUtilizationChart.getChart(), folderName + "/cpu_usage", BitmapFormat.PNG,
+		BitmapEncoder.saveBitmapWithDPI(charts.get(0).getChart(), folderName + "/map_chart", BitmapFormat.PNG, 300);
+		BitmapEncoder.saveBitmapWithDPI(charts.get(1).getChart(), folderName + "/cpu_usage", BitmapFormat.PNG, 300);
+		BitmapEncoder.saveBitmapWithDPI(charts.get(2).getChart(), folderName + "/tasks_success_rate", BitmapFormat.PNG,
 				300);
-		BitmapEncoder.saveBitmapWithDPI(tasksSuccessChart.getChart(), folderName + "/tasks_success_rate",
-				BitmapFormat.PNG, 300);
+		BitmapEncoder.saveBitmapWithDPI(charts.get(3).getChart(), folderName + "/network_usage", BitmapFormat.PNG, 300);
 
 	}
 

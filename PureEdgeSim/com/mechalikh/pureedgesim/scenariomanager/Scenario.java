@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddien Mechalikh
  **/
 package com.mechalikh.pureedgesim.scenariomanager;
 
@@ -55,19 +55,17 @@ public class Scenario {
 		this.devicesCount = devicesCount;
 	}
 
-	public String getStringOrchArchitecture() {
-
+	public String getStringOrchArchitecture() { 
 		return SimulationParameters.ORCHESTRATION_ARCHITECTURES[orchArchitecture].trim();
 	}
 
 	public String getStringOrchAlgorithm() {
-
 		return SimulationParameters.ORCHESTRATION_AlGORITHMS[orchAlgorithm].trim();
 	}
 
 	public String toString() {
 		return "Orchestration algorithm= " + getStringOrchAlgorithm()
-				+ " -  Architechitecture= " + getStringOrchArchitecture() + " -  number of edge devices= "
+				+ " -  Architecture= " + getStringOrchArchitecture() + " -  number of edge devices= "
 				+ getDevicesCount();
 	}
 }

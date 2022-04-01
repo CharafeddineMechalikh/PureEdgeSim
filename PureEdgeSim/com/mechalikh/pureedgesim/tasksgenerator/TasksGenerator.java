@@ -16,25 +16,26 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.tasksgenerator;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-import com.mechalikh.pureedgesim.datacentersmanager.DataCenter;
-import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
+import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public abstract class TasksGenerator {
-	protected List<Task> taskList;
-	protected List<? extends DataCenter> datacentersList;
+	protected LinkedList<Task> taskList;
+	protected List<? extends ComputingNode> devicesList;
 	private SimulationManager simulationManager;
 
 	public TasksGenerator(SimulationManager simulationManager) {
-		taskList = new ArrayList<>();
+		taskList = new LinkedList<>();
 		setSimulationManager(simulationManager);
-		datacentersList = new ArrayList<>(this.getSimulationManager().getDataCentersManager().getDatacenterList());
+		devicesList = new ArrayList<>(this.getSimulationManager().getDataCentersManager().getEdgeDevicesList());
 	}
 
 	public List<Task> getTaskList() {
@@ -49,5 +50,5 @@ public abstract class TasksGenerator {
 		this.simulationManager = simulationManager;
 	}
 
-	public abstract List<Task> generate() ;
+	public abstract List<Task> generate();
 }

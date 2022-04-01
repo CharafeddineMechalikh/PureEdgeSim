@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.tasksgenerator;
 
@@ -26,20 +26,18 @@ public class Application {
 	private long containerSize;
 	private long requestSize;
 	private long resultsSize;
-	private double taskLength;
-	private int numberOfCores;
+	private double taskLength; 
 	private double usagePercentage;
 
 	public Application(int rate, double usagePercentage, double latency, long containerSize, long requestSize,
-			long resultsSize, double taskLength, int numberOfCores) { 
+			long resultsSize, double taskLength) { 
 		setRate(rate);
 		setUsagePercentage(usagePercentage); 
 		setLatency(latency);
 		setContainerSize(containerSize);
 		setRequestSize(requestSize);
 		setResultsSize(resultsSize);
-		setTaskLength(taskLength);
-		setNumberOfCores(numberOfCores);
+		setTaskLength(taskLength); 
 	}
 
 	public int getRate() {
@@ -81,14 +79,6 @@ public class Application {
 
 	public void setResultsSize(long resultsSize) {
 		this.resultsSize = resultsSize;
-	}
-
-	public int getNumberOfCores() {
-		return numberOfCores;
-	}
-
-	public void setNumberOfCores(int numberOfCores) {
-		this.numberOfCores = numberOfCores;
 	}
 
 	public double getUsagePercentage() {

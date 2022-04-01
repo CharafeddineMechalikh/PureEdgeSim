@@ -16,39 +16,34 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package examples;
-import com.mechalikh.pureedgesim.simulationcore.Simulation;
+import com.mechalikh.pureedgesim.simulationmanager.Simulation;
 import com.mechalikh.pureedgesim.tasksgenerator.DefaultTasksGenerator;
 
 public class Example1 {
 	/**
 	 * This is a simple example showing how to launch simulation using custom
 	 * mobility model, energy model, custom edge orchestrator, custom tasks
-	 * generator, and custom edge devices. By removing them, you will use the
-	 * default models provided by PureEdgeSim. As you can see, this class extends
-	 * the Main class provided by PureEdgeSim, which is required for this example to
-	 * work.
+	 * generator, and custom edge devices. By removing them, it will use the
+	 * default models provided by PureEdgeSim. 
+	 * 
+	 * @author Charafeddine Mechalikh
+	 * @since  PureEdgeSim 5.0
 	 */
 	public Example1() {	
 		//Create a PureEdgeSim simulation
 		Simulation sim = new Simulation();
 
 		// To change the mobility model
-		sim.setCustomMobilityModel(CustomMobilityManager.class);
+		sim.setCustomMobilityModel(Example2CustomMobilityModel.class);
 
 		// To change the tasks orchestrator
-		sim.setCustomEdgeOrchestrator(CustomEdgeOrchestrator.class);
+		sim.setCustomEdgeOrchestrator(Example8FuzzyLogicOrchestrator.class);
 
 		// To change the tasks generator
 		sim.setCustomTasksGenerator(DefaultTasksGenerator.class);
-
-		// To use a custom edge device/datacenters class
-		sim.setCustomEdgeDataCenters(CustomDataCenter.class);
-
-		// To use a custom energy model
-		sim.setCustomEnergyModel(CustomEnergyModel.class);
 
 		/* to use the default one you can simply delete or comment those lines */
 

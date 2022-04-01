@@ -20,7 +20,7 @@
  **/
 package examples;
 
-import com.mechalikh.pureedgesim.simulationcore.Simulation;
+import com.mechalikh.pureedgesim.simulationmanager.Simulation;
 
 /**
  * In this example we show how to implement a Fuzzy Logic based orchestration
@@ -59,7 +59,7 @@ public class Example8 {
 		sim.setCustomSettingsFolder(settingsPath);
 
 		// telling PureEdgeSim to use the custom orchestrator class
-		sim.setCustomEdgeOrchestrator(FuzzyLogicOrchestrator.class);
+		sim.setCustomEdgeOrchestrator(Example8FuzzyLogicOrchestrator.class);
 
 		// launching the simulation
 		sim.launchSimulation();

@@ -16,44 +16,49 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.simulationvisualizer;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.LinkedList;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationcore.SimulationManager;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public class WanChart extends Chart {
 
-	private List<Double> wanUsage = new ArrayList<>();
+	private LinkedList<Double> wanUpUsage = new LinkedList<>();
+	private LinkedList<Double> wanDownUsage = new LinkedList<>();
 
 	public WanChart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
 		super(title, xAxisTitle, yAxisTitle, simulationManager);
 		getChart().getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
-		updateSize(0.0, 0.0, 0.0, SimulationParameters.WAN_BANDWIDTH / 1000.0);// 0.0, clock, ...
+		updateSize(0.0, 0.0, 0.0, SimulationParameters.WAN_BANDWIDTH_BITS_PER_SECOND / 1000000.0);// 0.0, clock, ...
 	}
 
 	public void update() {
-		double wan = simulationManager.getNetworkModel().getWanUtilization();
+		// get wan usage in Mbps
+		double wanUp = simulationManager.getNetworkModel().getWanUpUtilization() / 1000000.0;
+		double wanDown = simulationManager.getNetworkModel().getWanDownUtilization() / 1000000.0;
 
-		wanUsage.add(wan);
+		wanUpUsage.add(wanUp);
+		wanDownUsage.add(wanDown);
 
-		while (wanUsage.size() > 300 / SimulationParameters.CHARTS_UPDATE_INTERVAL) {
-			wanUsage.remove(0);
+		while (wanUpUsage.size() > 300 / SimulationParameters.CHARTS_UPDATE_INTERVAL) {
+			wanUpUsage.removeFirst();
+			wanDownUsage.removeFirst();
 		}
-		double[] time = new double[wanUsage.size()];
-		double currentTime = simulationManager.getSimulation().clock() - SimulationParameters.INITIALIZATION_TIME;
-		for (int i = wanUsage.size() - 1; i > 0; i--)
-			time[i] = currentTime - ((wanUsage.size() - i) * SimulationParameters.CHARTS_UPDATE_INTERVAL);
 
-		updateSize(currentTime - 200, currentTime, 0.0, SimulationParameters.WAN_BANDWIDTH / 1000.0);
-		updateSeries(getChart(), "WAN", time, toArray(wanUsage), SeriesMarkers.NONE, Color.BLACK);
+		double[] time = new double[wanUpUsage.size()];
+		double currentTime = simulationManager.getSimulation().clock();
+		for (int i = wanUpUsage.size() - 1; i > 0; i--)
+			time[i] = currentTime - ((wanUpUsage.size() - i) * SimulationParameters.CHARTS_UPDATE_INTERVAL);
+
+		updateSize(currentTime - 200, currentTime, 0.0, SimulationParameters.WAN_BANDWIDTH_BITS_PER_SECOND / 1000000.0);
+		updateSeries(getChart(), "WanUp", time, toArray(wanUpUsage), SeriesMarkers.NONE, Color.BLACK);
+		updateSeries(getChart(), "WanDown", time, toArray(wanDownUsage), SeriesMarkers.NONE, Color.BLACK);
 	}
 }
