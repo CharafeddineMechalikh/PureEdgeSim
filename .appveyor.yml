@@ -1,7 +1,7 @@
 os: Windows Server 2012
 
 version: '{build}'
-stack: jdk 11
+stack: jdk 12
 branches:
   only:
     - master
