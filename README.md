@@ -76,7 +76,7 @@ of data centers, servers, as well as end devices and their heterogeneity. Their 
 and mobility, however, are handled by the Location Manager module. Similarly, the 
 Network Module is in charge of bandwidth allocation and data transfer. 
 
-![Environment](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/PureEdgeSim/files/aspects.JPG)
+![Environment](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/PureEdgeSim/files/aspects.png)
 
 Edge computing simualtion aspects
 

@@ -1,7 +1,7 @@
 image: Visual Studio 2019
 
-version: '{build}' 
-
+version: '{build}'
+stack: jdk 12
 branches:
   only:
     - master
