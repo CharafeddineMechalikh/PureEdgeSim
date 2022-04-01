@@ -230,25 +230,25 @@ dependencies {
 ### Via Command Line
 
 Assuming that git  and maven  are already installed, PureEdgeSim can be run from the command line as follows:
-1.     First, the project source code must be downloaded by cloning the repository via the command `git clone https://github.com/CharafeddineMechalikh/PureEdgeSim.git`. 
-2.     Now that the project is cloned, it can be built using Maven by executing the  `mvn clean install ` command in the directory where it was cloned.
-3.     Now, the examples can be executed on Windows, Linux, or Mac operating systems, using the command  `mvn exec:java -Dexec.mainClass="package.Class_Name" `. For instance, to execute “Example1”, the command is  `mvn exec:java -Dexec.mainClass="examples.Example1" `
+1.    First, the project source code must be downloaded by cloning the repository via the command `git clone https://github.com/CharafeddineMechalikh/PureEdgeSim.git`. 
+2.    Now that the project is cloned, it can be built using Maven by executing the  `mvn clean install ` command in the directory where it was cloned.
+3.    Now, the examples can be executed on Windows, Linux, or Mac operating systems, using the command  `mvn exec:java -Dexec.mainClass="package.Class_Name" `. For instance, to execute “Example1”, the command is  `mvn exec:java -Dexec.mainClass="examples.Example1" `
 
 ## 🧩 Works that are based on PureEdgeSim
 
 Here are some works that are based on PureEdgeSim to give an idea about its wider applicability and the possibilities it offers. Feel free to edit the readme file and add yours!.
 
-1.     Mechalikh, C., Taktak, H., & Moussa, F. (2019, June). A scalable and adaptive tasks orchestration platform for IoT. In 2019 15th International Wireless Communications & Mobile Computing Conference (IWCMC) (pp. 1557-1563). IEEE.
-2.     Mechalikh, C., Taktak, H., & Moussa, F. (2019, June). A scalable and adaptive tasks orchestration platform for IoT. In 2019 15th International Wireless Communications & Mobile Computing Conference (IWCMC) (pp. 1557-1563). IEEE.
-3.     Mechalikh, C., Taktak, H., & Moussa, F. (2019, July). Towards a scalable and QoS-aware load balancing platform for edge computing environments. In 2019 International Conference on High Performance Computing & Simulation (HPCS) (pp. 684-691). IEEE.
-4.     Safavifar, Z., Ghanadbashi, S., & Golpayegani, F. (2021, November). Adaptive Workload Orchestration in Pure Edge Computing: A Reinforcement-Learning Model. In 2021 IEEE 33rd International Conference on Tools with Artificial Intelligence (ICTAI) (pp. 856-860). IEEE.
-5.     Wei, J., Cao, S., Pan, S., Han, J., Yan, L., & Zhang, L. (2020, June). SatEdgeSim: A toolkit for modeling and simulation of performance evaluation in satellite edge computing environments. In 2020 12th International Conference on Communication Software and Networks (ICCSN) (pp. 307-313). IEEE.
-6.     Khosroabadi, F., Fotouhi-Ghazvini, F., & Fotouhi, H. (2021). SCATTER: service placement in real-time fog-assisted IoT networks. Journal of Sensor and Actuator Networks, 10(2), 26.
-7.     Ferrucci, L., Mordacchini, M., Coppola, M., Carlini, E., Kavalionak, H., & Dazzi, P. (2020, June). Latency preserving self-optimizing placement at the edge. In Proceedings of the 1st Workshop on Flexible Resource and Application Management on the Edge (pp. 3-8).
-9.     Iftikhar, S., Golec, M., Chowdhury, D., Gill, S. S., & Uhlig, S. (2022). FogDLearner: A Deep Learning-based Cardiac Health Diagnosis Framework using Fog Computing. In Australasian Computer Science Week 2022 (pp. 136-144).
-10.     Mordacchini, M., Ferrucci, L., Carlini, E., Kavalionak, H., Coppola, M., & Dazzi, P. (2021, September). Self-organizing Energy-Minimization Placement of QoE-Constrained Services at the Edge. In International Conference on the Economics of Grids, Clouds, Systems, and Services (pp. 133-142). Springer, Cham.
-11.     Javaid, H., Saleem, S., Wajid, B., & Khan, U. G. (2021, May). Diagnose a Disease: A Fog Assisted Disease Diagnosis Framework with Bidirectional LSTM. In 2021 International Conference on Digital Futures and Transformative Technologies (ICoDT2) (pp. 1-6). IEEE.
-12.     Teramoto, K., Kishimoto, T., & Saito, T. (2020, September). A Microservice-Based Industrial Control System Architecture Using Cloud and MEC. In Edge Computing–EDGE 2020: 4th International Conference, Held as Part of the Services Conference Federation, SCF 2020, Honolulu, HI, USA, September 18-20, 2020, Proceedings (Vol. 12407, p. 18). Springer Nature.
+1.    Mechalikh, C., Taktak, H., & Moussa, F. (2019, June). A scalable and adaptive tasks orchestration platform for IoT. In 2019 15th International Wireless Communications & Mobile Computing Conference (IWCMC) (pp. 1557-1563). IEEE.
+2.    Mechalikh, C., Taktak, H., & Moussa, F. (2019, June). A scalable and adaptive tasks orchestration platform for IoT. In 2019 15th International Wireless Communications & Mobile Computing Conference (IWCMC) (pp. 1557-1563). IEEE.
+3.    Mechalikh, C., Taktak, H., & Moussa, F. (2019, July). Towards a scalable and QoS-aware load balancing platform for edge computing environments. In 2019 International Conference on High Performance Computing & Simulation (HPCS) (pp. 684-691). IEEE.
+4.    Safavifar, Z., Ghanadbashi, S., & Golpayegani, F. (2021, November). Adaptive Workload Orchestration in Pure Edge Computing: A Reinforcement-Learning Model. In 2021 IEEE 33rd International Conference on Tools with Artificial Intelligence (ICTAI) (pp. 856-860). IEEE.
+5.    Wei, J., Cao, S., Pan, S., Han, J., Yan, L., & Zhang, L. (2020, June). SatEdgeSim: A toolkit for modeling and simulation of performance evaluation in satellite edge computing environments. In 2020 12th International Conference on Communication Software and Networks (ICCSN) (pp. 307-313). IEEE.
+6.    Khosroabadi, F., Fotouhi-Ghazvini, F., & Fotouhi, H. (2021). SCATTER: service placement in real-time fog-assisted IoT networks. Journal of Sensor and Actuator Networks, 10(2), 26.
+7.    Ferrucci, L., Mordacchini, M., Coppola, M., Carlini, E., Kavalionak, H., & Dazzi, P. (2020, June). Latency preserving self-optimizing placement at the edge. In Proceedings of the 1st Workshop on Flexible Resource and Application Management on the Edge (pp. 3-8).
+9.    Iftikhar, S., Golec, M., Chowdhury, D., Gill, S. S., & Uhlig, S. (2022). FogDLearner: A Deep Learning-based Cardiac Health Diagnosis Framework using Fog Computing. In Australasian Computer Science Week 2022 (pp. 136-144).
+10.    Mordacchini, M., Ferrucci, L., Carlini, E., Kavalionak, H., Coppola, M., & Dazzi, P. (2021, September). Self-organizing Energy-Minimization Placement of QoE-Constrained Services at the Edge. In International Conference on the Economics of Grids, Clouds, Systems, and Services (pp. 133-142). Springer, Cham.
+11.    Javaid, H., Saleem, S., Wajid, B., & Khan, U. G. (2021, May). Diagnose a Disease: A Fog Assisted Disease Diagnosis Framework with Bidirectional LSTM. In 2021 International Conference on Digital Futures and Transformative Technologies (ICoDT2) (pp. 1-6). IEEE.
+12.    Teramoto, K., Kishimoto, T., & Saito, T. (2020, September). A Microservice-Based Industrial Control System Architecture Using Cloud and MEC. In Edge Computing–EDGE 2020: 4th International Conference, Held as Part of the Services Conference Federation, SCF 2020, Honolulu, HI, USA, September 18-20, 2020, Proceedings (Vol. 12407, p. 18). Springer Nature.
 
 ## ⚖️ License
 
