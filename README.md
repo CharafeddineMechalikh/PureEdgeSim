@@ -4,7 +4,7 @@ PureEdgeSim: A simulation framework for performance evaluation of cloud, edge an
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![Build Status](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim.svg?branch=master)](https://travis-ci.com/CharafeddineMechalikh/PureEdgeSim) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/7bcee5c75c3741b5923e0158c6e79b37)](https://www.codacy.com/gh/CharafeddineMechalikh/PureEdgeSim/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CharafeddineMechalikh/PureEdgeSim&amp;utm_campaign=Badge_Grade) [![Maven Central](https://img.shields.io/maven-central/v/com.mechalikh/pureedgesim.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.mechalikh%22%20AND%20a:%22pureedgesim%22) [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/7bcee5c75c3741b5923e0158c6e79b37)](https://www.codacy.com/gh/CharafeddineMechalikh/PureEdgeSim/dashboard?utm_source=github.com&utm_medium=referral&utm_content=CharafeddineMechalikh/PureEdgeSim&utm_campaign=Badge_Coverage)
 
-## 📝 Please cite it as
+## 📝 Please cite it as (don't use the github link, othewise, your citation will not be counted):
 
 Mechalikh, C., Taktak, H., & Moussa, F. (2021). PureEdgeSim: A simulation framework for performance evaluation of cloud, edge and mist computing environments. Computer Science and Information Systems, 18(1), 43-66.
 
@@ -28,7 +28,7 @@ Bibtex:
 
 *   Support of scenarios involving tens of thousands of devices. Compared to the previous version, the same simulation scenario (10 minutes simulation time, 10 000 devices, yes 10 thousands) took  1 minutes and 12 seconds on version 5.0 vs ... well the simulation didn't even start after more than 10 minutes, so I just canceled it. This is due to CloudSim Plus huge number of events, especially the broker and the vm allocation policy ones. A scenario of 10 minutes simulation time with 2000 devices, on the other hand, took 8 seconds on version 5.0 vs 2 minutes, 54 seconds on version 4.2. Even though the new version introduces many new features.
 
-*   Support for scenarios with longer simulation time. A scenario of 24 hours with 200 edge devices (2110706 generated task), took 1 minutes and 31 seconds on version 5.0 vs "not possible" on version 4.2 due to out of memory exception.
+*   Support for scenarios with longer simulation time. A scenario of 24 hours with 200 edge devices (2110706 generated tasks), took 1 minutes and 31 seconds on version 5.0 vs "not possible" on version 4.2 due to out of memory exception.
 
 *   Updated dependencies (...and removed some).
 
@@ -142,7 +142,7 @@ PureEdgeSim offers many exclusive features:
 *   Task success rate and reason of failure (the rate of tasks failed due to the lack of resources, due to mobility, due to latency, or due to the death of edge devices when they run out of battery).
 *   and many others.
 
-6.    The vizualisation of the simulation environement (which helps to debug and understand the course of the simualtion, refer to the figure below).
+6.    The visualization of the simulation environement (which helps to debug and understand the course of the simualtion, refer to the figure below).
 
 7.    Extensibility: Users can implement their scenarios and integrate their models without modeifying PureEdgeSim codebase.
 
@@ -158,10 +158,10 @@ PureEdgeSim offers many exclusive features:
 11.    Correctness.
 
 ![Real time charts](https://github.com/CharafeddineMechalikh/PureEdgeSim/blob/master/PureEdgeSim/files/real%20time.gif)
-The live vizualisation of the simulated environement
+The live visualization of the simulated environement
 
 ### Efficiency and Scalability 
-A system is said to be efficient when it can maintain a specified level of proficiency without utilizing an excessive amount of resources, i.e., execution time and memory (Kleuker, 2011). Determining the theoretical time complexity of the given simulation is not trivial because the execution time depends entirely on the user scenario (i.e., the devices and tasks count, the mobility model, the types of resources, etc.) and the number of events that occur during the simulation. Furthermore, some parameters strongly influence the number of simulations and, obviously, the number of runs also directly influences the execution time.
+A system is said to be efficient when it can maintain a specified level of proficiency without utilizing an excessive amount of resources, i.e., execution time and memory. Determining the theoretical time complexity of the given simulation is not trivial because the execution time depends entirely on the user scenario (i.e., the devices and tasks count, the mobility model, the types of resources, etc.) and the number of events that occur during the simulation. Furthermore, some parameters strongly influence the number of simulations and, obviously, the number of runs also directly influences the execution time.
 To demonstrate the scalability of PureEdgeSim, a few experiments were conducted on a single Intel Core i7-8550U.
 
 1.  A 10-minute simulation scenario with 10000 devices (ten thousand, which generated 1015000 tasks) took 72 seconds. 
@@ -179,7 +179,7 @@ As mentioned previously, PureEdgeSim offers the most realistic network, energy, 
 ### Correctness
 
 The tool is said to be correct if it fully complies with the stated requirements, which can be verified by checking test cases. To verify PureEdgeSim’s correctness through unit and integration testing, several test cases have been implemented. Nevertheless, this alone does not provide an assessment of which portions of the code were tested and which were not, neither gives a percentage of the overall coverage of tests alongside the project source code. To evaluate the amount of code that the available unit tests cover, code coverage reports were added to the project with the help of the Java Code Coverage Library (JaCoCo). 
-It is important to clarify that the concern of such test cases is the technical feasibility of the scenarios and not the evaluation of the simulation outcome. It is simply a matter of testing whether the given results are logically reasonable and not of actually validating them. To validate the software, a case study, as seen previously, was conducted using the simulator. The badge below shows that 95% of PureEdgeSim code is covered by those tests. 
+It is important to clarify that the concern of such test cases is the technical feasibility of the scenarios and not the evaluation of the simulation outcome. It is simply a matter of testing whether the given results are logically reasonable and not of actually validating them. To validate the software, a case study was conducted using the simulator. The following badge shows that 95% of PureEdgeSim code is covered by those tests. [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/7bcee5c75c3741b5923e0158c6e79b37)](https://www.codacy.com/gh/CharafeddineMechalikh/PureEdgeSim/dashboard?utm_source=github.com&utm_medium=referral&utm_content=CharafeddineMechalikh/PureEdgeSim&utm_campaign=Badge_Coverage)
 This achievement was made possible by testing all the new features and also by the considerable decrease in code duplication since duplicating code brings neglect of testing. 
 In conclusion, we can say that the proposed simulator performs as intended. Every function has finished without abortions and gave the expected output; All the input files were parsed successfully, and all the personalized models were integrated and verified with the predicted results. The plotting of the simulation results gave a reasonable graphical output. In terms of intended errors, such as incorrect inputs, proper error messages were displayed, and correct information was written into the log file. Moreover, the parameters can be modified, stored, and loaded without any error.
 
@@ -216,14 +216,14 @@ It is possible to use PureEdgeSim as a dependency in a Maven project, by inserti
 <dependency>
 	<groupId>com.mechalikh</groupId>
 	<artifactId>pureedgesim</artifactId>
-	<version>4.2.0</version>
+	<version>5.0.0</version>
 </dependency>
 ```
 Or on Gradle :
 
 ```groovy
 dependencies {
- implementation 'com.mechalikh:pureedgesim:4.2.0'
+ implementation 'com.mechalikh:pureedgesim:5.0.0'
 }
 ````
 
@@ -234,21 +234,49 @@ Assuming that git  and maven  are already installed, PureEdgeSim can be run from
 2.    Now that the project is cloned, it can be built using Maven by executing the  `mvn clean install ` command in the directory where it was cloned.
 3.    Now, the examples can be executed on Windows, Linux, or Mac operating systems, using the command  `mvn exec:java -Dexec.mainClass="package.Class_Name" `. For instance, to execute “Example1”, the command is  `mvn exec:java -Dexec.mainClass="examples.Example1" `
 
-## 🧩 Works that are based on PureEdgeSim
+## 🧩 Works that are based on / using PureEdgeSim
 
 Here are some works that are based on PureEdgeSim to give an idea about its wider applicability and the possibilities it offers. Feel free to edit the readme file and add yours!.
 
-1.    Mechalikh, C., Taktak, H., & Moussa, F. (2019, June). A scalable and adaptive tasks orchestration platform for IoT. In 2019 15th International Wireless Communications & Mobile Computing Conference (IWCMC) (pp. 1557-1563). IEEE.
-2.    Mechalikh, C., Taktak, H., & Moussa, F. (2019, June). A scalable and adaptive tasks orchestration platform for IoT. In 2019 15th International Wireless Communications & Mobile Computing Conference (IWCMC) (pp. 1557-1563). IEEE.
-3.    Mechalikh, C., Taktak, H., & Moussa, F. (2019, July). Towards a scalable and QoS-aware load balancing platform for edge computing environments. In 2019 International Conference on High Performance Computing & Simulation (HPCS) (pp. 684-691). IEEE.
-4.    Safavifar, Z., Ghanadbashi, S., & Golpayegani, F. (2021, November). Adaptive Workload Orchestration in Pure Edge Computing: A Reinforcement-Learning Model. In 2021 IEEE 33rd International Conference on Tools with Artificial Intelligence (ICTAI) (pp. 856-860). IEEE.
+### Rienforcement and deep learning scenarios
+
+1.    Mechalikh, C., Taktak, H., & Moussa, F. (2020, April). A fuzzy decision tree based tasks orchestration algorithm for edge computing environments. In International Conference on Advanced Information Networking and Applications (pp. 193-203). Springer, Cham.
+2.    Safavifar, Z., Ghanadbashi, S., & Golpayegani, F. (2021, November). Adaptive Workload Orchestration in Pure Edge Computing: A Reinforcement-Learning Model. In 2021 IEEE 33rd International Conference on Tools with Artificial Intelligence (ICTAI) (pp. 856-860). IEEE.
+3.    Neelakantam, G., Onthoni, D. D., & Sahoo, P. K. (2020). Reinforcement learning based passengers assistance system for crowded public transportation in fog enabled smart city. Electronics, 9(9), 1501.
+4.    Iftikhar, S., Golec, M., Chowdhury, D., Gill, S. S., & Uhlig, S. (2022). FogDLearner: A Deep Learning-based Cardiac Health Diagnosis Framework using Fog Computing. In Australasian Computer Science Week 2022 (pp. 136-144).
+
+### Simulation tools
+
 5.    Wei, J., Cao, S., Pan, S., Han, J., Yan, L., & Zhang, L. (2020, June). SatEdgeSim: A toolkit for modeling and simulation of performance evaluation in satellite edge computing environments. In 2020 12th International Conference on Communication Software and Networks (ICCSN) (pp. 307-313). IEEE.
-6.    Khosroabadi, F., Fotouhi-Ghazvini, F., & Fotouhi, H. (2021). SCATTER: service placement in real-time fog-assisted IoT networks. Journal of Sensor and Actuator Networks, 10(2), 26.
-7.    Ferrucci, L., Mordacchini, M., Coppola, M., Carlini, E., Kavalionak, H., & Dazzi, P. (2020, June). Latency preserving self-optimizing placement at the edge. In Proceedings of the 1st Workshop on Flexible Resource and Application Management on the Edge (pp. 3-8).
-9.    Iftikhar, S., Golec, M., Chowdhury, D., Gill, S. S., & Uhlig, S. (2022). FogDLearner: A Deep Learning-based Cardiac Health Diagnosis Framework using Fog Computing. In Australasian Computer Science Week 2022 (pp. 136-144).
+
+### Data Caching
+
+6.    Mechalikh, C., Taktak, H., & Moussa, F. (2019, July). Towards a scalable and QoS-aware load balancing platform for edge computing environments. In 2019 International Conference on High Performance Computing & Simulation (HPCS) (pp. 684-691). IEEE.
+7.    Epifâneo, L., Correia, C., & Rodrigues, L. (2021, November). Cathode: A Consistency-Aware Data Placement Algorithm for the Edge. In 2021 IEEE 20th International Symposium on Network Computing and Applications (NCA) (pp. 1-10). IEEE.
+
+### Tesk scheduling and security
+
+8.    Tiburski, R. T. (2021). Task scheduling and security for edge devices in internet of things applications.
+
+### Self-organized architectures
+
+9.    Mechalikh, C., Taktak, H., & Moussa, F. (2019, June). A scalable and adaptive tasks orchestration platform for IoT. In 2019 15th International Wireless Communications & Mobile Computing Conference (IWCMC) (pp. 1557-1563). IEEE.
 10.    Mordacchini, M., Ferrucci, L., Carlini, E., Kavalionak, H., Coppola, M., & Dazzi, P. (2021, September). Self-organizing Energy-Minimization Placement of QoE-Constrained Services at the Edge. In International Conference on the Economics of Grids, Clouds, Systems, and Services (pp. 133-142). Springer, Cham.
-11.    Javaid, H., Saleem, S., Wajid, B., & Khan, U. G. (2021, May). Diagnose a Disease: A Fog Assisted Disease Diagnosis Framework with Bidirectional LSTM. In 2021 International Conference on Digital Futures and Transformative Technologies (ICoDT2) (pp. 1-6). IEEE.
-12.    Teramoto, K., Kishimoto, T., & Saito, T. (2020, September). A Microservice-Based Industrial Control System Architecture Using Cloud and MEC. In Edge Computing–EDGE 2020: 4th International Conference, Held as Part of the Services Conference Federation, SCF 2020, Honolulu, HI, USA, September 18-20, 2020, Proceedings (Vol. 12407, p. 18). Springer Nature.
+
+### Software-Defined Networking
+
+11.    Okwuibe, J., Haavisto, J., Kovacevic, I., Harjula, E., Ahmad, I., Islam, J., & Ylianttila, M. (2021). SDN-Enabled Resource Orchestration for Industrial IoT in Collaborative Edge-Cloud Networks. IEEE Access, 9, 115839-115854.
+
+### Application placement
+
+12.    Khosroabadi, F., Fotouhi-Ghazvini, F., & Fotouhi, H. (2021). SCATTER: service placement in real-time fog-assisted IoT networks. Journal of Sensor and Actuator Networks, 10(2), 26.
+13.    Ferrucci, L., Mordacchini, M., Coppola, M., Carlini, E., Kavalionak, H., & Dazzi, P. (2020, June). Latency preserving self-optimizing placement at the edge. In Proceedings of the 1st Workshop on Flexible Resource and Application Management on the Edge (pp. 3-8).
+14.    Kavalionak, H., Coppola, M., & Dazzi, P. Self-organizing Energy-Minimization Placement of QoE-Constrained Services at the Edge. In Economics of Grids, Clouds, Systems, and Services: 18th International Conference, GECON 2021, Virtual Event, September 21–23, 2021, Proceedings (p. 133). Springer Nature.
+
+### Other use cases
+
+15.    Kaneko, Y., Yokoyama, Y., Monma, N., Terashima, Y., Teramoto, K., Kishimoto, T., & Saito, T. (2020, September). A Microservice-Based Industrial Control System Architecture Using Cloud and MEC. In International Conference on Edge Computing (pp. 18-32). Springer, Cham.
+16.    Javaid, H., Saleem, S., Wajid, B., & Khan, U. G. (2021, May). Diagnose a Disease: A Fog Assisted Disease Diagnosis Framework with Bidirectional LSTM. In 2021 International Conference on Digital Futures and Transformative Technologies (ICoDT2) (pp. 1-6). IEEE.
 
 ## ⚖️ License
 
