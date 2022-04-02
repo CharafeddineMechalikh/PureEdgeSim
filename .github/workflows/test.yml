@@ -1,4 +1,4 @@
-name: Java CI
+name: mvn test
 
 on: [push]
 
@@ -15,9 +15,6 @@ jobs:
           distribution: 'adopt'
       - name: Build with Maven
         run: mvn test
-  notify:
-   runs-on: ubuntu-lates
-   steps:
       - uses: actions/checkout@v2
       - name: Run codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1
