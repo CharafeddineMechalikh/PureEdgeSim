@@ -196,7 +196,7 @@ There are several ways to use PureEdgeSim; however, it is strongly advisable to 
 
 The simplest and recommended method to run this project is to use an IDE like Eclipse, IntelliJ IDEA, or NetBeans. The required steps to get started with the project are listed below:
 
-1.    Downloading and extracting the project source code archive from the project repository : This can be done using the web browser or the command line “git clone https://github.com/CharafeddineMechalikh/PureEdgeSim.git”
+1.    Downloading and extracting the project source code archive from the project repository : This can be done using the web browser or the command line `git clone https://github.com/CharafeddineMechalikh/PureEdgeSim.git`.
 2.    Importing the project to the IDE:
 
 *   In NetBeans, simply select the "Open project" option and chose the project directory.
