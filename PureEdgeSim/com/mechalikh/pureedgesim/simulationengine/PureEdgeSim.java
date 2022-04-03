@@ -101,6 +101,9 @@ public class PureEdgeSim {
 		while (runClockTickAndProcessFutureEvents(Double.MAX_VALUE) && isRunning) {
 			// All the processing happens inside the method called above
 		}
+		
+		//iteration finished
+		EnvironmentConstants.entitiesList.clear();
 	}
 
 	/**
@@ -184,6 +187,22 @@ public class PureEdgeSim {
 	void insert(Event event) {
 		events.addEvent(event);
 	}
+	
+	/**
+	 * Adds an event to the head of the queue
+	 * 
+	 * @param event the new event.
+	 * @see SimEntity#schedule(SimEntity, Double, int)
+	 * @see SimEntity#schedule(SimEntity, Double, int, Object)
+	 * @see SimEntity#startInternal()
+	 * @see FutureQueue
+	 * @see #start()
+	 * @see #runClockTickAndProcessFutureEvents(double)
+	 * @see #processFutureEventsHappeningAtSameTimeOfTheFirstOne(Event)
+	 */
+	public void insertFirst(Event event) {
+		events.addEventFirst(event);
+	}
 
 	/**
 	 * Adds a simulation entity to the entities list. The simulation entities are
@@ -223,4 +242,6 @@ public class PureEdgeSim {
 	public int clockInMinutes() {
 		return (int) (time / 60);
 	}
+
+	
 }

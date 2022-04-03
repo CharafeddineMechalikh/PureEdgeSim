@@ -8,8 +8,10 @@
 
 package com.mechalikh.pureedgesim.simulationengine;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 /**
@@ -84,42 +86,13 @@ public class FutureQueue implements EventQueue {
         return sortedSet.remove(event);
     }
 
-    /**
-     * Removes all the events from the queue.
-     *
-     * @param events the events
-     * @return true if successful; false if not event was removed
-     */
-    public boolean removeAll(final Collection<Event> events) {
-        return sortedSet.removeAll(events);
-    }
-
-    public boolean removeIf(final Predicate<Event> predicate){
-        return sortedSet.removeIf(predicate);
-    }
-
     @Override
     public Event first() throws NoSuchElementException {
         return sortedSet.first();
     }
 
-    /**
-     * Clears the queue.
-     */
-    public void clear() {
-        sortedSet.clear();
-    }
-
     /** Gets an incremental number used for {@link Event#getSerial()} event attribute. */
     public long getSerial() {
         return serial;
-    }
-
-    /**
-     * Maximum number of events that have ever existed at the same time
-     * inside the queue.
-     */
-    public long getMaxEventsNumber() {
-        return maxEventsNumber;
     }
 }

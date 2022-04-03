@@ -121,7 +121,6 @@ public class DefaultNetworkModel extends NetworkModel {
 			send(task.getRegistry(), task.getOffloadingDestination(), task,task.getContainerSize(), TransferProgress.Type.CONTAINER);
 		else
 			scheduleNow(simulationManager, SimulationManager.EXECUTE_TASK, task);
-		
 	}
 
 	public void sendRequestFromDeviceToOrch(Task task) { 
@@ -176,7 +175,7 @@ public class DefaultNetworkModel extends NetworkModel {
 
 	protected void updateEdgeDevicesRemainingEnergy(TransferProgress transfer, ComputingNode origin,
 			ComputingNode destination) {
-		if (origin != null && origin.getType() == TYPES.EDGE_DEVICE) {
+		if (origin != ComputingNode.NULL && origin.getType() == TYPES.EDGE_DEVICE) {
 			origin.getEnergyModel().updatewirelessEnergyConsumption(transfer.getFileSize(), origin, destination,
 					EnergyModelComputingNode.TRANSMISSION);
 		}

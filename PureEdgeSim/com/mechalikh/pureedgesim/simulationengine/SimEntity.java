@@ -13,6 +13,9 @@ public abstract class SimEntity {
 		simulator.addEntity(this); 
 	}
 
+	public SimEntity() {
+	}
+	
 	private void setId(int id) {
 		this.id = id;
 	}
@@ -42,11 +45,11 @@ public abstract class SimEntity {
 	}
 
 	protected void scheduleNow(SimEntity simEntity, int tag) {
-		simulator.insert(new Event(simEntity, simulator.clock(), tag));
+		simulator.insertFirst(new Event(simEntity, simulator.clock(), tag));
 	}
 
 	protected void scheduleNow(SimEntity simEntity, int tag, Object data) {
-		simulator.insert(new Event(simEntity, simulator.clock(), tag, data));
+		simulator.insertFirst(new Event(simEntity, simulator.clock(), tag, data));
 	}
 
 	public PureEdgeSim getSimulation() {

@@ -62,7 +62,7 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
 	 * 
 	 * @see SimulationManager#sendTaskToOrchestrator(Task task)
 	 */
-	protected ComputingNode orchestrator;
+	protected ComputingNode orchestrator= ComputingNode.NULL;
 
 	/**
 	 * Whether this computing node (IoT device in this case) generates tasks or not.

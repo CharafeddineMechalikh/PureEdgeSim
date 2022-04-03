@@ -20,20 +20,20 @@
  **/
 package com.mechalikh.pureedgesim.datacentersmanager;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import java.util.List;
-import com.mechalikh.pureedgesim.network.NetworkLink; 
+import com.mechalikh.pureedgesim.network.NetworkLink;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
-public abstract class NetworkingNode extends AbstractNode {    
-	protected NetworkLink currentUpLink;
-	protected NetworkLink currentDownLink;
-	protected NetworkLink currentDeviceToDeviceWifiLink; 
+public abstract class NetworkingNode extends AbstractNode {
+	protected NetworkLink currentUpLink = NetworkLink.NULL;
+	protected NetworkLink currentDownLink = NetworkLink.NULL;
+	protected NetworkLink currentDeviceToDeviceWifiLink = NetworkLink.NULL;
 	protected List<ComputingNode> vertexList = new ArrayList<>();
-	protected List<NetworkLink> edgeList = new ArrayList<>(); 
+	protected List<NetworkLink> edgeList = new ArrayList<>();
 
 	public NetworkingNode(SimulationManager simulationManager) {
-		super(simulationManager);  
+		super(simulationManager);
 	}
 
 	public NetworkLink getCurrentUpLink() {
@@ -59,6 +59,5 @@ public abstract class NetworkingNode extends AbstractNode {
 	public void setCurrentWiFiLink(NetworkLink currentWiFiDeviceToDeviceLink) {
 		this.currentDeviceToDeviceWifiLink = currentWiFiDeviceToDeviceLink;
 	}
-
 
 }

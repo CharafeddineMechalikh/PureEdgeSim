@@ -29,7 +29,7 @@ public class ComputingNodeNull implements ComputingNode {
 
 	@Override
 	public String getName() {
-		return null;
+		return "";
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class ComputingNodeNull implements ComputingNode {
 
 	@Override
 	public ComputingNode getOrchestrator() {
-		return null;
+		return ComputingNode.NULL;
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class ComputingNodeNull implements ComputingNode {
 
 	@Override
 	public NetworkLink getCurrentUpLink() {
-		return null;
+		return NetworkLink.NULL;
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class ComputingNodeNull implements ComputingNode {
 
 	@Override
 	public NetworkLink getCurrentDownLink() {
-		return null;
+		return NetworkLink.NULL;
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class ComputingNodeNull implements ComputingNode {
 
 	@Override
 	public NetworkLink getCurrentWiFiLink() {
-		return null;
+		return NetworkLink.NULL;
 	}
 
 	@Override
@@ -89,12 +89,12 @@ public class ComputingNodeNull implements ComputingNode {
 
 	@Override
 	public double getDeathTime() {
-		return 0;
+		return -1;
 	}
 
 	@Override
 	public EnergyModelComputingNode getEnergyModel() {
-		return null;
+		return EnergyModelComputingNode.NULL;
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class ComputingNodeNull implements ComputingNode {
 
 	@Override
 	public ComputingNode getApplicationPlacementLocation() {
-		return null;
+		return ComputingNode.NULL;
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public class ComputingNodeNull implements ComputingNode {
 
 	@Override
 	public int getApplicationType() {
-		return 0;
+		return -1;
 	}
 
 	@Override
@@ -202,8 +202,7 @@ public class ComputingNodeNull implements ComputingNode {
 
 	@Override
 	public LinkedList<Task> getTasksQueue() {
-
-		return null;
+		return new LinkedList<Task>();
 	}
 
 	@Override
@@ -231,7 +230,7 @@ public class ComputingNodeNull implements ComputingNode {
 
 	@Override
 	public int getId() {
-		return 0;
+		return -1;
 	}
 
 }

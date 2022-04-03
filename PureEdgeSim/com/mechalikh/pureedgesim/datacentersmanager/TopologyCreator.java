@@ -184,7 +184,7 @@ public class TopologyCreator {
 			if (computingNodesGenerator.getEdgeDatacenterList().get(i).getName().equals(name))
 				return computingNodesGenerator.getEdgeDatacenterList().get(i);
 
-		return null;
+		return ComputingNode.NULL;
 	}
 
 	private void connect(ComputingNode computingNode1, ComputingNode computingNode2, NetworkLinkTypes type) {

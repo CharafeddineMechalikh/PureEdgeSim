@@ -24,12 +24,13 @@ import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 
 /**
- * A class that computes the amount of energy was consumed by computing nodes.
- *
+ * The linear power model for computing nodes. It implements the Null Object
+ * Design Pattern in order to start avoiding {@link NullPointerException} when using the
+ * NULL object instead of attributing null to EnergyModelNetworkLink variables.
+ * 
  * @author Charafeddine Mechalikh
  * @since PureEdgeSim 5.0
  */
-
 public class EnergyModelComputingNode {
 	protected double maxActiveConsumption; // Consumed energy when the cpu is operating at 100% in Watt
 	protected double idleConsumption; // Consumed energy when idle (in Watt)
@@ -40,6 +41,12 @@ public class EnergyModelComputingNode {
 
 	public static final int TRANSMISSION = 0; // used to update edge devices batteries
 	public static final int RECEPTION = 1;
+	
+	/**
+	 * An attribute that implements the Null Object Design Pattern to avoid {@link NullPointerException} when using the
+	 * NULL object instead of attributing null to EnergyModelComputingNode variables.
+	 */
+	public static final EnergyModelComputingNode NULL = new EnergyModelComputingNodeNull(0, 0);
 	protected double networkEnergyConsumption;
 	protected double transmissionEnergyPerBits;
 	protected double receptionEnergyPerBits;

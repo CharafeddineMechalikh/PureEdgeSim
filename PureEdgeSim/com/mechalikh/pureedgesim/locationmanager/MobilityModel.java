@@ -30,7 +30,9 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 /**
  * The main class of the Mobility Manager module, that generates the mobility
- * path for different edge devices.
+ * path for different edge devices. It implements the Null Object
+ * Design Pattern in order to start avoiding {@link NullPointerException} when using the
+ * NULL object instead of attributing null to EnergyModelNetworkLink variables.
  *
  * @author Charafeddine Mechalikh
  * @since PureEdgeSim 1.0
@@ -46,14 +48,14 @@ public abstract class MobilityModel {
 	protected double minMobilityDuration;
 	protected double speed;
 	protected SimulationManager simulationManager;
-	protected ComputingNode closestEdgeDataCenter;
+	protected ComputingNode closestEdgeDataCenter= ComputingNode.NULL;
 	Map<Integer, Location> path = new HashMap<Integer, Location>();
 	Map<Integer, ComputingNode> datacentersMap = new HashMap<Integer, ComputingNode>();
 
 	/**
 	 * An attribute that implements the Null Object Design Pattern to avoid
 	 * NullPointerException when using the NULL object instead of attributing null
-	 * to EnergyModelNetworkLink variables.
+	 * to MobilityModel variables.
 	 */
 	public static MobilityModel NULL = new MobilityModelNull();
 
@@ -168,7 +170,7 @@ public abstract class MobilityModel {
 	private ComputingNode getDataCenter(Location newLocation) {
 		List<? extends ComputingNode> list = getSimulationManager().getDataCentersManager().getEdgeDatacenterList();
 		double range = SimulationParameters.EDGE_DATACENTERS_RANGE;
-		ComputingNode closestDC = null;
+		ComputingNode closestDC = ComputingNode.NULL;
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).isPeripheral() && distanceTo(list.get(i)) <= range) {
 				range = distanceTo(list.get(i));

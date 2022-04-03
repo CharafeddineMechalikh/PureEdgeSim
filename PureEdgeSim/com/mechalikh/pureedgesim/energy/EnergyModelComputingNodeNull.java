@@ -18,27 +18,50 @@
  *     
  *     @author Charafeddine Mechalikh
  **/
-package com.mechalikh.pureedgesim.locationmanager;
-
-import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
-
+package com.mechalikh.pureedgesim.energy;
 /**
  * A class that implements the Null Object Design Pattern for the
- * {@link MobilityModel} class. Needed to avoid
+ * {@link EnergyModelComputingNode} class. Needed to avoid
  * {@link NullPointerException} when using the NULL object instead of
- * attributing null to MobilityModel variables.
+ * attributing null to EnergyModelComputingNode variables.
  */
-public class MobilityModelNull extends MobilityModel {
+public class EnergyModelComputingNodeNull extends EnergyModelComputingNode {
 
-	public Location getCurrentLocation() {
-		return new Location(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+	public EnergyModelComputingNodeNull(double maxActiveConsumption, double idleConsumption) {
+		super(maxActiveConsumption, idleConsumption); 
 	}
 
-	public Location getNextLocation(Location location) {
-		return new Location(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+	public double getTotalEnergyConsumption() {
+		return 0;
 	}
 
-	public double distanceTo(ComputingNode device2) {
-		return Double.POSITIVE_INFINITY;
+	public double getMaxActiveConsumption() {
+		return 0;
 	}
+
+	public double getIdleConsumption() {
+		return 0;
+	}
+
+	public double getBatteryCapacity() {
+		return 0;
+	}
+
+	public double getBatteryLevel() {
+		return 0;
+	}
+
+	public double getBatteryLevelPercentage() {
+		return 0;
+	}
+
+	public boolean isBatteryPowered() {
+		return false;
+	}
+
+	public String getConnectivityType() {
+		return "";
+	}
+
 }

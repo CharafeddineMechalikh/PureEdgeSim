@@ -15,5 +15,9 @@ public class EnergyModelNetworkLinkNull extends EnergyModelNetworkLink {
 	public double getCurrentEnergyConsumption() {
 		return 0.0;
 	}
+	
+	public double getTotalEnergyConsumption() {
+		return 0.0;
+	}
 
 }

@@ -292,7 +292,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 			edgeOrchestrator.orchestrate(task);
 
 			// Stop if no resource is available for this task, the offloading is failed.
-			if (task.getOffloadingDestination() == null) {
+			if (task.getOffloadingDestination() == ComputingNode.NULL) {
 
 				simLog.incrementTasksFailedLackOfRessources(task);
 				tasksCount++;
@@ -364,7 +364,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 			return setFailed(task);
 		}
 		// or if the orchestrator died
-		if (phase == 1 && task.getOrchestrator() != null && task.getOrchestrator().isDead()) {
+		if (phase == 1 && task.getOrchestrator() != ComputingNode.NULL && task.getOrchestrator().isDead()) {
 			task.setFailureReason(Task.FailureReason.FAILED_BECAUSE_DEVICE_DEAD);
 			simLog.incrementFailedBeacauseDeviceDead(task);
 			return setFailed(task);
@@ -378,14 +378,14 @@ public class SimulationManager extends SimulationManagerAbstract {
 		// A simple representation of task failure due to
 		// device mobility, if the vm location doesn't match
 		// the edge device location (that generated this task)
-		if (phase == 1 && task.getOrchestrator() != null
+		if (phase == 1 && task.getOrchestrator() != ComputingNode.NULL
 				&& task.getOrchestrator().getType() != SimulationParameters.TYPES.CLOUD
 				&& !sameLocation(task.getEdgeDevice(), task.getOrchestrator())) {
 			task.setFailureReason(Task.FailureReason.FAILED_DUE_TO_DEVICE_MOBILITY);
 			simLog.incrementTasksFailedMobility(task);
 			return setFailed(task);
 		}
-		if (phase == 2 && (task.getOffloadingDestination()) != null
+		if (phase == 2 && (task.getOffloadingDestination()) != ComputingNode.NULL
 				&& (task.getOffloadingDestination().getType() != SimulationParameters.TYPES.CLOUD
 						&& !sameLocation(task.getEdgeDevice(), task.getOffloadingDestination()))) {
 			task.setFailureReason(Task.FailureReason.FAILED_DUE_TO_DEVICE_MOBILITY);

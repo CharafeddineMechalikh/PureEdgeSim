@@ -81,7 +81,7 @@ public class InfrastructureGraph {
 		try {
 			return algorithm.getPath(computingNode, node);
 		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Cannot");
+			throw new IllegalArgumentException("Cannot get a path from node "+computingNode.getId()+ " (Class: "+computingNode.getClass().getSimpleName()+ " type: "+computingNode.getType()+")  to "+node.getId()+" (Class: "+node.getClass().getSimpleName()+ " type: "+node.getType()+")" );
 		}
 	}
 

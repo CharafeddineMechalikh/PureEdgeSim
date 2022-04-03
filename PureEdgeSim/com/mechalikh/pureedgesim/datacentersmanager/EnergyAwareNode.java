@@ -24,7 +24,7 @@ import com.mechalikh.pureedgesim.energy.EnergyModelComputingNode;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public abstract class EnergyAwareNode extends NetworkingNode {
-	protected EnergyModelComputingNode energyModel;
+	protected EnergyModelComputingNode energyModel = EnergyModelComputingNode.NULL;
 	protected boolean isDead = false;
 	protected double deathTime;
 

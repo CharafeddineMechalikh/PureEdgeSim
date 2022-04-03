@@ -20,7 +20,7 @@
  **/
 package com.mechalikh.pureedgesim.network;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
@@ -36,10 +36,10 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 public class NetworkLink extends SimEntity {
 	public static final int UPDATE_PROGRESS = 1;
 	private double latency = 0;
-	private double bandwidth = 0; 
-	private List<TransferProgress> transferProgressList= new ArrayList<>();
-	private ComputingNode src;
-	private ComputingNode dst;
+	private double bandwidth = 0;
+	private List<TransferProgress> transferProgressList = new ArrayList<>();
+	private ComputingNode src = ComputingNode.NULL;
+	private ComputingNode dst = ComputingNode.NULL;
 	private SimulationManager simulationManager;
 	private double usedBandwidth = 0;
 	private double totalTrasferredData = 0;
@@ -49,7 +49,9 @@ public class NetworkLink extends SimEntity {
 		WAN, MAN, LAN, IGNORE
 	};
 
-	private NetworkLinkTypes type; 
+	private NetworkLinkTypes type;
+
+	public static NetworkLink NULL = new NetworkLinkNull();
 
 	public NetworkLink(ComputingNode src, ComputingNode dst, SimulationManager simulationManager,
 			NetworkLinkTypes type) {
@@ -57,7 +59,10 @@ public class NetworkLink extends SimEntity {
 		this.simulationManager = simulationManager;
 		this.src = src;
 		this.dst = dst;
-		this.setType(type); 
+		this.setType(type);
+	}
+
+	public NetworkLink() {
 	}
 
 	public double getLatency() {

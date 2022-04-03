@@ -24,15 +24,15 @@ import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 
 public class Task extends LatencySensitiveTask {
 	private double offloadingTime;
-	private ComputingNode device;
-	private long containerSize; // in KBytes 
-	private ComputingNode registry;
+	private ComputingNode device = ComputingNode.NULL;
+	private long containerSize; // in KBytes
+	private ComputingNode registry = ComputingNode.NULL;
 	private int applicationID;
 	private FailureReason failureReason;
 	private Status status = Status.SUCCESS;
 	private Object metaData;
 	private long fileSize;
-	private ComputingNode computingNode;
+	private ComputingNode computingNode = ComputingNode.NULL;
 	private double outputSize;
 	private double length;
 
@@ -63,7 +63,7 @@ public class Task extends LatencySensitiveTask {
 	}
 
 	public void setEdgeDevice(ComputingNode device) {
-		this.device = device; 
+		this.device = device;
 	}
 
 	public void setContainerSize(long containerSize) {
