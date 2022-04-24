@@ -1,0 +1,8 @@
+language: java
+jdk:
+  - openjdk12
+  
+before_install:
+  - rm -r /home/travis/build/CharafeddineMechalikh/PureEdgeSim/PureEdgeSim/examples/
+  
+install: mvn clean install

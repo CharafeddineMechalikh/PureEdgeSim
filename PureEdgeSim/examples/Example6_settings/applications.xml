@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<applications>
+	<application name="AUGMENTED_REALITY">
+	    <rate>10</rate>
+		<usage_percentage>20</usage_percentage> <!-- percentage of devices using this type of applications -->
+		<latency>5</latency> <!-- latency in seconds -->
+		<container_size>25000</container_size><!--application/container size in kilobytes -->
+		<request_size>1500</request_size><!-- the offloading request that will be sent to the orchestrator and then to the device where the task will be offloaded in kilobytes -->
+		<results_size>100</results_size><!-- the results of the offlaoded task in kilobytes -->
+		<task_length>60000</task_length><!--MI: million instructions --> 
+	</application>
+	<application name="E_HEALTH">
+	    <rate>10</rate>
+		<usage_percentage>20</usage_percentage> 
+		<latency>200</latency>
+		<container_size>13000</container_size>
+		<request_size>10000</request_size>
+		<results_size>10000</results_size>
+		<task_length>300000</task_length> 
+	</application>
+	<application name="HEAVY_COMP_APP">
+	    <rate>10</rate>
+		<usage_percentage>20</usage_percentage>
+		<latency>5</latency> <!-- a great number represents no latency- sensitivity -->
+		<container_size>9000</container_size>
+		<request_size>50</request_size>
+		<results_size>50</results_size>
+		<task_length>15000</task_length> 
+	</application> 
+</applications>

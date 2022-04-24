@@ -1,0 +1,148 @@
+// Block definition (there may be more than one block per file)
+FUNCTION_BLOCK tipper
+
+// Define input variables
+VAR_INPUT
+    wan : REAL;
+    taskLength : REAL;
+    delay : REAL;
+	cpuUsage : REAL;
+END_VAR
+
+// Define output variable
+VAR_OUTPUT
+    offload : REAL;
+END_VAR
+
+// Fuzzify input variable 'wan'
+FUZZIFY wan
+    TERM low := (0, 1) (6, 1) (10, 0); 
+    TERM medium := (6, 0) (10,1) (14,0);
+    TERM high := (10, 0) (14, 1)(20, 1);
+END_FUZZIFY
+
+// Fuzzify input variable 'taskLength'
+FUZZIFY taskLength
+    TERM low := (0, 1) (10000, 1) (20000,0) ;
+    TERM medium := (10000,0) (20000,1) (30000,0);
+    TERM high := (20000,0) (30000,1)(40000,1);
+END_FUZZIFY
+
+// Fuzzify input variable 'delay'
+FUZZIFY delay
+    TERM low := (0, 1) (100, 1) (200,0) ;
+    TERM medium := (100,0) (200,1) (300,0);
+    TERM high := (200,0) (300,1)(400,1);
+END_FUZZIFY
+
+// Fuzzify input variable 'cpuUsage'
+FUZZIFY cpuUsage
+    TERM low := (0, 1) (20, 1) (40,0) ;
+    TERM medium := (30,0) (50,1) (70,0);
+    TERM high := (60,0) (80,1)(100,1);
+END_FUZZIFY
+
+// Defzzzify output variable 'offload'
+DEFUZZIFY offload
+    TERM edge := (0, 1) (40, 1) (70,0) ; 
+    TERM cloud := (30,0) (60,1)(100,1);
+    // Use 'Center Of Gravity' defuzzification method
+    METHOD : COG;
+    // Default value is 0 (if no rule activates defuzzifier)
+    DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+    // Use 'min' for 'and' (also implicit use 'max'
+    // for 'or' to fulfill DeMorgan's Law)
+    AND : MIN;
+    // Use 'min' activation method
+    ACT : MIN;
+    // Use 'max' accumulation method
+    ACCU : MAX;
+
+RULE 1 : IF wan IS low AND taskLength IS low AND cpuUsage IS low AND delay IS low THEN offload IS edge;
+RULE 2 : IF wan IS low AND taskLength IS low AND cpuUsage IS low AND delay IS medium THEN offload IS edge;
+RULE 3 : IF wan IS low AND taskLength IS low AND cpuUsage IS low AND delay IS high THEN offload IS cloud;
+RULE 4 : IF wan IS low AND taskLength IS low AND cpuUsage IS medium AND delay IS low THEN offload IS edge;
+RULE 5 : IF wan IS low AND taskLength IS low AND cpuUsage IS medium AND delay IS medium THEN offload IS edge;
+RULE 6 : IF wan IS low AND taskLength IS low AND cpuUsage IS medium AND delay IS high THEN offload IS cloud;
+RULE 7 : IF wan IS low AND taskLength IS low AND cpuUsage IS high AND delay IS low THEN offload IS cloud;
+RULE 8 : IF wan IS low AND taskLength IS low AND cpuUsage IS high AND delay IS medium THEN offload IS cloud;
+RULE 9 : IF wan IS low AND taskLength IS low AND cpuUsage IS high AND delay IS high THEN offload IS cloud;
+RULE 10 : IF wan IS low AND taskLength IS medium AND cpuUsage IS low AND delay IS low THEN offload IS edge;
+RULE 11 : IF wan IS low AND taskLength IS medium AND cpuUsage IS low AND delay IS medium THEN offload IS edge;
+RULE 12 : IF wan IS low AND taskLength IS medium AND cpuUsage IS low AND delay IS high THEN offload IS cloud;
+RULE 13 : IF wan IS low AND taskLength IS medium AND cpuUsage IS medium AND delay IS low THEN offload IS edge;
+RULE 14 : IF wan IS low AND taskLength IS medium AND cpuUsage IS medium AND delay IS medium THEN offload IS edge;
+RULE 15 : IF wan IS low AND taskLength IS medium AND cpuUsage IS medium AND delay IS high THEN offload IS cloud;
+RULE 16 : IF wan IS low AND taskLength IS medium AND cpuUsage IS high AND delay IS low THEN offload IS cloud;
+RULE 17 : IF wan IS low AND taskLength IS medium AND cpuUsage IS high AND delay IS medium THEN offload IS cloud;
+RULE 18 : IF wan IS low AND taskLength IS medium AND cpuUsage IS high AND delay IS high THEN offload IS cloud;
+RULE 19 : IF wan IS low AND taskLength IS high AND cpuUsage IS low AND delay IS low THEN offload IS edge;
+RULE 20 : IF wan IS low AND taskLength IS high AND cpuUsage IS low AND delay IS medium THEN offload IS edge;
+RULE 21 : IF wan IS low AND taskLength IS high AND cpuUsage IS low AND delay IS high THEN offload IS cloud;
+RULE 22 : IF wan IS low AND taskLength IS high AND cpuUsage IS medium AND delay IS low THEN offload IS edge;
+RULE 23 : IF wan IS low AND taskLength IS high AND cpuUsage IS medium AND delay IS medium THEN offload IS edge;
+RULE 24 : IF wan IS low AND taskLength IS high AND cpuUsage IS medium AND delay IS high THEN offload IS cloud;
+RULE 25 : IF wan IS low AND taskLength IS high AND cpuUsage IS high AND delay IS low THEN offload IS cloud;
+RULE 26 : IF wan IS low AND taskLength IS high AND cpuUsage IS high AND delay IS medium THEN offload IS cloud;
+RULE 27 : IF wan IS low AND taskLength IS high AND cpuUsage IS high AND delay IS high THEN offload IS cloud;
+RULE 28 : IF wan IS medium AND taskLength IS low AND cpuUsage IS low AND delay IS low THEN offload IS edge;
+RULE 29 : IF wan IS medium AND taskLength IS low AND cpuUsage IS low AND delay IS medium THEN offload IS edge;
+RULE 30 : IF wan IS medium AND taskLength IS low AND cpuUsage IS low AND delay IS high THEN offload IS cloud;
+RULE 31 : IF wan IS medium AND taskLength IS low AND cpuUsage IS medium AND delay IS low THEN offload IS edge;
+RULE 32 : IF wan IS medium AND taskLength IS low AND cpuUsage IS medium AND delay IS medium THEN offload IS cloud;
+RULE 33 : IF wan IS medium AND taskLength IS low AND cpuUsage IS medium AND delay IS high THEN offload IS cloud;
+RULE 34 : IF wan IS medium AND taskLength IS low AND cpuUsage IS high AND delay IS low THEN offload IS cloud;
+RULE 35 : IF wan IS medium AND taskLength IS low AND cpuUsage IS high AND delay IS medium THEN offload IS cloud;
+RULE 36 : IF wan IS medium AND taskLength IS low AND cpuUsage IS high AND delay IS high THEN offload IS cloud;
+RULE 37 : IF wan IS medium AND taskLength IS medium AND cpuUsage IS low AND delay IS low THEN offload IS edge;
+RULE 38 : IF wan IS medium AND taskLength IS medium AND cpuUsage IS low AND delay IS medium THEN offload IS edge;
+RULE 39 : IF wan IS medium AND taskLength IS medium AND cpuUsage IS low AND delay IS high THEN offload IS cloud;
+RULE 40 : IF wan IS medium AND taskLength IS medium AND cpuUsage IS medium AND delay IS low THEN offload IS edge;
+RULE 41 : IF wan IS medium AND taskLength IS medium AND cpuUsage IS medium AND delay IS medium THEN offload IS cloud;
+RULE 42 : IF wan IS medium AND taskLength IS medium AND cpuUsage IS medium AND delay IS high THEN offload IS cloud;
+RULE 43 : IF wan IS medium AND taskLength IS medium AND cpuUsage IS high AND delay IS low THEN offload IS cloud;
+RULE 44 : IF wan IS medium AND taskLength IS medium AND cpuUsage IS high AND delay IS medium THEN offload IS cloud;
+RULE 45 : IF wan IS medium AND taskLength IS medium AND cpuUsage IS high AND delay IS high THEN offload IS cloud;
+RULE 46 : IF wan IS medium AND taskLength IS high AND cpuUsage IS low AND delay IS low THEN offload IS edge;
+RULE 47 : IF wan IS medium AND taskLength IS high AND cpuUsage IS low AND delay IS medium THEN offload IS edge;
+RULE 48 : IF wan IS medium AND taskLength IS high AND cpuUsage IS low AND delay IS high THEN offload IS cloud;
+RULE 49 : IF wan IS medium AND taskLength IS high AND cpuUsage IS medium AND delay IS low THEN offload IS edge;
+RULE 50 : IF wan IS medium AND taskLength IS high AND cpuUsage IS medium AND delay IS medium THEN offload IS cloud;
+RULE 51 : IF wan IS medium AND taskLength IS high AND cpuUsage IS medium AND delay IS high THEN offload IS cloud;
+RULE 52 : IF wan IS medium AND taskLength IS high AND cpuUsage IS high AND delay IS low THEN offload IS cloud;
+RULE 53 : IF wan IS medium AND taskLength IS high AND cpuUsage IS high AND delay IS medium THEN offload IS cloud;
+RULE 54 : IF wan IS medium AND taskLength IS high AND cpuUsage IS high AND delay IS high THEN offload IS cloud;
+RULE 55 : IF wan IS high AND taskLength IS low AND cpuUsage IS low AND delay IS low THEN offload IS edge;
+RULE 56 : IF wan IS high AND taskLength IS low AND cpuUsage IS low AND delay IS medium THEN offload IS edge;
+RULE 57 : IF wan IS high AND taskLength IS low AND cpuUsage IS low AND delay IS high THEN offload IS cloud;
+RULE 58 : IF wan IS high AND taskLength IS low AND cpuUsage IS medium AND delay IS low THEN offload IS cloud;
+RULE 59 : IF wan IS high AND taskLength IS low AND cpuUsage IS medium AND delay IS medium THEN offload IS cloud;
+RULE 60 : IF wan IS high AND taskLength IS low AND cpuUsage IS medium AND delay IS high THEN offload IS cloud;
+RULE 61 : IF wan IS high AND taskLength IS low AND cpuUsage IS high AND delay IS low THEN offload IS cloud;
+RULE 62 : IF wan IS high AND taskLength IS low AND cpuUsage IS high AND delay IS medium THEN offload IS cloud;
+RULE 63 : IF wan IS high AND taskLength IS low AND cpuUsage IS high AND delay IS high THEN offload IS cloud;
+RULE 64 : IF wan IS high AND taskLength IS medium AND cpuUsage IS low AND delay IS low THEN offload IS edge;
+RULE 65 : IF wan IS high AND taskLength IS medium AND cpuUsage IS low AND delay IS medium THEN offload IS edge;
+RULE 66 : IF wan IS high AND taskLength IS medium AND cpuUsage IS low AND delay IS high THEN offload IS cloud;
+RULE 67 : IF wan IS high AND taskLength IS medium AND cpuUsage IS medium AND delay IS low THEN offload IS cloud;
+RULE 68 : IF wan IS high AND taskLength IS medium AND cpuUsage IS medium AND delay IS medium THEN offload IS cloud;
+RULE 69 : IF wan IS high AND taskLength IS medium AND cpuUsage IS medium AND delay IS high THEN offload IS cloud;
+RULE 70 : IF wan IS high AND taskLength IS medium AND cpuUsage IS high AND delay IS low THEN offload IS cloud;
+RULE 71 : IF wan IS high AND taskLength IS medium AND cpuUsage IS high AND delay IS medium THEN offload IS cloud;
+RULE 72 : IF wan IS high AND taskLength IS medium AND cpuUsage IS high AND delay IS high THEN offload IS cloud;
+RULE 73 : IF wan IS high AND taskLength IS high AND cpuUsage IS low AND delay IS low THEN offload IS edge;
+RULE 74 : IF wan IS high AND taskLength IS high AND cpuUsage IS low AND delay IS medium THEN offload IS edge;
+RULE 75 : IF wan IS high AND taskLength IS high AND cpuUsage IS low AND delay IS high THEN offload IS cloud;
+RULE 76 : IF wan IS high AND taskLength IS high AND cpuUsage IS medium AND delay IS low THEN offload IS cloud;
+RULE 77 : IF wan IS high AND taskLength IS high AND cpuUsage IS medium AND delay IS medium THEN offload IS cloud;
+RULE 78 : IF wan IS high AND taskLength IS high AND cpuUsage IS medium AND delay IS high THEN offload IS cloud;
+RULE 79 : IF wan IS high AND taskLength IS high AND cpuUsage IS high AND delay IS low THEN offload IS cloud;
+RULE 80 : IF wan IS high AND taskLength IS high AND cpuUsage IS high AND delay IS medium THEN offload IS cloud;
+RULE 81 : IF wan IS high AND taskLength IS high AND cpuUsage IS high AND delay IS high THEN offload IS cloud;
+				
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
