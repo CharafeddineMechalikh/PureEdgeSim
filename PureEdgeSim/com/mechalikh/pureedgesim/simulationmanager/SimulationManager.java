@@ -407,7 +407,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 		tasksCount++;
 		// Return the execution results, only if the task has been sent to the
 		// orchestrator previously.
-		if (phase < 2)
+		if (phase > 0)
 			edgeOrchestrator.resultsReturned(task);
 		return true;
 	}

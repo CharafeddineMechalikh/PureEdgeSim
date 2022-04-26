@@ -229,8 +229,7 @@ public class DefaultComputingNode extends LocationAwareNode {
 
 			// Execute the task.
 			startExecution(task);
-		}
-
+		} 
 	}
 
 	@Override

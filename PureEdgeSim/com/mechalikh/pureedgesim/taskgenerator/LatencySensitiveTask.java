@@ -2,14 +2,14 @@ package com.mechalikh.pureedgesim.taskgenerator;
 
 public abstract class LatencySensitiveTask {
 
-	private double maxLatency;
+	private double maxLatency = 0;
 	private double actualNetworkTime = 0;
-	private double execEndTime;
-	private double execStartTime;
-	private double arrivalTime;
+	private double execEndTime = 0;
+	private double execStartTime = 0;
+	private double arrivalTime = 0;
 	private int id;
-	
-	public LatencySensitiveTask(int id) { 
+
+	public LatencySensitiveTask(int id) {
 		this.id = id;
 	}
 
@@ -20,15 +20,15 @@ public abstract class LatencySensitiveTask {
 	public void setMaxLatency(double maxLatency) {
 		this.maxLatency = maxLatency;
 	}
-	
+
 	public double getActualNetworkTime() {
 		return actualNetworkTime;
 	}
 
 	public void addActualNetworkTime(double actualNetworkTime) {
-		this.actualNetworkTime += actualNetworkTime; 
+		this.actualNetworkTime += actualNetworkTime;
 	}
-	
+
 	public double getActualCpuTime() {
 		return this.execEndTime - this.getExecStartTime();
 	}
@@ -40,7 +40,7 @@ public abstract class LatencySensitiveTask {
 	public double getWatingTime() {
 		return this.execStartTime - this.arrivalTime;
 	}
-	
+
 	public void setArrivalTime(double clock) {
 		this.arrivalTime = clock;
 	}
