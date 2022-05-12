@@ -4,7 +4,7 @@ public abstract class LatencySensitiveTask {
 
 	private double maxLatency = 0;
 	private double actualNetworkTime = 0;
-	private double execEndTime = 0;
+	private double execFinishTime = 0;
 	private double execStartTime = 0;
 	private double arrivalTime = 0;
 	private int id;
@@ -30,7 +30,7 @@ public abstract class LatencySensitiveTask {
 	}
 
 	public double getActualCpuTime() {
-		return this.execEndTime - this.getExecStartTime();
+		return this.execFinishTime - this.getExecStartTime();
 	}
 
 	public double getExecStartTime() {
@@ -49,8 +49,8 @@ public abstract class LatencySensitiveTask {
 		this.execStartTime = clock;
 	}
 
-	public void setExecutionEndTime(double clock) {
-		this.execEndTime = clock;
+	public void setExecutionFinishTime(double clock) {
+		this.execFinishTime = clock;
 	}
 
 	public void setId(int id) {

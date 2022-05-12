@@ -336,7 +336,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 	 * @return The failure rate.
 	 */
 	public double getFailureRate() {
-		double result = (failedTasksCount * 100) / Math.max(1, sentTasks);
+		double result = ((double) failedTasksCount * 100) / Math.max(1, sentTasks);
 		failedTasksCount = 0;
 		sentTasks = 0;
 		return result;

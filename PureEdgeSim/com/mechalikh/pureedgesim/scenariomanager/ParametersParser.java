@@ -134,9 +134,9 @@ public class ParametersParser extends FileParserAbstract {
 			SimulationParameters.CELLULAR_BANDWIDTH_BITS_PER_SECOND = 1000000
 					* assertDouble(prop, "cellular_bandwidth", value -> (value > 0), "> 0");
 			SimulationParameters.CELLULAR_DEVICE_TRANSMISSION_WATTHOUR_PER_BIT = 2.7777777777778e-13
-					* assertDouble(prop, "wifi_device_transmission_nanojoules_per_bit", value -> (value >= 0), ">= 0");
+					* assertDouble(prop, "cellular_device_transmission_nanojoules_per_bit", value -> (value >= 0), ">= 0");
 			SimulationParameters.CELLULAR_DEVICE_RECEPTION_WATTHOUR_PER_BIT = 2.7777777777778e-13
-					* assertDouble(prop, "wifi_device_reception_nanojoules_per_bit", value -> (value >= 0), ">= 0");
+					* assertDouble(prop, "cellular_device_reception_nanojoules_per_bit", value -> (value >= 0), ">= 0");
 			SimulationParameters.CELLULAR_BASE_STATION_WATTHOUR_PER_BIT_UP_LINK = 2.7777777777778e-13
 					* assertDouble(prop, "cellular_base_station_nanojoules_per_bit_up_link", value -> (value >= 0), ">= 0");
 			SimulationParameters.CELLULAR_BASE_STATION_WATTHOUR_PER_BIT_DOWN_LINK = 12.7777777777778e-13 * assertDouble(prop,

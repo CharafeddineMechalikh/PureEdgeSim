@@ -3,7 +3,7 @@
 	<application name="AUGMENTED_REALITY">
 	    <rate>10</rate>
 		<usage_percentage>20</usage_percentage> <!-- percentage of devices using this type of applications -->
-		<latency>5</latency> <!-- latency in seconds -->
+		<latency>1</latency> <!-- latency in seconds -->
 		<container_size>25000</container_size><!--application/container size in kilobytes -->
 		<request_size>72000</request_size><!-- the offloading request that will be sent to the orchestrator and then to the device where the task will be offloaded in kilobytes -->
 		<results_size>10000</results_size><!-- the results of the offlaoded task in kilobytes -->
@@ -21,7 +21,7 @@
 	<application name="HEAVY_COMP_APP">
 	    <rate>5</rate>
 		<usage_percentage>20</usage_percentage>
-		<latency>5</latency> <!-- a great number represents no latency- sensitivity -->
+		<latency>1</latency> <!-- a great number represents no latency- sensitivity -->
 		<container_size>9000</container_size>
 		<request_size>25000</request_size>
 		<results_size>25000</results_size>

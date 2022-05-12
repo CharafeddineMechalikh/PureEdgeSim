@@ -51,7 +51,7 @@ public class DefaultComputingNode extends LocationAwareNode {
 		setStorage(storage);
 		setAvailableStorage(storage);
 		setTotalMipsCapacity(mipsPerCore * numberOfCPUCores);
-		this.mipsPerCore = mipsPerCore; 
+		this.mipsPerCore = mipsPerCore;
 		setNumberOfCPUCores(numberOfCPUCores);
 		availableCores = numberOfCPUCores;
 		if (mipsPerCore <= 0 || numberOfCPUCores <= 0 || storage <= 0)
@@ -97,8 +97,8 @@ public class DefaultComputingNode extends LocationAwareNode {
 	public double getAvgCpuUtilization() {
 		if (this.getTotalMipsCapacity() == 0)
 			return 0;
-		double utilization = totalTasks / (getTotalMipsCapacity() * simulationManager.getSimulation().clock());
-		return utilization > 1 ? 100 : utilization * 100;
+		double utilization = totalTasks * 100 / (getTotalMipsCapacity() * simulationManager.getSimulation().clock());
+		return Math.min(100, utilization);
 	}
 
 	public double getCurrentCpuUtilization() {
@@ -163,7 +163,6 @@ public class DefaultComputingNode extends LocationAwareNode {
 
 		// If a CPU core is available, execute task directly
 		if (availableCores > 0) {
-
 			startExecution(task);
 		}
 		// Otherwise, add it to the execution queue
@@ -212,7 +211,7 @@ public class DefaultComputingNode extends LocationAwareNode {
 		removeCpuUtilization((Task) e.getData());
 
 		// Save the execution end time for later use.
-		((Task) e.getData()).setExecutionEndTime(this.getSimulation().clock());
+		((Task) e.getData()).setExecutionFinishTime(this.getSimulation().clock());
 
 		// Notify the simulation manager that a task has been finished, and it's time to
 		// return the execution results.
@@ -229,7 +228,7 @@ public class DefaultComputingNode extends LocationAwareNode {
 
 			// Execute the task.
 			startExecution(task);
-		} 
+		}
 	}
 
 	@Override
