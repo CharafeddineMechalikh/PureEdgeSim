@@ -54,9 +54,9 @@ Bibtex:
 
 *   The network model is more realistic than ever before.
 
-*   Latency is now more realistic and dependent of the update interval (The latency-sensitivity can be defined in milliseconds, and the update interval has no effect on the failure rate of latency-sensitive tasks).
+*   Latency is now more realistic and independent of the update interval (The latency-sensitivity can be defined in milliseconds, and the update interval has no effect on the failure rate of latency-sensitive tasks).
 
-*   Similarly, energy measurement is now dependent of the update interval, no need to decrease the update interval (which increases simulation time) to get precise energy measurement.
+*   Similarly, energy measurement is now independent of the update interval, no need to decrease the update interval (which increases simulation time) to get precise energy measurement.
 
 *   This independence from the update interval means that it can be set to high, which decreased the simulation time further, without reducing its accuracy.
 
