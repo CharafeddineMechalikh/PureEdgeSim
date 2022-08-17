@@ -1,12 +1,13 @@
 package com.mechalikh.pureedgesim.simulationengine;
- 
+
+import java.util.Objects;
 
 public class Event implements Comparable<Event> {
 	double time;
 	private SimEntity simEntity;
 	private int tag;
 	private Object data;
-	private long serial; 
+	private long serial;
 
 	public Event(SimEntity simEntity, Double time, int tag) {
 		this.simEntity = simEntity;
@@ -36,31 +37,46 @@ public class Event implements Comparable<Event> {
 	public Object getData() {
 		return data;
 	}
- 
-	public void setSerial(long l) { 
-		this.serial=l;
+
+	public void setSerial(long l) {
+		this.serial = l;
 	}
 
+	@Override
+	public int compareTo(final Event that) {
+		if (that == null) {
+			return 1;
+		}
 
-    @Override
-    public int compareTo(final Event that) {
-        if (that == null || that ==null) {
-            return 1;
-        }
+		if (this == that) {
+			return 0;
+		}
 
-        if (this == that) {
-            return 0;
-        }
+		int res = Double.compare(time, that.getTime());
+		if (res != 0) {
+			return res;
+		}
 
-        int res = Double.compare(time, that.getTime());
-        if (res != 0) {
-            return res;
-        }
+		return Long.compare(serial, that.getSerial());
+	}
 
-        return Long.compare(serial, that.getSerial());
-    }
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+		final Event that = (Event) obj;
+		return Double.compare(that.getTime(), getTime()) == 0 && getTag() == that.getTag()
+				&& getSerial() == that.getSerial();
+	}
 
-	private long getSerial() { 
+	@Override
+	public int hashCode() {
+		return Objects.hash(getTime(), getTag(), getSerial());
+	}
+
+	private long getSerial() {
 		return this.serial;
 	}
 

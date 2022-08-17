@@ -29,12 +29,13 @@ import com.mechalikh.pureedgesim.taskgenerator.Application;
 import com.mechalikh.pureedgesim.taskgenerator.Task;
 
 public class SimulationParameters {
+	
 	/**
 	 * The path to the configuration file.
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomFilePath(String path, Files file) 
 	 */
-	public static String SIMULATION_PARAMETERS_FILE = "PureEdgeSim/settings/simulation_parameters.properties";
+	public static String simulationParametersFile = "PureEdgeSim/settings/simulation_parameters.properties";
 
 	/**
 	 * The path to the applications characteristics file.
@@ -42,7 +43,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomFilePath(String,
 	 *      Files)
 	 */
-	public static String APPLICATIONS_FILE = "PureEdgeSim/settings/applications.xml";
+	public static String applicationFile = "PureEdgeSim/settings/applications.xml";
 
 	/**
 	 * The path to the edge data centers characteristics file.
@@ -50,7 +51,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomFilePath(String,
 	 *      Files)
 	 */
-	public static String EDGE_DATACENTERS_FILE = "PureEdgeSim/settings/edge_datacenters.xml";
+	public static String edgeDataCentersFile = "PureEdgeSim/settings/edge_datacenters.xml";
 
 	/**
 	 * The path to the edge devices characteristics file.
@@ -58,7 +59,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomFilePath(String,
 	 *      Files)
 	 */
-	public static String EDGE_DEVICES_FILE = "PureEdgeSim/settings/edge_devices.xml";
+	public static String edgeDevicesFile = "PureEdgeSim/settings/edge_devices.xml";
 
 	/**
 	 * The path to the cloud characteristics file.
@@ -66,28 +67,28 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomFilePath(String,
 	 *      Files)
 	 */
-	public static String CLOUD_DATACENTERS_FILE = "PureEdgeSim/settings/cloud.xml";
+	public static String cloudDataCentersFile = "PureEdgeSim/settings/cloud.xml";
 
 	/**
 	 * The output folder path.
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomOutputFolder(String)
 	 */
-	public static String OUTPUT_FOLDER = "PureEdgeSim/output/";
+	public static String outputFolder = "PureEdgeSim/output/";
 
 	/**
 	 * If true simulations will be launched in parallel
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.Simulation#launchSimulation()
 	 */
-	public static boolean PARALLEL = false;
+	public static boolean parallelism_enabled = false;
 
 	/**
 	 * Simualtion time in seconds.
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationManager#startInternal()
 	 */
-	public static double SIMULATION_TIME;
+	public static double simulationDuration;
 
 	/**
 	 * Pause between iterations (in seconds)
@@ -95,42 +96,42 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationThread#pause(SimLog
 	 *      simLog)
 	 */
-	public static int PAUSE_LENGTH;
+	public static int pauseLength;
 
 	/**
 	 * Update interval (Mobility and other events) (in seconds)
 	 * 
 	 */
-	public static double UPDATE_INTERVAL;
+	public static double updateInterval;
 
 	/**
 	 * If true, real-time charts will be displayed
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationvisualizer.SimulationVisualizer#updateCharts()
 	 */
-	public static boolean DISPLAY_REAL_TIME_CHARTS;
+	public static boolean displayRealTimeCharts;
 
 	/**
 	 * If true, real-time charts are automatically closed when simulation finishes
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationManager#processEvent(com.mechalikh.pureedgesim.simulationengine.Event)
 	 */
-	public static boolean AUTO_CLOSE_REAL_TIME_CHARTS;
+	public static boolean autoCloseRealTimeCharts;
 
 	/**
 	 * Charts refresh interval in seconds
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationvisualizer.SimulationVisualizer#updateCharts()
 	 */
-	public static double CHARTS_UPDATE_INTERVAL;
+	public static double chartsUpdateInterval;
 
 	/**
 	 * If true, charts are automatically generated at the end of the simulation and
-	 * saved in bitmap format in the {@link SimulationParameters#OUTPUT_FOLDER}
+	 * saved in bitmap format in the {@link SimulationParameters#outputFolder}
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationvisualizer.SimulationVisualizer#updateCharts()
 	 */
-	public static boolean SAVE_CHARTS;
+	public static boolean saveCharts;
 
 	/**
 	 * The length of simulation map in meters.
@@ -138,7 +139,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.locationmanager.MobilityModel
 	 * @see com.mechalikh.pureedgesim.locationmanager.DefaultMobilityModel
 	 */
-	public static int AREA_LENGTH;
+	public static int simulationMapLength;
 
 	/**
 	 * The width of simulation map in meters.
@@ -146,42 +147,42 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.locationmanager.MobilityModel
 	 * @see com.mechalikh.pureedgesim.locationmanager.DefaultMobilityModel
 	 */
-	public static int AREA_WIDTH;
+	public static int simulationMapWidth;
 
 	/**
 	 * The number of edge data centers.
 	 * 
 	 * @see com.mechalikh.pureedgesim.scenariomanager.DatacentersParser#typeSpecificChecking(org.w3c.dom.Document)
 	 */
-	public static int NUM_OF_EDGE_DATACENTERS;
+	public static int numberOfEdgeDataCenters;
 
 	/**
 	 * The number of cloud data centers.
 	 * 
 	 * @see com.mechalikh.pureedgesim.scenariomanager.DatacentersParser#typeSpecificChecking(org.w3c.dom.Document)
 	 */
-	public static int NUM_OF_CLOUD_DATACENTERS;
+	public static int numberOfCloudDataCenters;
 
 	/**
 	 * The minimum number of edge devices.
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.Simulation#loadScenarios()
 	 */
-	public static int MIN_NUM_OF_EDGE_DEVICES;
+	public static int minNumberOfEdgeDevices;
 
 	/**
 	 * The maximum number of edge devices.
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.Simulation#loadScenarios()
 	 */
-	public static int MAX_NUM_OF_EDGE_DEVICES;
+	public static int maxNumberOfEdgeDevices;
 
 	/**
 	 * The incremental step of edge devices
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.Simulation#loadScenarios()
 	 */
-	public static int EDGE_DEVICE_COUNTER_STEP;
+	public static int edgeDevicesIncrementationStepSize;
 
 	/**
 	 * The types of computing nodes.
@@ -189,30 +190,30 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.ComputingNodesGenerator#generateDatacentersAndDevices()
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.ComputingNode#setType(TYPES)
 	 */
-	public static enum TYPES {
+	public enum TYPES {
 		CLOUD, EDGE_DATACENTER, EDGE_DEVICE
-	};
+	}
 
 	/**
 	 * Whether deep logging is enabled or not.
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimLog#deepLog(String)
 	 */
-	public static boolean DEEP_LOGGING;
+	public static boolean deepLoggingEnabled;
 
 	/**
 	 * Whether to save the log or not.
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimLog#saveLog()
 	 */
-	public static boolean SAVE_LOG;
+	public static boolean saveLog;
 
 	/**
 	 * If true, it delete previous logs and simulation results.
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimLog#cleanOutputFolder()
 	 */
-	public static boolean CLEAN_OUTPUT_FOLDER;
+	public static boolean cleanOutputFolder;
 
 	/**
 	 * The WAN (core+data center network) bandwidth in bits per second.
@@ -220,7 +221,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.TopologyCreator#generateTopologyGraph()
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#setBandwidth(double)
 	 */
-	public static double WAN_BANDWIDTH_BITS_PER_SECOND;
+	public static double wanBandwidthBitsPerSecond;
 
 	/**
 	 * The WAN (core+data center network) latency in seconds.
@@ -230,7 +231,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWanUp
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWanDown
 	 */
-	public static double WAN_LATENCY;
+	public static double wanLatency;
 
 	/**
 	 * The WAN (core+data center network) energy consumption in watthour per bit.
@@ -241,7 +242,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWanUp
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWanDown
 	 */
-	public static double WAN_WATTHOUR_PER_BIT;
+	public static double wanWattHourPerBit;
 
 	/**
 	 * If true, all data sent to /received from the cloud will be transmitted
@@ -252,7 +253,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWanUp
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWanDown
 	 */
-	public static boolean ONE_SHARED_WAN_NETWORK;// If all the data transferred to the cloud will sent over the same wan
+	public static boolean useOneSharefWanLink;// If all the data transferred to the cloud will sent over the same wan
 	// network.
 
 	/**
@@ -262,7 +263,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#setBandwidth(double)
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkMan
 	 */
-	public static double MAN_BANDWIDTH_BITS_PER_SECOND;
+	public static double manBandwidthBitsPerSecond;
 
 	/**
 	 * The MAN (the links between edge data centers) latency in seconds.
@@ -271,7 +272,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#setLatency(double)
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkMan
 	 */
-	public static double MAN_LATENCY;
+	public static double manLatency;
 
 	/**
 	 * The MAN (the links between edge data centers) energy consumption in watthour
@@ -282,7 +283,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#getEnergyModel()
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkMan
 	 */
-	public static double MAN_WATTHOUR_PER_BIT;
+	public static double manWattHourPerBit;
 
 	/**
 	 * The WiFI bandwidth in bits per second.
@@ -291,7 +292,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#setBandwidth(double)
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWifi
 	 */
-	public static double WIFI_BANDWIDTH_BITS_PER_SECOND;
+	public static double wifiBandwidthBitsPerSecond;
 
 	/**
 	 * The energy consumed by the device when transmitting data (in watthour per bit).
@@ -303,7 +304,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWifiDeviceToDevice
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWifiUp
 	 */
-	public static double WIFI_DEVICE_TRANSMISSION_WATTHOUR_PER_BIT;
+	public static double wifiDeviceTransmissionWattHourPerBit;
 
 	/**
 	 * The energy consumed by the device when receiving data (in watthour per bit).
@@ -315,7 +316,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWifiDeviceToDevice
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWifiDown
 	 */
-	public static double WIFI_DEVICE_RECEPTION_WATTHOUR_PER_BIT;
+	public static double wifiDeviceReceptionWattHourPerBit;
 
 	/**
 	 * The energy consumed by the WiFi access point when transmitting data in watthour per bit.
@@ -326,7 +327,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWifi
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWifiDown
 	 */
-	public static double WIFI_ACCESS_POINT_TRANSMISSION_WATTHOUR_PER_BIT;
+	public static double wifiAccessPointTransmissionWattHourPerBit;
 
 	/**
 	 * The energy consumed by the WiFi access point when receiving data in watthour per bit.
@@ -337,7 +338,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWifi
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWifiUp
 	 */
-	public static double WIFI_ACCESS_POINT_RECEPTION_WATTHOUR_PER_BIT;
+	public static double wifiAccessPointReceptionWattHourPerBit;
 
 	/**
 	 * The WiFi latency in seconds.
@@ -346,7 +347,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#setLatency(double)
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkWifi
 	 */
-	public static double WIFI_LATENCY;
+	public static double wifiLatency;
 
 	/**
 	 * The Ethernet bandwidth in bits per second.
@@ -355,7 +356,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#setBandwidth(double)
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkEthernet
 	 */
-	public static double ETHERNET_BANDWIDTH_BITS_PER_SECOND;
+	public static double ethernetBandwidthBitsPerSecond;
 
 	/**
 	 * The Ethernet energy consumption in watthour per bit.
@@ -365,7 +366,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#getEnergyModel()
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkEthernet
 	 */
-	public static double ETHERNET_WATTHOUR_PER_BIT;
+	public static double ethernetWattHourPerBit;
 
 	/**
 	 * The Ethernet latency in seconds.
@@ -374,7 +375,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#setLatency(double)
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkEthernet
 	 */
-	public static double ETHERNET_LATENCY;
+	public static double ethernetLatency;
 
 	/**
 	 * The mobile communication/ cellular network (e.g. 3G, 4G, 5G) bandwidth in
@@ -384,7 +385,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#setBandwidth(double)
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkCellular
 	 */
-	public static double CELLULAR_BANDWIDTH_BITS_PER_SECOND;
+	public static double cellularBandwidthBitsPerSecond;
 
 	/**
 	 * The energy consumed by an edge device when transmitting data using a cellular connection (e.g. 3G,
@@ -395,7 +396,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#getEnergyModel()
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkCellularUp 
 	 */
-	public static double CELLULAR_DEVICE_TRANSMISSION_WATTHOUR_PER_BIT;
+	public static double cellularDeviceTransmissionWattHourPerBit;
 
 	/**
 	 * The energy consumed by an edge device when receiving data using a cellular connection (e.g. 3G,
@@ -406,7 +407,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#getEnergyModel()
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkCellularUp 
 	 */
-	public static double CELLULAR_DEVICE_RECEPTION_WATTHOUR_PER_BIT;
+	public static double cellularDeviceReceptionWattHourPerBit;
 
 	/**
 	 * The mobile base station uplink network (e.g. 3G, 4G, 5G) energy consumption
@@ -417,7 +418,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#getEnergyModel()
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkCellularUp
 	 */
-	public static double CELLULAR_BASE_STATION_WATTHOUR_PER_BIT_UP_LINK;
+	public static double cellularBaseStationWattHourPerBitUpLink;
 
 	/**
 	 * The mobile base station downlink network (e.g. 3G, 4G, 5G) energy consumption
@@ -428,7 +429,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#getEnergyModel()
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkCellularDown
 	 */
-	public static double CELLULAR_BASE_STATION_WATTHOUR_PER_BIT_DOWN_LINK;
+	public static double cellularBaseStationWattHourPerBitDownLink;
 
 	/**
 	 * The mobile communication/ cellular (e.g. 3G, 4G, 5G) network latency in
@@ -438,7 +439,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#setLatency(double)
 	 * @see com.mechalikh.pureedgesim.network.NetworkLinkCellular
 	 */
-	public static double CELLULAR_LATENCY;
+	public static double cellularLatency;
 
 	/**
 	 * The WiFi range of edge devices when using a device to device connection( in
@@ -446,7 +447,7 @@ public class SimulationParameters {
 	 * 
 	 * @see com.mechalikh.pureedgesim.locationmanager.MobilityModel#distanceTo(com.mechalikh.pureedgesim.datacentersmanager.ComputingNode)
 	 */
-	public static int EDGE_DEVICES_RANGE;
+	public static int edgeDevicesRange;
 
 	/**
 	 * The edge data centers coverage area (in meters) in which edge devices can
@@ -454,14 +455,14 @@ public class SimulationParameters {
 	 * 
 	 * @see com.mechalikh.pureedgesim.locationmanager.MobilityModel#distanceTo(com.mechalikh.pureedgesim.datacentersmanager.ComputingNode)
 	 */
-	public static int EDGE_DATACENTERS_RANGE;
+	public static int edgeDataCentersRange;
 
 	/**
 	 * The network model update interval.
 	 * 
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#startInternal()
 	 */
-	public static double NETWORK_UPDATE_INTERVAL;
+	public static double networkUpdateInterval;
 
 	/**
 	 * If true, the network model will be more realistic and gives more accurate
@@ -470,7 +471,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.network.NetworkLink#updateTransfer(TransferProgress
 	 *      transfer)
 	 */
-	public static boolean REALISTIC_NETWORK_MODEL;
+	public static boolean realisticNetworkModel;
 
 	/**
 	 * If true, the tasks will be sent for another computing node (i.e. the
@@ -480,7 +481,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.ComputingNode#getOrchestrator()
 	 * @see examples.Example7
 	 */
-	public static boolean ENABLE_ORCHESTRATORS;
+	public static boolean enableOrchestrators;
 
 	/**
 	 * Where the orchestrator(s) are deployed, e.g. on cloud data centers, edge data
@@ -489,7 +490,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.ComputingNode#getOrchestrator()
 	 * @see examples.Example7
 	 */
-	public static String DEPLOY_ORCHESTRATOR;
+	public static String deployOrchestrators;
 
 	/**
 	 * The algorithm that will be used in the simulation to orchestrate the tasks.
@@ -497,14 +498,14 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.taskorchestrator.DefaultOrchestrator#findComputingNode(String[]
 	 *      architecture, Task task)
 	 */
-	public static String[] ORCHESTRATION_AlGORITHMS;
+	public static String[] orchestrationAlgorithms;
 
 	/**
 	 * The architecture/paradigms to use in the simulation
 	 * 
 	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#orchestrate(Task)
 	 */
-	public static String[] ORCHESTRATION_ARCHITECTURES;
+	public static String[] orchestrationArchitectures;
 
 	/**
 	 * If enable, a container will be pulled from the registry before executing the
@@ -512,14 +513,14 @@ public class SimulationParameters {
 	 * 
 	 * @see examples.Example7
 	 */
-	public static boolean ENABLE_REGISTRY;
+	public static boolean enableRegistry;
 
 	/**
 	 * Sets a custom strategy for downloading containers.
 	 * 
 	 * @see examples.Example7
 	 */
-	public static String registry_mode;
+	public static String registryMode;
 
 	/**
 	 * The list of applications.
@@ -527,13 +528,20 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.scenariomanager.ApplicationFileParser
 	 * @see com.mechalikh.pureedgesim.taskgenerator.DefaultTasksGenerator#generate()
 	 */
-	public static List<Application> APPLICATIONS_LIST;
+	public static List<Application> applicationList;
 
 	/**
 	 * After the end of the simulation time, some tasks may still have not executed
 	 * yet, enabling this will force the simulation to wait for the execution of all tasks.
 	 */
-	public static boolean WAIT_FOR_TASKS;
+	public static boolean waitForAllTasksToFinish;
 
+	/**
+	 * A private constructor to prevent this class from being instantiated.
+	 * 
+	 */
+	private SimulationParameters () {
+		throw new IllegalStateException("SimulationParameters class cannot be instantiated");
+	}
 
 }

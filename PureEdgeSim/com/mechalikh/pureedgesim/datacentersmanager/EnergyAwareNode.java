@@ -28,7 +28,7 @@ public abstract class EnergyAwareNode extends NetworkingNode {
 	protected boolean isDead = false;
 	protected double deathTime;
 
-	public EnergyAwareNode(SimulationManager simulationManager) {
+	protected EnergyAwareNode(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
 
@@ -65,7 +65,7 @@ public abstract class EnergyAwareNode extends NetworkingNode {
 	}
 
 	public void setEnergyModel(EnergyModelComputingNode energyModel) {
-		this.energyModel = (EnergyModelComputingNode) energyModel;
+		this.energyModel = energyModel;
 	}
 
 }

@@ -6,14 +6,14 @@ public abstract class SimEntity {
 	private PureEdgeSim simulation;
 	private int id;
 
-	public SimEntity(PureEdgeSim simulator) {
+	protected SimEntity(PureEdgeSim simulator) {
 		setSimulator(simulator);
 		id = EnvironmentConstants.entitiesList.stream().filter(getClass()::isInstance).collect(Collectors.toList()).size();
 		setId(id);
 		simulator.addEntity(this); 
 	}
 
-	public SimEntity() {
+	protected SimEntity() {
 	}
 	
 	private void setId(int id) {

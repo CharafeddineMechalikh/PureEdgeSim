@@ -40,7 +40,7 @@ public class Example7CachingDevice extends Example7ClusteringDevice {
 		super(simulationManager, mipsCapacity, numberOfPes, storage);
 
 		// Initialize probability map
-		for (int i = 0; i < SimulationParameters.APPLICATIONS_LIST.size(); i++)
+		for (int i = 0; i < SimulationParameters.applicationList.size(); i++)
 			probability.put(i, 0);
 	}
 
@@ -89,7 +89,7 @@ public class Example7CachingDevice extends Example7ClusteringDevice {
 	public double getCost(Task task) {
 		double maxSize = 1;
 		double T = 3;
-		double MaxP = 0;
+		double MaxP = -1;
 		for (int i = 0; i < cache.size(); i++) {
 			if (cache.get(i).getContainerSize() > maxSize)
 				maxSize = cache.get(i).getContainerSize();

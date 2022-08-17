@@ -26,7 +26,7 @@ import java.util.List;
 import org.jgrapht.GraphPath;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
-import com.mechalikh.pureedgesim.energy.EnergyModelComputingNode; 
+import com.mechalikh.pureedgesim.energy.EnergyModelComputingNode;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.simulationengine.Event;
@@ -96,34 +96,38 @@ public class DefaultNetworkModel extends NetworkModel {
 	public void sendRequestFromOrchToDest(Task task) {
 		if (task.getOrchestrator() != task.getOffloadingDestination()
 				&& task.getOffloadingDestination() != task.getEdgeDevice())
-			send(task.getOrchestrator(), task.getOffloadingDestination(), task, task.getFileSize(),TransferProgress.Type.TASK);
+			send(task.getOrchestrator(), task.getOffloadingDestination(), task, task.getFileSize(),
+					TransferProgress.Type.TASK);
 		else // The device will execute the task locally
 			executeTaskOrDownloadContainer(new TransferProgress(task, task.getFileSize(), TransferProgress.Type.TASK));
 	}
 
 	public void sendResultFromOrchToDev(Task task) {
 		if (task.getOrchestrator() != task.getEdgeDevice())
-			send(task.getOrchestrator(), task.getEdgeDevice(), task,task.getOutputSize(), TransferProgress.Type.RESULTS_TO_DEV);
+			send(task.getOrchestrator(), task.getEdgeDevice(), task, task.getOutputSize(),
+					TransferProgress.Type.RESULTS_TO_DEV);
 		else
 			scheduleNow(simulationManager, SimulationManager.RESULT_RETURN_FINISHED, task);
 	}
 
 	public void sendResultFromDevToOrch(Task task) {
 		if (task.getOffloadingDestination() != task.getOrchestrator())
-			send(task.getOffloadingDestination(), task.getOrchestrator(), task, task.getOutputSize(), TransferProgress.Type.RESULTS_TO_ORCH);
+			send(task.getOffloadingDestination(), task.getOrchestrator(), task, task.getOutputSize(),
+					TransferProgress.Type.RESULTS_TO_ORCH);
 		else
 			scheduleNow(this, DefaultNetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV, task);
 	}
 
 	public void addContainer(Task task) {
 		if (task.getRegistry() != task.getOffloadingDestination())
-			send(task.getRegistry(), task.getOffloadingDestination(), task,task.getContainerSize(), TransferProgress.Type.CONTAINER);
+			send(task.getRegistry(), task.getOffloadingDestination(), task, task.getContainerSize(),
+					TransferProgress.Type.CONTAINER);
 		else
 			scheduleNow(simulationManager, SimulationManager.EXECUTE_TASK, task);
 	}
 
-	public void sendRequestFromDeviceToOrch(Task task) { 
-		if (task.getEdgeDevice() != task.getOrchestrator()) { 
+	public void sendRequestFromDeviceToOrch(Task task) {
+		if (task.getEdgeDevice() != task.getOrchestrator()) {
 			send(task.getEdgeDevice(), task.getOrchestrator(), task, task.getFileSize(), TransferProgress.Type.REQUEST);
 
 		} else // The device orchestrates its tasks by itself, so, send the request directly to
@@ -175,11 +179,11 @@ public class DefaultNetworkModel extends NetworkModel {
 	protected void updateEdgeDevicesRemainingEnergy(TransferProgress transfer, ComputingNode origin,
 			ComputingNode destination) {
 		if (origin != ComputingNode.NULL && origin.getType() == TYPES.EDGE_DEVICE) {
-			origin.getEnergyModel().updatewirelessEnergyConsumption(transfer.getFileSize(), origin, destination,
+			origin.getEnergyModel().updatewirelessEnergyConsumption(transfer.getFileSize(),
 					EnergyModelComputingNode.TRANSMISSION);
 		}
 		if (destination.getType() == TYPES.EDGE_DEVICE)
-			destination.getEnergyModel().updatewirelessEnergyConsumption(transfer.getFileSize(), origin, destination,
+			destination.getEnergyModel().updatewirelessEnergyConsumption(transfer.getFileSize(),
 					EnergyModelComputingNode.RECEPTION);
 	}
 
@@ -196,7 +200,7 @@ public class DefaultNetworkModel extends NetworkModel {
 	}
 
 	protected void executeTaskOrDownloadContainer(TransferProgress transfer) {
-		if (SimulationParameters.ENABLE_REGISTRY && "CLOUD".equals(SimulationParameters.registry_mode)
+		if (SimulationParameters.enableRegistry && "CLOUD".equals(SimulationParameters.registryMode)
 				&& !(transfer.getTask().getOffloadingDestination()).getType().equals(TYPES.CLOUD)) {
 			// If the registry is enabled and the task is offloaded to the edge data centers
 			// or the mist nodes (edge devices),
@@ -213,7 +217,8 @@ public class DefaultNetworkModel extends NetworkModel {
 	}
 
 	@Override
-	public void startInternal() {
+	public void startInternal() { 
+		// Do nothing 
 	}
 
 }

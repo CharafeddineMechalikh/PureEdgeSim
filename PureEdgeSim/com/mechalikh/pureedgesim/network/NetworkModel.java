@@ -45,7 +45,7 @@ public abstract class NetworkModel extends SimEntity {
 	protected NetworkLinkWanUp wanUp;
 	protected NetworkLinkWanDown wanDown;
 
-	public NetworkModel(SimulationManager simulationManager) {
+	protected NetworkModel(SimulationManager simulationManager) {
 		super(simulationManager.getSimulation());
 		setSimulationManager(simulationManager);
 	}
@@ -65,14 +65,14 @@ public abstract class NetworkModel extends SimEntity {
 	}
 
 	public double getWanUpUtilization() {
-		if (!SimulationParameters.ONE_SHARED_WAN_NETWORK)
+		if (!SimulationParameters.useOneSharefWanLink)
 			throw new IllegalArgumentException(getClass().getSimpleName()
 					+ " - The \"one_shared_wan_network\" option needs to be enabled in simulation_parameters.properties file in  in order to call \"getWanUpUtilization()\"");
 		return wanUp.getUsedBandwidth();
 	}
 
 	public double getWanDownUtilization() {
-		if (!SimulationParameters.ONE_SHARED_WAN_NETWORK)
+		if (!SimulationParameters.useOneSharefWanLink)
 			throw new IllegalArgumentException(getClass().getSimpleName()
 					+ " - The \"one_shared_wan_network\" option needs to be enabled in simulation_parameters.properties file in order to call \"getWanDownUtilization()\"");
 		return wanDown.getUsedBandwidth();

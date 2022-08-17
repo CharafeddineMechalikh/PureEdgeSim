@@ -23,6 +23,9 @@ package com.mechalikh.pureedgesim.datacentersmanager;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -136,20 +139,15 @@ public class ComputingNodesGenerator {
 	 * ones, and the edge devices.
 	 */
 	public void generateDatacentersAndDevices() {
-		try {
-			// Generate Edge and Cloud data centers.
-			generateDataCenters(SimulationParameters.CLOUD_DATACENTERS_FILE, SimulationParameters.TYPES.CLOUD);
-			SimulationParameters.NUM_OF_CLOUD_DATACENTERS = cloudDataCentersList.size();
-			generateDataCenters(SimulationParameters.EDGE_DATACENTERS_FILE, SimulationParameters.TYPES.EDGE_DATACENTER);
-			SimulationParameters.NUM_OF_EDGE_DATACENTERS = edgeDataCentersList.size();
 
-			// Generate edge devices.
-			generateEdgeDevices();
+		// Generate Edge and Cloud data centers.
+		generateDataCenters(SimulationParameters.cloudDataCentersFile, SimulationParameters.TYPES.CLOUD);
+		SimulationParameters.numberOfCloudDataCenters = cloudDataCentersList.size();
+		generateDataCenters(SimulationParameters.edgeDataCentersFile, SimulationParameters.TYPES.EDGE_DATACENTER);
+		SimulationParameters.numberOfEdgeDataCenters = edgeDataCentersList.size();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.print(false);
-		}
+		// Generate edge devices.
+		generateEdgeDevices();
 
 		getSimulationManager().getSimulationLogger()
 				.print(getClass().getSimpleName() + " - Datacenters and devices were generated");
@@ -159,34 +157,43 @@ public class ComputingNodesGenerator {
 	/**
 	 * Generates edge devices
 	 */
-	public void generateEdgeDevices() throws Exception {
+	public void generateEdgeDevices() {
 
 		// Generate edge devices instances from edge devices types in xml file.
-		InputStream devicesFile = new FileInputStream(SimulationParameters.EDGE_DEVICES_FILE);
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(devicesFile);
-		NodeList nodeList = doc.getElementsByTagName("device");
-		Element edgeElement = null;
+		try (InputStream devicesFile = new FileInputStream(SimulationParameters.edgeDevicesFile)) {
 
-		// Load all devices types in edge_devices.xml file.
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node edgeNode = nodeList.item(i);
-			edgeElement = (Element) edgeNode;
-			generateDevicesInstances(edgeElement);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+
+			// Disable access to external entities in XML parsing, by disallowing DocType
+			// declaration
+			dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(devicesFile);
+			NodeList nodeList = doc.getElementsByTagName("device");
+			Element edgeElement = null;
+
+			// Load all devices types in edge_devices.xml file.
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node edgeNode = nodeList.item(i);
+				edgeElement = (Element) edgeNode;
+				generateDevicesInstances(edgeElement);
+			}
+
+			// if percentage of generated devices is < 100%.
+			if (edgeDevicesList.size() < getSimulationManager().getScenario().getDevicesCount())
+				getSimulationManager().getSimulationLogger().print(getClass().getSimpleName()
+						+ " - Wrong percentages values (the sum is inferior than 100%), check edge_devices.xml file !");
+			// Add more devices.
+			if (edgeElement != null) {
+				int missingInstances = getSimulationManager().getScenario().getDevicesCount() - edgeDevicesList.size();
+				for (int k = 0; k < missingInstances; k++) {
+					ComputingNode newDevice = createComputingNode(edgeElement, SimulationParameters.TYPES.EDGE_DEVICE);
+					edgeDevicesList.add(newDevice);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-		// if percentage of generated devices is < 100%.
-		if (edgeDevicesList.size() < getSimulationManager().getScenario().getDevicesCount())
-			getSimulationManager().getSimulationLogger().print(getClass().getSimpleName()
-					+ " - Wrong percentages values (the sum is inferior than 100%), check edge_devices.xml file !");
-		// Add more devices.
-		int missingInstances = getSimulationManager().getScenario().getDevicesCount() - edgeDevicesList.size();
-		for (int k = 0; k < missingInstances; k++) {
-			edgeDevicesList.add(createComputingNode(edgeElement, SimulationParameters.TYPES.EDGE_DEVICE));
-		}
-
-		devicesFile.close();
 
 	}
 
@@ -195,12 +202,12 @@ public class ComputingNodesGenerator {
 	 * 
 	 * @param type The type of edge devices.
 	 */
-	private void generateDevicesInstances(Element type) throws Exception {
+	private void generateDevicesInstances(Element type) {
 
 		int instancesPercentage = Integer.parseInt(type.getElementsByTagName("percentage").item(0).getTextContent());
 
 		// Find the number of instances of this type of devices
-		float devicesInstances = getSimulationManager().getScenario().getDevicesCount() * instancesPercentage / 100;
+		int devicesInstances = getSimulationManager().getScenario().getDevicesCount() * instancesPercentage / 100;
 
 		for (int j = 0; j < devicesInstances; j++) {
 			if (edgeDevicesList.size() > getSimulationManager().getScenario().getDevicesCount()) {
@@ -209,7 +216,12 @@ public class ComputingNodesGenerator {
 				break;
 			}
 
-			edgeDevicesList.add(createComputingNode(type, SimulationParameters.TYPES.EDGE_DEVICE));
+			try {
+				edgeDevicesList.add(createComputingNode(type, SimulationParameters.TYPES.EDGE_DEVICE));
+			} catch (NoSuchAlgorithmException | NoSuchMethodException | SecurityException | InstantiationException
+					| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				e.printStackTrace();
+			}
 
 		}
 	}
@@ -220,23 +232,29 @@ public class ComputingNodesGenerator {
 	 * @param file The configuration file.
 	 * @param type The type, whether a CLOUD data center or an EDGE one.
 	 */
-	private void generateDataCenters(String file, TYPES type) throws Exception {
+	private void generateDataCenters(String file, TYPES type) {
 
 		// Fill list with edge data centers
-		InputStream serversFile = new FileInputStream(file);
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(serversFile);
-		NodeList datacenterList = doc.getElementsByTagName("datacenter");
-		for (int i = 0; i < datacenterList.getLength(); i++) {
-			Element datacenterElement = (Element) datacenterList.item(i);
-			ComputingNode computingNode = createComputingNode(datacenterElement, type);
-			if (computingNode.getType() == TYPES.CLOUD)
-				cloudDataCentersList.add(computingNode);
-			else
-				edgeDataCentersList.add(computingNode);
+		try (InputStream serversFile = new FileInputStream(file)) {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+
+			// Disable access to external entities in XML parsing, by disallowing DocType
+			// declaration
+			dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(serversFile);
+			NodeList datacenterList = doc.getElementsByTagName("datacenter");
+			for (int i = 0; i < datacenterList.getLength(); i++) {
+				Element datacenterElement = (Element) datacenterList.item(i);
+				ComputingNode computingNode = createComputingNode(datacenterElement, type);
+				if (computingNode.getType() == TYPES.CLOUD)
+					cloudDataCentersList.add(computingNode);
+				else
+					edgeDataCentersList.add(computingNode);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		serversFile.close();
 	}
 
 	/**
@@ -248,22 +266,32 @@ public class ComputingNodesGenerator {
 	 * @param datacenterElement The configuration file.
 	 * @param type              The type, whether an MIST (edge) device, an EDGE
 	 *                          data center, or a CLOUD one.
+	 * @throws NoSuchAlgorithmException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
 	private ComputingNode createComputingNode(Element datacenterElement, SimulationParameters.TYPES type)
-			throws Exception {
+			throws NoSuchAlgorithmException, NoSuchMethodException, SecurityException, InstantiationException,
+			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		// SecureRandom is preferred to generate random values.
+		Random random = SecureRandom.getInstanceStrong();
 		Boolean mobile = false;
 		double speed = 0;
 		double minPauseDuration = 0;
 		double maxPauseDuration = 0;
 		double minMobilityDuration = 0;
 		double maxMobilityDuration = 0;
-		int x_position = -1;
-		int y_position = -1;
+		int xPosition = -1;
+		int yPosition = -1;
 		double idleConsumption = Double
 				.parseDouble(datacenterElement.getElementsByTagName("idleConsumption").item(0).getTextContent());
 		double maxConsumption = Double
 				.parseDouble(datacenterElement.getElementsByTagName("maxConsumption").item(0).getTextContent());
-		Location datacenterLocation = new Location(x_position, y_position);
+		Location datacenterLocation = new Location(xPosition, yPosition);
 		long numOfCores = Integer.parseInt(datacenterElement.getElementsByTagName("cores").item(0).getTextContent());
 		double mips = Double.parseDouble(datacenterElement.getElementsByTagName("mips").item(0).getTextContent());
 		long storage = Long.parseLong(datacenterElement.getElementsByTagName("storage").item(0).getTextContent());
@@ -287,10 +315,10 @@ public class ComputingNodesGenerator {
 			String name = datacenterElement.getAttribute("name");
 			computingNode.setName(name);
 			Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
-			x_position = Integer.parseInt(location.getElementsByTagName("x_pos").item(0).getTextContent());
-			y_position = Integer.parseInt(location.getElementsByTagName("y_pos").item(0).getTextContent());
-			datacenterLocation = new Location(x_position, y_position);
-			
+			xPosition = Integer.parseInt(location.getElementsByTagName("x_pos").item(0).getTextContent());
+			yPosition = Integer.parseInt(location.getElementsByTagName("y_pos").item(0).getTextContent());
+			datacenterLocation = new Location(xPosition, yPosition);
+
 			for (ComputingNode edgeDC : edgeDataCentersList)
 				if (datacenterLocation.equals(edgeDC.getMobilityModel().getCurrentLocation()))
 					throw new IllegalArgumentException(
@@ -319,8 +347,8 @@ public class ComputingNodesGenerator {
 			computingNode.enableTaskGeneration(Boolean
 					.parseBoolean(datacenterElement.getElementsByTagName("generateTasks").item(0).getTextContent()));
 			// Generate random location for edge devices
-			datacenterLocation = new Location(new Random().nextInt(SimulationParameters.AREA_LENGTH),
-					new Random().nextInt(SimulationParameters.AREA_LENGTH));
+			datacenterLocation = new Location(random.nextInt(SimulationParameters.simulationMapLength),
+					random.nextInt(SimulationParameters.simulationMapLength));
 			getSimulationManager().getSimulationLogger()
 					.deepLog("ComputingNodesGenerator- Edge device:" + edgeDevicesList.size() + "    location: ( "
 							+ datacenterLocation.getXPos() + "," + datacenterLocation.getYPos() + " )");

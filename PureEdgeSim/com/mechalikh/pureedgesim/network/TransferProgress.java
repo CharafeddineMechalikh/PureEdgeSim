@@ -26,7 +26,7 @@ import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.taskgenerator.Task;
 
 public class TransferProgress {
-	public static enum Type {
+	public enum Type {
 		TASK, CONTAINER, RESULTS_TO_DEV, RESULTS_TO_ORCH, REQUEST
 	}
 

@@ -56,11 +56,11 @@ public class Scenario {
 	}
 
 	public String getStringOrchArchitecture() { 
-		return SimulationParameters.ORCHESTRATION_ARCHITECTURES[orchArchitecture].trim();
+		return SimulationParameters.orchestrationArchitectures[orchArchitecture].trim();
 	}
 
 	public String getStringOrchAlgorithm() {
-		return SimulationParameters.ORCHESTRATION_AlGORITHMS[orchAlgorithm].trim();
+		return SimulationParameters.orchestrationAlgorithms[orchAlgorithm].trim();
 	}
 
 	public String toString() {

@@ -65,7 +65,7 @@ public class Example7ClusteringDevice extends DefaultComputingNode {
 	public void processEvent(Event ev) {
 		switch (ev.getTag()) {
 		case UPDATE_CLUSTERS:
-			if ("CLUSTER".equals(SimulationParameters.DEPLOY_ORCHESTRATOR) && (getSimulation().clock() - time > 30)) {
+			if ("CLUSTER".equals(SimulationParameters.deployOrchestrators) && (getSimulation().clock() - time > 30)) {
 				time = (int) getSimulation().clock();
 
 				// Update clusters.
@@ -86,7 +86,7 @@ public class Example7ClusteringDevice extends DefaultComputingNode {
 	public void updateCluster() {
 		originalWeight = getOriginalWeight();
 		if ((getOrchestratorWeight() < originalWeight)
-				|| ((parent != null) && (getDistance(this, parent) > SimulationParameters.EDGE_DEVICES_RANGE))) {
+				|| ((parent != null) && (getDistance(this, parent) > SimulationParameters.edgeDevicesRange))) {
 			setOrchestrator(this);
 			weight = getOrchestratorWeight();
 		}
@@ -96,12 +96,12 @@ public class Example7ClusteringDevice extends DefaultComputingNode {
 	}
 
 	public double getOriginalWeight() {
-		int neighbors = 0;
+		int neighbors = 1; //to avoid devision by zero
 		double distance = 0;
 		for (int i = 0; i < simulationManager.getDataCentersManager().getEdgeDevicesList().size(); i++) {
 			if (simulationManager.getDataCentersManager().getEdgeDevicesList().get(i)
 					.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
-				if (distance <= SimulationParameters.EDGE_DEVICES_RANGE) {
+				if (distance <= SimulationParameters.edgeDevicesRange) {
 					// neighbor
 					neighbors++;
 				}
@@ -114,7 +114,7 @@ public class Example7ClusteringDevice extends DefaultComputingNode {
 		if (getEnergyModel().isBatteryPowered())
 			battery = getEnergyModel().getBatteryLevel() / 100;
 		double mips = this.getMipsPerCore();
-
+ 
 		// mips is divided by 200000 to normalize it, it is out of the parenthesis so
 		// the weight becomes 0 when mips = 0
 		return weight = mips / 200000 * ((battery * 0.5 / neighbors) + (neighbors * 0.2) + (mobility * 0.3));
@@ -181,7 +181,7 @@ public class Example7ClusteringDevice extends DefaultComputingNode {
 			if (simulationManager.getDataCentersManager().getNodesList().get(i)
 					.getType() == SimulationParameters.TYPES.EDGE_DEVICE
 					&& getDistance(this, simulationManager.getDataCentersManager().getNodesList()
-							.get(i)) <= SimulationParameters.EDGE_DEVICES_RANGE
+							.get(i)) <= SimulationParameters.edgeDevicesRange
 					// neighbors
 					&& (weight < ((Example7ClusteringDevice) simulationManager.getDataCentersManager().getNodesList()
 							.get(i)).weight)) {

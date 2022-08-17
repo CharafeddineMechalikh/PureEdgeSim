@@ -112,7 +112,7 @@ public class SimulationThread {
 				simLog = new SimLog(startTime, isFirstIteration);
 
 				// Clean output folder if it is the first iteration.
-				if (SimulationParameters.CLEAN_OUTPUT_FOLDER && isFirstIteration && fromIteration == 0) {
+				if (SimulationParameters.cleanOutputFolder && isFirstIteration && fromIteration == 0) {
 					simLog.cleanOutputFolder();
 				}
 				isFirstIteration = false;
@@ -134,7 +134,7 @@ public class SimulationThread {
 				simulationManager.startSimulation();
 
 				// Take a few seconds pause to display results, if parallelism is disabled.
-				if (!SimulationParameters.PARALLEL) {
+				if (!SimulationParameters.parallelism_enabled) {
 					pause(simLog);
 				}
 				iteration++;
@@ -150,8 +150,8 @@ public class SimulationThread {
 			generateCharts(simLog);
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			SimLog.println(getClass().getSimpleName()+" - The simulation has been terminated due to an unexpected error");
+		    Thread.currentThread().interrupt();
 		}
 	}
 
@@ -163,8 +163,8 @@ public class SimulationThread {
 	 */
 	private void pause(SimLog simLog) throws InterruptedException {
 		// Take a few seconds pause to show the results.
-		simLog.print(SimulationParameters.PAUSE_LENGTH + " seconds peause...");
-		for (int k = 1; k <= SimulationParameters.PAUSE_LENGTH; k++) {
+		simLog.print(SimulationParameters.pauseLength + " seconds peause...");
+		for (int k = 1; k <= SimulationParameters.pauseLength; k++) {
 			simLog.printSameLine(".");
 			Thread.sleep(1000);
 		}
@@ -174,7 +174,7 @@ public class SimulationThread {
 	/**
 	 * Loads the custom models and classes that are used in the simulation, if any.
 	 * 
-	 * @see #setCustomEdgeDataCenters(Class)
+	 * @see #setCustomComputingNode(Class)
 	 * @see #setCustomEdgeOrchestrator(Class)
 	 * @see #setCustomEnergyModel(Class)
 	 * @see #setCustomMobilityModel(Class)
@@ -213,7 +213,7 @@ public class SimulationThread {
 	 * @param simLog the simulation logger.
 	 */
 	protected void generateCharts(SimLog simLog) {
-		if (SimulationParameters.SAVE_CHARTS && !SimulationParameters.PARALLEL && simLog != null) {
+		if (SimulationParameters.saveCharts && !SimulationParameters.parallelism_enabled && simLog != null) {
 			SimLog.println(getClass().getSimpleName() + " - Saving charts...");
 			ChartsGenerator chartsGenerator = new ChartsGenerator(simLog.getFileName(".csv"));
 			chartsGenerator.generate();

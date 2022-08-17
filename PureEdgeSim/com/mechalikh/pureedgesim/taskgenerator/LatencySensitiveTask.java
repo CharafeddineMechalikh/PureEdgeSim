@@ -9,7 +9,7 @@ public abstract class LatencySensitiveTask {
 	private double arrivalTime = 0;
 	private int id;
 
-	public LatencySensitiveTask(int id) {
+	protected LatencySensitiveTask(int id) {
 		this.id = id;
 	}
 

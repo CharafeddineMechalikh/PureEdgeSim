@@ -32,9 +32,9 @@ public class NetworkLinkMan extends NetworkLink {
 
 	public NetworkLinkMan(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
-		setBandwidth(SimulationParameters.MAN_BANDWIDTH_BITS_PER_SECOND);
-		setLatency(SimulationParameters.MAN_LATENCY); 
-		setEnergyModel(new EnergyModelNetworkLink(SimulationParameters.MAN_WATTHOUR_PER_BIT, this));
+		setBandwidth(SimulationParameters.manBandwidthBitsPerSecond);
+		setLatency(SimulationParameters.manLatency); 
+		setEnergyModel(new EnergyModelNetworkLink(SimulationParameters.manWattHourPerBit, this));
 	}
 
 }

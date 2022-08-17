@@ -32,9 +32,9 @@ public class NetworkLinkWanDown extends NetworkLink {
 
 	public NetworkLinkWanDown(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
-		setBandwidth(SimulationParameters.WAN_BANDWIDTH_BITS_PER_SECOND);
-		setLatency(SimulationParameters.WAN_LATENCY);
-		setEnergyModel(new EnergyModelNetworkLink(SimulationParameters.WAN_WATTHOUR_PER_BIT, this));
+		setBandwidth(SimulationParameters.wanBandwidthBitsPerSecond);
+		setLatency(SimulationParameters.wanLatency);
+		setEnergyModel(new EnergyModelNetworkLink(SimulationParameters.wanWattHourPerBit, this));
 	}
 
 }

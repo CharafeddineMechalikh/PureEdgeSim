@@ -40,7 +40,7 @@ import com.mechalikh.pureedgesim.network.NetworkLink.NetworkLinkTypes;
  */
 public class InfrastructureGraph {
 
-	public static InfrastructureGraph NULL = new InfrastructureGraph() {
+	public static final InfrastructureGraph NULL = new InfrastructureGraph() {
 	};
 
 	private DirectedWeightedMultigraph<ComputingNode, NetworkLink> graph;

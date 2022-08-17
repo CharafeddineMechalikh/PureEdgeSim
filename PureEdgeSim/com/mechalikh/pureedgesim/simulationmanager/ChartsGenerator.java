@@ -69,13 +69,11 @@ public class ChartsGenerator {
 	}
 
 	private void loadFile() {
-		try {
-			BufferedReader file = new BufferedReader(new FileReader(fileName));
+		try (BufferedReader file = new BufferedReader(new FileReader(fileName))) {
 			String line;
 			while ((line = file.readLine()) != null) {
 				records.add(line.split(","));
-			}
-			file.close();
+			} 
 		} catch (Exception e) {
 			SimLog.println(this.getClass().getSimpleName() + " - Problem reading CSV file.");
 		}
@@ -102,17 +100,17 @@ public class ChartsGenerator {
 
 	public void generateChart(String x_series, String y_series, String y_series_label, boolean byAlgorithms) {
 		XYChart chart;
-		for (int i = 0; i < (byAlgorithms ? SimulationParameters.ORCHESTRATION_AlGORITHMS.length
-				: SimulationParameters.ORCHESTRATION_ARCHITECTURES.length); i++) {
+		for (int i = 0; i < (byAlgorithms ? SimulationParameters.orchestrationAlgorithms.length
+				: SimulationParameters.orchestrationArchitectures.length); i++) {
 			chart = initChart(x_series, y_series, y_series_label, getArray(byAlgorithms)[i]);
-			for (int j = 0; j < (byAlgorithms ? SimulationParameters.ORCHESTRATION_ARCHITECTURES.length
-					: SimulationParameters.ORCHESTRATION_AlGORITHMS.length); j++) {
+			for (int j = 0; j < (byAlgorithms ? SimulationParameters.orchestrationArchitectures.length
+					: SimulationParameters.orchestrationAlgorithms.length); j++) {
 				double[] xData = toArray(
-						getColumn(x_series, SimulationParameters.ORCHESTRATION_ARCHITECTURES[(byAlgorithms ? j : i)],
-								SimulationParameters.ORCHESTRATION_AlGORITHMS[(byAlgorithms ? i : j)]));
+						getColumn(x_series, SimulationParameters.orchestrationArchitectures[(byAlgorithms ? j : i)],
+								SimulationParameters.orchestrationAlgorithms[(byAlgorithms ? i : j)]));
 				double[] yData = toArray(
-						getColumn(y_series, SimulationParameters.ORCHESTRATION_ARCHITECTURES[(byAlgorithms ? j : i)],
-								SimulationParameters.ORCHESTRATION_AlGORITHMS[(byAlgorithms ? i : j)]));
+						getColumn(y_series, SimulationParameters.orchestrationArchitectures[(byAlgorithms ? j : i)],
+								SimulationParameters.orchestrationAlgorithms[(byAlgorithms ? i : j)]));
 
 				XYSeries series = chart.addSeries(getArray(!byAlgorithms)[j], xData, yData);
 				series.setMarker(SeriesMarkers.CIRCLE); // Marker type: circle,rectangle, diamond..
@@ -125,8 +123,8 @@ public class ChartsGenerator {
 	}
 
 	private String[] getArray(boolean byAlgorithms) {
-		return (byAlgorithms ? SimulationParameters.ORCHESTRATION_AlGORITHMS
-				: SimulationParameters.ORCHESTRATION_ARCHITECTURES);
+		return (byAlgorithms ? SimulationParameters.orchestrationAlgorithms
+				: SimulationParameters.orchestrationArchitectures);
 	}
 
 	private XYChart initChart(String x_series, String y_series, String y_series_label, String title) {

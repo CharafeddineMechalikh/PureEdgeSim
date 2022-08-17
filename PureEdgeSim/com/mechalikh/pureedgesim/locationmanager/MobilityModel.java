@@ -30,9 +30,9 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 /**
  * The main class of the Mobility Manager module, that generates the mobility
- * path for different edge devices. It implements the Null Object
- * Design Pattern in order to start avoiding {@link NullPointerException} when using the
- * NULL object instead of attributing null to EnergyModelNetworkLink variables.
+ * path for different edge devices. It implements the Null Object Design Pattern
+ * in order to start avoiding {@link NullPointerException} when using the NULL
+ * object instead of attributing null to EnergyModelNetworkLink variables.
  *
  * @author Charafeddine Mechalikh
  * @since PureEdgeSim 1.0
@@ -48,30 +48,31 @@ public abstract class MobilityModel {
 	protected double minMobilityDuration;
 	protected double speed;
 	protected SimulationManager simulationManager;
-	protected ComputingNode closestEdgeDataCenter= ComputingNode.NULL;
-	Map<Integer, Location> path = new HashMap<Integer, Location>();
-	Map<Integer, ComputingNode> datacentersMap = new HashMap<Integer, ComputingNode>();
+	protected ComputingNode closestEdgeDataCenter = ComputingNode.NULL;
+	Map<Integer, Location> path = new HashMap<>();
+	Map<Integer, ComputingNode> datacentersMap = new HashMap<>();
 
 	/**
 	 * An attribute that implements the Null Object Design Pattern to avoid
 	 * NullPointerException when using the NULL object instead of attributing null
 	 * to MobilityModel variables.
 	 */
-	public static MobilityModel NULL = new MobilityModelNull();
+	public static final MobilityModel NULL = new MobilityModelNull();
 
-	public MobilityModel(SimulationManager simulationManager, Location location) {
+	protected MobilityModel(SimulationManager simulationManager, Location location) {
 		currentLocation = location;
-		setSimulationManager(simulationManager); 
+		setSimulationManager(simulationManager);
 	}
 
-	public MobilityModel() {
+	protected MobilityModel() {
 	}
 
 	protected abstract Location getNextLocation(Location location);
 
 	public Location updateLocation(double time) {
-		return time <= SimulationParameters.SIMULATION_TIME ? (currentLocation = path.get((int) time * 1000))
-				: currentLocation;
+		if (time <= SimulationParameters.simulationDuration)
+			currentLocation = path.get((int) time * 1000);
+		return currentLocation;
 	}
 
 	public Location getCurrentLocation() {
@@ -149,34 +150,34 @@ public abstract class MobilityModel {
 
 	public void generatePath() {
 
-		closestEdgeDataCenter = getDataCenter(currentLocation);
-		
+		closestEdgeDataCenter = getDataCenter();
+
 		if (!isMobile())
 			return;
 		Location newLocation = currentLocation;
 
 		// Working around the double imprecision
-		int interval = (int) (SimulationParameters.UPDATE_INTERVAL * 1000);
-		int simulationTime = (int) (SimulationParameters.SIMULATION_TIME * 1000);
+		int interval = (int) (SimulationParameters.updateInterval * 1000);
+		int simulationTime = (int) (SimulationParameters.simulationDuration * 1000);
 
 		for (int i = 0; i <= simulationTime; i = i + interval) {
 			path.put(i, newLocation);
 			newLocation = getNextLocation(newLocation);
-			datacentersMap.put(i, getDataCenter(newLocation));
+			datacentersMap.put(i, getDataCenter());
 		}
 
 	}
 
-	private ComputingNode getDataCenter(Location newLocation) {
+	private ComputingNode getDataCenter() {
 		List<? extends ComputingNode> list = getSimulationManager().getDataCentersManager().getEdgeDatacenterList();
-		double range = SimulationParameters.EDGE_DATACENTERS_RANGE;
+		double range = SimulationParameters.edgeDataCentersRange;
 		ComputingNode closestDC = ComputingNode.NULL;
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).isPeripheral() && distanceTo(list.get(i)) <= range) {
 				range = distanceTo(list.get(i));
 				closestDC = list.get(i);
 			}
-		} 
+		}
 		return closestDC;
 	}
 

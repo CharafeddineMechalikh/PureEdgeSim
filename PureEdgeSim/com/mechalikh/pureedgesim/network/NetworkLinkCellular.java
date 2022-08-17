@@ -27,12 +27,12 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 /**
  * A 4G LTE network link.
  */
-public class NetworkLinkCellular extends NetworkLink {
+public abstract class NetworkLinkCellular extends NetworkLink {
 
-	public NetworkLinkCellular(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
+	protected NetworkLinkCellular(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
-		setBandwidth(SimulationParameters.CELLULAR_BANDWIDTH_BITS_PER_SECOND);
-		setLatency(SimulationParameters.CELLULAR_LATENCY); 
+		setBandwidth(SimulationParameters.cellularBandwidthBitsPerSecond);
+		setLatency(SimulationParameters.cellularLatency); 
 	}
 
 }

@@ -33,12 +33,12 @@ public class NetworkLinkCellularDown extends NetworkLinkCellular {
 	public NetworkLinkCellularDown(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
 
-		double energyConsumption = SimulationParameters.CELLULAR_DEVICE_RECEPTION_WATTHOUR_PER_BIT
-				+ SimulationParameters.CELLULAR_BASE_STATION_WATTHOUR_PER_BIT_DOWN_LINK;
+		double energyConsumption = SimulationParameters.cellularDeviceReceptionWattHourPerBit
+				+ SimulationParameters.cellularBaseStationWattHourPerBitDownLink;
 		if (type == NetworkLinkTypes.WAN) {
-			energyConsumption += SimulationParameters.WAN_WATTHOUR_PER_BIT;
-			setLatency(SimulationParameters.WAN_LATENCY);
-			setBandwidth(Math.min(SimulationParameters.WAN_BANDWIDTH_BITS_PER_SECOND, SimulationParameters.CELLULAR_BANDWIDTH_BITS_PER_SECOND));
+			energyConsumption += SimulationParameters.wanWattHourPerBit;
+			setLatency(SimulationParameters.wanLatency);
+			setBandwidth(Math.min(SimulationParameters.wanBandwidthBitsPerSecond, SimulationParameters.cellularBandwidthBitsPerSecond));
 		}
 		setEnergyModel(new EnergyModelNetworkLink(energyConsumption, this));
 	}

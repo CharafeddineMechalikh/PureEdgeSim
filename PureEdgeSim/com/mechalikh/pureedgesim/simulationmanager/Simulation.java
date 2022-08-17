@@ -57,8 +57,8 @@ import com.mechalikh.pureedgesim.scenariomanager.EdgeDevicesParser;
  * {@link com.mechalikh.pureedgesim.taskorchestrator.DefaultOrchestrator
  * DefaultOrchestrator}, the
  * {@link com.mechalikh.pureedgesim.network.DefaultNetworkModel
- * DefaultNetworkModel}, etc. Fortunately, PureEdgeSim allows the user to
- * integrate their custom models into the simulation. Here is a quick example of
+ * DefaultNetworkModel}, etc. Fortunately, PureEdgeSim allows users to
+ * integrate their custom models into the simulation. Here, is a quick example of
  * how to do it:
  * <p>
  * **<blockquote>*
@@ -150,7 +150,7 @@ public class Simulation extends SimulationAbstract {
 		// Walk through all orchestration scenarios.
 		loadScenarios();
 
-		if (SimulationParameters.PARALLEL) {
+		if (SimulationParameters.parallelism_enabled) {
 			// Parallel simulation.
 			launchParallelSimulations();
 		} else {
@@ -164,7 +164,7 @@ public class Simulation extends SimulationAbstract {
 		// Then, print the simulation duration
 		SimLog.println(getClass().getSimpleName() + " - Simulation took : " + simulatioDuration(startTime, finishTime));
 		SimLog.println(getClass().getSimpleName() + " - results were saved to the folder: "
-				+ SimulationParameters.OUTPUT_FOLDER);
+				+ SimulationParameters.outputFolder);
 
 	}
 
@@ -172,11 +172,11 @@ public class Simulation extends SimulationAbstract {
 	 * Checks the input files.
 	 */
 	private boolean checkFiles() {
-		return (new EdgeDevicesParser(SimulationParameters.EDGE_DEVICES_FILE).parse()
-				&& new DatacentersParser(SimulationParameters.EDGE_DATACENTERS_FILE, TYPES.EDGE_DATACENTER).parse()
-				&& new DatacentersParser(SimulationParameters.CLOUD_DATACENTERS_FILE, TYPES.CLOUD).parse()
-				&& new ParametersParser(SimulationParameters.SIMULATION_PARAMETERS_FILE).parse()
-				&& new ApplicationFileParser(SimulationParameters.APPLICATIONS_FILE).parse());
+		return (new EdgeDevicesParser(SimulationParameters.edgeDevicesFile).parse()
+				&& new DatacentersParser(SimulationParameters.edgeDataCentersFile, TYPES.EDGE_DATACENTER).parse()
+				&& new DatacentersParser(SimulationParameters.cloudDataCentersFile, TYPES.CLOUD).parse()
+				&& new ParametersParser(SimulationParameters.simulationParametersFile).parse()
+				&& new ApplicationFileParser(SimulationParameters.applicationFile).parse());
 	}
 
 	/**
@@ -214,9 +214,9 @@ public class Simulation extends SimulationAbstract {
 	 */
 	private void loadScenarios() {
 		// Save the different simulation runs (i.e., scenarios) in the scenarios List
-		for (int algorithmID = 0; algorithmID < SimulationParameters.ORCHESTRATION_AlGORITHMS.length; algorithmID++) {
-			for (int architectureID = 0; architectureID < SimulationParameters.ORCHESTRATION_ARCHITECTURES.length; architectureID++) {
-				for (int devicesCount = SimulationParameters.MIN_NUM_OF_EDGE_DEVICES; devicesCount <= SimulationParameters.MAX_NUM_OF_EDGE_DEVICES; devicesCount += SimulationParameters.EDGE_DEVICE_COUNTER_STEP) {
+		for (int algorithmID = 0; algorithmID < SimulationParameters.orchestrationAlgorithms.length; algorithmID++) {
+			for (int architectureID = 0; architectureID < SimulationParameters.orchestrationArchitectures.length; architectureID++) {
+				for (int devicesCount = SimulationParameters.minNumberOfEdgeDevices; devicesCount <= SimulationParameters.maxNumberOfEdgeDevices; devicesCount += SimulationParameters.edgeDevicesIncrementationStepSize) {
 					iterations.add(new Scenario(devicesCount, algorithmID, architectureID));
 				}
 			}

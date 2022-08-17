@@ -32,7 +32,7 @@ public abstract class NetworkingNode extends AbstractNode {
 	protected List<ComputingNode> vertexList = new ArrayList<>();
 	protected List<NetworkLink> edgeList = new ArrayList<>();
 
-	public NetworkingNode(SimulationManager simulationManager) {
+	protected NetworkingNode(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
 

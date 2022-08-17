@@ -41,7 +41,7 @@ public class Example4 {
 		 * custom nodes status updater class can be found in the examples folder as
 		 * well. by removing this line, PureEdgeSim will use its default class.
 		 */
-		sim.setCustomEdgeDataCenters(Example4CustomComputingNode.class);
+		sim.setCustomComputingNode(Example4CustomComputingNode.class);
 
 		// To use the PureEdgeSim default edge data centers class you can also uncomment
 		// this:

@@ -96,7 +96,7 @@ public class PureEdgeSim {
 	 * @see #terminate()
 	 */
 	public void start() {
-		EnvironmentConstants.entitiesList.forEach(e -> e.startInternal());
+		EnvironmentConstants.entitiesList.forEach(SimEntity::startInternal);
 
 		while (runClockTickAndProcessFutureEvents(Double.MAX_VALUE) && isRunning) {
 			// All the processing happens inside the method called above

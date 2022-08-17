@@ -51,7 +51,7 @@ public class SimulationVisualizer {
 				simulationManager);
 		charts.addAll(List.of(mapChart, cpuUtilizationChart, tasksSuccessChart));
 
-		if (SimulationParameters.ONE_SHARED_WAN_NETWORK) {
+		if (SimulationParameters.useOneSharefWanLink) {
 			Chart networkUtilizationChart = new WanChart("Network utilization", "Time (s)", "Utilization (Mbps)",
 					simulationManager);
 			charts.add(networkUtilizationChart);
@@ -86,7 +86,7 @@ public class SimulationVisualizer {
 	}
 
 	public void saveCharts() throws IOException {
-		String folderName = SimulationParameters.OUTPUT_FOLDER + "/"
+		String folderName = SimulationParameters.outputFolder + "/"
 				+ simulationManager.getSimulationLogger().getSimStartTime() + "/simulation_"
 				+ simulationManager.getSimulationId() + "/iteration_" + simulationManager.getIteration() + "__"
 				+ simulationManager.getScenario().toString();

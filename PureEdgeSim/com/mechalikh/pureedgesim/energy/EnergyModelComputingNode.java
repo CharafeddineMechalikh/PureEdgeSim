@@ -20,7 +20,6 @@
  **/
 package com.mechalikh.pureedgesim.energy;
 
-import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 
 /**
@@ -38,7 +37,7 @@ public class EnergyModelComputingNode {
 	protected double cpuEnergyConsumption = 0;
 	protected double batteryCapacity;
 	protected String connectivity;
-	protected boolean isBatteryPowered = false; 
+	protected boolean isBatteryPowered = false;
 
 	public static final int TRANSMISSION = 0; // used to update edge devices batteries
 	public static final int RECEPTION = 1;
@@ -59,7 +58,7 @@ public class EnergyModelComputingNode {
 	}
 
 	public void updateStaticEnergyConsumption() {
-		cpuEnergyConsumption += getIdleConsumption() / 3600 * SimulationParameters.UPDATE_INTERVAL;
+		cpuEnergyConsumption += getIdleConsumption() / 3600 * SimulationParameters.updateInterval;
 	}
 
 	public double getTotalEnergyConsumption() {
@@ -118,19 +117,18 @@ public class EnergyModelComputingNode {
 		this.connectivity = connectivity;
 
 		if ("cellular".equals(connectivity)) {
-			transmissionEnergyPerBits = SimulationParameters.CELLULAR_DEVICE_TRANSMISSION_WATTHOUR_PER_BIT;
-			receptionEnergyPerBits = SimulationParameters.CELLULAR_DEVICE_RECEPTION_WATTHOUR_PER_BIT;
+			transmissionEnergyPerBits = SimulationParameters.cellularDeviceTransmissionWattHourPerBit;
+			receptionEnergyPerBits = SimulationParameters.cellularDeviceReceptionWattHourPerBit;
 		} else if ("wifi".equals(connectivity)) {
-			transmissionEnergyPerBits = SimulationParameters.WIFI_DEVICE_TRANSMISSION_WATTHOUR_PER_BIT;
-			receptionEnergyPerBits = SimulationParameters.WIFI_DEVICE_RECEPTION_WATTHOUR_PER_BIT;
+			transmissionEnergyPerBits = SimulationParameters.wifiDeviceTransmissionWattHourPerBit;
+			receptionEnergyPerBits = SimulationParameters.wifiDeviceReceptionWattHourPerBit;
 		} else {
-			transmissionEnergyPerBits = SimulationParameters.ETHERNET_WATTHOUR_PER_BIT / 2;
-			receptionEnergyPerBits = SimulationParameters.ETHERNET_WATTHOUR_PER_BIT / 2;
+			transmissionEnergyPerBits = SimulationParameters.ethernetWattHourPerBit / 2;
+			receptionEnergyPerBits = SimulationParameters.ethernetWattHourPerBit / 2;
 		}
 	}
 
-	public void updatewirelessEnergyConsumption(double sizeInBits, ComputingNode origin, ComputingNode destination,
-			int flag) {
+	public void updatewirelessEnergyConsumption(double sizeInBits, int flag) {
 		if (flag == RECEPTION)
 			networkEnergyConsumption += sizeInBits * transmissionEnergyPerBits;
 		else
@@ -138,7 +136,7 @@ public class EnergyModelComputingNode {
 	}
 
 	public void updateDynamicEnergyConsumption(double length, double mipsCapacity) {
-		cpuEnergyConsumption += ((getMaxActiveConsumption() - getIdleConsumption()) / 3600 * length / mipsCapacity); 
+		cpuEnergyConsumption += ((getMaxActiveConsumption() - getIdleConsumption()) / 3600 * length / mipsCapacity);
 	}
 
 }

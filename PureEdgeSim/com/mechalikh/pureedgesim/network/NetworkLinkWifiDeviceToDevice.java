@@ -34,8 +34,8 @@ public class NetworkLinkWifiDeviceToDevice extends NetworkLinkWifi {
 			NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
 
-		setEnergyModel(new EnergyModelNetworkLink(SimulationParameters.WIFI_DEVICE_TRANSMISSION_WATTHOUR_PER_BIT
-				+ SimulationParameters.WIFI_DEVICE_RECEPTION_WATTHOUR_PER_BIT, this));
+		setEnergyModel(new EnergyModelNetworkLink(SimulationParameters.wifiDeviceTransmissionWattHourPerBit
+				+ SimulationParameters.wifiDeviceReceptionWattHourPerBit, this));
 	}
 
 }

@@ -32,14 +32,14 @@ public class NetworkLinkEthernet extends NetworkLink {
 
 	public NetworkLinkEthernet(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
-		setBandwidth(SimulationParameters.ETHERNET_BANDWIDTH_BITS_PER_SECOND);
-		setLatency(SimulationParameters.ETHERNET_LATENCY);
-		double energyConsumption = SimulationParameters.ETHERNET_WATTHOUR_PER_BIT;
+		setBandwidth(SimulationParameters.ethernetBandwidthBitsPerSecond);
+		setLatency(SimulationParameters.ethernetLatency);
+		double energyConsumption = SimulationParameters.ethernetWattHourPerBit;
 	
 		if (type == NetworkLinkTypes.WAN) {
-			energyConsumption += SimulationParameters.WAN_WATTHOUR_PER_BIT;
-			setLatency(SimulationParameters.WAN_LATENCY);
-			setBandwidth(Math.min(SimulationParameters.WAN_BANDWIDTH_BITS_PER_SECOND, SimulationParameters.ETHERNET_BANDWIDTH_BITS_PER_SECOND));
+			energyConsumption += SimulationParameters.wanWattHourPerBit;
+			setLatency(SimulationParameters.wanLatency);
+			setBandwidth(Math.min(SimulationParameters.wanBandwidthBitsPerSecond, SimulationParameters.ethernetBandwidthBitsPerSecond));
 		}
 
 		setEnergyModel(new EnergyModelNetworkLink(energyConsumption, this));

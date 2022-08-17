@@ -24,9 +24,9 @@ import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 
 /**
  * A class that implements the Null Object Design Pattern for the
- * {@link MobilityModel} class. Needed to avoid
- * {@link NullPointerException} when using the NULL object instead of
- * attributing null to MobilityModel variables.
+ * {@link MobilityModel} class. Needed to avoid {@link NullPointerException}
+ * when using the NULL object instead of attributing null to MobilityModel
+ * variables.
  */
 public class MobilityModelNull extends MobilityModel {
 
@@ -34,10 +34,12 @@ public class MobilityModelNull extends MobilityModel {
 		return new Location(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 	}
 
+	@Override
 	public Location getNextLocation(Location location) {
 		return new Location(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 	}
 
+	@Override
 	public double distanceTo(ComputingNode device2) {
 		return Double.POSITIVE_INFINITY;
 	}

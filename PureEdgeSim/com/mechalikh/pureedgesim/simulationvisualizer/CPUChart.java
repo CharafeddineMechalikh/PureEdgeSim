@@ -33,10 +33,10 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public class CPUChart extends Chart {
 
-	private List<Double> cloudUsage = new ArrayList<>((int) SimulationParameters.SIMULATION_TIME);
-	private List<Double> mistUsage = new ArrayList<>((int) SimulationParameters.SIMULATION_TIME);
-	private List<Double> edgeUsage = new ArrayList<>((int) SimulationParameters.SIMULATION_TIME);
-	private List<Double> currentTime = new ArrayList<>((int) SimulationParameters.SIMULATION_TIME);
+	private List<Double> cloudUsage = new ArrayList<>((int) SimulationParameters.simulationDuration);
+	private List<Double> mistUsage = new ArrayList<>((int) SimulationParameters.simulationDuration);
+	private List<Double> edgeUsage = new ArrayList<>((int) SimulationParameters.simulationDuration);
+	private List<Double> currentTime = new ArrayList<>((int) SimulationParameters.simulationDuration);
 
 	public CPUChart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
 		super(title, xAxisTitle, yAxisTitle, simulationManager);
@@ -86,7 +86,7 @@ public class CPUChart extends Chart {
 				edUsage += dc.getAvgCpuUtilization();
 			}
 
-			edgeUsage.add(edUsage / SimulationParameters.NUM_OF_EDGE_DATACENTERS);
+			edgeUsage.add(edUsage / SimulationParameters.numberOfEdgeDataCenters);
 			updateSeries(getChart(), "Edge", toArray(currentTime), toArray(edgeUsage), SeriesMarkers.NONE, Color.BLACK);
 		}
 	}
@@ -96,7 +96,7 @@ public class CPUChart extends Chart {
 		for (ComputingNode dc : simulationManager.getDataCentersManager().getCloudDatacentersList()) {
 			clUsage = dc.getAvgCpuUtilization();
 		}
-		cloudUsage.add(clUsage / SimulationParameters.NUM_OF_CLOUD_DATACENTERS);
+		cloudUsage.add(clUsage / SimulationParameters.numberOfCloudDataCenters);
 		updateSeries(getChart(), "Cloud", toArray(currentTime), toArray(cloudUsage), SeriesMarkers.NONE, Color.BLACK);
 	}
 }

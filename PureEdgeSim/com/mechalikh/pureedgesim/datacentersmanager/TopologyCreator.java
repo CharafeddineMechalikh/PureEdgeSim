@@ -96,7 +96,7 @@ public class TopologyCreator {
 		// What remains is to link edge devices with the closest edge data center
 		for (ComputingNode node : computingNodesGenerator.getEdgeDevicesList()) {
 			// Link this device with a close edge data center
-			double range = SimulationParameters.EDGE_DATACENTERS_RANGE;
+			double range = SimulationParameters.edgeDataCentersRange;
 			ComputingNode closestDC = ComputingNode.NULL;
 			for (ComputingNode edgeDC : computingNodesGenerator.getEdgeDatacenterList()) {
 				if (node.getMobilityModel().distanceTo(edgeDC) <= range && edgeDC.isPeripheral()) {
@@ -127,7 +127,7 @@ public class TopologyCreator {
 		ComputingNode cloud = computingNodesGenerator.getCloudDatacenterList().get(0);
 
 		// If we want all data to be sent over the same wan network.
-		if (SimulationParameters.ONE_SHARED_WAN_NETWORK) {
+		if (SimulationParameters.useOneSharefWanLink) {
 			// We need to create another node to link with the cloud.
 			ComputingNode metroRouter = new Router(simulationManager);
 
@@ -151,10 +151,12 @@ public class TopologyCreator {
 
 	private void generateTopologyFromXmlFile() {
 		// Fill list with edge data centers
-
-		try {
-			InputStream serversFile = new FileInputStream(SimulationParameters.EDGE_DATACENTERS_FILE);
+		try (InputStream serversFile = new FileInputStream(SimulationParameters.edgeDataCentersFile)) {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+
+			// Disable access to external entities in XML parsing, by disallowing DocType
+			// declaration
+			dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(serversFile);
 
@@ -164,7 +166,6 @@ public class TopologyCreator {
 				Element networkLink = (Element) networkLinks.item(i);
 				createNetworkLink(networkLink);
 			}
-			serversFile.close();
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			e.printStackTrace();
 		}
@@ -189,8 +190,8 @@ public class TopologyCreator {
 	}
 
 	private void connect(ComputingNode computingNode1, ComputingNode computingNode2, NetworkLinkTypes type) {
-		NetworkLink up = NetworkLink.NULL;
-		NetworkLink down = NetworkLink.NULL;
+		NetworkLink up;
+		NetworkLink down;
 
 		// If this device is connected using WiFi, then create a WiFi link
 		if ("wifi".equals(computingNode1.getEnergyModel().getConnectivityType())) {

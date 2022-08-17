@@ -24,7 +24,7 @@ import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationengine.Event;
 import com.mechalikh.pureedgesim.simulationengine.SimEntity;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
-import com.mechalikh.pureedgesim.taskgenerator.Task; 
+import com.mechalikh.pureedgesim.taskgenerator.Task;
 
 /**
  * The abstract class of a computing node.
@@ -53,7 +53,8 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
 	 * The name of this computing node (used when generating the topology). It is
 	 * defined by the user in the edge_datacenters.xml.
 	 * 
-	 * @see com.mechalikh.pureedgesim.datacentersmanager.TopologyCreator#getDataCenterByName(String name)
+	 * @see com.mechalikh.pureedgesim.datacentersmanager.TopologyCreator#getDataCenterByName(String
+	 *      name)
 	 */
 	protected String name;
 
@@ -62,7 +63,7 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
 	 * 
 	 * @see SimulationManager#sendTaskToOrchestrator(Task task)
 	 */
-	protected ComputingNode orchestrator= ComputingNode.NULL;
+	protected ComputingNode orchestrator = ComputingNode.NULL;
 
 	/**
 	 * Whether this computing node (IoT device in this case) generates tasks or not.
@@ -77,8 +78,7 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
 	 */
 	protected boolean isOrchestrator = false;
 
-
-	public AbstractNode(SimulationManager simulationManager) {
+	protected AbstractNode(SimulationManager simulationManager) {
 		super(simulationManager.getSimulation());
 		this.simulationManager = simulationManager;
 	}
@@ -90,13 +90,9 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
 
 	@Override
 	public void processEvent(Event e) {
-		switch (e.getTag()) {
-		case UPDATE_STATUS:
+		if (e.getTag() == UPDATE_STATUS) {
 			updateStatus();
-			schedule(this, SimulationParameters.UPDATE_INTERVAL, UPDATE_STATUS);
-			break;
-		default:
-			break;
+			schedule(this, SimulationParameters.updateInterval, UPDATE_STATUS);
 		}
 	}
 
@@ -125,7 +121,8 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
 	 * this node is "Edge". The name is given by the user in the
 	 * edge_datacenters.xml file. It will be used when creating the topology.
 	 * 
-	 * @see com.mechalikh.pureedgesim.datacentersmanager.TopologyCreator#getDataCenterByName(String name)
+	 * @see com.mechalikh.pureedgesim.datacentersmanager.TopologyCreator#getDataCenterByName(String
+	 *      name)
 	 * 
 	 * @param name The name of this edge data center.
 	 */
@@ -139,7 +136,8 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
 	 * 
 	 * @return name: The name of this computing node.
 	 * 
-	 * @see com.mechalikh.pureedgesim.datacentersmanager.TopologyCreator#getDataCenterByName(String name)
+	 * @see com.mechalikh.pureedgesim.datacentersmanager.TopologyCreator#getDataCenterByName(String
+	 *      name)
 	 */
 	public String getName() {
 		return name;
@@ -149,7 +147,7 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
 	 * Returns true if this computing node is set as orchestrator.
 	 * 
 	 * @return isOrchestrator: Whether this computing node is orchestrator or not.
-	 *  
+	 * 
 	 */
 	public boolean isOrchestrator() {
 		return isOrchestrator;
@@ -160,7 +158,7 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
 	 * tasks will be sent to this node to make offloading/placement decisions.
 	 * 
 	 * @param isOrchestrator Whether this computing node is orchestrator or not.
-	 *  
+	 * 
 	 */
 	public void setAsOrchestrator(boolean isOrchestrator) {
 		this.isOrchestrator = isOrchestrator;

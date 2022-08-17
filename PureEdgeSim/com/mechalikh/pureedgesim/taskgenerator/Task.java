@@ -35,12 +35,12 @@ public class Task extends LatencySensitiveTask {
 	private double outputSize;
 	private double length;
 
-	public static enum FailureReason {
+	public enum FailureReason {
 		FAILED_DUE_TO_LATENCY, FAILED_BECAUSE_DEVICE_DEAD, FAILED_DUE_TO_DEVICE_MOBILITY,
 		NOT_GENERATED_BECAUSE_DEVICE_DEAD, FAILED_NO_RESSOURCES
 	}
 
-	public static enum Status {
+	public enum Status {
 		SUCCESS, FAILED
 	}
 

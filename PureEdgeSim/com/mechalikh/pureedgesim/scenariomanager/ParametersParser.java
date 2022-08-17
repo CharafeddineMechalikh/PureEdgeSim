@@ -15,154 +15,142 @@ public class ParametersParser extends FileParserAbstract {
 	}
 
 	@Override
-	public boolean parse() { 
+	public boolean parse() {
 		return checkSimulationProperties();
 	}
 
 	private boolean checkSimulationProperties() {
 		SimLog.println(getClass().getSimpleName() + " - Checking simulation properties file...");
 		boolean result = false;
-		InputStream input = null;
-		try {
-			input = new FileInputStream(file);
+		try (InputStream input = new FileInputStream(file)) {
 
 			// Loading properties file.
 			Properties prop = new Properties();
 			prop.load(input);
 
 			// In seconds
-			SimulationParameters.SIMULATION_TIME = (double) 60
+			SimulationParameters.simulationDuration = (double) 60
 					* assertDouble(prop, "simulation_time", value -> (value > 0), "> 0");
 
-			SimulationParameters.PARALLEL = Boolean.parseBoolean(prop.getProperty("parallel_simulation").trim());
+			SimulationParameters.parallelism_enabled = Boolean.parseBoolean(prop.getProperty("parallel_simulation").trim());
 
 			// In seconds
-			SimulationParameters.UPDATE_INTERVAL = assertDouble(prop, "update_interval", value -> (value >= 0.01),
+			SimulationParameters.updateInterval = assertDouble(prop, "update_interval", value -> (value >= 0.01),
 					">= 0.01");
 
 			// In seconds
-			SimulationParameters.PAUSE_LENGTH = (int) assertDouble(prop, "pause_length", value -> (value >= 0), ">= 0");
+			SimulationParameters.pauseLength = (int) assertDouble(prop, "pause_length", value -> (value >= 0), ">= 0");
 
-			SimulationParameters.DISPLAY_REAL_TIME_CHARTS = Boolean
+			SimulationParameters.displayRealTimeCharts = Boolean
 					.parseBoolean(prop.getProperty("display_real_time_charts").trim());
-			SimulationParameters.AUTO_CLOSE_REAL_TIME_CHARTS = Boolean
+			SimulationParameters.autoCloseRealTimeCharts = Boolean
 					.parseBoolean(prop.getProperty("auto_close_real_time_charts").trim());
 
-			SimulationParameters.CHARTS_UPDATE_INTERVAL = assertDouble(prop, "charts_update_interval",
+			SimulationParameters.chartsUpdateInterval = assertDouble(prop, "charts_update_interval",
 					value -> (value >= 0.01 && value <= 60), "between 0.01 and 60");
 
-			SimulationParameters.SAVE_CHARTS = Boolean.parseBoolean(prop.getProperty("save_charts").trim());
+			SimulationParameters.saveCharts = Boolean.parseBoolean(prop.getProperty("save_charts").trim());
 
 			// Meters
-			SimulationParameters.AREA_LENGTH = (int) assertDouble(prop, "length", value -> (value > 0), "> 0");
+			SimulationParameters.simulationMapLength = (int) assertDouble(prop, "length", value -> (value > 0), "> 0");
 
 			// Meters
-			SimulationParameters.AREA_WIDTH = (int) assertDouble(prop, "width", value -> (value > 0), "> 0");
+			SimulationParameters.simulationMapWidth = (int) assertDouble(prop, "width", value -> (value > 0), "> 0");
 
-			SimulationParameters.EDGE_DEVICES_RANGE = (int) assertDouble(prop, "edge_devices_range",
+			SimulationParameters.edgeDevicesRange = (int) assertDouble(prop, "edge_devices_range",
 					value -> (value > 0), "> 0");
-			SimulationParameters.EDGE_DATACENTERS_RANGE = (int) assertDouble(prop, "edge_datacenters_coverage",
+			SimulationParameters.edgeDataCentersRange = (int) assertDouble(prop, "edge_datacenters_coverage",
 					value -> (value > 0), "> 0");
 
-			SimulationParameters.ENABLE_REGISTRY = Boolean.parseBoolean(prop.getProperty("enable_registry").trim());
-			SimulationParameters.registry_mode = prop.getProperty("registry_mode").trim();
-			SimulationParameters.ENABLE_ORCHESTRATORS = Boolean
+			SimulationParameters.enableRegistry = Boolean.parseBoolean(prop.getProperty("enable_registry").trim());
+			SimulationParameters.registryMode = prop.getProperty("registry_mode").trim();
+			SimulationParameters.enableOrchestrators = Boolean
 					.parseBoolean(prop.getProperty("enable_orchestrators").trim());
-			SimulationParameters.DEPLOY_ORCHESTRATOR = prop.getProperty("deploy_orchestrator").trim();
+			SimulationParameters.deployOrchestrators = prop.getProperty("deploy_orchestrator").trim();
 
-			SimulationParameters.WAIT_FOR_TASKS = Boolean.parseBoolean(prop.getProperty("wait_for_all_tasks").trim());
-			SimulationParameters.SAVE_LOG = Boolean.parseBoolean(prop.getProperty("save_log_file").trim());
-			SimulationParameters.CLEAN_OUTPUT_FOLDER = Boolean
+			SimulationParameters.waitForAllTasksToFinish = Boolean.parseBoolean(prop.getProperty("wait_for_all_tasks").trim());
+			SimulationParameters.saveLog = Boolean.parseBoolean(prop.getProperty("save_log_file").trim());
+			SimulationParameters.cleanOutputFolder = Boolean
 					.parseBoolean(prop.getProperty("clear_output_folder").trim());
-			SimulationParameters.DEEP_LOGGING = Boolean.parseBoolean(prop.getProperty("deep_log_enabled").trim());
+			SimulationParameters.deepLoggingEnabled = Boolean.parseBoolean(prop.getProperty("deep_log_enabled").trim());
 
-			SimulationParameters.MIN_NUM_OF_EDGE_DEVICES = (int) assertDouble(prop, "min_number_of_edge_devices",
+			SimulationParameters.minNumberOfEdgeDevices = (int) assertDouble(prop, "min_number_of_edge_devices",
 					value -> (value > 0), "> 0");
-			SimulationParameters.MAX_NUM_OF_EDGE_DEVICES = (int) assertDouble(prop, "max_number_of_edge_devices",
+			SimulationParameters.maxNumberOfEdgeDevices = (int) assertDouble(prop, "max_number_of_edge_devices",
 					value -> (value > 0), "> 0");
 
-			if (SimulationParameters.MIN_NUM_OF_EDGE_DEVICES > SimulationParameters.MAX_NUM_OF_EDGE_DEVICES) {
+			if (SimulationParameters.minNumberOfEdgeDevices > SimulationParameters.maxNumberOfEdgeDevices) {
 				throw new IllegalArgumentException(getClass().getSimpleName()
 						+ " - Error,  the entered min number of edge devices is superior to the max number, check the 'simulation.properties' file.");
 			}
 
-			SimulationParameters.EDGE_DEVICE_COUNTER_STEP = (int) assertDouble(prop, "edge_device_counter_size",
+			SimulationParameters.edgeDevicesIncrementationStepSize = (int) assertDouble(prop, "edge_device_counter_size",
 					value -> (value > 0), "> 0");
 
-			SimulationParameters.REALISTIC_NETWORK_MODEL = Boolean
+			SimulationParameters.realisticNetworkModel = Boolean
 					.parseBoolean(prop.getProperty("realistic_network_model").trim());
 			// Seconds
-			SimulationParameters.NETWORK_UPDATE_INTERVAL = assertDouble(prop, "network_update_interval",
+			SimulationParameters.networkUpdateInterval = assertDouble(prop, "network_update_interval",
 					value -> (value >= 0.01), ">= 0.01");
-			SimulationParameters.ONE_SHARED_WAN_NETWORK = Boolean
+			SimulationParameters.useOneSharefWanLink = Boolean
 					.parseBoolean(prop.getProperty("one_shared_wan_network").trim());
 
 			// Mbps to bits per second
-			SimulationParameters.WAN_BANDWIDTH_BITS_PER_SECOND = 1000000
+			SimulationParameters.wanBandwidthBitsPerSecond = 1000000
 					* assertDouble(prop, "wan_bandwidth", value -> (value > 0), "> 0");
-			SimulationParameters.WAN_LATENCY = assertDouble(prop, "wan_latency", value -> (value >= 0), ">= 0");
+			SimulationParameters.wanLatency = assertDouble(prop, "wan_latency", value -> (value >= 0), ">= 0");
 
 			// Nanojoules per second (per bit) to Watt Hour (per bit)
-			SimulationParameters.WAN_WATTHOUR_PER_BIT = 2.7777777777778e-13
+			SimulationParameters.wanWattHourPerBit = 2.7777777777778e-13
 					* assertDouble(prop, "wan_nanojoules_per_bit", value -> (value >= 0), ">= 0");
 
-			SimulationParameters.MAN_BANDWIDTH_BITS_PER_SECOND = 1000000
+			SimulationParameters.manBandwidthBitsPerSecond = 1000000
 					* assertDouble(prop, "man_bandwidth", value -> (value > 0), "> 0");
-			SimulationParameters.MAN_LATENCY = assertDouble(prop, "man_latency", value -> (value >= 0), ">= 0");
-			SimulationParameters.MAN_WATTHOUR_PER_BIT = 2.7777777777778e-13
+			SimulationParameters.manLatency = assertDouble(prop, "man_latency", value -> (value >= 0), ">= 0");
+			SimulationParameters.manWattHourPerBit = 2.7777777777778e-13
 					* assertDouble(prop, "man_nanojoules_per_bit", value -> (value >= 0), ">= 0");
 
-			SimulationParameters.WIFI_BANDWIDTH_BITS_PER_SECOND = 1000000
+			SimulationParameters.wifiBandwidthBitsPerSecond = 1000000
 					* assertDouble(prop, "wifi_bandwidth", value -> (value > 0), "> 0");
-			SimulationParameters.WIFI_DEVICE_TRANSMISSION_WATTHOUR_PER_BIT = 2.7777777777778e-13
+			SimulationParameters.wifiDeviceTransmissionWattHourPerBit = 2.7777777777778e-13
 					* assertDouble(prop, "wifi_device_transmission_nanojoules_per_bit", value -> (value >= 0), ">= 0");
-			SimulationParameters.WIFI_DEVICE_RECEPTION_WATTHOUR_PER_BIT = 2.7777777777778e-13 * assertDouble(prop,
-					"wifi_device_reception_nanojoules_per_bit", value -> (value >= 0), ">= 0");
-			SimulationParameters.WIFI_ACCESS_POINT_TRANSMISSION_WATTHOUR_PER_BIT = 2.7777777777778e-13 * assertDouble(prop,
-					"wifi_access_point_transmission_nanojoules_per_bit", value -> (value >= 0), ">= 0");
-			SimulationParameters.WIFI_ACCESS_POINT_RECEPTION_WATTHOUR_PER_BIT = 2.7777777777778e-13 * assertDouble(prop,
+			SimulationParameters.wifiDeviceReceptionWattHourPerBit = 2.7777777777778e-13
+					* assertDouble(prop, "wifi_device_reception_nanojoules_per_bit", value -> (value >= 0), ">= 0");
+			SimulationParameters.wifiAccessPointTransmissionWattHourPerBit = 2.7777777777778e-13 * assertDouble(
+					prop, "wifi_access_point_transmission_nanojoules_per_bit", value -> (value >= 0), ">= 0");
+			SimulationParameters.wifiAccessPointReceptionWattHourPerBit = 2.7777777777778e-13 * assertDouble(prop,
 					"wifi_access_point_reception_nanojoules_per_bit", value -> (value >= 0), ">= 0");
-			
-			SimulationParameters.WIFI_LATENCY = assertDouble(prop, "wifi_latency", value -> (value >= 0), ">= 0");
-			SimulationParameters.ETHERNET_BANDWIDTH_BITS_PER_SECOND = 1000000
+
+			SimulationParameters.wifiLatency = assertDouble(prop, "wifi_latency", value -> (value >= 0), ">= 0");
+			SimulationParameters.ethernetBandwidthBitsPerSecond = 1000000
 					* assertDouble(prop, "ethernet_bandwidth", value -> (value > 0), "> 0");
-			SimulationParameters.ETHERNET_WATTHOUR_PER_BIT = 2.7777777777778e-13
+			SimulationParameters.ethernetWattHourPerBit = 2.7777777777778e-13
 					* assertDouble(prop, "ethernet_nanojoules_per_bit", value -> (value >= 0), ">= 0");
-			SimulationParameters.ETHERNET_LATENCY = assertDouble(prop, "ethernet_latency", value -> (value >= 0),
+			SimulationParameters.ethernetLatency = assertDouble(prop, "ethernet_latency", value -> (value >= 0),
 					">= 0");
 
-			SimulationParameters.CELLULAR_BANDWIDTH_BITS_PER_SECOND = 1000000
+			SimulationParameters.cellularBandwidthBitsPerSecond = 1000000
 					* assertDouble(prop, "cellular_bandwidth", value -> (value > 0), "> 0");
-			SimulationParameters.CELLULAR_DEVICE_TRANSMISSION_WATTHOUR_PER_BIT = 2.7777777777778e-13
-					* assertDouble(prop, "cellular_device_transmission_nanojoules_per_bit", value -> (value >= 0), ">= 0");
-			SimulationParameters.CELLULAR_DEVICE_RECEPTION_WATTHOUR_PER_BIT = 2.7777777777778e-13
+			SimulationParameters.cellularDeviceTransmissionWattHourPerBit = 2.7777777777778e-13 * assertDouble(
+					prop, "cellular_device_transmission_nanojoules_per_bit", value -> (value >= 0), ">= 0");
+			SimulationParameters.cellularDeviceReceptionWattHourPerBit = 2.7777777777778e-13
 					* assertDouble(prop, "cellular_device_reception_nanojoules_per_bit", value -> (value >= 0), ">= 0");
-			SimulationParameters.CELLULAR_BASE_STATION_WATTHOUR_PER_BIT_UP_LINK = 2.7777777777778e-13
-					* assertDouble(prop, "cellular_base_station_nanojoules_per_bit_up_link", value -> (value >= 0), ">= 0");
-			SimulationParameters.CELLULAR_BASE_STATION_WATTHOUR_PER_BIT_DOWN_LINK = 12.7777777777778e-13 * assertDouble(prop,
-					"cellular_base_station_nanojoules_per_bit_down_link", value -> (value >= 0), ">= 0");
-			SimulationParameters.CELLULAR_LATENCY = assertDouble(prop, "cellular_latency", value -> (value >= 0), ">= 0");
+			SimulationParameters.cellularBaseStationWattHourPerBitUpLink = 2.7777777777778e-13 * assertDouble(
+					prop, "cellular_base_station_nanojoules_per_bit_up_link", value -> (value >= 0), ">= 0");
+			SimulationParameters.cellularBaseStationWattHourPerBitDownLink = 12.7777777777778e-13 * assertDouble(
+					prop, "cellular_base_station_nanojoules_per_bit_down_link", value -> (value >= 0), ">= 0");
+			SimulationParameters.cellularLatency = assertDouble(prop, "cellular_latency", value -> (value >= 0),
+					">= 0");
 
-			SimulationParameters.ORCHESTRATION_ARCHITECTURES = prop.getProperty("orchestration_architectures")
+			SimulationParameters.orchestrationArchitectures = prop.getProperty("orchestration_architectures")
 					.split(",");
-			SimulationParameters.ORCHESTRATION_AlGORITHMS = prop.getProperty("orchestration_algorithms").split(",");
-			input.close();
+			SimulationParameters.orchestrationAlgorithms = prop.getProperty("orchestration_algorithms").split(",");
+
+			result = true;
+			SimLog.println(getClass().getSimpleName() + " - Properties file successfully Loaded propoerties file!");
 		} catch (IOException ex) {
 			ex.printStackTrace();
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-					result = true;
-					SimLog.println(getClass().getSimpleName() + " - Properties file successfully Loaded propoerties file!");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} else {
-				throw new IllegalArgumentException(getClass().getSimpleName() + " - Failed to load properties file!");
-			}
 		}
-
 		return result;
 
 	}

@@ -54,7 +54,7 @@ public abstract class SimulationAbstract {
 	/**
 	 * The Computing Node class that is used in the simulation.
 	 * 
-	 * @see #setCustomEdgeDataCenters(Class)
+	 * @see #setCustomComputingNode(Class)
 	 */
 	protected Class<? extends ComputingNode> computingNode = DefaultComputingNode.class;
 
@@ -86,7 +86,7 @@ public abstract class SimulationAbstract {
 	 * 
 	 * @param customComputingNode the custom class to use.
 	 */
-	public void setCustomEdgeDataCenters(Class<? extends ComputingNode> customComputingNode) {
+	public void setCustomComputingNode(Class<? extends ComputingNode> customComputingNode) {
 		this.computingNode = customComputingNode;
 	}
 
@@ -137,7 +137,7 @@ public abstract class SimulationAbstract {
 	 * @param path the output folder to set.
 	 */
 	public void setCustomOutputFolder(String path) {
-		SimulationParameters.OUTPUT_FOLDER = path;
+		SimulationParameters.outputFolder = path;
 	}
 
 	/**
@@ -162,19 +162,19 @@ public abstract class SimulationAbstract {
 	public void setCustomFilePath(String path, Files file) {
 		switch (file) {
 		case SIMULATION_PARAMETERS:
-			SimulationParameters.SIMULATION_PARAMETERS_FILE = path;
+			SimulationParameters.simulationParametersFile = path;
 			break;
 		case APPLICATIONS_FILE:
-			SimulationParameters.APPLICATIONS_FILE = path;
+			SimulationParameters.applicationFile = path;
 			break;
 		case EDGE_DATACENTERS_FILE:
-			SimulationParameters.EDGE_DATACENTERS_FILE = path;
+			SimulationParameters.edgeDataCentersFile = path;
 			break;
 		case EDGE_DEVICES_FILE:
-			SimulationParameters.EDGE_DEVICES_FILE = path;
+			SimulationParameters.edgeDevicesFile = path;
 			break;
 		case CLOUD_FILE:
-			SimulationParameters.CLOUD_DATACENTERS_FILE = path;
+			SimulationParameters.cloudDataCentersFile = path;
 			break;
 		default:
 			throw new IllegalArgumentException(getClass().getSimpleName()+ " - Unknown file type");

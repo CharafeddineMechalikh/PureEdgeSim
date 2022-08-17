@@ -53,12 +53,12 @@ public class Example2CustomMobilityModel extends MobilityModel {
 		Double y_position = location.getYPos() + 1;
 
 		// If x position is bigger then the simulation area length, start from 0.
-		if (x_position > SimulationParameters.AREA_LENGTH)
-			x_position = x_position % SimulationParameters.AREA_LENGTH;
+		if (x_position > SimulationParameters.simulationMapLength)
+			x_position = x_position % SimulationParameters.simulationMapLength;
 
 		// If y position is bigger then the simulation area length, start from 0.
-		if (y_position > SimulationParameters.AREA_WIDTH)
-			y_position = y_position % SimulationParameters.AREA_WIDTH;
+		if (y_position > SimulationParameters.simulationMapWidth)
+			y_position = y_position % SimulationParameters.simulationMapWidth;
 
 		// Return the new Location.
 		return new Location(x_position, y_position);

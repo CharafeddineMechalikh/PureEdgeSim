@@ -35,7 +35,7 @@ public abstract class Orchestrator {
 	protected String algorithm;
 	protected String architecture;
 
-	public Orchestrator(SimulationManager simulationManager) {
+	protected Orchestrator(SimulationManager simulationManager) {
 		this.simulationManager = simulationManager;
 		simLog = simulationManager.getSimulationLogger();
 		nodeList = simulationManager.getDataCentersManager().getNodesList();
@@ -61,43 +61,43 @@ public abstract class Orchestrator {
 
 	// If the orchestration scenario is MIST_ONLY send Tasks only to edge devices
 	private void mistOnly(Task task) {
-		String[] Architecture = { "Mist" };
-		assignTaskToComputingNode(findComputingNode(Architecture, task), task);
+		String[] architecture = { "Mist" };
+		assignTaskToComputingNode(findComputingNode(architecture, task), task);
 	}
 
 	// If the orchestration scenario is ClOUD_ONLY send Tasks (cloudlets) only to
 	// cloud virtual machines (vms)
 	private void cloudOnly(Task task) {
-		String[] Architecture = { "Cloud" };
-		assignTaskToComputingNode(findComputingNode(Architecture, task), task);
+		String[] architecture = { "Cloud" };
+		assignTaskToComputingNode(findComputingNode(architecture, task), task);
 	}
 
 	// If the orchestration scenario is EDGE_AND_CLOUD send Tasks only to edge data
 	// centers or cloud virtual machines (vms)
 	private void edgeAndCloud(Task task) {
-		String[] Architecture = { "Cloud", "Edge" };
-		assignTaskToComputingNode(findComputingNode(Architecture, task), task);
+		String[] architecture = { "Cloud", "Edge" };
+		assignTaskToComputingNode(findComputingNode(architecture, task), task);
 	}
 
 	// If the orchestration scenario is MIST_AND_CLOUD send Tasks only to edge
 	// devices or cloud virtual machines (vms)
 	private void mistAndCloud(Task task) {
-		String[] Architecture = { "Cloud", "Mist" };
-		assignTaskToComputingNode(findComputingNode(Architecture, task), task);
+		String[] architecture = { "Cloud", "Mist" };
+		assignTaskToComputingNode(findComputingNode(architecture, task), task);
 	}
 
 	// If the orchestration scenario is EDGE_ONLY send Tasks only to edge data
 	// centers
 	private void edgeOnly(Task task) {
-		String[] Architecture = { "Edge" };
-		assignTaskToComputingNode(findComputingNode(Architecture, task), task);
+		String[] architecture = { "Edge" };
+		assignTaskToComputingNode(findComputingNode(architecture, task), task);
 	}
 
 	// If the orchestration scenario is ALL send Tasks to any virtual machine (vm)
 	// or device
 	private void all(Task task) {
-		String[] Architecture = { "Cloud", "Edge", "Mist" };
-		assignTaskToComputingNode(findComputingNode(Architecture, task), task);
+		String[] architecture = { "Cloud", "Edge", "Mist" };
+		assignTaskToComputingNode(findComputingNode(architecture, task), task);
 	}
 
 	protected abstract int findComputingNode(String[] architecture, Task task);
@@ -124,7 +124,7 @@ public abstract class Orchestrator {
 		}
 	}
 
-	protected void checkComputingNode(ComputingNode computingNode) throws Exception {
+	protected void checkComputingNode(ComputingNode computingNode) {
 		if (computingNode.isSensor())
 			throw new IllegalArgumentException(
 					getClass().getSimpleName() + " - The forbidden happened! The orchestration algorithm \"" + algorithm
@@ -138,8 +138,8 @@ public abstract class Orchestrator {
 		return (distance <= RANGE);
 	}
 
-	protected boolean arrayContains(String[] Architecture, String value) {
-		for (String s : Architecture) {
+	protected boolean arrayContains(String[] architecture, String value) {
+		for (String s : architecture) {
 			if (s.equals(value))
 				return true;
 		}
@@ -162,10 +162,10 @@ public abstract class Orchestrator {
 																												// computing
 				// compare destination (edge device) location and origin (edge device) location,
 				// if they are in same area offload to this device
-						&& (sameLocation(node, task.getEdgeDevice(), SimulationParameters.EDGE_DEVICES_RANGE)
+						&& (sameLocation(node, task.getEdgeDevice(), SimulationParameters.edgeDevicesRange)
 								// or compare the location of their orchestrators
-								|| (SimulationParameters.ENABLE_ORCHESTRATORS && sameLocation(node,
-										task.getOrchestrator(), SimulationParameters.EDGE_DEVICES_RANGE)))
+								|| (SimulationParameters.enableOrchestrators && sameLocation(node,
+										task.getOrchestrator(), SimulationParameters.edgeDevicesRange)))
 						&& !node.isDead() && !node.isSensor()));
 	}
 

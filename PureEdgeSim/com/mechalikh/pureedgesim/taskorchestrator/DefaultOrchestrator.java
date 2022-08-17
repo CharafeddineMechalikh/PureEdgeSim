@@ -52,7 +52,7 @@ public class DefaultOrchestrator extends Orchestrator {
 	protected int tradeOff(String[] architecture, Task task) {
 		int selected = -1;
 		double min = -1;
-		double new_min;// the computing node with minimum weight;
+		double newMin;// the computing node with minimum weight;
 		ComputingNode node;
 		// get best computing node for this task
 		for (int i = 0; i < nodeList.size(); i++) {
@@ -69,11 +69,11 @@ public class DefaultOrchestrator extends Orchestrator {
 					weight = 1.3;// this is an edge device, it results in an extremely low latency, but may
 									// consume more energy.
 				}
-				new_min = (historyMap.get(i) + 1) * weight * task.getLength() / node.getMipsPerCore();
-				if (min == -1 || min > new_min) { // if it is the first iteration, or if this computing node has more
+				newMin = (historyMap.get(i) + 1) * weight * task.getLength() / node.getMipsPerCore();
+				if (min == -1 || min > newMin) { // if it is the first iteration, or if this computing node has more
 													// cpu mips and
 													// less waiting tasks
-					min = new_min;
+					min = newMin;
 					// set the first computing node as the best one
 					selected = i;
 				}
@@ -105,6 +105,7 @@ public class DefaultOrchestrator extends Orchestrator {
 
 	@Override
 	public void resultsReturned(Task task) {
+		// Do nothing for now.
 	}
 
 }

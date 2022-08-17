@@ -106,7 +106,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 		super(simLog, pureEdgeSim, simulationId, iteration, scenario);
 
 		// Show real-time results during the simulation.
-		if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL)
+		if (SimulationParameters.displayRealTimeCharts && !SimulationParameters.parallelism_enabled)
 			simulationVisualizer = new SimulationVisualizer(this);
 	}
 
@@ -138,10 +138,10 @@ public class SimulationManager extends SimulationManagerAbstract {
 			schedule(this, task.getTime(), SEND_TO_ORCH, task);
 
 		// Scheduling the end of the simulation.
-		schedule(this, SimulationParameters.SIMULATION_TIME, PRINT_LOG);
+		schedule(this, SimulationParameters.simulationDuration, PRINT_LOG);
 
 		// Schedule the update of real-time charts.
-		if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL)
+		if (SimulationParameters.displayRealTimeCharts && !SimulationParameters.parallelism_enabled)
 			scheduleNow(this, UPDATE_REAL_TIME_CHARTS);
 
 		// Show simulation progress.
@@ -210,7 +210,7 @@ public class SimulationManager extends SimulationManagerAbstract {
 				} else
 					simLog.printSameLine("#", "red");
 			}
-			schedule(this, SimulationParameters.SIMULATION_TIME / 100, SHOW_PROGRESS);
+			schedule(this, SimulationParameters.simulationDuration / 100, SHOW_PROGRESS);
 			break;
 
 		case UPDATE_REAL_TIME_CHARTS:
@@ -218,13 +218,13 @@ public class SimulationManager extends SimulationManagerAbstract {
 			simulationVisualizer.updateCharts();
 
 			// Schedule the next update.
-			schedule(this, SimulationParameters.CHARTS_UPDATE_INTERVAL, UPDATE_REAL_TIME_CHARTS);
+			schedule(this, SimulationParameters.chartsUpdateInterval, UPDATE_REAL_TIME_CHARTS);
 			break;
 
 		case PRINT_LOG:
 
 			// Whether to wait or not, if some tasks have not been executed yet.
-			if (SimulationParameters.WAIT_FOR_TASKS && (tasksCount / simLog.getGeneratedTasks()) < 1) {
+			if (SimulationParameters.waitForAllTasksToFinish && (tasksCount / simLog.getGeneratedTasks()) < 1) {
 				// 1 = 100% , 0,9= 90%
 				// Some tasks may take hours to be executed that's why we don't wait until
 				// all of them get executed, but we only wait for 99% of tasks to be executed at
@@ -238,14 +238,14 @@ public class SimulationManager extends SimulationManagerAbstract {
 
 			simLog.printSameLine(" 100% ]", "red");
 
-			if (SimulationParameters.DISPLAY_REAL_TIME_CHARTS && !SimulationParameters.PARALLEL) {
+			if (SimulationParameters.displayRealTimeCharts && !SimulationParameters.parallelism_enabled) {
 
 				// Close real time charts after the end of the simulation.
-				if (SimulationParameters.AUTO_CLOSE_REAL_TIME_CHARTS)
+				if (SimulationParameters.autoCloseRealTimeCharts)
 					simulationVisualizer.close();
 				try {
 					// Save those charts in bitmap and vector formats.
-					if (SimulationParameters.SAVE_CHARTS)
+					if (SimulationParameters.saveCharts)
 						simulationVisualizer.saveCharts();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -421,9 +421,9 @@ public class SimulationManager extends SimulationManagerAbstract {
 		if (Dev1.getType() == TYPES.CLOUD || Dev2.getType() == TYPES.CLOUD)
 			return true;
 		double distance = Dev1.getMobilityModel().distanceTo(Dev2);
-		int RANGE = SimulationParameters.EDGE_DEVICES_RANGE;
+		int RANGE = SimulationParameters.edgeDevicesRange;
 		if (Dev1.getType() != Dev2.getType()) // One of them is an edge data center and the other is an edge device
-			RANGE = SimulationParameters.EDGE_DATACENTERS_RANGE;
+			RANGE = SimulationParameters.edgeDataCentersRange;
 		return (distance < RANGE);
 	}
 

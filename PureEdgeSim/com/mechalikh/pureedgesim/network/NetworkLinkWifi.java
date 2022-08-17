@@ -28,12 +28,12 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 /**
  * A WiFi network link.
  */
-public class NetworkLinkWifi extends NetworkLink {
+public abstract class NetworkLinkWifi extends NetworkLink {
  
-	public NetworkLinkWifi(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
+	protected NetworkLinkWifi(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
         super(src, dst, simulationManager, type);
-        setBandwidth(SimulationParameters.WIFI_BANDWIDTH_BITS_PER_SECOND);
-        setLatency(SimulationParameters.WIFI_LATENCY); 
+        setBandwidth(SimulationParameters.wifiBandwidthBitsPerSecond);
+        setLatency(SimulationParameters.wifiLatency); 
     }
 
 }

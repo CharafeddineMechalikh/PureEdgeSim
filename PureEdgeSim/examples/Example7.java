@@ -80,7 +80,7 @@ public class Example7 {
 		 * this case.To use it we need to execute the following line.
 		 **/
 
-		sim.setCustomEdgeDataCenters(Example7CachingDevice.class);
+		sim.setCustomComputingNode(Example7CachingDevice.class);
 
 		/**
 		 * After adding the clustering algorithm we can now implement the cooperative

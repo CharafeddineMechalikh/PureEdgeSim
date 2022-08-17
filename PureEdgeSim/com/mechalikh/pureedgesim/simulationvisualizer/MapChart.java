@@ -37,7 +37,7 @@ public class MapChart extends Chart {
 		super(title, xAxisTitle, yAxisTitle, simulationManager);
 		getChart().getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Scatter);
 		getChart().getStyler().setMarkerSize(4);
-		updateSize(0.0, (double) SimulationParameters.AREA_WIDTH, 0.0, (double) SimulationParameters.AREA_LENGTH);
+		updateSize(0.0, (double) SimulationParameters.simulationMapWidth, 0.0, (double) SimulationParameters.simulationMapLength);
 
 	}
 

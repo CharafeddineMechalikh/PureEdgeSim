@@ -38,8 +38,8 @@ public class Example7CustomNetworkModel extends DefaultNetworkModel {
 
 	@Override
 	protected void transferFinished(TransferProgress transfer) {
-		if (transfer.getTransferType() == TransferProgress.Type.TASK && SimulationParameters.ENABLE_REGISTRY
-				&& "CACHE".equals(SimulationParameters.registry_mode)) {
+		if (transfer.getTransferType() == TransferProgress.Type.TASK && SimulationParameters.enableRegistry
+				&& "CACHE".equals(SimulationParameters.registryMode)) {
 			// the offloading request has been received, now pull the container in order to
 			// execute the task
 			pullContainer(transfer.getTask());
@@ -82,7 +82,7 @@ public class Example7CustomNetworkModel extends DefaultNetworkModel {
 	}
 
 	private boolean canKeepReplica(Example7CachingDevice edgeDevice, Task task) {
-		return ("CACHE".equals(SimulationParameters.registry_mode)
+		return ("CACHE".equals(SimulationParameters.registryMode)
 				&& ((Example7CachingDevice) edgeDevice.getOrchestrator())
 						.countContainer(task.getApplicationID()) < MAX_NUMBER_OF_REPLICAS);
 	}
@@ -116,7 +116,7 @@ public class Example7CustomNetworkModel extends DefaultNetworkModel {
 	}
 
 	private double toMegaBytes(long bits) {
-		return bits / 8000000;
+		return bits / (double) 8000000;
 	}
 
 	private void pullContainer(Task task) {

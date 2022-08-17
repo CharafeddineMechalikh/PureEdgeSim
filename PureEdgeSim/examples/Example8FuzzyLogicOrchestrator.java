@@ -19,7 +19,7 @@
  *     @author Mechalikh
  **/
 package examples;
- 
+
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 import com.mechalikh.pureedgesim.taskgenerator.Task;
@@ -64,12 +64,12 @@ public class Example8FuzzyLogicOrchestrator extends DefaultOrchestrator {
 
 		// Set fuzzy inputs
 		fis.setVariable("wan",
-				(SimulationParameters.WAN_BANDWIDTH_BITS_PER_SECOND
+				(SimulationParameters.wanBandwidthBitsPerSecond
 						- simulationManager.getNetworkModel().getWanUpUtilization())
-						/ SimulationParameters.WAN_BANDWIDTH_BITS_PER_SECOND);
+						/ SimulationParameters.wanBandwidthBitsPerSecond);
 		fis.setVariable("taskLength", task.getLength());
 		fis.setVariable("delay", task.getMaxLatency());
-		fis.setVariable("cpuUsage", cpuUsage / count);
+		fis.setVariable("cpuUsage", count > 0 ? cpuUsage / count : 1);
 
 		// Evaluate
 		fis.evaluate();
@@ -96,10 +96,9 @@ public class Example8FuzzyLogicOrchestrator extends DefaultOrchestrator {
 		}
 		for (int i = 0; i < nodeList.size(); i++) {
 			if (offloadingIsPossible(task, nodeList.get(i), architecture2) && nodeList.get(i).getTotalStorage() > 0) {
-				if (!task.getEdgeDevice().getMobilityModel().isMobile())
-					fis.setVariable("vm_local", 0);
-				else
-					fis.setVariable("vm_local", 0);
+
+				fis.setVariable("vm_local", 1 - task.getEdgeDevice().getAvgCpuUtilization()
+						* task.getEdgeDevice().getTotalMipsCapacity() / 1000);
 				fis.setVariable("vm",
 						(1 - nodeList.get(i).getAvgCpuUtilization()) * nodeList.get(i).getTotalMipsCapacity() / 1000);
 				fis.evaluate();

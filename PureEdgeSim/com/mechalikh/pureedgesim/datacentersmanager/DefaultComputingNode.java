@@ -30,11 +30,20 @@ import com.mechalikh.pureedgesim.simulationengine.Event;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 import com.mechalikh.pureedgesim.taskgenerator.Task;
 
+/**
+ * This computing node class used by the simulator by default. PureEdgeSim's
+ * users can extend it and use their custom class (@see
+ * com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomComputingNode(Class))
+ * 
+ * 
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 5.0
+ */
 public class DefaultComputingNode extends LocationAwareNode {
 	protected int applicationType;
 	protected boolean isSensor = false;
 	protected double availableStorage = 0;
-	protected double Storage = 0;
+	protected double storage = 0;
 	protected boolean isIdle = true;
 	protected double tasks = 0;
 	protected double totalTasks = 0;
@@ -60,14 +69,8 @@ public class DefaultComputingNode extends LocationAwareNode {
 
 	@Override
 	public void processEvent(Event e) {
-		switch (e.getTag()) {
-		case EXECUTION_FINISHED:
+		if (e.getTag() == EXECUTION_FINISHED)
 			executionFinished(e);
-			break;
-		default:
-			super.processEvent(e);
-			break;
-		}
 	}
 
 	public double getNumberOfCPUCores() {
@@ -141,11 +144,11 @@ public class DefaultComputingNode extends LocationAwareNode {
 	}
 
 	public double getTotalStorage() {
-		return Storage;
+		return storage;
 	}
 
 	public void setStorage(double storage) {
-		Storage = storage;
+		this.storage = storage;
 	}
 
 	public double getTotalMipsCapacity() {
@@ -171,6 +174,7 @@ public class DefaultComputingNode extends LocationAwareNode {
 	}
 
 	private void startExecution(Task task) {
+
 		// Update the CPU utilization
 		addCpuUtilization(task);
 		availableCores--;
@@ -195,7 +199,7 @@ public class DefaultComputingNode extends LocationAwareNode {
 
 		getEnergyModel().updateDynamicEnergyConsumption(task.getLength(), this.getTotalMipsCapacity());
 
-		schedule(this, ((double) task.getLength() / mipsPerCore), EXECUTION_FINISHED, task);
+		schedule(this, (task.getLength() / mipsPerCore), EXECUTION_FINISHED, task);
 	}
 
 	public double getMipsPerCore() {

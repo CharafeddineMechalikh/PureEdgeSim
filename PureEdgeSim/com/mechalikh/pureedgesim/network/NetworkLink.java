@@ -45,13 +45,13 @@ public class NetworkLink extends SimEntity {
 	private double totalTrasferredData = 0;
 	private EnergyModelNetworkLink energyModel = EnergyModelNetworkLink.NULL;
 
-	public static enum NetworkLinkTypes {
+	public enum NetworkLinkTypes {
 		WAN, MAN, LAN, IGNORE
-	};
+	}
 
 	private NetworkLinkTypes type;
 
-	public static NetworkLink NULL = new NetworkLinkNull();
+	public static final NetworkLink NULL = new NetworkLinkNull();
 
 	public NetworkLink(ComputingNode src, ComputingNode dst, SimulationManager simulationManager,
 			NetworkLinkTypes type) {
@@ -102,25 +102,22 @@ public class NetworkLink extends SimEntity {
 
 	@Override
 	public void processEvent(Event evt) {
-		switch (evt.getTag()) {
-		case UPDATE_PROGRESS:
+		if (evt.getTag() == UPDATE_PROGRESS) {
 			// Update the progress of the current transfers and their allocated bandwidth
 			updateTransfersProgress();
-			schedule(this, SimulationParameters.NETWORK_UPDATE_INTERVAL, UPDATE_PROGRESS);
-			break;
-		default:
-			break;
+			schedule(this, SimulationParameters.networkUpdateInterval, UPDATE_PROGRESS);
 		}
+
 	}
 
 	protected void updateTransfersProgress() {
 		usedBandwidth = 0;
-		double bandwidth = getBandwidth(transferProgressList.size());
+		double allocatedBandwidth = getBandwidth(transferProgressList.size());
 		for (int i = 0; i < transferProgressList.size(); i++) {
 			// Allocate bandwidth
 			usedBandwidth += transferProgressList.get(i).getRemainingFileSize();
 
-			transferProgressList.get(i).setCurrentBandwidth(bandwidth);
+			transferProgressList.get(i).setCurrentBandwidth(allocatedBandwidth);
 			updateTransfer(transferProgressList.get(i));
 		}
 	}
@@ -134,9 +131,9 @@ public class NetworkLink extends SimEntity {
 		double oldRemainingSize = transfer.getRemainingFileSize();
 
 		// Update progress (remaining file size)
-		if (SimulationParameters.REALISTIC_NETWORK_MODEL)
+		if (SimulationParameters.realisticNetworkModel)
 			transfer.setRemainingFileSize(transfer.getRemainingFileSize()
-					- (SimulationParameters.NETWORK_UPDATE_INTERVAL * transfer.getCurrentBandwidth()));
+					- (SimulationParameters.networkUpdateInterval * transfer.getCurrentBandwidth()));
 		else
 			transfer.setRemainingFileSize(0);
 
