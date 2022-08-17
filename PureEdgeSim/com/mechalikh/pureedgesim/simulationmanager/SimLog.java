@@ -394,7 +394,6 @@ public class SimLog {
 			print("First device died at                                                    :"
 					+ padLeftSpaces("" + firstDeviceDeathTime, 20) + " seconds");
 
-		System.err.println(6 * (cloudEnConsumption + edgeEnConsumption + mistEnConsumption + wan + lan));
 		// Add these values to the las item of the results list
 		resultsList.set(resultsList.size() - 1, resultsList.get(resultsList.size() - 1)
 				+ decimalFormat.format(energyConsumption) + ","
