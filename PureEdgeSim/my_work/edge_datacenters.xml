@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<edge_datacenters>
+	<datacenter name="dc1">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>150</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>500</x_pos>
+			<y_pos>500</y_pos>
+		</location>
+		<cores>10</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<datacenter name="dc2">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>150</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>500</x_pos>
+			<y_pos>1500</y_pos>
+		</location>
+		<cores>10</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<datacenter name="dc3">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>150</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>1500</x_pos>
+			<y_pos>500</y_pos>
+		</location>
+		<cores>10</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<datacenter name="dc4">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>150</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>1500</x_pos>
+			<y_pos>1500</y_pos>
+		</location>
+		<cores>10</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<network_links>
+		<link>
+			<from>dc1</from>
+			<to>dc2</to>
+		</link>
+		<link>
+			<from>dc2</from>
+			<to>dc3</to>
+		</link>
+		<link>
+			<from>dc3</from>
+			<to>dc4</to>
+		</link>
+		<link>
+			<from>dc4</from>
+			<to>dc1</to>
+		</link>
+	</network_links>
+</edge_datacenters>

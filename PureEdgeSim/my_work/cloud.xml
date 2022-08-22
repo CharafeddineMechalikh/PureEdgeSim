@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<cloud_data_centers>
+	<datacenter>
+		<idleConsumption>0</idleConsumption>
+		<maxConsumption>5776</maxConsumption>
+		<isOrchestrator>false</isOrchestrator> <!-- it has a task orchestrator or not  -->
+		<cores>200</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>1000000</storage>
+	</datacenter>
+</cloud_data_centers>
