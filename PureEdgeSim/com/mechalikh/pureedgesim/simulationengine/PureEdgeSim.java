@@ -20,7 +20,10 @@
  **/
 package com.mechalikh.pureedgesim.simulationengine;
 
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager;
 
 /**
  * The {@code PureEdgeSim} class represents the discrete event simulation (DES)
@@ -31,9 +34,9 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  * SimulationThread} in the
  * {@link com.mechalikh.pureedgesim.simulationmanager.SimulationThread#startSimulation()
  * startSimulation()} method. But it is not started until the
- * {@link com.mechalikh.pureedgesim.simulationmanager.SimulationManager#startSimulation()
+ * {@link com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager#startSimulation()
  * startSimulation()} method of the
- * {@link com.mechalikh.pureedgesim.simulationmanager.SimulationManager
+ * {@link com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager
  * SimulationManager} is called.
  * <p>
  * Once the PureEdgeSim simulation engine has started, it notifies all
@@ -44,16 +47,17 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  * @see com.mechalikh.pureedgesim.simulationengine.PureEdgeSim#start()
  * @see com.mechalikh.pureedgesim.simulationmanager.SimulationThread#startSimulation()
  * @see SimEntity#startInternal()
- * @see com.mechalikh.pureedgesim.simulationmanager.SimulationManager#startSimulation()
- * @see com.mechalikh.pureedgesim.simulationmanager.SimulationManager#startInternal()
+ * @see com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager#startSimulation()
+ * @see com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager#startInternal()
  *
  * @author Charafeddine Mechalikh
  * @since PureEdgeSim 5.0
  */
 public class PureEdgeSim {
-	private double time;
-	private boolean isRunning = true;
-	private FutureQueue events;
+	List<SimEntity> entitiesList = new ArrayList<>();
+	protected double time;
+	protected boolean isRunning = true;
+	protected FutureQueue<Event> events;
 
 	/**
 	 * Gets the current simulation time in seconds.
@@ -74,7 +78,7 @@ public class PureEdgeSim {
 	 * @see #start()
 	 */
 	public PureEdgeSim() {
-		events = new FutureQueue();
+		events = new FutureQueue<>();
 	}
 
 	/**
@@ -91,21 +95,23 @@ public class PureEdgeSim {
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.Simulation#launchSimulation()
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationThread#startSimulation()
-	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationManager#startSimulation()
+	 * @see com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager#startSimulation()
 	 * @see SimEntity#startInternal()
 	 * @see #terminate()
 	 */
 	public void start() {
-		EnvironmentConstants.entitiesList.forEach(e -> e.startInternal());
+		// Notify all entities that the simulation has started.
+		entitiesList.forEach(SimEntity::startInternal);
 
 		while (runClockTickAndProcessFutureEvents(Double.MAX_VALUE) && isRunning) {
 			// All the processing happens inside the method called above
 		}
-		
-		//iteration finished
-		EnvironmentConstants.entitiesList.clear();
-	}
 
+		// Iteration finished, notify all entities and clear their list
+		entitiesList.forEach(SimEntity::onSimulationEnd);
+		entitiesList.clear();
+	}
+ 
 	/**
 	 * Processes future events as long as the simulation end time has not reached.
 	 * 
@@ -116,8 +122,9 @@ public class PureEdgeSim {
 	 * @see #start()
 	 * @see #processFutureEventsHappeningAtSameTimeOfTheFirstOne(Event)
 	 */
-	private boolean runClockTickAndProcessFutureEvents(final double until) {
-		if (events.isEmpty()) {
+	protected boolean runClockTickAndProcessFutureEvents(final double until) {
+
+		if (getEventsQueue().isEmpty()) {
 			return false;
 		}
 
@@ -140,12 +147,12 @@ public class PureEdgeSim {
 	 * @see #runClockTickAndProcessFutureEvents(double)
 	 * @see #processEvent(Event)
 	 */
-	private void processFutureEventsHappeningAtSameTimeOfTheFirstOne(final Event firstEvent) {
+	protected void processFutureEventsHappeningAtSameTimeOfTheFirstOne(final Event firstEvent) {
 		processEvent(firstEvent);
-		events.remove(firstEvent);
+		getEventsQueue().remove(firstEvent);
 
-		while (!events.isEmpty()) {
-			final Event evt = events.first();
+		while (!getEventsQueue().isEmpty()) {
+			final Event evt = getEventsQueue().first();
 			if (evt.getTime() != firstEvent.getTime())
 				break;
 			processEvent(evt);
@@ -161,7 +168,7 @@ public class PureEdgeSim {
 	 * @see #runClockTickAndProcessFutureEvents(double)
 	 * @see #processFutureEventsHappeningAtSameTimeOfTheFirstOne(Event)
 	 */
-	private void processEvent(final Event event) {
+	protected void processEvent(final Event event) {
 		if (event.getTime() < time) {
 			final String msg = "Past event detected. Event time: %.2f Simulation clock: %.2f";
 			throw new IllegalArgumentException(String.format(msg, event.getTime(), time));
@@ -185,9 +192,9 @@ public class PureEdgeSim {
 	 * @see #processFutureEventsHappeningAtSameTimeOfTheFirstOne(Event)
 	 */
 	void insert(Event event) {
-		events.addEvent(event);
+		events.add(event);
 	}
-	
+
 	/**
 	 * Adds an event to the head of the queue
 	 * 
@@ -201,7 +208,7 @@ public class PureEdgeSim {
 	 * @see #processFutureEventsHappeningAtSameTimeOfTheFirstOne(Event)
 	 */
 	public void insertFirst(Event event) {
-		events.addEventFirst(event);
+		getEventsQueue().addFirst(event);
 	}
 
 	/**
@@ -212,13 +219,13 @@ public class PureEdgeSim {
 	 * 
 	 * @param simEntity the new simulation entity.
 	 * 
-	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationThread#loadModels(SimulationManager
+	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationThread#loadModels(DefaultSimulationManager
 	 *      simulationManager)
 	 * @see #start()
 	 * @see SimEntity#startInternal()
 	 */
 	public void addEntity(SimEntity simEntity) {
-		EnvironmentConstants.entitiesList.add(simEntity);
+		entitiesList.add(simEntity);
 	}
 
 	/**
@@ -243,5 +250,13 @@ public class PureEdgeSim {
 		return (int) (time / 60);
 	}
 
-	
+	/**
+	 * Gets the list of generated events.
+	 * 
+	 * @return events queue
+	 */
+	public FutureQueue<Event> getEventsQueue() {
+		return events;
+	}
+
 }

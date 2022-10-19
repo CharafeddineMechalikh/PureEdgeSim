@@ -42,54 +42,54 @@ import com.mechalikh.pureedgesim.energy.EnergyModelNetworkLink;
 import com.mechalikh.pureedgesim.network.NetworkLink;
 import com.mechalikh.pureedgesim.network.TransferProgress;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.tasksgenerator.Task;
+import com.mechalikh.pureedgesim.taskgenerator.Task;
 
 public class SimLog {
 	public static final int NO_TIME = 0;
 	public static final int SAME_LINE = 1;
 	public static final int DEFAULT = 2;
-	private List<String> resultsList = new ArrayList<String>();
-	private DecimalFormat decimalFormat;
-	private List<String> log = new ArrayList<String>();
-	private String currentOrchArchitecture;
-	private String currentOrchAlgorithm;
-	private int currentEdgeDevicesCount;
-	private String simStartTime;
-	private SimulationManager simulationManager;
-	private boolean isFirstIteration;
+	protected ArrayList<String> resultsList = new ArrayList<String>();
+	protected DecimalFormat decimalFormat;
+	protected List<String> log = new ArrayList<String>();
+	protected String currentOrchArchitecture;
+	protected String currentOrchAlgorithm;
+	protected int currentEdgeDevicesCount;
+	protected String simStartTime;
+	protected SimulationManager simulationManager;
+	protected boolean isFirstIteration;
 
 	// Tasks execution results
-	private int generatedTasksCount = 0;
-	private int tasksSent = 0;
-	private int tasksFailed = 0;
-	private int tasksFailedLatency = 0;
-	private int tasksFailedMobility = 0;
-	private int tasksFailedRessourcesUnavailable = 0;
-	private int tasksFailedBeacauseDeviceDead = 0;
-	private int notGeneratedBecDeviceDead = 0;
-	private double totalExecutionTime = 0;
-	private double totalWaitingTime = 0;
-	private int executedTasksCount = 0;
-	private int tasksExecutedOnCloud = 0;
-	private int tasksExecutedOnEdge = 0;
-	private int tasksExecutedOnMist = 0;
-	private int tasksFailedCloud = 0;
-	private int tasksFailedEdge = 0;
-	private int tasksFailedMist = 0;
+	protected int generatedTasksCount = 0;
+	protected int tasksSent = 0;
+	protected int tasksFailed = 0;
+	protected int tasksFailedLatency = 0;
+	protected int tasksFailedMobility = 0;
+	protected int tasksFailedRessourcesUnavailable = 0;
+	protected int tasksFailedBeacauseDeviceDead = 0;
+	protected int notGeneratedBecDeviceDead = 0;
+	protected Double totalExecutionTime = 0.0;
+	protected Double totalWaitingTime = 0.0;
+	protected int executedTasksCount = 0;
+	protected int tasksExecutedOnCloud = 0;
+	protected int tasksExecutedOnEdge = 0;
+	protected int tasksExecutedOnMist = 0;
+	protected int tasksFailedCloud = 0;
+	protected int tasksFailedEdge = 0;
+	protected int tasksFailedMist = 0;
 
 	// Network utilization
-	private double totalLanUsage = 0;
-	private double totalManUsage = 0;
-	private double totalWanUsage = 0;
-	private double totalBandwidth = 0;
-	private int transfersCount = 0;
-	private double containersLanUsage = 0;
-	private double containersWanUsage = 0;
-	private double containersManUsage = 0;
-	private double totalTraffic = 0;
+	protected Double totalLanUsage = 0.0;
+	protected Double totalManUsage = 0.0;
+	protected Double totalWanUsage = 0.0;
+	protected Double totalBandwidth = 0.0;
+	protected int transfersCount = 0;
+	protected Double containersLanUsage = 0.0;
+	protected Double containersWanUsage = 0.0;
+	protected Double containersManUsage = 0.0;
+	protected Double totalTraffic = 0.0;
 
-	public SimLog(String time, boolean isFirstIteration) {
-		this.setSimStartTime(time);
+	public SimLog(String startTime, boolean isFirstIteration) {
+		this.setSimStartTime(startTime);
 		this.isFirstIteration = isFirstIteration;
 
 		// Use this format for all numbers
@@ -133,36 +133,34 @@ public class SimLog {
 		saveLog();
 	}
 
-	private void printCPUutilizationResults() {
-		int edgeDevicesCount = 0;
+	protected void printCPUutilizationResults() {
 		double averageCpuUtilization = 0;
 		double averageCloudCpuUtilization = 0;
 		double averageMistCpuUtilization = 0;
 		double averageEdgeCpuUtilization = 0;
-		for (ComputingNode cloudDC : simulationManager.getDataCentersManager().getCloudDatacentersList()) {
-			averageCloudCpuUtilization += cloudDC.getAvgCpuUtilization();
-		}
-		for (ComputingNode edgeDC : simulationManager.getDataCentersManager().getEdgeDatacenterList()) {
-			averageEdgeCpuUtilization += edgeDC.getAvgCpuUtilization();
-		}
-		for (ComputingNode edgeDevice : simulationManager.getDataCentersManager().getEdgeDevicesList()) {
-			if (edgeDevice.getTotalMipsCapacity() > 0) {
-				// only devices with computing capability
-				// the devices that have no VM are considered simple sensors, and will not be
-				// counted here
-				averageMistCpuUtilization += edgeDevice.getAvgCpuUtilization();
-				edgeDevicesCount++;
-			}
 
-		}
+		averageCloudCpuUtilization = getCpuUtilization(
+				simulationManager.getDataCentersManager().getComputingNodesGenerator().getCloudOnlyList());
+		averageEdgeCpuUtilization = getCpuUtilization(
+				simulationManager.getDataCentersManager().getComputingNodesGenerator().getEdgeOnlyList());
+
+		// only devices with computing capability the devices that have no VM are
+		// considered simple sensors, and will not be counted here
+		averageMistCpuUtilization = getCpuUtilization(simulationManager.getDataCentersManager()
+				.getComputingNodesGenerator().getMistOnlyListSensorsExcluded());
 
 		averageCpuUtilization = (averageCloudCpuUtilization + averageMistCpuUtilization + averageEdgeCpuUtilization)
-				/ (edgeDevicesCount + SimulationParameters.NUM_OF_EDGE_DATACENTERS
-						+ SimulationParameters.NUM_OF_CLOUD_DATACENTERS);
+				/ (simulationManager.getDataCentersManager().getComputingNodesGenerator()
+						.getMistOnlyListSensorsExcluded().size() + SimulationParameters.numberOfEdgeDataCenters
+						+ SimulationParameters.numberOfCloudDataCenters);
 
-		averageCloudCpuUtilization = averageCloudCpuUtilization / SimulationParameters.NUM_OF_CLOUD_DATACENTERS;
-		averageEdgeCpuUtilization = averageEdgeCpuUtilization / SimulationParameters.NUM_OF_EDGE_DATACENTERS;
-		averageMistCpuUtilization = averageMistCpuUtilization / edgeDevicesCount;
+		averageCloudCpuUtilization = averageCloudCpuUtilization / SimulationParameters.numberOfCloudDataCenters;
+		averageEdgeCpuUtilization = averageEdgeCpuUtilization / SimulationParameters.numberOfEdgeDataCenters;
+		averageMistCpuUtilization = simulationManager.getDataCentersManager().getComputingNodesGenerator()
+				.getMistOnlyListSensorsExcluded().size() > 0
+						? averageMistCpuUtilization / simulationManager.getDataCentersManager()
+								.getComputingNodesGenerator().getMistOnlyListSensorsExcluded().size()
+						: 0;
 
 		print("Average CPU utilization                                                 :"
 				+ padLeftSpaces(decimalFormat.format(averageCpuUtilization), 20) + " %");
@@ -180,8 +178,16 @@ public class SimLog {
 						+ decimalFormat.format(averageMistCpuUtilization) + ",");
 	}
 
+	protected double getCpuUtilization(List<ComputingNode> list) {
+		double averageCpuUtilization = 0;
+		for (ComputingNode node : list) {
+			averageCpuUtilization += node.getAvgCpuUtilization();
+		}
+		return averageCpuUtilization;
+	}
+
 	public void printTasksRelatedResults() {
-		print(getClass().getSimpleName()+ " - Printing iteration output...");
+		print(getClass().getSimpleName() + " - Printing iteration output...");
 		print("------------------------------------------------------- OUTPUT -------------------------------------------------------");
 		print("");
 		print("Tasks not sent because device died (low energy)                         :"
@@ -285,31 +291,41 @@ public class SimLog {
 		int batteryPoweredDevicesCount = 0;
 		int aliveBatteryPoweredDevicesCount = 0;
 
-		double wan = simulationManager.getDataCentersManager().getTopology().getWanLinks().stream().map(NetworkLink::getEnergyModel)
+		double wan = simulationManager.getDataCentersManager().getTopology().getWanLinks().stream()
+				.map(NetworkLink::getEnergyModel)
 				.collect(Collectors.summingDouble(EnergyModelNetworkLink::getTotalEnergyConsumption));
 
-		double man = simulationManager.getDataCentersManager().getTopology().getManLinks().stream().map(NetworkLink::getEnergyModel)
+		double man = simulationManager.getDataCentersManager().getTopology().getManLinks().stream()
+				.map(NetworkLink::getEnergyModel)
 				.collect(Collectors.summingDouble(EnergyModelNetworkLink::getTotalEnergyConsumption));
 
-		double lan = simulationManager.getDataCentersManager().getTopology().getLanLinks().stream().map(NetworkLink::getEnergyModel)
+		double lan = simulationManager.getDataCentersManager().getTopology().getLanLinks().stream()
+				.map(NetworkLink::getEnergyModel)
 				.collect(Collectors.summingDouble(EnergyModelNetworkLink::getTotalEnergyConsumption));
 
-		double fourG = simulationManager.getDataCentersManager().getTopology().get4gLinks().stream().map(NetworkLink::getEnergyModel)
+		double fourG = simulationManager.getDataCentersManager().getTopology().get4gLinks().stream()
+				.map(NetworkLink::getEnergyModel)
 				.collect(Collectors.summingDouble(EnergyModelNetworkLink::getTotalEnergyConsumption));
-		
-		double eth = simulationManager.getDataCentersManager().getTopology().getEthernetLinks().stream().map(NetworkLink::getEnergyModel)
-				.collect(Collectors.summingDouble(EnergyModelNetworkLink::getTotalEnergyConsumption));
-		
-		double wifi = simulationManager.getDataCentersManager().getTopology().getWifiLinks().stream().map(NetworkLink::getEnergyModel)
-				.collect(Collectors.summingDouble(EnergyModelNetworkLink::getTotalEnergyConsumption));
-		
-		for (ComputingNode cloudDc : simulationManager.getDataCentersManager().getCloudDatacentersList())
-			cloudEnConsumption += cloudDc.getEnergyModel().getTotalEnergyConsumption();
 
-		for (ComputingNode edgeDc : simulationManager.getDataCentersManager().getEdgeDatacenterList())
-			edgeEnConsumption += edgeDc.getEnergyModel().getTotalEnergyConsumption();
+		double eth = simulationManager.getDataCentersManager().getTopology().getEthernetLinks().stream()
+				.map(NetworkLink::getEnergyModel)
+				.collect(Collectors.summingDouble(EnergyModelNetworkLink::getTotalEnergyConsumption));
 
-		for (ComputingNode edgeDevice : simulationManager.getDataCentersManager().getEdgeDevicesList()) {
+		double wifi = simulationManager.getDataCentersManager().getTopology().getWifiLinks().stream()
+				.map(NetworkLink::getEnergyModel)
+				.collect(Collectors.summingDouble(EnergyModelNetworkLink::getTotalEnergyConsumption));
+
+		for (ComputingNode node : simulationManager.getDataCentersManager().getComputingNodesGenerator()
+				.getCloudOnlyList())
+			cloudEnConsumption = node.getEnergyModel().getTotalEnergyConsumption();
+
+		for (ComputingNode node : simulationManager.getDataCentersManager().getComputingNodesGenerator()
+				.getEdgeOnlyList())
+			edgeEnConsumption += node.getEnergyModel().getTotalEnergyConsumption();
+
+		for (ComputingNode node : simulationManager.getDataCentersManager().getComputingNodesGenerator()
+				.getMistOnlyList()) {
+			ComputingNode edgeDevice = node;
 			mistEnConsumption += edgeDevice.getEnergyModel().getTotalEnergyConsumption();
 
 			if (edgeDevice.isDead()) {
@@ -322,7 +338,7 @@ public class SimLog {
 					firstDeviceDeathTime = edgeDevice.getDeathTime();
 			} else {
 				if (edgeDevice.getEnergyModel().isBatteryPowered()) {
-					averageRemainingPowerWh += edgeDevice.getEnergyModel().getBatteryLevel();
+					averageRemainingPowerWh += edgeDevice.getEnergyModel().getBatteryLevelWattHour();
 					averageRemainingPower += edgeDevice.getEnergyModel().getBatteryLevelPercentage();
 					remainingPower.add(edgeDevice.getEnergyModel().getBatteryLevelPercentage());
 					aliveBatteryPoweredDevicesCount++;
@@ -337,26 +353,26 @@ public class SimLog {
 		energyConsumption = cloudEnConsumption + edgeEnConsumption + mistEnConsumption;
 		averageRemainingPower = averageRemainingPower / (double) aliveBatteryPoweredDevicesCount;
 		averageRemainingPowerWh = averageRemainingPowerWh / (double) aliveBatteryPoweredDevicesCount;
-		double averageCloudEnConsumption = cloudEnConsumption / SimulationParameters.NUM_OF_CLOUD_DATACENTERS;
-		double averageEdgeEnConsumption = edgeEnConsumption / SimulationParameters.NUM_OF_EDGE_DATACENTERS;
+		double averageCloudEnConsumption = cloudEnConsumption / SimulationParameters.numberOfCloudDataCenters;
+		double averageEdgeEnConsumption = edgeEnConsumption / SimulationParameters.numberOfEdgeDataCenters;
 		double averageMistEnConsumption = mistEnConsumption / simulationManager.getScenario().getDevicesCount();
 
 		print("Energy consumption                                                      :"
 				+ padLeftSpaces(decimalFormat.format(energyConsumption), 20) + " Wh (Average: "
 				+ decimalFormat.format(energyConsumption
-						/ (SimulationParameters.NUM_OF_EDGE_DATACENTERS + SimulationParameters.NUM_OF_CLOUD_DATACENTERS
+						/ (SimulationParameters.numberOfEdgeDataCenters + SimulationParameters.numberOfCloudDataCenters
 								+ simulationManager.getScenario().getDevicesCount()))
 				+ " Wh/data center(or device))");
-		print("                                                                        :"
-				+ padLeftSpaces("", 19) + "     (Average: "
-				+ decimalFormat.format(energyConsumption / (double) finishedTasks.size()) + " Wh/task)");
+		print("                                                                        :" + padLeftSpaces("", 19)
+				+ "     (Average: " + decimalFormat.format(energyConsumption / (double) finishedTasks.size())
+				+ " Wh/task)");
 		print("Energy Consumption per level                                            :Cloud= "
 				+ padLeftSpaces(decimalFormat.format(cloudEnConsumption), 13) + " Wh (Average: "
-				+ decimalFormat.format(cloudEnConsumption / SimulationParameters.NUM_OF_CLOUD_DATACENTERS)
+				+ decimalFormat.format(cloudEnConsumption / SimulationParameters.numberOfCloudDataCenters)
 				+ " Wh/data center)");
 		print("                                                                          Edge="
 				+ padLeftSpaces(decimalFormat.format(edgeEnConsumption), 14) + " Wh (Average: "
-				+ decimalFormat.format(edgeEnConsumption / SimulationParameters.NUM_OF_EDGE_DATACENTERS)
+				+ decimalFormat.format(edgeEnConsumption / SimulationParameters.numberOfEdgeDataCenters)
 				+ " Wh/data center)");
 		print("                                                                          Mist="
 				+ padLeftSpaces(decimalFormat.format(mistEnConsumption), 14) + " Wh (Average: "
@@ -392,7 +408,7 @@ public class SimLog {
 		resultsList.set(resultsList.size() - 1, resultsList.get(resultsList.size() - 1)
 				+ decimalFormat.format(energyConsumption) + ","
 				+ decimalFormat.format(energyConsumption
-						/ (SimulationParameters.NUM_OF_EDGE_DATACENTERS + SimulationParameters.NUM_OF_CLOUD_DATACENTERS
+						/ (SimulationParameters.numberOfEdgeDataCenters + SimulationParameters.numberOfCloudDataCenters
 								+ simulationManager.getScenario().getDevicesCount()))
 				+ "," + decimalFormat.format(cloudEnConsumption) + "," + decimalFormat.format(averageCloudEnConsumption)
 				+ "," + decimalFormat.format(edgeEnConsumption) + "," + decimalFormat.format(averageEdgeEnConsumption)
@@ -411,14 +427,14 @@ public class SimLog {
 	public void cleanOutputFolder() throws IOException {
 		// Clean the folder where the results files will be saved
 		if (isFirstIteration) {
-			print(getClass().getSimpleName()+" - Cleaning the outputfolder...");
+			print(getClass().getSimpleName() + " - Cleaning the outputfolder...");
 			isFirstIteration = false;
-			Path dir = new File(SimulationParameters.OUTPUT_FOLDER).toPath();
+			Path dir = new File(SimulationParameters.outputFolder).toPath();
 			deleteDirectory(dir);
 		}
 	}
 
-	private void deleteDirectory(Path path) throws IOException {
+	protected void deleteDirectory(Path path) throws IOException {
 		if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
 			try (DirectoryStream<Path> entries = Files.newDirectoryStream(path)) {
 				for (Path entry : entries) {
@@ -429,7 +445,7 @@ public class SimLog {
 		try {
 			Files.delete(path);
 		} catch (Exception e) {
-			print(getClass().getSimpleName()+" - Could not delete file/folder: " + path.toString());
+			print(getClass().getSimpleName() + " - Could not delete file/folder: " + path.toString());
 		}
 	}
 
@@ -437,8 +453,8 @@ public class SimLog {
 		// writing results in csv file
 		writeFile(getFileName(".csv"), getResultsList());
 
-		if (!SimulationParameters.SAVE_LOG) {
-			println(getClass().getSimpleName()+" - No log saving");
+		if (!SimulationParameters.saveLog) {
+			println(getClass().getSimpleName() + " - No log saving");
 			return;
 		}
 
@@ -446,28 +462,26 @@ public class SimLog {
 
 	}
 
-	private List<String> getResultsList() {
+	protected List<String> getResultsList() {
 		return this.resultsList;
 	}
 
 	public void writeFile(String fileName, List<String> Lines) {
-		try {
-			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName, true));
+		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName, true))) {
 			for (String str : Lines) {
 				bufferedWriter.append(str);
 				bufferedWriter.newLine();
 			}
 			Lines.clear();
-			bufferedWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public String getFileName(String extension) {
-		String outputFilesName = SimulationParameters.OUTPUT_FOLDER + "/" + simStartTime;
+		String outputFilesName = SimulationParameters.outputFolder + "/" + simStartTime;
 		new File(outputFilesName).mkdirs();
-		if (SimulationParameters.PARALLEL)
+		if (SimulationParameters.parallelism_enabled)
 			outputFilesName += "/Parallel_simulation_" + simulationManager.getSimulationId();
 		else
 			outputFilesName += "/Sequential_simulation";
@@ -482,9 +496,8 @@ public class SimLog {
 		} else {
 			switch (flag) {
 			case DEFAULT:
-					newLine = padLeftSpaces(decimalFormat.format(
-							simulationManager.getSimulation().clock()), 7)
-							+ " (s) : " + newLine;
+				newLine = padLeftSpaces(decimalFormat.format(simulationManager.getSimulation().clock()), 7) + " (s) : "
+						+ newLine;
 				log.add(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + " - simulation time "
 						+ newLine);
 				break;
@@ -509,12 +522,14 @@ public class SimLog {
 	}
 
 	public void deepLog(String line) {
-		if (SimulationParameters.DEEP_LOGGING)
+		if (SimulationParameters.deepLoggingEnabled) {
 			print(line, DEFAULT);
+			System.out.println(line);
+		}
 	}
 
 	public void deepLog(String line, int flag) {
-		if (SimulationParameters.DEEP_LOGGING) {
+		if (SimulationParameters.deepLoggingEnabled) {
 			print(line, flag);
 		}
 	}
@@ -548,8 +563,8 @@ public class SimLog {
 
 	public void initialize(SimulationManager simulationManager, int dev, int alg, int arch) {
 		this.currentEdgeDevicesCount = dev;
-		this.currentOrchAlgorithm = SimulationParameters.ORCHESTRATION_AlGORITHMS[alg];
-		this.currentOrchArchitecture = SimulationParameters.ORCHESTRATION_ARCHITECTURES[arch];
+		this.currentOrchAlgorithm = SimulationParameters.orchestrationAlgorithms[alg];
+		this.currentOrchArchitecture = SimulationParameters.orchestrationArchitectures[arch];
 		this.simulationManager = simulationManager;
 	}
 

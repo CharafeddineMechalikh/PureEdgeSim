@@ -27,13 +27,15 @@ import org.knowm.xchart.style.Styler.ChartTheme;
 import org.knowm.xchart.style.Styler.LegendPosition;
 import org.knowm.xchart.style.markers.Marker;
 
+import com.mechalikh.pureedgesim.datacentersmanager.ComputingNodesGenerator;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
-import java.awt.*; 
+import java.awt.*;
 import java.util.List;
 
 public abstract class Chart {
 
+	protected ComputingNodesGenerator computingNodesGenerator;
 	protected XYChart chart;
 	protected static int height = 270;
 	protected static int width = 450;
@@ -46,6 +48,7 @@ public abstract class Chart {
 		chart.getStyler().setLegendPosition(LegendPosition.OutsideE);
 		chart.getStyler().setLegendVisible(true);
 		this.simulationManager = simulationManager;
+		computingNodesGenerator = simulationManager.getDataCentersManager().getComputingNodesGenerator();
 	}
 
 	protected abstract void update();

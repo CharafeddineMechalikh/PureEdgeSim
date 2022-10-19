@@ -20,13 +20,13 @@
  **/
 package com.mechalikh.pureedgesim.energy;
 
-import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 
 /**
  * The linear power model for computing nodes. It implements the Null Object
- * Design Pattern in order to start avoiding {@link NullPointerException} when using the
- * NULL object instead of attributing null to EnergyModelNetworkLink variables.
+ * Design Pattern in order to start avoiding {@link NullPointerException} when
+ * using the NULL object instead of attributing null to EnergyModelNetworkLink
+ * variables.
  * 
  * @author Charafeddine Mechalikh
  * @since PureEdgeSim 5.0
@@ -36,15 +36,16 @@ public class EnergyModelComputingNode {
 	protected double idleConsumption; // Consumed energy when idle (in Watt)
 	protected double cpuEnergyConsumption = 0;
 	protected double batteryCapacity;
+	protected double initialBatteryLevel = 1;
 	protected String connectivity;
 	protected boolean isBatteryPowered = false;
-
 	public static final int TRANSMISSION = 0; // used to update edge devices batteries
 	public static final int RECEPTION = 1;
-	
+
 	/**
-	 * An attribute that implements the Null Object Design Pattern to avoid {@link NullPointerException} when using the
-	 * NULL object instead of attributing null to EnergyModelComputingNode variables.
+	 * An attribute that implements the Null Object Design Pattern to avoid
+	 * {@link NullPointerException} when using the NULL object instead of
+	 * attributing null to EnergyModelComputingNode variables.
 	 */
 	public static final EnergyModelComputingNode NULL = new EnergyModelComputingNodeNull(0, 0);
 	protected double networkEnergyConsumption;
@@ -57,11 +58,15 @@ public class EnergyModelComputingNode {
 	}
 
 	public void updateStaticEnergyConsumption() {
-		cpuEnergyConsumption += getIdleConsumption() / 3600 * SimulationParameters.UPDATE_INTERVAL;
+		cpuEnergyConsumption += getIdleConsumption() / 3600 * SimulationParameters.updateInterval;
+	}
+
+	public double getCpuEnergyConsumption() {
+		return cpuEnergyConsumption;
 	}
 
 	public double getTotalEnergyConsumption() {
-		return cpuEnergyConsumption;
+		return cpuEnergyConsumption + networkEnergyConsumption;
 	}
 
 	public double getMaxActiveConsumption() {
@@ -88,16 +93,16 @@ public class EnergyModelComputingNode {
 		this.batteryCapacity = batteryCapacity;
 	}
 
-	public double getBatteryLevel() {
+	public double getBatteryLevelWattHour() {
 		if (!isBatteryPowered())
-			return 100;
-		if (getBatteryCapacity() < getTotalEnergyConsumption())
+			return -1;
+		if (getBatteryCapacity() * this.initialBatteryLevel < getTotalEnergyConsumption())
 			return 0;
-		return getBatteryCapacity() - (getTotalEnergyConsumption() + networkEnergyConsumption);
+		return (getBatteryCapacity() * this.initialBatteryLevel) - getTotalEnergyConsumption();
 	}
 
 	public double getBatteryLevelPercentage() {
-		return getBatteryLevel() * 100 / getBatteryCapacity();
+		return getBatteryLevelWattHour() * 100 / getBatteryCapacity();
 	}
 
 	public boolean isBatteryPowered() {
@@ -108,6 +113,10 @@ public class EnergyModelComputingNode {
 		this.isBatteryPowered = battery;
 	}
 
+	public void setIntialBatteryPercentage(double batteryLevel) {
+			this.initialBatteryLevel = batteryLevel / 100.0;
+	}
+
 	public String getConnectivityType() {
 		return connectivity;
 	}
@@ -116,24 +125,22 @@ public class EnergyModelComputingNode {
 		this.connectivity = connectivity;
 
 		if ("cellular".equals(connectivity)) {
-			transmissionEnergyPerBits = SimulationParameters.CELLULAR_DEVICE_TRANSMISSION_WATTHOUR_PER_BIT;
-			receptionEnergyPerBits = SimulationParameters.CELLULAR_DEVICE_RECEPTION_WATTHOUR_PER_BIT;
+			transmissionEnergyPerBits = SimulationParameters.cellularDeviceTransmissionWattHourPerBit;
+			receptionEnergyPerBits = SimulationParameters.cellularDeviceReceptionWattHourPerBit;
 		} else if ("wifi".equals(connectivity)) {
-			transmissionEnergyPerBits = SimulationParameters.WIFI_DEVICE_TRANSMISSION_WATTHOUR_PER_BIT;
-			receptionEnergyPerBits = SimulationParameters.WIFI_DEVICE_RECEPTION_WATTHOUR_PER_BIT;
+			transmissionEnergyPerBits = SimulationParameters.wifiDeviceTransmissionWattHourPerBit;
+			receptionEnergyPerBits = SimulationParameters.wifiDeviceReceptionWattHourPerBit;
 		} else {
-			transmissionEnergyPerBits = SimulationParameters.ETHERNET_WATTHOUR_PER_BIT / 2;
-			receptionEnergyPerBits = SimulationParameters.ETHERNET_WATTHOUR_PER_BIT / 2;
+			transmissionEnergyPerBits = SimulationParameters.ethernetWattHourPerBit / 2;
+			receptionEnergyPerBits = SimulationParameters.ethernetWattHourPerBit / 2;
 		}
 	}
 
-	public void updatewirelessEnergyConsumption(double sizeInBits, ComputingNode origin, ComputingNode destination,
-			int flag) {
+	public void updatewirelessEnergyConsumption(double sizeInBits, int flag) {
 		if (flag == RECEPTION)
 			networkEnergyConsumption += sizeInBits * transmissionEnergyPerBits;
 		else
 			networkEnergyConsumption += sizeInBits * receptionEnergyPerBits;
-
 	}
 
 	public void updateDynamicEnergyConsumption(double length, double mipsCapacity) {

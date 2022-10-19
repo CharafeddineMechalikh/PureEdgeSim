@@ -21,16 +21,18 @@
 package com.mechalikh.pureedgesim.simulationmanager;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
-import com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNode;  
+import com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNode;
+import com.mechalikh.pureedgesim.datacentersmanager.DefaultTopologyCreator;
+import com.mechalikh.pureedgesim.datacentersmanager.TopologyCreator;
 import com.mechalikh.pureedgesim.locationmanager.DefaultMobilityModel;
 import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
 import com.mechalikh.pureedgesim.network.DefaultNetworkModel;
 import com.mechalikh.pureedgesim.network.NetworkModel;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.tasksgenerator.DefaultTasksGenerator;
-import com.mechalikh.pureedgesim.tasksgenerator.TasksGenerator;
-import com.mechalikh.pureedgesim.tasksorchestration.DefaultOrchestrator;
-import com.mechalikh.pureedgesim.tasksorchestration.Orchestrator;
+import com.mechalikh.pureedgesim.taskgenerator.DefaultTaskGenerator;
+import com.mechalikh.pureedgesim.taskgenerator.TaskGenerator;
+import com.mechalikh.pureedgesim.taskorchestrator.DefaultOrchestrator;
+import com.mechalikh.pureedgesim.taskorchestrator.Orchestrator;
 
 /**
  * An abstract class that represents the simulation environment
@@ -54,16 +56,16 @@ public abstract class SimulationAbstract {
 	/**
 	 * The Computing Node class that is used in the simulation.
 	 * 
-	 * @see #setCustomEdgeDataCenters(Class)
+	 * @see #setCustomComputingNode(Class)
 	 */
 	protected Class<? extends ComputingNode> computingNode = DefaultComputingNode.class;
 
 	/**
 	 * The Tasks Generator class that is used in the simulation.
 	 * 
-	 * @see #setCustomTasksGenerator(Class)
+	 * @see #setCustomTaskGenerator(Class)
 	 */
-	protected Class<? extends TasksGenerator> tasksGenerator = DefaultTasksGenerator.class;
+	protected Class<? extends TaskGenerator> tasksGenerator = DefaultTaskGenerator.class;
 
 	/**
 	 * The Orchestrator class that is used in the simulation.
@@ -71,7 +73,7 @@ public abstract class SimulationAbstract {
 	 * @see #setCustomEdgeOrchestrator(Class)
 	 */
 	protected Class<? extends Orchestrator> orchestrator = DefaultOrchestrator.class;
-
+	
 	/**
 	 * The Network Model class that is used in the simulation.
 	 * 
@@ -79,25 +81,38 @@ public abstract class SimulationAbstract {
 	 */
 	protected Class<? extends NetworkModel> networkModel = DefaultNetworkModel.class;
 
-
+	/**
+	 * The Simulation Manager class that is used in the simulation.
+	 * 
+	 * @see #setCustomSimulationManager(Class)
+	 */
+	protected Class<? extends SimulationManager> simulationManager = DefaultSimulationManager.class;
+	
+	/**
+	 * The Topology Creator class that is used in the simulation.
+	 * 
+	 * @see #setCustomTopologyCreator(Class)
+	 */
+	protected Class<? extends TopologyCreator> topologyCreator = DefaultTopologyCreator.class;
+	
 	/**
 	 * Allows to use a custom computing node class in the simulation. The class must
 	 * extend the {@link ComputingNode} provided by PureEdgeSim.
 	 * 
 	 * @param customComputingNode the custom class to use.
 	 */
-	public void setCustomEdgeDataCenters(Class<? extends ComputingNode> customComputingNode) {
+	public void setCustomComputingNode(Class<? extends ComputingNode> customComputingNode) {
 		this.computingNode = customComputingNode;
 	}
 
 	/**
 	 * Allows to use a custom tasks generator class in the simulation. The class
-	 * must extend the {@link TasksGenerator} provided by PureEdgeSim.
+	 * must extend the {@link TaskGenerator} provided by PureEdgeSim.
 	 * 
-	 * @param tasksGenerator the custom task generator class to use.
+	 * @param taskGenerator the custom task generator class to use.
 	 */
-	public void setCustomTasksGenerator(Class<? extends TasksGenerator> tasksGenerator) {
-		this.tasksGenerator = tasksGenerator;
+	public void setCustomTaskGenerator(Class<? extends TaskGenerator> taskGenerator) {
+		this.tasksGenerator = taskGenerator;
 	}
 
 	/**
@@ -108,7 +123,8 @@ public abstract class SimulationAbstract {
 	 */
 	public void setCustomEdgeOrchestrator(Class<? extends Orchestrator> orchestrator) {
 		this.orchestrator = orchestrator;
-	}
+	} 
+	
 
 	/**
 	 * Allows to use a custom mobility model in the simulation. The class must
@@ -121,13 +137,33 @@ public abstract class SimulationAbstract {
 	}
 
 	/**
-	 * Allows to use a network model in the simulation. The class must extend the
-	 * {@link NetworkModel} provided by PureEdgeSim.
+	 * Allows to use a custom network model in the simulation. The class must extend
+	 * the {@link NetworkModel} provided by PureEdgeSim.
 	 * 
 	 * @param networkModel the custom network model class to use.
 	 */
 	public void setCustomNetworkModel(Class<? extends NetworkModel> networkModel) {
 		this.networkModel = networkModel;
+	}
+
+	/**
+	 * Allows to use a custom topology creator in the simulation. The class must extend
+	 * the {@link TopologyCreator} provided by PureEdgeSim.
+	 * 
+	 * @param topologyCreator the custom topology creator class to use.
+	 */
+	public void setCustomTopologyCreator(Class<? extends TopologyCreator> topologyCreator) {
+		this.topologyCreator = topologyCreator;
+	}
+	
+	/**
+	 * Allows to use a custom simulation manager class in the simulation. The class
+	 * must extend the {@link DefaultSimulationManager} provided by PureEdgeSim.
+	 * 
+	 * @param simulationManager the custom simulation manager class to use.
+	 */
+	public void setCustomSimulationManager(Class<? extends SimulationManager> simulationManager) {
+		this.simulationManager = simulationManager;
 	}
 
 	/**
@@ -137,7 +173,7 @@ public abstract class SimulationAbstract {
 	 * @param path the output folder to set.
 	 */
 	public void setCustomOutputFolder(String path) {
-		SimulationParameters.OUTPUT_FOLDER = path;
+		SimulationParameters.outputFolder = path;
 	}
 
 	/**
@@ -162,22 +198,22 @@ public abstract class SimulationAbstract {
 	public void setCustomFilePath(String path, Files file) {
 		switch (file) {
 		case SIMULATION_PARAMETERS:
-			SimulationParameters.SIMULATION_PARAMETERS_FILE = path;
+			SimulationParameters.simulationParametersFile = path;
 			break;
 		case APPLICATIONS_FILE:
-			SimulationParameters.APPLICATIONS_FILE = path;
+			SimulationParameters.applicationFile = path;
 			break;
 		case EDGE_DATACENTERS_FILE:
-			SimulationParameters.EDGE_DATACENTERS_FILE = path;
+			SimulationParameters.edgeDataCentersFile = path;
 			break;
 		case EDGE_DEVICES_FILE:
-			SimulationParameters.EDGE_DEVICES_FILE = path;
+			SimulationParameters.edgeDevicesFile = path;
 			break;
 		case CLOUD_FILE:
-			SimulationParameters.CLOUD_DATACENTERS_FILE = path;
+			SimulationParameters.cloudDataCentersFile = path;
 			break;
 		default:
-			throw new IllegalArgumentException(getClass().getSimpleName()+ " - Unknown file type");
+			throw new IllegalArgumentException(getClass().getSimpleName() + " - Unknown file type");
 		}
 	}
 

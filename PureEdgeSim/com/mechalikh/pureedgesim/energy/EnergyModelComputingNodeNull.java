@@ -19,6 +19,7 @@
  *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.energy;
+
 /**
  * A class that implements the Null Object Design Pattern for the
  * {@link EnergyModelComputingNode} class. Needed to avoid
@@ -28,38 +29,45 @@ package com.mechalikh.pureedgesim.energy;
 public class EnergyModelComputingNodeNull extends EnergyModelComputingNode {
 
 	public EnergyModelComputingNodeNull(double maxActiveConsumption, double idleConsumption) {
-		super(maxActiveConsumption, idleConsumption); 
+		super(maxActiveConsumption, idleConsumption);
 	}
 
-
+	@Override
 	public double getTotalEnergyConsumption() {
 		return 0;
 	}
 
+	@Override
 	public double getMaxActiveConsumption() {
 		return 0;
 	}
 
+	@Override
 	public double getIdleConsumption() {
 		return 0;
 	}
 
+	@Override
 	public double getBatteryCapacity() {
 		return 0;
 	}
 
-	public double getBatteryLevel() {
+	@Override
+	public double getBatteryLevelWattHour() {
 		return 0;
 	}
 
+	@Override
 	public double getBatteryLevelPercentage() {
 		return 0;
 	}
 
+	@Override
 	public boolean isBatteryPowered() {
 		return false;
 	}
 
+	@Override
 	public String getConnectivityType() {
 		return "";
 	}

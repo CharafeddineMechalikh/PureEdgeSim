@@ -19,35 +19,50 @@
  *     @author Charafeddine Mechalikh
  **/
 package com.mechalikh.pureedgesim.locationmanager;
- 
+
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager; 
 
 public class DefaultMobilityModel extends MobilityModel {
-	private boolean pause = false;
-	private double pauseDuration = -1;
-	private double mobilityDuration ;
-	private int orientationAngle = new Random().nextInt(359);
+	/**
+	 * Used to generate random values.
+	 * 
+	 * @see #pause
+	 * @see #reoriontate(double, double)
+	 */
+	protected Random random;
+	protected boolean pause = false;
+	protected double pauseDuration = -1;
+	protected double mobilityDuration;
+	protected int orientationAngle;
 
 	public DefaultMobilityModel(SimulationManager simulationManager, Location currentLocation) {
 		super(simulationManager, currentLocation);
+		try {
+			random = SecureRandom.getInstanceStrong();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		orientationAngle = random.nextInt(359);
 	}
 
 	@Override
 	protected Location getNextLocation(Location newLocation) {
-		double X_position = newLocation.getXPos(); // Get the initial X coordinate assigned to this device
-		double Y_position = newLocation.getYPos(); // Get the initial y coordinate assigned to this device
+		double xPosition = newLocation.getXPos(); // Get the initial X coordinate assigned to this device
+		double yPosition = newLocation.getYPos(); // Get the initial y coordinate assigned to this device
 
 		if (pause && pauseDuration > 0) {
 			// The device mobility is paused until that random delay finishes
-			pauseDuration -= SimulationParameters.UPDATE_INTERVAL;
+			pauseDuration -= SimulationParameters.updateInterval;
 			return newLocation;
 		}
 
 		// Make sure that the device stay in the simulation area
-		reoriontate(X_position, Y_position);
+		reoriontate(xPosition, yPosition);
 
 		if (mobilityDuration <= 0) {
 			pause();
@@ -58,51 +73,51 @@ public class DefaultMobilityModel extends MobilityModel {
 		}
 
 		// Update the currentLocation of this device
-		return updateLocation(X_position, Y_position);
+		return updateLocation(xPosition, yPosition);
 
 	}
 
-	private Location updateLocation(double X_position, double Y_position) {
-		double distance = getSpeed() * SimulationParameters.UPDATE_INTERVAL;
+	protected Location updateLocation(double xPosition, double yPosition) {
+		double distance = getSpeed() * SimulationParameters.updateInterval;
 		double X_distance = Math.cos(Math.toRadians(orientationAngle)) * distance;
 		double Y_distance = Math.sin(Math.toRadians(orientationAngle)) * distance;
-		// Update the X_position
-		double X_pos = X_position + X_distance;
-		double Y_pos = Y_position + Y_distance;
+		// Update the xPosition
+		double X_pos = xPosition + X_distance;
+		double Y_pos = yPosition + Y_distance;
 		return new Location(X_pos, Y_pos);
 	}
 
-	private void resume() {
+	protected void resume() {
 		// Resume mobility in the next iteration
 		pause = false;
 		// Increment time and then calculate the next coordinates in the next iteration
 		// (the device is moving)
-		mobilityDuration -= SimulationParameters.UPDATE_INTERVAL;
+		mobilityDuration -= SimulationParameters.updateInterval;
 	}
 
-	private void pause() {
+	protected void pause() {
 		// Pickup random duration from 50 to 200 seconds
 		pauseDuration = getMinPauseDuration()
-				+ new Random().nextInt((int) (getMaxPauseDuration() - getMinPauseDuration()));
+				+ random.nextInt((int) (getMaxPauseDuration() - getMinPauseDuration()));
 		// Pause mobility (the device will stay in its location for the randomly
 		// generated duration
 		pause = true;
 		// Reorientate the device to a new direction
-		orientationAngle = new Random().nextInt(359);
+		orientationAngle = random.nextInt(359);
 		// The mobility will be resumed for the following period of time
-		mobilityDuration = new Random().nextInt((int) (getMaxMobilityDuration() - getMinMobilityDuration()))
+		mobilityDuration = random.nextInt((int) (getMaxMobilityDuration() - getMinMobilityDuration()))
 				+ getMinMobilityDuration();
 	}
 
-	private void reoriontate(double x_position, double y_position) {
-		if (x_position >= SimulationParameters.AREA_LENGTH)
-			orientationAngle = -90 - new Random().nextInt(180);
-		else if (x_position <= 0)
-			orientationAngle = -90 + new Random().nextInt(180);
-		if (y_position >= SimulationParameters.AREA_WIDTH)
-			orientationAngle = -new Random().nextInt(180);
-		else if (y_position <= 0)
-			orientationAngle = new Random().nextInt(180);
+	protected void reoriontate(double xPosition, double yPosition) {
+		if (xPosition >= SimulationParameters.simulationMapLength)
+			orientationAngle = -90 - random.nextInt(180);
+		else if (xPosition <= 0)
+			orientationAngle = -90 + random.nextInt(180);
+		if (yPosition >= SimulationParameters.simulationMapWidth)
+			orientationAngle = -random.nextInt(180);
+		else if (yPosition <= 0)
+			orientationAngle = random.nextInt(180);
 	}
 
 }

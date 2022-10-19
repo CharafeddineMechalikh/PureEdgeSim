@@ -23,25 +23,25 @@ package com.mechalikh.pureedgesim.network;
 import java.util.List;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
-import com.mechalikh.pureedgesim.tasksgenerator.Task;
+import com.mechalikh.pureedgesim.taskgenerator.Task;
 
 public class TransferProgress {
-	public static enum Type {
+	public enum Type {
 		TASK, CONTAINER, RESULTS_TO_DEV, RESULTS_TO_ORCH, REQUEST
 	}
 
-	private Task task;
-	private double wanNetworkUsage = 0; // seconds
-	private double manNetworkUsage = 0; // seconds
-	private double lanNetworkUsage = 0; // seconds
-	private Type transferType; 
-	private double fileSize; // in bits
-	private double remainingFileSize; // in bits
-	private double currentBandwidth = 0; // bits/s
-	private double totalBandwidths = 0; // bits/s
-	private int bwAllocationTimes = 0;
-	private List<ComputingNode> vertexList;
-	private List<NetworkLink> edgeList; 
+	protected Task task;
+	protected double wanNetworkUsage = 0; // seconds
+	protected double manNetworkUsage = 0; // seconds
+	protected double lanNetworkUsage = 0; // seconds
+	protected Type transferType; 
+	protected double fileSize; // in bits
+	protected double remainingFileSize; // in bits
+	protected double currentBandwidth = 0; // bits/s
+	protected double totalBandwidths = 0; // bits/s
+	protected int bwAllocationTimes = 0;
+	protected List<ComputingNode> vertexList;
+	protected List<NetworkLink> edgeList; 
 
 	public TransferProgress(Task task, double fileSize, Type type) {
 		this.task = task; 

@@ -26,12 +26,12 @@ import java.util.List;
 
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.markers.SeriesMarkers;
-
+ 
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public class TasksChart extends Chart {
 
-	private List<Double> tasksFailedList = new ArrayList<>();
+	protected List<Double> tasksFailedList = new ArrayList<>();
 	public TasksChart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
 		super(title, xAxisTitle, yAxisTitle, simulationManager);
 		getChart().getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);

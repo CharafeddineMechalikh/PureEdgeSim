@@ -26,14 +26,16 @@ import java.util.List;
 import org.jgrapht.GraphPath;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
-import com.mechalikh.pureedgesim.energy.EnergyModelComputingNode; 
+import com.mechalikh.pureedgesim.energy.EnergyModelComputingNode;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.simulationengine.Event;
+import com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
-import com.mechalikh.pureedgesim.tasksgenerator.Task;
+import com.mechalikh.pureedgesim.taskgenerator.Task;
 
 public class DefaultNetworkModel extends NetworkModel {
+
 	public DefaultNetworkModel(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
@@ -71,23 +73,52 @@ public class DefaultNetworkModel extends NetworkModel {
 	}
 
 	public void send(ComputingNode from, ComputingNode to, Task task, double fileSize, TransferProgress.Type type) {
-		List<ComputingNode> vertexList = new ArrayList<>();
-		List<NetworkLink> edgeList = new ArrayList<>();
+		List<ComputingNode> vertexList = new ArrayList<>(5);
+		List<NetworkLink> edgeList = new ArrayList<>(5);
 
+		// If both are edge devices (one hop far from each other), send directly.
 		if (from.getType() == TYPES.EDGE_DEVICE && to.getType() == TYPES.EDGE_DEVICE) {
-
 			from.getCurrentWiFiLink().setDst(to);
 			vertexList.addAll(List.of(from, to));
-			edgeList.addAll(List.of(from.getCurrentWiFiLink()));
-		} else {
+			edgeList.add(from.getCurrentWiFiLink());
 
+		} // Otherwise, if the first is a mobile edge device
+		else if (from.getType() == TYPES.EDGE_DEVICE && to.getType() == TYPES.EDGE_DATACENTER) { 
+			long id = simulationManager.getDataCentersManager().getTopology()
+					.getUniqueId(from.getCurrentUpLink().getDst().getId(), to.getId());
 			GraphPath<ComputingNode, NetworkLink> path = simulationManager.getDataCentersManager().getTopology()
-					.getPath(from, to);
+					.getPathsMap().get(id);
+			vertexList.add(from);
+			vertexList.addAll(path.getVertexList());
+			edgeList.add(from.getCurrentUpLink());
+			edgeList.addAll(path.getEdgeList());
 
+		} // Else, if the second is a mobile edge device
+		else if (from.getType() == TYPES.EDGE_DATACENTER && to.getType() == TYPES.EDGE_DEVICE) {
+			long id = simulationManager.getDataCentersManager().getTopology().getUniqueId(from.getId(),
+					to.getCurrentDownLink().getSrc().getId());
+			GraphPath<ComputingNode, NetworkLink> path = simulationManager.getDataCentersManager().getTopology()
+					.getPathsMap().get(id);
+			vertexList.addAll(path.getVertexList());
+			vertexList.add(from);
+			edgeList.addAll(path.getEdgeList());
+			edgeList.add(to.getCurrentDownLink()); 
+			
+		} 
+		else { // Otherwise, if one of them is and edge device but not mobile, or the other is a cloud, or any other cases.
+			GraphPath<ComputingNode, NetworkLink> path;
+			long id = simulationManager.getDataCentersManager().getTopology().getUniqueId(from.getId(), to.getId());
+
+			if (simulationManager.getDataCentersManager().getTopology().getPathsMap().containsKey(id)) {
+				path = simulationManager.getDataCentersManager().getTopology().getPathsMap().get(id);
+			} else {
+				path = simulationManager.getDataCentersManager().getTopology().getPath(from, to);
+				simulationManager.getDataCentersManager().getTopology().getPathsMap().put(id, path);
+			}
 			vertexList.addAll(path.getVertexList());
 			edgeList.addAll(path.getEdgeList());
+			
 		}
-
 		edgeList.get(0).addTransfer(
 				new TransferProgress(task, fileSize, type).setVertexList(vertexList).setEdgeList(edgeList));
 
@@ -96,40 +127,50 @@ public class DefaultNetworkModel extends NetworkModel {
 	public void sendRequestFromOrchToDest(Task task) {
 		if (task.getOrchestrator() != task.getOffloadingDestination()
 				&& task.getOffloadingDestination() != task.getEdgeDevice())
-			send(task.getOrchestrator(), task.getOffloadingDestination(), task, task.getFileSize(),TransferProgress.Type.TASK);
+
+			send(task.getOrchestrator(), task.getOffloadingDestination(), task, task.getFileSizeInBits(),
+					TransferProgress.Type.TASK);
 		else // The device will execute the task locally
-			executeTaskOrDownloadContainer(new TransferProgress(task, task.getFileSize(), TransferProgress.Type.TASK));
+			executeTaskOrDownloadContainer(
+					new TransferProgress(task, task.getFileSizeInBits(), TransferProgress.Type.TASK));
 	}
 
 	public void sendResultFromOrchToDev(Task task) {
 		if (task.getOrchestrator() != task.getEdgeDevice())
-			send(task.getOrchestrator(), task.getEdgeDevice(), task,task.getOutputSize(), TransferProgress.Type.RESULTS_TO_DEV);
+			send(task.getOrchestrator(), task.getEdgeDevice(), task, task.getOutputSizeInBits(),
+					TransferProgress.Type.RESULTS_TO_DEV);
 		else
-			scheduleNow(simulationManager, SimulationManager.RESULT_RETURN_FINISHED, task);
+			scheduleNow(simulationManager, DefaultSimulationManager.RESULT_RETURN_FINISHED, task);
+
 	}
 
 	public void sendResultFromDevToOrch(Task task) {
 		if (task.getOffloadingDestination() != task.getOrchestrator())
-			send(task.getOffloadingDestination(), task.getOrchestrator(), task, task.getOutputSize(), TransferProgress.Type.RESULTS_TO_ORCH);
+			send(task.getOffloadingDestination(), task.getOrchestrator(), task, task.getOutputSizeInBits(),
+					TransferProgress.Type.RESULTS_TO_ORCH);
 		else
 			scheduleNow(this, DefaultNetworkModel.SEND_RESULT_FROM_ORCH_TO_DEV, task);
+
 	}
 
 	public void addContainer(Task task) {
-
 		if (task.getRegistry() != task.getOffloadingDestination())
-			send(task.getRegistry(), task.getOffloadingDestination(), task,task.getContainerSize(), TransferProgress.Type.CONTAINER);
+			send(task.getRegistry(), task.getOffloadingDestination(), task, task.getContainerSizeInBits(),
+					TransferProgress.Type.CONTAINER);
 		else
-			scheduleNow(simulationManager, SimulationManager.EXECUTE_TASK, task);
+			scheduleNow(simulationManager, DefaultSimulationManager.EXECUTE_TASK, task);
 	}
 
-	public void sendRequestFromDeviceToOrch(Task task) { 
-		if (task.getEdgeDevice() != task.getOrchestrator()) { 
-			send(task.getEdgeDevice(), task.getOrchestrator(), task, task.getFileSize(), TransferProgress.Type.REQUEST);
+	public void sendRequestFromDeviceToOrch(Task task) {
+		if (SimulationParameters.enableOrchestrators && task.getEdgeDevice() != task.getOrchestrator()) {
+			send(task.getEdgeDevice(), task.getOrchestrator(), task, task.getFileSizeInBits(),
+					TransferProgress.Type.REQUEST);
 
 		} else // The device orchestrates its tasks by itself, so, send the request directly to
 				// destination
-			scheduleNow(simulationManager, SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, task);
+		{
+			scheduleNow(simulationManager, DefaultSimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, task);
+		}
 	}
 
 	protected void transferFinished(TransferProgress transfer) {
@@ -137,20 +178,22 @@ public class DefaultNetworkModel extends NetworkModel {
 		// If it is an offloading request that is sent to the orchestrator
 		if (transfer.getTransferType() == TransferProgress.Type.REQUEST) {
 			// in case this node is the orchestrator
+
 			if (transfer.getVertexList().get(0) == transfer.getTask().getOrchestrator()) {
-				offloadingRequestRecievedByOrchestrator(transfer);
 				updateEdgeDevicesRemainingEnergy(transfer, transfer.getTask().getEdgeDevice(),
 						transfer.getTask().getOrchestrator());
 			}
+			offloadingRequestRecievedByOrchestrator(transfer);
 		}
 		// If it is a task (or offloading request) that is sent to the destination
 		else if (transfer.getTransferType() == TransferProgress.Type.TASK) {
 			// in case this node is the destination
 			if (transfer.getVertexList().get(0) == transfer.getTask().getOffloadingDestination()) {
-				executeTaskOrDownloadContainer(transfer);
 				updateEdgeDevicesRemainingEnergy(transfer, transfer.getTask().getEdgeDevice(),
 						transfer.getTask().getOffloadingDestination());
 			}
+
+			executeTaskOrDownloadContainer(transfer);
 		}
 		// If the container has been downloaded, then execute the task now
 		else if (transfer.getTransferType() == TransferProgress.Type.CONTAINER) {
@@ -176,20 +219,20 @@ public class DefaultNetworkModel extends NetworkModel {
 	protected void updateEdgeDevicesRemainingEnergy(TransferProgress transfer, ComputingNode origin,
 			ComputingNode destination) {
 		if (origin != ComputingNode.NULL && origin.getType() == TYPES.EDGE_DEVICE) {
-			origin.getEnergyModel().updatewirelessEnergyConsumption(transfer.getFileSize(), origin, destination,
+			origin.getEnergyModel().updatewirelessEnergyConsumption(transfer.getFileSize(),
 					EnergyModelComputingNode.TRANSMISSION);
 		}
 		if (destination.getType() == TYPES.EDGE_DEVICE)
-			destination.getEnergyModel().updatewirelessEnergyConsumption(transfer.getFileSize(), origin, destination,
+			destination.getEnergyModel().updatewirelessEnergyConsumption(transfer.getFileSize(),
 					EnergyModelComputingNode.RECEPTION);
 	}
 
 	protected void containerDownloadFinished(TransferProgress transfer) {
-		scheduleNow(simulationManager, SimulationManager.EXECUTE_TASK, transfer.getTask());
+		scheduleNow(simulationManager, DefaultSimulationManager.EXECUTE_TASK, transfer.getTask());
 	}
 
 	protected void resultsReturnedToDevice(TransferProgress transfer) {
-		scheduleNow(simulationManager, SimulationManager.RESULT_RETURN_FINISHED, transfer.getTask());
+		scheduleNow(simulationManager, DefaultSimulationManager.RESULT_RETURN_FINISHED, transfer.getTask());
 	}
 
 	protected void returnResultsToDevice(TransferProgress transfer) {
@@ -197,7 +240,7 @@ public class DefaultNetworkModel extends NetworkModel {
 	}
 
 	protected void executeTaskOrDownloadContainer(TransferProgress transfer) {
-		if (SimulationParameters.ENABLE_REGISTRY && "CLOUD".equals(SimulationParameters.registry_mode)
+		if (SimulationParameters.enableRegistry && "CLOUD".equals(SimulationParameters.registryMode)
 				&& !(transfer.getTask().getOffloadingDestination()).getType().equals(TYPES.CLOUD)) {
 			// If the registry is enabled and the task is offloaded to the edge data centers
 			// or the mist nodes (edge devices),
@@ -205,17 +248,29 @@ public class DefaultNetworkModel extends NetworkModel {
 			scheduleNow(this, DefaultNetworkModel.DOWNLOAD_CONTAINER, transfer.getTask());
 
 		} else// if the registry is disabled, execute directly the task
-			scheduleNow(simulationManager, SimulationManager.EXECUTE_TASK, transfer.getTask());
+			scheduleNow(simulationManager, DefaultSimulationManager.EXECUTE_TASK, transfer.getTask());
 	}
 
 	protected void offloadingRequestRecievedByOrchestrator(TransferProgress transfer) {
 		// Find the offloading destination and execute the task
-		scheduleNow(simulationManager, SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, transfer.getTask());
+		scheduleNow(simulationManager, DefaultSimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, transfer.getTask());
 	}
 
+	/**
+	 * Defines the logic to be performed by the default network model when the
+	 * simulation starts.
+	 */
 	@Override
 	public void startInternal() {
-
+		// Do nothing.
 	}
 
+	/**
+	 * Defines the logic to be performed by the default network model when the
+	 * simulation ends.
+	 */
+	@Override
+	public void onSimulationEnd() {
+		// Do something when the simulation finishes.
+	}
 }

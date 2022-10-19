@@ -7,7 +7,7 @@
 
 	<device arch="x86" os="linux" vmm="xen">
 		<!-- this is a smartphone, for example -->
-		<connectivity>cellular</connectivity><!-- the type of network connection -->
+		<connectivity>cellular</connectivity> <!-- the type of network connection -->
 		<mobility>true</mobility> <!-- the device is mobile or fixed -->
 		<speed>1.4</speed> <!-- the speed of the device in meters per second : 1.4m/s 
 			equals 5km/h, 0 = non mobile -->
@@ -22,6 +22,8 @@
 		<battery>true</battery> <!-- relies on battery? -->
 		<percentage>30</percentage> <!-- percentage of this device type -->
 		<batteryCapacity>18.75</batteryCapacity> <!-- battery capacity in Watt-Hour -->
+		<initialBatteryLevel>100</initialBatteryLevel> <!-- initial battery percentage. e.g. set it to 50 in order to generate devices with 50% remaining energy-->
+
 		<idleConsumption>0.078</idleConsumption> <!-- idle energy consumption/ second, 
 			default=0 .000010975 -->
 		<maxConsumption>3.3</maxConsumption> <!-- max energy consumption/second, 
@@ -47,11 +49,11 @@
 		<battery>false</battery>
 		<percentage>10</percentage>
 		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel> 
 		<idleConsumption>1.6</idleConsumption>
 		<maxConsumption>5.1</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
 		<generateTasks>false</generateTasks>
-
 		<cores>4</cores>
 		<mips>16000</mips>
 		<ram>4000</ram>
@@ -70,11 +72,11 @@
 		<battery>true</battery>
 		<percentage>20</percentage>
 		<batteryCapacity>56.2</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel> 
 		<idleConsumption>1.7</idleConsumption>
 		<maxConsumption>23.6</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
 		<generateTasks>false</generateTasks>
-
 		<cores>8</cores>
 		<mips>110000</mips>
 		<ram>8000</ram>
@@ -92,15 +94,14 @@
 		<battery>false</battery>
 		<percentage>40</percentage>
 		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel> 
 		<idleConsumption>0.0011</idleConsumption>
 		<maxConsumption>0.036</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
 		<generateTasks>true</generateTasks>
-
 		<cores>2</cores>
 		<mips>70000</mips>
 		<ram>4000</ram>
 		<storage>64</storage> <!--64MB of caching memory used in example 7 -->
-
 	</device>
 </edge_devices>

@@ -14,7 +14,7 @@ import com.mechalikh.pureedgesim.simulationmanager.SimLog;
 public abstract class ComputingNodesParser extends XmlFileParser {
 	protected TYPES type;
 
-	public ComputingNodesParser(String file, TYPES type) {
+	protected ComputingNodesParser(String file, TYPES type) {
 		super(file);
 		this.type = type;
 	}
@@ -24,17 +24,18 @@ public abstract class ComputingNodesParser extends XmlFileParser {
 		return checkComputingNodesFile();
 	}
 
-	private boolean checkComputingNodesFile() {
+	protected boolean checkComputingNodesFile() {
 		SimLog.println(this.getClass().getSimpleName() + " - Checking file: " + file);
-	    InputStream computingNodesFile;
-		try { 
-		    computingNodesFile = new FileInputStream(file);
+		try (InputStream computingNodesFile = new FileInputStream(file)) {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+
+			// Disable access to external entities in XML parsing, by disallowing DocType
+			// declaration
+			dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document xmlDoc = dBuilder.parse(computingNodesFile);
-			xmlDoc.getDocumentElement().normalize(); 
+			xmlDoc.getDocumentElement().normalize();
 			typeSpecificChecking(xmlDoc);
-			computingNodesFile.close();
 		} catch (Exception e) {
 			SimLog.println(getClass().getSimpleName() + " - Failed to load " + file + " file!");
 			e.printStackTrace();

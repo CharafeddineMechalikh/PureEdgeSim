@@ -1,10 +1,26 @@
 # Changelog
 
-## Version 5.0 (MAJOR UPDATE - Mar 30th 2022)
+## Version 5.1 Changelog (October 13th 2022)
+
+*   Updated the energy model with the ability to set an initial battery level for generated devices, either programmatically or via the xml file. 
+*   Now users can extend the simulation manager to change its behavior, and easily integrate it in the simulation.
+*   Users can now easily integrate a custom task class.
+*   All entities are now notified at the end of the simulation through onSimulationEnd() method.
+*   Failure Model: now tasks can fail due to insufficient resources: RAM, STORAGE, CPU Cores.
+*   Disabled some unnecessary network links events/loops for better performance.
+*   Now tasks can be scheduled in batches instead of being scheduled all at once at the beginning of the simulation (hence, decreasing the number of events and therefore, faster simulations and less memory usage).
+*   Removed unnecessary loops when orchestrating tasks (e.g., no need to browse through edge devices when the cloud only architecture is used, etc.) 
+*   Overall version 5.1 can be 30 times faster and supports up to 8 times the number of tasks compared to previous version 5.0.
+*   More extensibility: Users can now easily incorporate a custom task class, custom simulation manager, as well as a custom topology creator.
+*   Now applications placement decisions are done after each failure (default behavior, can be changed by extending the DefaultSimulationManager and DefaultOrchestrator classes).
+*   Reduced duplication and improved code quality.
+*   Other fixes..
+
+## Version 5.0 Changelog (Mar 30th 2022)
  
 *   Removed CloudSim Plus (Just by doing this, the time complexity has been reduced by more than 10 times. But, we are still relying on their efficient implementation of Events Queue).
 *   Support of scenarios involving tens of thousands of devices. Compared to the previous version, the same simulation scenario (10 minutes simulation time, 10 000 devices, yes 10 thousands) took  1 minutes and 12 seconds on version 5.0 vs ... well the simulation didn't even start after more than 10 minutes, so I just canceled it. This is due to CloudSim Plus huge number of events, especially the broker and the vm allocation policy ones. A scenario of 10 minutes simulation time with 2000 devices, on the other hand, took 8 seconds on version 5.0 vs 2 minutes, 54 seconds on version 4.2. Even though the new version introduces many new features.
-*   Support for scenarios with longer simulation time. A scenario of 24 hours with 200 edge devices (2110706 generated task), took 1 minutes and 31 seconds on version 5.0 vs "not possible" on version 4.2 due to out of memory exception.
+*   Support for scenarios with longer simulation time. A scenario of 24 hours with 200 edge devices (2110706 generated tasks), took 1 minutes and 31 seconds on version 5.0 vs "not possible" on version 4.2 due to out of memory exception.
 *   Updated dependencies (...and removed some).
 *   Improved code quality and JavaDoc.
 *   More refactoring to improve extensibility even more.
@@ -17,11 +33,17 @@
 *   Now, we can define the type of connectivity (Ethernet, 5G, 4G, WiFi) of each device (in terms of latency, bandwidth, and energy consumption rates).
 *   Now, energy consumption of Ethernet, WiFi, Cellular (5G, 4G,..) networks is also measured.
 *   The network model is more realistic than ever before.
-*   Latency is now more realistic and dependent of the update interval (The latency-sensitivity can be defined in milliseconds, and the update interval has no effect on the failure rate of latency-sensitive tasks).
-*   Similarly, energy measurement is now dependent of the update interval, no need to decrease the update interval (which increases simulation time) to get precise energy measurement.
+*   Latency is now more realistic and independent of the update interval (The latency-sensitivity can be defined in milliseconds, and the update interval has no effect on the failure rate of latency-sensitive tasks).
+*   Similarly, energy measurement is now independent of the update interval, no need to decrease the update interval (which increases simulation time) to get precise energy measurement.
 *   This independence from the update interval means that it can be set to high, which decreased the simulation time further, without reducing its accuracy.
 *   Improved reliability (More exceptions handling + proper guidance).
 *   Implemented the Null Object Design Pattern in order to avoid NullPointerException.
+
+## Version 4.2 (May 31st 2021)
+
+*   Upgraded to CloudSim Plus 6.2.7
+*   Updated dependencies 
+*   Improved code quality 
 
 ## Version 4.2 (May 31st 2021)
 
@@ -94,9 +116,9 @@
 *   Update from CloudSim Plus 3.0.1 to 4.3.0
 *   New example added "Example 6" to show how to use a custom network model, to do so a cooperative caching algorithm has been implemented in which devices keep replicas of the containers they downloaded in order to minimize the network usage. This required implementing a clustering algorithm by which edge devices will be grouped into clusters, and the cluster head orchestrates their tasks. So, a custom edge devices class was created which inherits the DefaultDataCenter class.
 
-## Version 2.2.3 (nov 7th 2019) 
+## Version 2.2.3 (nov 8th 2019) 
 
-*   Now you can add applications easily without exiting the code.
+*   Now you can add applications easily.
 
 ## Version 2.2.2 (nov 7th 2019) 
 
@@ -115,10 +137,11 @@
 
 ## Version 2.0.0 (oct 24th 2019)
 
+*   The code has been revisited and cleaned, now it is more readable  
 *   New mobility model and new parameters for mobility update: Now it uses speed in m/s instead of intervals. The new mobility model works on demand, instead of generating a list for each device containing all its location changes (from the beginning of the simulation). The egde devices will request the next location only when needed (which reduces the use of memory)
 *   New and more realistic energy model and new energy parameters 
 *   Added initialization time to simulation parameters (in order to ignore the time when the resources are being generated)
-*   Some bugs here and there have been fixed 
+*   Some bugs here and there has been fixed 
 *   Added ram as a property to EdgeDataCenter class
 *   Added real time simulation map (now you can verify and check how your mobility model is working)  
 *   Added some real time charts showing the CPU utilization of Cloud, Fog and Edge resources, the WAN utilization, and the tasks success rate

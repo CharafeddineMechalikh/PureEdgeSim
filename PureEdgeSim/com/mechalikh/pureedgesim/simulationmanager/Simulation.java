@@ -54,11 +54,11 @@ import com.mechalikh.pureedgesim.scenariomanager.EdgeDevicesParser;
  * DefaultMobilityModel}, the
  * {@link com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNode
  * DefaultComputingNode}, the
- * {@link com.mechalikh.pureedgesim.tasksorchestration.DefaultOrchestrator
+ * {@link com.mechalikh.pureedgesim.taskorchestrator.DefaultOrchestrator
  * DefaultOrchestrator}, the
  * {@link com.mechalikh.pureedgesim.network.DefaultNetworkModel
- * DefaultNetworkModel}, etc. Fortunately, PureEdgeSim allows the user to
- * integrate their custom models into the simulation. Here is a quick example of
+ * DefaultNetworkModel}, etc. Fortunately, PureEdgeSim allows users to
+ * integrate their custom models into the simulation. Here, is a quick example of
  * how to do it:
  * <p>
  * **<blockquote>*
@@ -124,7 +124,7 @@ public class Simulation extends SimulationAbstract {
 	protected List<SimulationThread> simulationList;
 
 	/**
-	 * Creates a PureEdgeSim simulation with default predifined models.
+	 * Creates a PureEdgeSim simulation with default predefined models.
 	 */
 	public Simulation() {
 	}
@@ -150,7 +150,7 @@ public class Simulation extends SimulationAbstract {
 		// Walk through all orchestration scenarios.
 		loadScenarios();
 
-		if (SimulationParameters.PARALLEL) {
+		if (SimulationParameters.parallelism_enabled) {
 			// Parallel simulation.
 			launchParallelSimulations();
 		} else {
@@ -164,19 +164,19 @@ public class Simulation extends SimulationAbstract {
 		// Then, print the simulation duration
 		SimLog.println(getClass().getSimpleName() + " - Simulation took : " + simulatioDuration(startTime, finishTime));
 		SimLog.println(getClass().getSimpleName() + " - results were saved to the folder: "
-				+ SimulationParameters.OUTPUT_FOLDER);
+				+ SimulationParameters.outputFolder);
 
 	}
 
 	/**
 	 * Checks the input files.
 	 */
-	private boolean checkFiles() {
-		return (new EdgeDevicesParser(SimulationParameters.EDGE_DEVICES_FILE).parse()
-				&& new DatacentersParser(SimulationParameters.EDGE_DATACENTERS_FILE, TYPES.EDGE_DATACENTER).parse()
-				&& new DatacentersParser(SimulationParameters.CLOUD_DATACENTERS_FILE, TYPES.CLOUD).parse()
-				&& new ParametersParser(SimulationParameters.SIMULATION_PARAMETERS_FILE).parse()
-				&& new ApplicationFileParser(SimulationParameters.APPLICATIONS_FILE).parse());
+	protected boolean checkFiles() {
+		return (new EdgeDevicesParser(SimulationParameters.edgeDevicesFile).parse()
+				&& new DatacentersParser(SimulationParameters.edgeDataCentersFile, TYPES.EDGE_DATACENTER).parse()
+				&& new DatacentersParser(SimulationParameters.cloudDataCentersFile, TYPES.CLOUD).parse()
+				&& new ParametersParser(SimulationParameters.simulationParametersFile).parse()
+				&& new ApplicationFileParser(SimulationParameters.applicationFile).parse());
 	}
 
 	/**
@@ -185,7 +185,7 @@ public class Simulation extends SimulationAbstract {
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract
 	 */
-	private void launchParallelSimulations() {
+	protected void launchParallelSimulations() {
 
 		// Get the number of CPU cores
 		cpuCores = Runtime.getRuntime().availableProcessors();
@@ -212,11 +212,11 @@ public class Simulation extends SimulationAbstract {
 	 * @see #setCustomFilePath(String, Files)
 	 * @see #setCustomSettingsFolder(String)
 	 */
-	private void loadScenarios() {
+	protected void loadScenarios() {
 		// Save the different simulation runs (i.e., scenarios) in the scenarios List
-		for (int algorithmID = 0; algorithmID < SimulationParameters.ORCHESTRATION_AlGORITHMS.length; algorithmID++) {
-			for (int architectureID = 0; architectureID < SimulationParameters.ORCHESTRATION_ARCHITECTURES.length; architectureID++) {
-				for (int devicesCount = SimulationParameters.MIN_NUM_OF_EDGE_DEVICES; devicesCount <= SimulationParameters.MAX_NUM_OF_EDGE_DEVICES; devicesCount += SimulationParameters.EDGE_DEVICE_COUNTER_STEP) {
+		for (int algorithmID = 0; algorithmID < SimulationParameters.orchestrationAlgorithms.length; algorithmID++) {
+			for (int architectureID = 0; architectureID < SimulationParameters.orchestrationArchitectures.length; architectureID++) {
+				for (int devicesCount = SimulationParameters.minNumberOfEdgeDevices; devicesCount <= SimulationParameters.maxNumberOfEdgeDevices; devicesCount += SimulationParameters.edgeDevicesIncrementationStepSize) {
 					iterations.add(new Scenario(devicesCount, algorithmID, architectureID));
 				}
 			}
@@ -229,7 +229,7 @@ public class Simulation extends SimulationAbstract {
 	 * @param startTime The time when simulation was started
 	 * @param endTime   The time when simulation has been finished.
 	 */
-	private String simulatioDuration(Date startTime, Date endTime) {
+	protected String simulatioDuration(Date startTime, Date endTime) {
 		long difference = endTime.getTime() - startTime.getTime();
 		long seconds = difference / 1000 % 60;
 		long minutes = difference / (60 * 1000) % 60;
@@ -252,5 +252,6 @@ public class Simulation extends SimulationAbstract {
 	public List<Scenario> getScenarios() {
 		return this.iterations;
 	}
+
 
 }

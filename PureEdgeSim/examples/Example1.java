@@ -18,9 +18,13 @@
  *     
  *     @author Charafeddine Mechalikh
  **/
-package examples;
+package examples; 
+import com.mechalikh.pureedgesim.datacentersmanager.DefaultTopologyCreator;
+import com.mechalikh.pureedgesim.network.DefaultNetworkModel;
+import com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager;
 import com.mechalikh.pureedgesim.simulationmanager.Simulation;
-import com.mechalikh.pureedgesim.tasksgenerator.DefaultTasksGenerator;
+import com.mechalikh.pureedgesim.taskgenerator.DefaultTaskGenerator;
+import com.mechalikh.pureedgesim.taskorchestrator.DefaultOrchestrator; 
 
 public class Example1 {
 	/**
@@ -40,14 +44,26 @@ public class Example1 {
 		sim.setCustomMobilityModel(Example2CustomMobilityModel.class);
 
 		// To change the tasks orchestrator
-		sim.setCustomEdgeOrchestrator(Example8FuzzyLogicOrchestrator.class);
-
+		sim.setCustomEdgeOrchestrator(DefaultOrchestrator.class);
+		
+		// To change the computing node class
+		sim.setCustomComputingNode(Example4CustomComputingNode.class);
+		
 		// To change the tasks generator
-		sim.setCustomTasksGenerator(DefaultTasksGenerator.class);
-
+		sim.setCustomTaskGenerator(DefaultTaskGenerator.class); 
+		
+		// To change the network model
+		sim.setCustomNetworkModel(DefaultNetworkModel.class); 
+		
+		// To change the simulation manager
+		sim.setCustomSimulationManager(DefaultSimulationManager.class); 
+		
+		// To change the topology
+		sim.setCustomTopologyCreator(DefaultTopologyCreator.class); 
+		
 		/* to use the default one you can simply delete or comment those lines */
 
-		// Finally,you can launch the simulation
+		// Finally, you can launch the simulation
 		sim.launchSimulation();
 	}
 

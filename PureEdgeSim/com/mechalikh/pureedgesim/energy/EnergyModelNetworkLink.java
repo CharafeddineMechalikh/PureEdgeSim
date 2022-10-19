@@ -35,18 +35,18 @@ public class EnergyModelNetworkLink {
 	/**
 	 * The network link to monitor.
 	 */
-	private NetworkLink link;
+	protected NetworkLink link;
 
 	/**
 	 * The amount of energy consumed by each bit of transmitted data.
 	 */
-	private double energyPerBit;
+	protected double energyPerBit;
 
 	/**
 	 * An attribute that implements the Null Object Design Pattern to avoid {@link NullPointerException} when using the
 	 * NULL object instead of attributing null to EnergyModelNetworkLink variables.
 	 */
-	public static EnergyModelNetworkLink NULL = new EnergyModelNetworkLinkNull();
+	public static final EnergyModelNetworkLink NULL = new EnergyModelNetworkLinkNull();
 
 	public EnergyModelNetworkLink(final double energyPerBit, NetworkLink link) {
 		this.energyPerBit = energyPerBit;

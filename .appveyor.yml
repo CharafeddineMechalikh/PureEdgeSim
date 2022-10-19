@@ -1,7 +1,7 @@
-image: Visual Studio 2019
+os: Windows Server 2012
 
 version: '{build}'
-stack: jdk 12
+
 branches:
   only:
     - master

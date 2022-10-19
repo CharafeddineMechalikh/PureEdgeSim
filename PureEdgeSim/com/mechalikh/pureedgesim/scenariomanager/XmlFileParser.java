@@ -6,7 +6,7 @@ import org.w3c.dom.Element;
 
 public abstract class XmlFileParser extends FileParserAbstract {
 
-	public XmlFileParser(String file) {
+	protected XmlFileParser(String file) {
 		super(file); 
 	}
 

@@ -25,8 +25,9 @@ import com.mechalikh.pureedgesim.network.DefaultNetworkModel;
 import com.mechalikh.pureedgesim.network.NetworkModel;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
+import com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
-import com.mechalikh.pureedgesim.tasksgenerator.Task;
+import com.mechalikh.pureedgesim.taskgenerator.Task;
 
 public class Example7CustomNetworkModel extends DefaultNetworkModel {
 
@@ -38,8 +39,8 @@ public class Example7CustomNetworkModel extends DefaultNetworkModel {
 
 	@Override
 	protected void transferFinished(TransferProgress transfer) {
-		if (transfer.getTransferType() == TransferProgress.Type.TASK && SimulationParameters.ENABLE_REGISTRY
-				&& "CACHE".equals(SimulationParameters.registry_mode)) {
+		if (transfer.getTransferType() == TransferProgress.Type.TASK && SimulationParameters.enableRegistry
+				&& "CACHE".equals(SimulationParameters.registryMode)) {
 			// the offloading request has been received, now pull the container in order to
 			// execute the task
 			pullContainer(transfer.getTask());
@@ -68,21 +69,21 @@ public class Example7CustomNetworkModel extends DefaultNetworkModel {
 		Example7CachingDevice edgeDevice = (Example7CachingDevice) task.getEdgeDevice();
 		if (canKeepReplica(edgeDevice, task)) {
 			// bits to MBytes
-			if (edgeDevice.getAvailableStorage() >= toMegaBytes(task.getContainerSize())) {
+			if (edgeDevice.getAvailableStorage() >= task.getContainerSizeInMBytes()) {
 				saveImage(edgeDevice, task);
 			} else {
 				// while the storage is not enough
 				freeStorage(edgeDevice, task);
 			}
 			// if the memory is enough
-			if (edgeDevice.getAvailableStorage() >= toMegaBytes(task.getContainerSize())) {
+			if (edgeDevice.getAvailableStorage() >= task.getContainerSizeInMBytes()) {
 				saveImage(edgeDevice, task);
 			}
 		}
 	}
 
 	private boolean canKeepReplica(Example7CachingDevice edgeDevice, Task task) {
-		return ("CACHE".equals(SimulationParameters.registry_mode)
+		return ("CACHE".equals(SimulationParameters.registryMode)
 				&& ((Example7CachingDevice) edgeDevice.getOrchestrator())
 						.countContainer(task.getApplicationID()) < MAX_NUMBER_OF_REPLICAS);
 	}
@@ -102,21 +103,17 @@ public class Example7CustomNetworkModel extends DefaultNetworkModel {
 	}
 
 	private boolean storageIsNotEnough(Example7CachingDevice edgeDevice, Task task) {
-		return (edgeDevice.getAvailableStorage() < toMegaBytes(task.getContainerSize())
-				&& edgeDevice.getTotalStorage() >= toMegaBytes(task.getContainerSize()));
+		return (edgeDevice.getAvailableStorage() < task.getContainerSizeInMBytes()
+				&& edgeDevice.getTotalStorage() >= task.getContainerSizeInMBytes());
 	}
 
 	private void saveImage(Example7CachingDevice edgeDevice, Task task) {
-		edgeDevice.setAvailableStorage(edgeDevice.getAvailableStorage() - toMegaBytes(task.getContainerSize()));
+		edgeDevice.setAvailableStorage(edgeDevice.getAvailableStorage() - task.getContainerSizeInMBytes());
 		edgeDevice.cache.add(task);
 		int[] array = new int[2];
 		array[0] = task.getApplicationID();
 		array[1] = task.getEdgeDevice().getId();
 		((Example7CachingDevice) edgeDevice.getOrchestrator()).Remotecache.add(array);
-	}
-
-	private double toMegaBytes(long bits) {
-		return bits / 8000000;
 	}
 
 	private void pullContainer(Task task) {
@@ -135,13 +132,14 @@ public class Example7CustomNetworkModel extends DefaultNetworkModel {
 		if (((Example7CachingDevice) task.getOffloadingDestination()).hasContainer(task.getApplicationID())
 				|| ((Example7CachingDevice) task.getOffloadingDestination()).getType() == TYPES.CLOUD) {
 			// This device has a replica in its cache, so execute a task directly
-			scheduleNow(simulationManager, SimulationManager.EXECUTE_TASK, task);
+			scheduleNow(simulationManager, DefaultSimulationManager.EXECUTE_TASK, task);
 		} else {
 			int from = ((Example7CachingDevice) task.getEdgeDevice().getOrchestrator())
 					.findReplica(task.getApplicationID());
 			// The IDs are shifted by 2 (to avoid the cloud data center and the edge data
-			// centers) 
-			task.setRegistry(simulationManager.getDataCentersManager().getNodesList().get(from));
+			// centers)
+			task.setRegistry(
+					simulationManager.getDataCentersManager().getComputingNodesGenerator().getAllNodesList().get(from));
 			// Pull container from another edge device
 			scheduleNow(this, NetworkModel.DOWNLOAD_CONTAINER, task);
 		}

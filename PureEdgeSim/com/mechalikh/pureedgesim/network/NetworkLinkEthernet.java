@@ -22,7 +22,7 @@ package com.mechalikh.pureedgesim.network;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.energy.EnergyModelNetworkLink;
-import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters; 
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 /**
@@ -32,9 +32,17 @@ public class NetworkLinkEthernet extends NetworkLink {
 
 	public NetworkLinkEthernet(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
-		setBandwidth(SimulationParameters.ETHERNET_BANDWIDTH_BITS_PER_SECOND);
-		setLatency(SimulationParameters.ETHERNET_LATENCY);
-		setEnergyModel(new EnergyModelNetworkLink(SimulationParameters.ETHERNET_WATTHOUR_PER_BIT, this));
+		setBandwidth(SimulationParameters.ethernetBandwidthBitsPerSecond);
+		setLatency(SimulationParameters.ethernetLatency);
+		double energyConsumption = SimulationParameters.ethernetWattHourPerBit;
+	
+		if (type == NetworkLinkTypes.WAN) {
+			energyConsumption += SimulationParameters.wanWattHourPerBit;
+			setLatency(SimulationParameters.wanLatency);
+			setBandwidth(Math.min(SimulationParameters.wanBandwidthBitsPerSecond, SimulationParameters.ethernetBandwidthBitsPerSecond));
+		}
+
+		setEnergyModel(new EnergyModelNetworkLink(energyConsumption, this));
 	}
 
 }

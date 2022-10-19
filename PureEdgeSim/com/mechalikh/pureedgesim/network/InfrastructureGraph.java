@@ -20,7 +20,9 @@
  **/
 package com.mechalikh.pureedgesim.network;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.jgrapht.GraphPath;
@@ -40,10 +42,12 @@ import com.mechalikh.pureedgesim.network.NetworkLink.NetworkLinkTypes;
  */
 public class InfrastructureGraph {
 
-	public static InfrastructureGraph NULL = new InfrastructureGraph() {
+	public static final InfrastructureGraph NULL = new InfrastructureGraph() {
 	};
 
-	private DirectedWeightedMultigraph<ComputingNode, NetworkLink> graph;
+	protected DirectedWeightedMultigraph<ComputingNode, NetworkLink> graph;
+
+	protected Map<Long, GraphPath<ComputingNode, NetworkLink>> pathsMap = new LinkedHashMap<>();
 
 	public InfrastructureGraph() {
 		graph = new DirectedWeightedMultigraph<>(NetworkLink.class);
@@ -62,7 +66,8 @@ public class InfrastructureGraph {
 		// should not be necessary
 		FloydWarshallShortestPaths<ComputingNode, NetworkLink> algorithm = new FloydWarshallShortestPaths<>(graph);
 		try {
-			return algorithm.getPathWeight(computingNode, computingNode2); // Returns Double.POSITIVE_INFINITY if no path exists
+			return algorithm.getPathWeight(computingNode, computingNode2); // Returns Double.POSITIVE_INFINITY if no
+																			// path exists
 		} catch (IllegalArgumentException e) {
 			return Double.POSITIVE_INFINITY;
 		}
@@ -79,10 +84,19 @@ public class InfrastructureGraph {
 	public GraphPath<ComputingNode, NetworkLink> getPath(final ComputingNode computingNode, final ComputingNode node) {
 		DijkstraShortestPath<ComputingNode, NetworkLink> algorithm = new DijkstraShortestPath<>(graph);
 		try {
-			return algorithm.getPath(computingNode, node);
+			return assertNotNull(algorithm.getPath(computingNode, node));
 		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Cannot get a path from node "+computingNode.getId()+ " (Class: "+computingNode.getClass().getSimpleName()+ " type: "+computingNode.getType()+")  to "+node.getId()+" (Class: "+node.getClass().getSimpleName()+ " type: "+node.getType()+")" );
+			throw new IllegalArgumentException("Cannot get a path from node " + computingNode.getId() + " (Class: "
+					+ computingNode.getClass().getSimpleName() + " type: " + computingNode.getType() + ") to "
+					+ node.getId() + " (Class: " + node.getClass().getSimpleName() + " type: " + node.getType()
+					+ "). Possible solutions : add links in edge_datacenter.xml file (see examples), Or check your topology creator class.");
 		}
+	}
+
+	protected GraphPath<ComputingNode, NetworkLink> assertNotNull(GraphPath<ComputingNode, NetworkLink> path) {
+		if (null == path)
+			throw new IllegalArgumentException();
+		return path;
 	}
 
 	public DirectedWeightedMultigraph<ComputingNode, NetworkLink> getGraph() {
@@ -121,12 +135,31 @@ public class InfrastructureGraph {
 		return getEdgeByType(NetworkLinkTypes.LAN);
 	}
 
-	private <T extends NetworkLink> List<T> getEdgeByType(Class<T> x) {
+	protected <T extends NetworkLink> List<T> getEdgeByType(Class<T> x) {
 		return getGraph().edgeSet().stream().filter(x::isInstance).map(x::cast).collect(Collectors.toList());
 	}
 
-	private List<NetworkLink> getEdgeByType(NetworkLinkTypes type) {
+	protected List<NetworkLink> getEdgeByType(NetworkLinkTypes type) {
 		return getGraph().edgeSet().stream().filter(n -> n.getType().equals(type)).collect(Collectors.toList());
-	} 
+	}
 
+	public Map<Long, GraphPath<ComputingNode, NetworkLink>> getPathsMap() {
+		return pathsMap;
+	}
+
+	public void savePathsToMap(List<ComputingNode> list) {
+		// Save shortest paths in map to use them later
+		for (int i = 0; i < list.size(); i++) {
+			ComputingNode from = list.get(i);
+			for (int j = 0; j < list.size(); j++) { 
+				ComputingNode to = list.get(j);
+				pathsMap.put(getUniqueId(from.getId(), to.getId()), this.getPath(from, to));
+			}
+		}
+	}
+
+	// Get a unique id using Cantor pairing function
+	public long getUniqueId(int a, int b) {
+		return (long) ((1 / 2.0) * (a + b) * (a + b + 1)) + b;
+	}
 }

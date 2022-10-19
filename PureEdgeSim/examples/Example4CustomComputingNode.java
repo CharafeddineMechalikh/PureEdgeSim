@@ -21,7 +21,7 @@
 package examples;
 
 import com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNode;
-import com.mechalikh.pureedgesim.simulationengine.Event;
+import com.mechalikh.pureedgesim.simulationengine.Event; 
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 /*
@@ -35,9 +35,9 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 public class Example4CustomComputingNode extends DefaultComputingNode {
 	private static final int DO_SOMETHING = 12000; // Avoid conflicting with CloudSim Plus Tags
 
-	public Example4CustomComputingNode(SimulationManager simulationManager, double mipsCapacity, long numberOfPes,
-			long storage) {
-		super(simulationManager, mipsCapacity, numberOfPes, storage);
+	public Example4CustomComputingNode(SimulationManager simulationManager, double mipsCapacity, int numberOfPes,
+			double storage, double ram) {
+		super(simulationManager, mipsCapacity, numberOfPes, storage, ram);
 	}
 
 	/*

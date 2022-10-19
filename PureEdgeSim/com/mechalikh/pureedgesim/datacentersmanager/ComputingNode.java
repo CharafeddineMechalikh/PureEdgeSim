@@ -20,13 +20,14 @@
  **/
 package com.mechalikh.pureedgesim.datacentersmanager;
 
-import java.util.LinkedList;
+import java.util.List;
+
 import com.mechalikh.pureedgesim.energy.EnergyModelComputingNode;
 import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
 import com.mechalikh.pureedgesim.network.NetworkLink;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
-import com.mechalikh.pureedgesim.tasksgenerator.Task;
+import com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager;
+import com.mechalikh.pureedgesim.taskgenerator.Task; 
 
 /**
  * An interface to be implemented by each class that provides "computing node"
@@ -45,13 +46,14 @@ public interface ComputingNode {
 	 * NullPointerException when using the NULL object instead of attributing null
 	 * to EnergyModelNetworkLink variables.
 	 */
-	ComputingNode NULL = new ComputingNodeNull(); 
+	ComputingNode NULL = new ComputingNodeNull();
 
 	/**
 	 * Called when a task has been offloaded to this computing node. The task will
 	 * be added to the execution queue.
-	 *  
+	 * 
 	 * @param task the task to execute.
+	 * @return 
 	 */
 	void submitTask(Task task);
 
@@ -81,7 +83,7 @@ public interface ComputingNode {
 	 * by the user in the edge_datacenters.xml file. It is needed in order to create
 	 * the topology.
 	 * 
-	 * @see TopologyCreator#getDataCenterByName(String name)
+	 * @see DefaultTopologyCreator#getDataCenterByName(String name)
 	 * 
 	 * @param name The name of this edge data center.
 	 */
@@ -94,7 +96,7 @@ public interface ComputingNode {
 	 * 
 	 * @return the name of this computing node.
 	 * 
-	 * @see TopologyCreator#getDataCenterByName(String name)
+	 * @see DefaultTopologyCreator#getDataCenterByName(String name)
 	 * @see #setName(String)
 	 */
 	String getName();
@@ -113,10 +115,20 @@ public interface ComputingNode {
 	 * tasks will be sent to this node to make offloading/placement decisions.
 	 * 
 	 * @param isOrchestrator whether this computing node is orchestrator or not.
-	 *  
+	 * 
 	 * @see #isOrchestrator()
 	 */
 	void setAsOrchestrator(boolean isOrchestrator);
+	
+	/**
+	 * Sets the node that orchestrates the tasks on behalf of this one. Used only
+	 * when the type of this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}
+	 * 
+	 * @param orchestrator the node that orchestrates the tasks of this device.
+	 * 
+	 * @see #isOrchestrator()
+	 */
+	void setOrchestrator(ComputingNode orchestrator);
 
 	/**
 	 * Gets the node that orchestrates the tasks on behalf of this one. Used only
@@ -124,7 +136,7 @@ public interface ComputingNode {
 	 * 
 	 * @return the orchestrator of this edge device.
 	 * 
-	 * @see SimulationManager#sendTaskToOrchestrator(Task task)
+	 * @see DefaultSimulationManager#sendTaskToOrchestrator(Task task)
 	 * @see #setAsOrchestrator(boolean)
 	 */
 	ComputingNode getOrchestrator();
@@ -137,7 +149,8 @@ public interface ComputingNode {
 	 * @see ComputingNodesGenerator#generateEdgeDevices()
 	 * @see #isGeneratingTasks()
 	 * 
-	 * @param generateTasks true when this edge device can generate tasks, false otherwise.
+	 * @param generateTasks true when this edge device can generate tasks, false
+	 *                      otherwise.
 	 */
 	void enableTaskGeneration(boolean generateTasks);
 
@@ -185,8 +198,8 @@ public interface ComputingNode {
 
 	/**
 	 * Gets the network link that is used currently to receive data from the cloud
-	 * or edge data centers. Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * or edge data centers. Used only when the type of this node is
+	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
 	 * @return the network link used to transfer data from the cloud or edge data
 	 *         centers to this device.
@@ -200,8 +213,8 @@ public interface ComputingNode {
 
 	/**
 	 * Sets the network link that is used currently to receive data from the cloud
-	 * or edge data centers. Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * or edge data centers. Used only when the type of this node is
+	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
 	 * @see #setCurrentUpLink(NetworkLink)
 	 * @see #getCurrentUpLink()
@@ -215,8 +228,8 @@ public interface ComputingNode {
 
 	/**
 	 * Gets the network link that is used currently to send data to nearby edge
-	 * devices (peer to peer).Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * devices (peer to peer).Used only when the type of this node is
+	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
 	 * @return the network link used to transfer to nearby edge devices.
 	 * @see #setCurrentWiFiLink(NetworkLink)
@@ -229,10 +242,11 @@ public interface ComputingNode {
 
 	/**
 	 * Sets the network link that is used currently to send data to nearby edge
-	 * devices (peer to peer). Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * devices (peer to peer). Used only when the type of this node is
+	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
-	 * @param currentWiFiDeviceToDeviceLink the network link used to transfer to nearby edge devices.
+	 * @param currentWiFiDeviceToDeviceLink the network link used to transfer to
+	 *                                      nearby edge devices.
 	 * @see #getCurrentWiFiLink()
 	 * @see #getCurrentUpLink()
 	 * @see #getCurrentDownLink()
@@ -242,16 +256,16 @@ public interface ComputingNode {
 	void setCurrentWiFiLink(NetworkLink currentWiFiDeviceToDeviceLink);
 
 	/**
-	 * Whether this device is out of battery. Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * Whether this device is out of battery. Used only when the type of this node
+	 * is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
 	 * @return true if this device is out of battery.
 	 */
 	boolean isDead();
 
 	/**
-	 * Gets the time in seconds when this device was out of battery. Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * Gets the time in seconds when this device was out of battery. Used only when
+	 * the type of this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
 	 * @return time when this device was out of battery.
 	 */
@@ -287,8 +301,8 @@ public interface ComputingNode {
 
 	/**
 	 * Gets whether edge devices can connect to this edge data center directly (via
-	 * a single hop), or not. Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DATACENTER}.
+	 * a single hop), or not. Used only when the type of this node is
+	 * {@link SimulationParameters.TYPES#EDGE_DATACENTER}.
 	 * 
 	 * @return true if edge devices can connect to this edge data center directly.
 	 */
@@ -296,8 +310,8 @@ public interface ComputingNode {
 
 	/**
 	 * Sets whether edge devices can connect to this edge data center directly (via
-	 * a single hop), or not. Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DATACENTER}.
+	 * a single hop), or not. Used only when the type of this node is
+	 * {@link SimulationParameters.TYPES#EDGE_DATACENTER}.
 	 * 
 	 * @param peripheral true to set the edge data center to peripheral, false
 	 *                   otherwise.
@@ -306,24 +320,24 @@ public interface ComputingNode {
 	void setPeriphery(boolean peripheral);
 
 	/**
-	 * Sets where the application of this edge device has been placed. Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * Sets where the application of this edge device has been placed. Used only
+	 * when the type of this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
 	 * @param node the computing node that executes the tasks of this device.
 	 */
 	void setApplicationPlacementLocation(ComputingNode node);
 
 	/**
-	 * Gets where the application of this edge device has been placed. Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * Gets where the application of this edge device has been placed. Used only
+	 * when the type of this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
 	 * @return the computing node that executes the tasks of this device.
 	 */
 	ComputingNode getApplicationPlacementLocation();
 
 	/**
-	 * Gets if the application of this edge device has been placed. Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * Gets if the application of this edge device has been placed. Used only when
+	 * the type of this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
 	 * @return true if the application of this edge device has been placed.
 	 * @see #setApplicationPlaced(boolean)
@@ -350,7 +364,7 @@ public interface ComputingNode {
 	 * @see #getNumberOfCPUCores()
 	 * @see #getTotalMipsCapacity()
 	 * @see #setTotalMipsCapacity(double)
-	 * @see #getMipsCapacity()
+	 * @see #getMipsPerCore()
 	 */
 	double getNumberOfCPUCores();
 
@@ -362,35 +376,35 @@ public interface ComputingNode {
 	 * @see #getNumberOfCPUCores()
 	 * @see #getTotalMipsCapacity()
 	 * @see #setTotalMipsCapacity(double)
-	 * @see #getMipsCapacity()
+	 * @see #getMipsPerCore()
 	 */
-	void setNumberOfCPUCores(double numberOfCPUCores);
+	void setNumberOfCPUCores(int numberOfCPUCores);
 
 	/**
-	 * Gets the type of application this edge device is using. Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * Gets the type of application this edge device is using. Used only when the
+	 * type of this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
 	 * @return the type of application.
 	 */
 	int getApplicationType();
 
 	/**
-	 * Sets the type of application this edge device is using. Used only when the type of this
-	 * node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * Sets the type of application this edge device is using. Used only when the
+	 * type of this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
 	 * @param applicationType the type of application.
 	 */
 	void setApplicationType(int applicationType);
 
 	/**
-	 * Gets the amount storage that is available on this computing node.
+	 * Gets the amount storage (in Megabytes) that is available on this computing node.
 	 * 
 	 * @return the available storage.
 	 */
 	double getAvailableStorage();
 
 	/**
-	 * Sets the amount storage that is available on this computing node.
+	 * Sets the amount storage (in Megabytes) that is available on this computing node.
 	 * 
 	 * @param availableStorage the available storage.
 	 */
@@ -448,7 +462,7 @@ public interface ComputingNode {
 	void removeCpuUtilization(Task task);
 
 	/**
-	 * Gets whether this node is a sensor (no computing capabilities), or not. 
+	 * Gets whether this node is a sensor (no computing capabilities), or not.
 	 * 
 	 * @return true if this device has no computing capabilities, false otherwise.
 	 * 
@@ -473,12 +487,12 @@ public interface ComputingNode {
 	 * 
 	 * @see #submitTask(Task)
 	 */
-	LinkedList<Task> getTasksQueue();
+	List<Task> getTasksQueue();
 
 	/**
-	 * Gets the total amount of storage that this computing node has.
+	 * Gets the total amount of storage (in Megabytes) that this computing node has.
 	 * 
-	 * @return the total amount storage.
+	 * @return the total amount of storage.
 	 * 
 	 * @see #getAvailableStorage()
 	 * @see #setAvailableStorage(double)
@@ -487,12 +501,56 @@ public interface ComputingNode {
 	double getTotalStorage();
 
 	/**
-	 * Sets the total amount storage that this computing node has.
+	 * Gets the total amount of RAM (in Megabytes) that this computing node has.
+	 * 
+	 * @return the total amount of RAM.
+	 * 
+	 * @see #getAvailableRam()
+	 * @see #setAvailableRam(double)
+	 * @see #setRam(double)
+	 */
+	double getRamCapacity();
+
+	/**
+	 * Gets the amount of RAM (in Megabytes) that is available on this computing node.
+	 * 
+	 * @return the amount of available RAM.
+	 * 
+	 * @see #getRamCapacity()
+	 * @see #setAvailableRam(double)
+	 * @see #setRam(double)
+	 */
+	double getAvailableRam();
+
+	/**
+	 * Sets the total amount of RAM (in Megabytes) that this computing node has.
+	 * 
+	 * @param ram the total RAM on this computing node.
+	 * 
+	 * @see #getAvailableRam()
+	 * @see #setAvailableRam(double)
+	 * @see #getRamCapacity()
+	 */
+	void setRam(double ram);
+
+	/**
+	 * Sets the amount of RAM (in Megabytes) that is available on this computing node.
+	 * 
+	 * @param ram the available RAM.
+	 * 
+	 * @see #getAvailableRam()
+	 * @see #getRamCapacity()
+	 * @see #setRam(double)
+	 */
+	void setAvailableRam(double ram);
+
+	/**
+	 * Sets the total amount storage (in Megabytes) that this computing node has.
 	 * 
 	 * @param storage the amount of storage.
 	 * 
 	 * @see #getAvailableStorage()
-	 * @see #setAvailableStorage(long)
+	 * @see #setAvailableStorage(double)
 	 * @see #getTotalStorage()
 	 */
 	void setStorage(double storage);
@@ -521,7 +579,7 @@ public interface ComputingNode {
 	 * @see #getTotalMipsCapacity()
 	 * @see #setTotalMipsCapacity(double)
 	 */
-	double getMipsCapacity();
+	double getMipsPerCore();
 
 	/**
 	 * Gets the Id of this computing node.

@@ -27,7 +27,7 @@ import java.util.Map;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
-import com.mechalikh.pureedgesim.tasksgenerator.Task;
+import com.mechalikh.pureedgesim.taskgenerator.Task;
 
 public class Example7CachingDevice extends Example7ClusteringDevice {
 
@@ -35,12 +35,12 @@ public class Example7CachingDevice extends Example7ClusteringDevice {
 	public List<int[]> Remotecache = new ArrayList<int[]>();
 	public Map<Integer, Integer> probability = new HashMap<Integer, Integer>();
 
-	public Example7CachingDevice(SimulationManager simulationManager, double mipsCapacity, long numberOfPes,
-			long storage) {
-		super(simulationManager, mipsCapacity, numberOfPes, storage);
+	public Example7CachingDevice(SimulationManager simulationManager, double mipsCapacity, int numberOfPes,
+			double storage, double ram) {
+		super(simulationManager, mipsCapacity, numberOfPes, storage, ram);
 
 		// Initialize probability map
-		for (int i = 0; i < SimulationParameters.APPLICATIONS_LIST.size(); i++)
+		for (int i = 0; i < SimulationParameters.applicationList.size(); i++)
 			probability.put(i, 0);
 	}
 
@@ -89,16 +89,16 @@ public class Example7CachingDevice extends Example7ClusteringDevice {
 	public double getCost(Task task) {
 		double maxSize = 1;
 		double T = 3;
-		double MaxP = 0;
+		double MaxP = -1;
 		for (int i = 0; i < cache.size(); i++) {
-			if (cache.get(i).getContainerSize() > maxSize)
-				maxSize = cache.get(i).getContainerSize();
+			if (cache.get(i).getContainerSizeInMBytes() > maxSize)
+				maxSize = cache.get(i).getContainerSizeInMBytes();
 			if (getProbability(cache.get(i).getApplicationID()) >= MaxP)
 				MaxP = getProbability(cache.get(i).getApplicationID());
 		}
 
 		return 1 - (getProbability(task.getApplicationID()) / MaxP) * countT(task)
-				* (task.getContainerSize() / (T * maxSize));
+				* (task.getContainerSizeInMBytes() / (T * maxSize));
 	}
 
 	private double countT(Task task) {
@@ -134,7 +134,7 @@ public class Example7CachingDevice extends Example7ClusteringDevice {
 	public void deleteMinAapp() {
 		int app = getAppWithMinCost();
 		if (app != -1) {
-			this.setAvailableStorage(this.getAvailableStorage() + cache.get(app).getContainerSize());
+			this.setAvailableStorage(this.getAvailableStorage() + cache.get(app).getContainerSizeInMBytes());
 			Example7CachingDevice orch = this;
 			if (!isOrchestrator)
 				orch = (Example7CachingDevice) getOrchestrator();

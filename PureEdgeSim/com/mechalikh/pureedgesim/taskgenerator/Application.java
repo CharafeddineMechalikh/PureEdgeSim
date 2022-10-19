@@ -18,26 +18,28 @@
  *     
  *     @author Charafeddine Mechalikh
  **/
-package com.mechalikh.pureedgesim.tasksgenerator;
+package com.mechalikh.pureedgesim.taskgenerator;
 
-public class Application { 
-	private int rate;
-	private double latency;
-	private long containerSize;
-	private long requestSize;
-	private long resultsSize;
-	private double taskLength; 
-	private double usagePercentage;
+public class Application {
+	protected int rate;
+	protected double latency; // in seconds
+	protected long containerSize; // in bits
+	protected long requestSize; // in bits
+	protected long resultsSize; // in bits
+	protected double taskLength; // in MI
+	protected double usagePercentage;
+	protected String type;
 
-	public Application(int rate, double usagePercentage, double latency, long containerSize, long requestSize,
-			long resultsSize, double taskLength) { 
+	public Application(String type, int rate, double usagePercentage, double latency, long containerSize,
+			long requestSize, long resultsSize, double taskLength) {
+		setType(type);
 		setRate(rate);
-		setUsagePercentage(usagePercentage); 
+		setUsagePercentage(usagePercentage);
 		setLatency(latency);
-		setContainerSize(containerSize);
+		setContainerSizeInBits(containerSize);
 		setRequestSize(requestSize);
 		setResultsSize(resultsSize);
-		setTaskLength(taskLength); 
+		setTaskLength(taskLength);
 	}
 
 	public int getRate() {
@@ -48,12 +50,15 @@ public class Application {
 		this.rate = rate;
 	}
 
-
-	public long getContainerSize() {
+	public long getContainerSizeInBits() {
 		return containerSize;
 	}
+	
+	public double getContainerSizeInMBytes() {
+		return containerSize / 8000000.0;
+	}
 
-	public void setContainerSize(long containerSize) {
+	public void setContainerSizeInBits(long containerSize) {
 		this.containerSize = containerSize;
 	}
 
@@ -95,6 +100,14 @@ public class Application {
 
 	public void setLatency(double latency) {
 		this.latency = latency;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

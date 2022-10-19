@@ -15,84 +15,79 @@ import java.util.TreeSet;
 import java.util.stream.Stream;
 
 /**
- * An {@link EventQueue} that stores future simulation events.
- * It uses a {@link TreeSet} in order ensure the events
- * are stored ordered. 
+ * An {@link Queue} that stores future simulation Events and Tasks. It uses a {@link TreeSet}
+ * in order ensure the Ts are stored ordered.
  *
  * @author Marcos Dias de Assuncao
  * @author Manoel Campos da Silva Filho
+ * @author Charafeddine Mechalikh
  * @see java.util.TreeSet
- * @since CloudSim Toolkit 1.0
+ * @since PureEdgeSim 5.0
  */
-public class FutureQueue implements EventQueue {
+public class FutureQueue<T extends QueueElement> implements Queue<T> {
 
-    /**
-     * The sorted set of events.
-     */
-    private final SortedSet<Event> sortedSet = new TreeSet<>();
+	/**
+	 * The sorted set of QueueElements.
+	 */
+	protected final SortedSet<T> sortedSet = new TreeSet<>();
 
-    /** @see #getSerial() */
-    private long serial;
+	protected long serial;
 
-    private long lowestSerial;
+	protected long lowestSerial;
 
-    /** @see #getMaxEventsNumber() */
-    private long maxEventsNumber;
+	/** @see #getMaxTsNumber() */
+	protected long maxTsNumber;
 
-    @Override
-    public void addEvent(final Event newEvent) {
-        newEvent.setSerial(serial++);
-        sortedSet.add(newEvent);
-        maxEventsNumber = Math.max(maxEventsNumber, sortedSet.size());
-    }
+	@Override
+	public void add(final T item) {
+		item.setSerial(serial++);
+		sortedSet.add(item);
+		maxTsNumber = Math.max(maxTsNumber, sortedSet.size());
+	}
 
-    /**
-     * Adds a new event to the head of the queue.
-     *
-     * @param newEvent The event to be put in the queue.
-     */
-    public void addEventFirst(final Event newEvent) {
-        newEvent.setSerial(--lowestSerial);
-        sortedSet.add(newEvent);
-    }
+	/**
+	 * Adds a new item to the head of the queue.
+	 *
+	 * @param item The element to be put in the queue.
+	 */
+	public void addFirst(final T item) {
+		item.setSerial(--lowestSerial);
+		sortedSet.add(item);
+	}
 
-    @Override
-    public Iterator<Event> iterator() {
-        return sortedSet.iterator();
-    }
+	@Override
+	public Iterator<T> iterator() {
+		return sortedSet.iterator();
+	}
 
-    @Override
-    public Stream<Event> stream() {
-        return sortedSet.stream();
-    }
+	@Override
+	public Stream<T> stream() {
+		return sortedSet.stream();
+	}
 
-    @Override
-    public int size() {
-        return sortedSet.size();
-    }
+	@Override
+	public int size() {
+		return sortedSet.size();
+	}
 
-    @Override
-    public boolean isEmpty() {
-        return sortedSet.isEmpty();
-    }
+	@Override
+	public boolean isEmpty() {
+		return sortedSet.isEmpty();
+	}
 
-    /**
-     * Removes the event from the queue.
-     *
-     * @param event the event
-     * @return true if successful; false if not event was removed
-     */
-    public boolean remove(final Event event) {
-        return sortedSet.remove(event);
-    }
+	/**
+	 * Removes an item from the queue.
+	 *
+	 * @param queueElement the element to remove
+	 * @return true if successful; false if not queueElement was removed
+	 */
+	public boolean remove(final T queueElement) {
+		return sortedSet.remove(queueElement);
+	}
 
-    @Override
-    public Event first() throws NoSuchElementException {
-        return sortedSet.first();
-    }
+	@Override
+	public T first() throws NoSuchElementException {
+		return sortedSet.first();
+	}
 
-    /** Gets an incremental number used for {@link Event#getSerial()} event attribute. */
-    public long getSerial() {
-        return serial;
-    }
 }

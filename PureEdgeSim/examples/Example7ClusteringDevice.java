@@ -38,24 +38,29 @@ public class Example7ClusteringDevice extends DefaultComputingNode {
 	public List<Example7ClusteringDevice> cluster;
 	private static final int UPDATE_CLUSTERS = 11000;
 	private int time = -30;
+	private List<ComputingNode> edgeDevices;
+	private List<ComputingNode> orchestratorsList;
 
-	public Example7ClusteringDevice(SimulationManager simulationManager, double mipsCapacity, long numberOfPes,
-			long storage) {
-		super(simulationManager, mipsCapacity, numberOfPes, storage);
+	public Example7ClusteringDevice(SimulationManager simulationManager, double mipsCapacity, int numberOfPes,
+			double storage, double ram) {
+		super(simulationManager, mipsCapacity, numberOfPes, storage, ram);
 		cluster = new ArrayList<Example7ClusteringDevice>();
+		edgeDevices = simulationManager.getDataCentersManager().getComputingNodesGenerator().getMistOnlyList();
+		orchestratorsList = simulationManager.getDataCentersManager().getComputingNodesGenerator()
+				.getOrchestratorsList();
 	}
 
 	/**
 	 * The clusters update will be done by scheduling events, the first event has to
 	 * be scheduled within the startInternal() method:
 	 */
-	
+
 	@Override
 	public void startInternal() {
 		super.startInternal();
-		schedule(this,1, UPDATE_CLUSTERS);
+		schedule(this, 1, UPDATE_CLUSTERS);
 	}
-	
+
 	/**
 	 * The scheduled event will be processed in processEvent(). To update the
 	 * clusters continuously (a loop) another event has to be scheduled right after
@@ -65,13 +70,13 @@ public class Example7ClusteringDevice extends DefaultComputingNode {
 	public void processEvent(Event ev) {
 		switch (ev.getTag()) {
 		case UPDATE_CLUSTERS:
-			if ("CLUSTER".equals(SimulationParameters.DEPLOY_ORCHESTRATOR) && (getSimulation().clock() - time > 30)) {
+			if ("CLUSTER".equals(SimulationParameters.deployOrchestrators) && (getSimulation().clock() - time > 30)) {
 				time = (int) getSimulation().clock();
 
 				// Update clusters.
-				this.simulationManager.getDataCentersManager().getNodesList().parallelStream()
-						.filter(node -> node.getType() == SimulationParameters.TYPES.EDGE_DEVICE)
-						.forEach(node -> ((Example7ClusteringDevice) node).updateCluster());
+				for (int i = 0; i < edgeDevices.size(); i++)
+					((Example7ClusteringDevice) edgeDevices.get(i)).updateCluster();
+
 				// Schedule the next update.
 				schedule(this, 1, UPDATE_CLUSTERS);
 			}
@@ -85,8 +90,8 @@ public class Example7ClusteringDevice extends DefaultComputingNode {
 
 	public void updateCluster() {
 		originalWeight = getOriginalWeight();
-		if ((getOrchestratorWeight() < originalWeight)
-				|| ((parent != null) && (getDistance(this, parent) > SimulationParameters.EDGE_DEVICES_RANGE))) {
+		if ((getOrchestratorWeight() < originalWeight) || ((parent != null)
+				&& (this.getMobilityModel().distanceTo(parent) > SimulationParameters.edgeDevicesRange))) {
 			setOrchestrator(this);
 			weight = getOrchestratorWeight();
 		}
@@ -96,37 +101,27 @@ public class Example7ClusteringDevice extends DefaultComputingNode {
 	}
 
 	public double getOriginalWeight() {
-		int neighbors = 0;
+		int neighbors = 1; // to avoid devision by zero
 		double distance = 0;
-		for (int i = 0; i < simulationManager.getDataCentersManager().getNodesList().size(); i++) {
-			if (simulationManager.getDataCentersManager().getNodesList().get(i)
-					.getType() == SimulationParameters.TYPES.EDGE_DEVICE) {
-				if (distance <= SimulationParameters.EDGE_DEVICES_RANGE) {
-					// neighbor
-					neighbors++;
-				}
+		for (int i = 0; i < edgeDevices.size(); i++) {
+			if (distance <= SimulationParameters.edgeDevicesRange) {
+				// neighbor
+				neighbors++;
 			}
+
 		}
 		double battery = 2;
 		double mobility = 1;
 		if (getMobilityModel().isMobile())
 			mobility = 0;
 		if (getEnergyModel().isBatteryPowered())
-			battery = getEnergyModel().getBatteryLevel() / 100;
-		double mips = this.getMipsCapacity();
+			battery = getEnergyModel().getBatteryLevelPercentage();
+		double mips = this.getMipsPerCore();
 
 		// mips is divided by 200000 to normalize it, it is out of the parenthesis so
 		// the weight becomes 0 when mips = 0
 		return weight = mips / 200000 * ((battery * 0.5 / neighbors) + (neighbors * 0.2) + (mobility * 0.3));
 
-	}
-
-	private double getDistance(Example7ClusteringDevice device1, ComputingNode device2) {
-		return Math.abs(Math.sqrt(Math
-				.pow((device1.getMobilityModel().getCurrentLocation().getXPos()
-						- device2.getMobilityModel().getCurrentLocation().getXPos()), 2)
-				+ Math.pow((device1.getMobilityModel().getCurrentLocation().getYPos()
-						- device2.getMobilityModel().getCurrentLocation().getYPos()), 2)));
 	}
 
 	private double getOrchestratorWeight() {
@@ -153,7 +148,7 @@ public class Example7ClusteringDevice extends DefaultComputingNode {
 			// now remove it cluster after
 			cluster.clear();
 			// remove this device from orchestrators list
-			simulationManager.getDataCentersManager().getOrchestratorsList().remove(this);
+			orchestratorsList.remove(this);
 			// set the new orchestrator as the parent node ( a tree-like topology)
 			parent = newOrchestrator;
 			// this device is no more an orchestrator so set it to false
@@ -171,23 +166,18 @@ public class Example7ClusteringDevice extends DefaultComputingNode {
 		if (!newOrchestrator.cluster.contains(newOrchestrator))
 			newOrchestrator.cluster.add(newOrchestrator);
 		// add the new orchestrator to the list
-		if (!simulationManager.getDataCentersManager().getOrchestratorsList().contains(newOrchestrator))
-			simulationManager.getDataCentersManager().getOrchestratorsList().add(newOrchestrator);
+		if (!orchestratorsList.contains(newOrchestrator))
+			orchestratorsList.add(newOrchestrator);
 
 	}
 
 	private void compareWeightWithNeighbors() {
-		for (int i = 2; i < simulationManager.getDataCentersManager().getNodesList().size(); i++) {
-			if (simulationManager.getDataCentersManager().getNodesList().get(i)
-					.getType() == SimulationParameters.TYPES.EDGE_DEVICE
-					&& getDistance(this, simulationManager.getDataCentersManager().getNodesList()
-							.get(i)) <= SimulationParameters.EDGE_DEVICES_RANGE
+		for (int i = 2; i < edgeDevices.size(); i++) {
+			if (this.getMobilityModel().distanceTo(edgeDevices.get(i)) <= SimulationParameters.edgeDevicesRange
 					// neighbors
-					&& (weight < ((Example7ClusteringDevice) simulationManager.getDataCentersManager().getNodesList()
-							.get(i)).weight)) {
+					&& (weight < ((Example7ClusteringDevice) edgeDevices.get(i)).weight)) {
 
-				setOrchestrator(
-						(Example7ClusteringDevice) simulationManager.getDataCentersManager().getNodesList().get(i));
+				setOrchestrator((Example7ClusteringDevice) edgeDevices.get(i));
 				weight = getOrchestratorWeight() * weightDrop;
 
 			}

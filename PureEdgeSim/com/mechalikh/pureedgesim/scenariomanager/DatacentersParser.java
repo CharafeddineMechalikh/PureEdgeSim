@@ -26,19 +26,19 @@ public class DatacentersParser extends ComputingNodesParser {
 				isElementPresent(datacenterElement, element);
 
 			for (String element : List.of("cores", "mips", "ram", "storage"))
-				assertDouble(datacenterElement, element, value -> (value > 0), "> 0. Check the " + file + " file!");
+				assertDouble(datacenterElement, element, value -> (value > 0), "> 0. Check the file: " + file );
 
 			assertDouble(datacenterElement, "idleConsumption", value -> (value >= 0),
-					">= 0. Check the " + file + " file!");
+					">= 0. Check the file " + file);
 			double idleConsumption = Double
 					.parseDouble(datacenterElement.getElementsByTagName("idleConsumption").item(0).getTextContent());
 			assertDouble(datacenterElement, "maxConsumption", value -> (value > idleConsumption),
-					"> \"idleConsumption\". Check the " + file + " file!");
+					"> \"idleConsumption\". Check the file " + file);
 
 			if (type == TYPES.CLOUD) {
-				SimulationParameters.NUM_OF_CLOUD_DATACENTERS++;
+				SimulationParameters.numberOfCloudDataCenters++;
 			} else {
-				SimulationParameters.NUM_OF_EDGE_DATACENTERS++;
+				SimulationParameters.numberOfEdgeDataCenters++;
 				Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
 				isElementPresent(location, "x_pos");
 				isElementPresent(location, "y_pos");

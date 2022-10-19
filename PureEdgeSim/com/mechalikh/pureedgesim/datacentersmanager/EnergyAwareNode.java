@@ -20,7 +20,7 @@
  **/
 package com.mechalikh.pureedgesim.datacentersmanager;
 
-import com.mechalikh.pureedgesim.energy.EnergyModelComputingNode;
+import com.mechalikh.pureedgesim.energy.EnergyModelComputingNode; 
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public abstract class EnergyAwareNode extends NetworkingNode {
@@ -28,7 +28,7 @@ public abstract class EnergyAwareNode extends NetworkingNode {
 	protected boolean isDead = false;
 	protected double deathTime;
 
-	public EnergyAwareNode(SimulationManager simulationManager) {
+	protected EnergyAwareNode(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
 
@@ -41,7 +41,7 @@ public abstract class EnergyAwareNode extends NetworkingNode {
 		// in DefaultComputingNode.startExecution() for performance and accuracy reasons
 		getEnergyModel().updateStaticEnergyConsumption();
 
-		if (getEnergyModel().isBatteryPowered() && getEnergyModel().getBatteryLevel() <= 0) {
+		if (getEnergyModel().isBatteryPowered() && getEnergyModel().getBatteryLevelWattHour() <= 0) {
 			setDeath(true, simulationManager.getSimulation().clock());
 		}
 
@@ -65,7 +65,7 @@ public abstract class EnergyAwareNode extends NetworkingNode {
 	}
 
 	public void setEnergyModel(EnergyModelComputingNode energyModel) {
-		this.energyModel = (EnergyModelComputingNode) energyModel;
+		this.energyModel = energyModel;
 	}
 
 }

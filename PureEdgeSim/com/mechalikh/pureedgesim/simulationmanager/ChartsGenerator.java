@@ -40,10 +40,10 @@ import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 
 public class ChartsGenerator {
 
-	private List<String[]> records = new ArrayList<>(50);
-	private String fileName;
-	private String folder;
-	private List<String> energyChartsList = List.of("Energy consumption of computing nodes (Wh)",
+	protected List<String[]> records = new ArrayList<>(50);
+	protected String fileName;
+	protected String folder;
+	protected List<String> energyChartsList = List.of("Energy consumption of computing nodes (Wh)",
 			"Average energy consumption (Wh/Computing node)", "Cloud energy consumption (Wh)",
 			"Average Cloud energy consumption (Wh/Data center)", "Edge energy consumption (Wh)",
 			"Average Edge energy consumption (Wh/Data center)", "Mist energy consumption (Wh)",
@@ -51,16 +51,16 @@ public class ChartsGenerator {
 			"LAN energy consumption (Wh)", "WiFi energy consumption (Wh)", "LTE energy consumption (Wh)",
 			"Ethernet energy consumption (Wh)");
 
-	private List<String> cpuChartsList = List.of("Average CPU usage (%)", "Average CPU usage (Cloud) (%)",
+	protected List<String> cpuChartsList = List.of("Average CPU usage (%)", "Average CPU usage (Cloud) (%)",
 			"Average CPU usage (Edge) (%)", "Average CPU usage (Mist) (%)");
 
-	private List<String> tasksChartsList = List.of("Tasks successfully executed", "Tasks failed (delay)",
+	protected List<String> tasksChartsList = List.of("Tasks successfully executed", "Tasks failed (delay)",
 			"Tasks failed (device dead)", "Tasks failed (mobility)", "Tasks not generated due to the death of devices",
 			"Total tasks executed (Cloud)", "Tasks successfully executed (Cloud)", "Total tasks executed (Edge)",
 			"Tasks successfully executed (Edge)", "Total tasks executed (Mist)", "Tasks successfully executed (Mist)");
-	private List<String> delaysChartsList = List.of("Average waiting time (s)", "Average execution delay (s)");
+	protected List<String> delaysChartsList = List.of("Average waiting time (s)", "Average execution delay (s)");
 
-	private List<String> networkChartsList = List.of("Network usage (s)", "Wan usage (s)", "Containers wan usage (s)",
+	protected List<String> networkChartsList = List.of("Network usage (s)", "Wan usage (s)", "Containers wan usage (s)",
 			"Containers lan usage (s)");
 
 	public ChartsGenerator(String fileName) {
@@ -68,20 +68,18 @@ public class ChartsGenerator {
 		loadFile();
 	}
 
-	private void loadFile() {
-		try {
-			BufferedReader file = new BufferedReader(new FileReader(fileName));
+	protected void loadFile() {
+		try (BufferedReader file = new BufferedReader(new FileReader(fileName))) {
 			String line;
 			while ((line = file.readLine()) != null) {
 				records.add(line.split(","));
-			}
-			file.close();
+			} 
 		} catch (Exception e) {
 			SimLog.println(this.getClass().getSimpleName() + " - Problem reading CSV file.");
 		}
 	}
 
-	private int getColumnIndex(String name) {
+	protected int getColumnIndex(String name) {
 		for (int j = 0; j < records.get(0).length; j++) {
 			if (records.get(0)[j].trim().equals(name.trim())) {
 				return j;
@@ -102,17 +100,17 @@ public class ChartsGenerator {
 
 	public void generateChart(String x_series, String y_series, String y_series_label, boolean byAlgorithms) {
 		XYChart chart;
-		for (int i = 0; i < (byAlgorithms ? SimulationParameters.ORCHESTRATION_AlGORITHMS.length
-				: SimulationParameters.ORCHESTRATION_ARCHITECTURES.length); i++) {
+		for (int i = 0; i < (byAlgorithms ? SimulationParameters.orchestrationAlgorithms.length
+				: SimulationParameters.orchestrationArchitectures.length); i++) {
 			chart = initChart(x_series, y_series, y_series_label, getArray(byAlgorithms)[i]);
-			for (int j = 0; j < (byAlgorithms ? SimulationParameters.ORCHESTRATION_ARCHITECTURES.length
-					: SimulationParameters.ORCHESTRATION_AlGORITHMS.length); j++) {
+			for (int j = 0; j < (byAlgorithms ? SimulationParameters.orchestrationArchitectures.length
+					: SimulationParameters.orchestrationAlgorithms.length); j++) {
 				double[] xData = toArray(
-						getColumn(x_series, SimulationParameters.ORCHESTRATION_ARCHITECTURES[(byAlgorithms ? j : i)],
-								SimulationParameters.ORCHESTRATION_AlGORITHMS[(byAlgorithms ? i : j)]));
+						getColumn(x_series, SimulationParameters.orchestrationArchitectures[(byAlgorithms ? j : i)],
+								SimulationParameters.orchestrationAlgorithms[(byAlgorithms ? i : j)]));
 				double[] yData = toArray(
-						getColumn(y_series, SimulationParameters.ORCHESTRATION_ARCHITECTURES[(byAlgorithms ? j : i)],
-								SimulationParameters.ORCHESTRATION_AlGORITHMS[(byAlgorithms ? i : j)]));
+						getColumn(y_series, SimulationParameters.orchestrationArchitectures[(byAlgorithms ? j : i)],
+								SimulationParameters.orchestrationAlgorithms[(byAlgorithms ? i : j)]));
 
 				XYSeries series = chart.addSeries(getArray(!byAlgorithms)[j], xData, yData);
 				series.setMarker(SeriesMarkers.CIRCLE); // Marker type: circle,rectangle, diamond..
@@ -124,12 +122,12 @@ public class ChartsGenerator {
 		}
 	}
 
-	private String[] getArray(boolean byAlgorithms) {
-		return (byAlgorithms ? SimulationParameters.ORCHESTRATION_AlGORITHMS
-				: SimulationParameters.ORCHESTRATION_ARCHITECTURES);
+	protected String[] getArray(boolean byAlgorithms) {
+		return (byAlgorithms ? SimulationParameters.orchestrationAlgorithms
+				: SimulationParameters.orchestrationArchitectures);
 	}
 
-	private XYChart initChart(String x_series, String y_series, String y_series_label, String title) {
+	protected XYChart initChart(String x_series, String y_series, String y_series_label, String title) {
 		XYChart chart = new XYChartBuilder().height(400).width(600).theme(ChartTheme.Matlab).xAxisTitle(x_series)
 				.yAxisTitle(y_series_label).build();
 		chart.setTitle(y_series + " (" + title + ")");
@@ -137,7 +135,7 @@ public class ChartsGenerator {
 		return chart;
 	}
 
-	private void saveBitmap(XYChart chart, String folder, String name) {
+	protected void saveBitmap(XYChart chart, String folder, String name) {
 		try {
 			File file = new File(new File(fileName).getParent() + "/Final results/" + folder);
 			file.mkdirs();
@@ -149,7 +147,7 @@ public class ChartsGenerator {
 
 	}
 
-	private List<Double> getColumn(String name, String orch, String alg) {
+	protected List<Double> getColumn(String name, String orch, String alg) {
 		List<Double> list = new ArrayList<>();
 		int column = getColumnIndex(name);
 		for (int line = 1; line < records.size(); line++) {
@@ -160,7 +158,7 @@ public class ChartsGenerator {
 		return list;
 	}
 
-	private double[] toArray(List<Double> list) {
+	protected double[] toArray(List<Double> list) {
 		double[] results = new double[list.size()];
 		for (int i = 0; i < list.size(); i++)
 			results[i] = list.get(i);
@@ -174,22 +172,22 @@ public class ChartsGenerator {
 		generateEnergyCharts();
 	}
 
-	private void generateEnergyCharts() {
+	protected void generateEnergyCharts() {
 		for (String value : energyChartsList)
 			displayChart(value, "Consumed energy (Wh)", "/Energy");
 	}
 
-	private void generateCpuCharts() {
+	protected void generateCpuCharts() {
 		for (String value : cpuChartsList)
 			displayChart(value, "CPU utilization (%)", "/CPU Utilization");
 	}
 
-	private void generateNetworkCharts() {
+	protected void generateNetworkCharts() {
 		for (String value : networkChartsList)
 			displayChart(value, "Utilization (s)", "/Network");
 	}
 
-	private void generateTasksCharts() {
+	protected void generateTasksCharts() {
 		for (String value : tasksChartsList)
 			displayChart(value, "Number of tasks", "/Tasks");
 

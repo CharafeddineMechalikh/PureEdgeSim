@@ -18,135 +18,158 @@
  *     
  *     @author Charafeddine Mechalikh
  **/
-package com.mechalikh.pureedgesim.tasksgenerator;
+package com.mechalikh.pureedgesim.taskgenerator;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 
-public class Task extends LatencySensitiveTask {
-	private double offloadingTime;
-	private ComputingNode device = ComputingNode.NULL;
-	private long containerSize; // in KBytes
-	private ComputingNode registry = ComputingNode.NULL;
-	private int applicationID;
-	private FailureReason failureReason;
-	private Status status = Status.SUCCESS;
-	private Object metaData;
-	private long fileSize;
-	private ComputingNode computingNode = ComputingNode.NULL;
-	private double outputSize;
-	private double length;
+public class DefaultTask extends TaskAbstract {
+	protected double offloadingTime;
+	protected ComputingNode device = ComputingNode.NULL;
+	protected long containerSize; // in bits
+	protected ComputingNode registry = ComputingNode.NULL;
+	protected int applicationID;
+	protected FailureReason failureReason;
+	protected Status status = Status.SUCCESS;
+	protected long fileSize; // in bits
+	protected ComputingNode computingNode = ComputingNode.NULL;
+	protected double outputSize; // in bits
+	protected String type;
+	protected ComputingNode orchestrator = ComputingNode.NULL;
 
-	public static enum FailureReason {
-		FAILED_DUE_TO_LATENCY, FAILED_BECAUSE_DEVICE_DEAD, FAILED_DUE_TO_DEVICE_MOBILITY,
-		NOT_GENERATED_BECAUSE_DEVICE_DEAD, FAILED_NO_RESSOURCES
-	}
-
-	public static enum Status {
-		SUCCESS, FAILED
-	}
-
-	public Task(int id, long length) {
+	public DefaultTask(int id) {
 		super(id);
-		this.length = length;
 	}
 
+	@Override
 	public void setTime(double time) {
 		this.offloadingTime = time;
 	}
 
+	@Override
 	public double getTime() {
 		return offloadingTime;
 	}
 
+	@Override
 	public ComputingNode getEdgeDevice() {
 		return device;
 	}
 
+	@Override
 	public void setEdgeDevice(ComputingNode device) {
 		this.device = device;
 	}
 
-	public void setContainerSize(long containerSize) {
+	@Override
+	public void setContainerSizeInBits(long containerSize) {
 		this.containerSize = containerSize;
 	}
 
-	public long getContainerSize() {
+	@Override
+	public long getContainerSizeInBits() {
 		return containerSize;
 	}
 
-	public ComputingNode getOrchestrator() {
-		return device.getOrchestrator();
+	@Override
+	public double getContainerSizeInMBytes() {
+		return containerSize / 8000000.0;
 	}
 
+	@Override
+	public ComputingNode getOrchestrator() {
+		if(this.orchestrator== ComputingNode.NULL) {
+			this.getEdgeDevice().setAsOrchestrator(true);
+			return this.getEdgeDevice();
+		}
+		return this.orchestrator;
+	}
+
+	@Override
+	public void setOrchestrator(ComputingNode orchestrator) {
+		this.orchestrator = orchestrator;
+	}
+
+	@Override
 	public ComputingNode getRegistry() {
 		return registry;
 	}
 
+	@Override
 	public void setRegistry(ComputingNode registry) {
 		this.registry = registry;
 	}
 
+	@Override
 	public int getApplicationID() {
 		return applicationID;
 	}
 
+	@Override
 	public void setApplicationID(int applicationID) {
 		this.applicationID = applicationID;
 	}
 
+	@Override
 	public FailureReason getFailureReason() {
 		return failureReason;
 	}
 
+	@Override
 	public void setFailureReason(FailureReason reason) {
 		this.setStatus(Task.Status.FAILED);
 		this.failureReason = reason;
 	}
 
-	public Object getMetaData() {
-		return metaData;
-	}
-
-	public void setMetaData(Object metaData) {
-		this.metaData = metaData;
-	}
-
+	@Override
 	public ComputingNode getOffloadingDestination() {
 		return computingNode;
 	}
 
-	public void setComputingNode(ComputingNode applicationPlacementLocation) {
+	@Override
+	public void setOffloadingDestination(ComputingNode applicationPlacementLocation) {
 		this.computingNode = applicationPlacementLocation;
 	}
 
-	public Task setFileSize(long requestSize) {
+	@Override
+	public DefaultTask setFileSizeInBits(long requestSize) {
 		this.fileSize = requestSize;
 		return this;
 	}
 
-	public Task setOutputSize(long outputSize) {
+	@Override
+	public DefaultTask setOutputSizeInBits(long outputSize) {
 		this.outputSize = outputSize;
 		return this;
 	}
 
-	public double getLength() {
-		return this.length;
-	}
-
-	public double getFileSize() {
+	@Override
+	public double getFileSizeInBits() {
 		return fileSize;
 	}
 
-	public double getOutputSize() {
+	@Override
+	public double getOutputSizeInBits() {
 		return this.outputSize;
 	}
 
+	@Override
 	public void setStatus(Status status) {
 		this.status = status;
 	}
 
+	@Override
 	public Status getStatus() {
 		return status;
+	}
+
+	@Override
+	public String getType() {
+		return type;
+	}
+
+	@Override
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

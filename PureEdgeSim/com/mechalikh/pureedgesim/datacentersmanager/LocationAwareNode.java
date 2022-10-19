@@ -30,14 +30,14 @@ public abstract class LocationAwareNode extends EnergyAwareNode {
 	protected ComputingNode applicationPlacementLocation = ComputingNode.NULL;
 	protected boolean isApplicationPlaced = false;
 
-	public LocationAwareNode(SimulationManager simulationManager) {
+	protected LocationAwareNode(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
 
 	@Override
 	public void startInternal() {
 		super.startInternal();
-		getMobilityModel().generatePath();
+		mobilityModel.generatePath();
 	}
 
 	@Override
@@ -55,38 +55,34 @@ public abstract class LocationAwareNode extends EnergyAwareNode {
 		getCurrentDownLink().setSrc(closestEdgeDataCenter);
 
 		if (getCurrentWiFiLink().getDst() != ComputingNode.NULL && getMobilityModel()
-				.distanceTo(getCurrentWiFiLink().getDst()) >= SimulationParameters.EDGE_DEVICES_RANGE) {
+				.distanceTo(getCurrentWiFiLink().getDst()) >= SimulationParameters.edgeDataCentersRange) {
 			setApplicationPlaced(false);
 		}
 	}
 
 	@Override
 	public ComputingNode getOrchestrator() {
-		if (orchestrator == ComputingNode.NULL && SimulationParameters.ENABLE_ORCHESTRATORS) {
-			if ("".equals(SimulationParameters.DEPLOY_ORCHESTRATOR)
-					|| ("CLOUD".equals(SimulationParameters.DEPLOY_ORCHESTRATOR))) {
-				orchestrator = simulationManager.getDataCentersManager().getCloudDatacentersList().get(0);
-			} else if ("EDGE".equals(SimulationParameters.DEPLOY_ORCHESTRATOR)) {
+		if (orchestrator == ComputingNode.NULL && SimulationParameters.enableOrchestrators) {
+			if ("".equals(SimulationParameters.deployOrchestrators)
+					|| ("CLOUD".equals(SimulationParameters.deployOrchestrators))) {
+				orchestrator = simulationManager.getDataCentersManager().getComputingNodesGenerator().getCloudOnlyList()
+						.get(0);
+			} else if ("EDGE".equals(SimulationParameters.deployOrchestrators)) {
 				orchestrator = getMobilityModel().getClosestEdgeDataCenter();
-			} else if ("MIST".equals(SimulationParameters.DEPLOY_ORCHESTRATOR)) {
-				orchestrator = (ComputingNode) this;
+			} else if ("MIST".equals(SimulationParameters.deployOrchestrators)) {
+				orchestrator = this;
 			} else {
 				double min = Double.POSITIVE_INFINITY;
-				int orch = 0;
-				for (int i = 0; i < simulationManager.getDataCentersManager().getOrchestratorsList().size(); i++) {
-					double delay = simulationManager.getDataCentersManager().getTopology().getDelay(
-							(ComputingNode) this,
-							simulationManager.getDataCentersManager().getOrchestratorsList().get(i));
+				for (ComputingNode node : simulationManager.getDataCentersManager().getComputingNodesGenerator()
+						.getOrchestratorsList()) {
+					double delay = simulationManager.getDataCentersManager().getTopology().getDelay(this, node);
 					if (delay < min) {
 						min = delay;
-						orch = i;
+						orchestrator = node;
 					}
 				}
-
-				orchestrator = (ComputingNode) simulationManager.getDataCentersManager().getOrchestratorsList()
-						.get(orch);
 			}
-		} else if (!SimulationParameters.ENABLE_ORCHESTRATORS)
+		} else if (!SimulationParameters.enableOrchestrators)
 			orchestrator = this;
 		return orchestrator;
 	}
@@ -96,7 +92,7 @@ public abstract class LocationAwareNode extends EnergyAwareNode {
 	}
 
 	public void setMobilityModel(MobilityModel mobilityModel) {
-		this.mobilityModel = (MobilityModel) mobilityModel;
+		this.mobilityModel = mobilityModel;
 	}
 
 	public boolean isPeripheral() {
@@ -106,8 +102,6 @@ public abstract class LocationAwareNode extends EnergyAwareNode {
 	public void setPeriphery(boolean periphery) {
 		this.peripheral = periphery;
 	}
-
-	public abstract void setApplicationPlacementLocation(ComputingNode node);
 
 	public ComputingNode getApplicationPlacementLocation() {
 		return this.applicationPlacementLocation;

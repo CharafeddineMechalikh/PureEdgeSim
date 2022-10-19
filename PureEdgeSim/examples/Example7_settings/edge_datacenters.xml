@@ -15,6 +15,6 @@
 		<storage>200000</storage>
 	</datacenter>
 	<network_links>
-		<!-- To create a topology add links here. See example 10 -->
+		<!-- To create a topology add links here. See example 3 -->
 	</network_links>
 </edge_datacenters>

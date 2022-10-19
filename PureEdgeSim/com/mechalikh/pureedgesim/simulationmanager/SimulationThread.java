@@ -23,14 +23,14 @@ package com.mechalikh.pureedgesim.simulationmanager;
 import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+
 import com.mechalikh.pureedgesim.datacentersmanager.DataCentersManager;
-import com.mechalikh.pureedgesim.network.NetworkModel;
+import com.mechalikh.pureedgesim.scenariomanager.Scenario;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.tasksgenerator.Task;
-import com.mechalikh.pureedgesim.tasksgenerator.TasksGenerator;
-import com.mechalikh.pureedgesim.tasksorchestration.Orchestrator;
+import com.mechalikh.pureedgesim.simulationengine.FutureQueue;
 import com.mechalikh.pureedgesim.simulationengine.PureEdgeSim;
+import com.mechalikh.pureedgesim.taskgenerator.Task;
+import com.mechalikh.pureedgesim.taskgenerator.TaskGenerator;
 
 /**
  * The {@code SimulationThread} class allows to run parallel simulations.
@@ -61,17 +61,17 @@ public class SimulationThread {
 	/**
 	 * The iteration/scenario from which loop will start.
 	 */
-	private int fromIteration;
+	protected int fromIteration;
 
 	/**
 	 * The iteration step.
 	 */
-	private int step;
+	protected int step;
 
 	/**
 	 * PureEdgeSim simulation object.
 	 */
-	private Simulation simulation;
+	protected Simulation simulation;
 
 	/**
 	 * Used to run parallel simulations. When parallelism is enabled in the
@@ -104,6 +104,7 @@ public class SimulationThread {
 		boolean isFirstIteration = true;
 		SimulationManager simulationManager;
 		SimLog simLog = null;
+
 		try {
 			// Repeat the operation for different numbers of devices.
 			for (int it = fromIteration; it < simulation.getScenarios().size(); it += step) {
@@ -112,7 +113,7 @@ public class SimulationThread {
 				simLog = new SimLog(startTime, isFirstIteration);
 
 				// Clean output folder if it is the first iteration.
-				if (SimulationParameters.CLEAN_OUTPUT_FOLDER && isFirstIteration && fromIteration == 0) {
+				if (SimulationParameters.cleanOutputFolder && isFirstIteration && fromIteration == 0) {
 					simLog.cleanOutputFolder();
 				}
 				isFirstIteration = false;
@@ -121,8 +122,10 @@ public class SimulationThread {
 				PureEdgeSim pureEdgeSim = new PureEdgeSim();
 
 				// Initialize the simulation manager.
-				simulationManager = new SimulationManager(simLog, pureEdgeSim, simulationId, iteration,
-						simulation.getScenarios().get(it));
+				Constructor<?> simulationManagerConstructor = simulation.simulationManager.getConstructor(SimLog.class,
+						PureEdgeSim.class, int.class, int.class, Scenario.class);
+				simulationManager = (SimulationManager) simulationManagerConstructor.newInstance(simLog, pureEdgeSim,
+						simulationId, iteration, simulation.getScenarios().get(it));
 				simLog.initialize(simulationManager, simulation.getScenarios().get(it).getDevicesCount(),
 						simulation.getScenarios().get(it).getOrchAlgorithm(),
 						simulation.getScenarios().get(it).getOrchArchitecture());
@@ -134,7 +137,7 @@ public class SimulationThread {
 				simulationManager.startSimulation();
 
 				// Take a few seconds pause to display results, if parallelism is disabled.
-				if (!SimulationParameters.PARALLEL) {
+				if (!SimulationParameters.parallelism_enabled) {
 					pause(simLog);
 				}
 				iteration++;
@@ -151,7 +154,9 @@ public class SimulationThread {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			SimLog.println(getClass().getSimpleName()+" - The simulation has been terminated due to an unexpected error");
+			SimLog.println(
+					getClass().getSimpleName() + " - The simulation has been terminated due to an unexpected error");
+			Thread.currentThread().interrupt();
 		}
 	}
 
@@ -161,10 +166,10 @@ public class SimulationThread {
 	 * 
 	 * @param simLog The simulation logger.
 	 */
-	private void pause(SimLog simLog) throws InterruptedException {
+	protected void pause(SimLog simLog) throws InterruptedException {
 		// Take a few seconds pause to show the results.
-		simLog.print(SimulationParameters.PAUSE_LENGTH + " seconds peause...");
-		for (int k = 1; k <= SimulationParameters.PAUSE_LENGTH; k++) {
+		simLog.print(SimulationParameters.pauseLength + " seconds peause...");
+		for (int k = 1; k <= SimulationParameters.pauseLength; k++) {
 			simLog.printSameLine(".");
 			Thread.sleep(1000);
 		}
@@ -174,35 +179,39 @@ public class SimulationThread {
 	/**
 	 * Loads the custom models and classes that are used in the simulation, if any.
 	 * 
-	 * @see #setCustomEdgeDataCenters(Class)
+	 * @see #setCustomComputingNode(Class)
 	 * @see #setCustomEdgeOrchestrator(Class)
 	 * @see #setCustomEnergyModel(Class)
 	 * @see #setCustomMobilityModel(Class)
 	 * @see #setCustomNetworkModel(Class)
-	 * @see #setCustomTasksGenerator(Class)
+	 * @see #setCustomTaskGenerator(Class)
 	 * 
 	 * @param simulationManager the simulation manager
 	 */
-	private void loadModels(SimulationManager simulationManager) throws Exception {
+	protected void loadModels(SimulationManager simulationManager) throws Exception {
 
 		// Initialize the network model
+		SimLog.println(this.getClass().getSimpleName() + " - Initializing the Network Module...");
 		Constructor<?> networkConstructor = simulation.networkModel.getConstructor(SimulationManager.class);
-		NetworkModel networkModel = (NetworkModel) networkConstructor.newInstance(simulationManager);
-		simulationManager.setNetworkModel(networkModel);
+		networkConstructor.newInstance(simulationManager);
 
 		// Generate all data centers, servers, an devices
-		new DataCentersManager(simulationManager, simulation.mobilityModel, simulation.computingNode);
+		SimLog.println(this.getClass().getSimpleName() + " - Initializing the Datacenters Manager Module...");
+		new DataCentersManager(simulationManager, simulation.mobilityModel, simulation.computingNode,
+				simulation.topologyCreator);
 
 		// Generate tasks list
-		Constructor<?> TasksGeneratorConstructor = simulation.tasksGenerator.getConstructor(SimulationManager.class);
-		TasksGenerator tasksGenerator = (TasksGenerator) TasksGeneratorConstructor.newInstance(simulationManager);
-		List<Task> tasksList = tasksGenerator.generate();
-		simulationManager.setTasksList(tasksList);
+		SimLog.println(this.getClass().getSimpleName() + " - Initializing the Task Generator...");
+		Constructor<?> tasksGeneratorConstructor = simulation.tasksGenerator.getConstructor(SimulationManager.class);
+		TaskGenerator tasksGenerator = (TaskGenerator) tasksGeneratorConstructor.newInstance(simulationManager);
+		FutureQueue<Task> taskList = tasksGenerator.generate();
+		simulationManager.setTaskList(taskList);
 
 		// Initialize the orchestrator
-		Constructor<?> OrchestratorConstructor = simulation.orchestrator.getConstructor(SimulationManager.class);
-		Orchestrator edgeOrchestrator = (Orchestrator) OrchestratorConstructor.newInstance(simulationManager);
-		simulationManager.setOrchestrator(edgeOrchestrator);
+		SimLog.println(this.getClass().getSimpleName() + " - Initializing the Task Orchestrator...");
+		Constructor<?> orchestratorConstructor = simulation.orchestrator.getConstructor(SimulationManager.class);
+		orchestratorConstructor.newInstance(simulationManager);
+		SimLog.println(this.getClass().getSimpleName() + " - All modules were successfully launched...");
 
 	}
 
@@ -213,7 +222,7 @@ public class SimulationThread {
 	 * @param simLog the simulation logger.
 	 */
 	protected void generateCharts(SimLog simLog) {
-		if (SimulationParameters.SAVE_CHARTS && !SimulationParameters.PARALLEL && simLog != null) {
+		if (SimulationParameters.saveCharts && !SimulationParameters.parallelism_enabled && simLog != null) {
 			SimLog.println(getClass().getSimpleName() + " - Saving charts...");
 			ChartsGenerator chartsGenerator = new ChartsGenerator(simLog.getFileName(".csv"));
 			chartsGenerator.generate();

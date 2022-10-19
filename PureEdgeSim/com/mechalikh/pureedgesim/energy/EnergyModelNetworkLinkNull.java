@@ -11,11 +11,13 @@ public class EnergyModelNetworkLinkNull extends EnergyModelNetworkLink {
 	public EnergyModelNetworkLinkNull() {
 		super(0, null);
 	}
-	
+
+	@Override
 	public double getCurrentEnergyConsumption() {
 		return 0.0;
 	}
-	
+
+	@Override
 	public double getTotalEnergyConsumption() {
 		return 0.0;
 	}

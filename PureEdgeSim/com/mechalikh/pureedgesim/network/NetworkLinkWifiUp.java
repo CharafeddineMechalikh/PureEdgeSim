@@ -22,7 +22,7 @@ package com.mechalikh.pureedgesim.network;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.energy.EnergyModelNetworkLink;
-import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters; 
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 /**
@@ -33,11 +33,12 @@ public class NetworkLinkWifiUp extends NetworkLinkWifi {
 	public NetworkLinkWifiUp(ComputingNode src, ComputingNode dst, SimulationManager simulationManager,
 			NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
-		double energyConsumption = SimulationParameters.WIFI_DEVICE_TRANSMISSION_WATTHOUR_PER_BIT
-				+ SimulationParameters.WIFI_ACCESS_POINT_RECEPTION_WATTHOUR_PER_BIT;
+		double energyConsumption = SimulationParameters.wifiDeviceTransmissionWattHourPerBit
+				+ SimulationParameters.wifiAccessPointReceptionWattHourPerBit;
 		if (type == NetworkLinkTypes.WAN) {
-			energyConsumption += SimulationParameters.WAN_WATTHOUR_PER_BIT;
-			setLatency(SimulationParameters.WAN_LATENCY);
+			energyConsumption += SimulationParameters.wanWattHourPerBit;
+			setLatency(SimulationParameters.wanLatency);
+			setBandwidth(Math.min(SimulationParameters.wanBandwidthBitsPerSecond, SimulationParameters.wifiBandwidthBitsPerSecond));
 		}
 		setEnergyModel(new EnergyModelNetworkLink(energyConsumption, this));
 	}

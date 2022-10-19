@@ -35,23 +35,24 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 public class NetworkLink extends SimEntity {
 	public static final int UPDATE_PROGRESS = 1;
-	private double latency = 0;
-	private double bandwidth = 0;
-	private List<TransferProgress> transferProgressList = new ArrayList<>();
-	private ComputingNode src = ComputingNode.NULL;
-	private ComputingNode dst = ComputingNode.NULL;
-	private SimulationManager simulationManager;
-	private double usedBandwidth = 0;
-	private double totalTrasferredData = 0;
-	private EnergyModelNetworkLink energyModel = EnergyModelNetworkLink.NULL;
+	protected double latency = 0;
+	protected double bandwidth = 0;
+	protected List<TransferProgress> transferProgressList = new ArrayList<>();
+	protected ComputingNode src = ComputingNode.NULL;
+	protected ComputingNode dst = ComputingNode.NULL;
+	protected SimulationManager simulationManager;
+	protected double usedBandwidth = 0;
+	protected double totalTrasferredData = 0;
+	protected EnergyModelNetworkLink energyModel = EnergyModelNetworkLink.NULL;
+	protected boolean scheduled = false;
 
-	public static enum NetworkLinkTypes {
+	public enum NetworkLinkTypes {
 		WAN, MAN, LAN, IGNORE
-	};
+	}
 
-	private NetworkLinkTypes type;
+	protected NetworkLinkTypes type;
 
-	public static NetworkLink NULL = new NetworkLinkNull();
+	public static final NetworkLink NULL = new NetworkLinkNull();
 
 	public NetworkLink(ComputingNode src, ComputingNode dst, SimulationManager simulationManager,
 			NetworkLinkTypes type) {
@@ -79,9 +80,13 @@ public class NetworkLink extends SimEntity {
 		return this;
 	}
 
+	/**
+	 * Defines the logic to be performed by the network link when the simulation
+	 * starts.
+	 */
 	@Override
 	public void startInternal() {
-		scheduleNow(this, UPDATE_PROGRESS);
+		// Do nothing for now.
 	}
 
 	public ComputingNode getSrc() {
@@ -102,25 +107,25 @@ public class NetworkLink extends SimEntity {
 
 	@Override
 	public void processEvent(Event evt) {
-		switch (evt.getTag()) {
-		case UPDATE_PROGRESS:
+		if (evt.getTag() == UPDATE_PROGRESS) {
 			// Update the progress of the current transfers and their allocated bandwidth
 			updateTransfersProgress();
-			schedule(this, SimulationParameters.NETWORK_UPDATE_INTERVAL, UPDATE_PROGRESS);
-			break;
-		default:
-			break;
+			if (this.transferProgressList.size() != 0)
+				schedule(this, SimulationParameters.networkUpdateInterval, UPDATE_PROGRESS);
+			else
+				scheduled = false;
 		}
+
 	}
 
 	protected void updateTransfersProgress() {
 		usedBandwidth = 0;
-		double bandwidth = getBandwidth(transferProgressList.size());
+		double allocatedBandwidth = getBandwidth(transferProgressList.size());
 		for (int i = 0; i < transferProgressList.size(); i++) {
 			// Allocate bandwidth
 			usedBandwidth += transferProgressList.get(i).getRemainingFileSize();
 
-			transferProgressList.get(i).setCurrentBandwidth(bandwidth);
+			transferProgressList.get(i).setCurrentBandwidth(allocatedBandwidth);
 			updateTransfer(transferProgressList.get(i));
 		}
 	}
@@ -134,9 +139,9 @@ public class NetworkLink extends SimEntity {
 		double oldRemainingSize = transfer.getRemainingFileSize();
 
 		// Update progress (remaining file size)
-		if (SimulationParameters.REALISTIC_NETWORK_MODEL)
+		if (SimulationParameters.realisticNetworkModel)
 			transfer.setRemainingFileSize(transfer.getRemainingFileSize()
-					- (SimulationParameters.NETWORK_UPDATE_INTERVAL * transfer.getCurrentBandwidth()));
+					- (SimulationParameters.networkUpdateInterval * transfer.getCurrentBandwidth()));
 		else
 			transfer.setRemainingFileSize(0);
 
@@ -207,6 +212,10 @@ public class NetworkLink extends SimEntity {
 		totalTrasferredData += transfer.getFileSize();
 		transferProgressList.add(transfer);
 
+		if (!scheduled) {
+			scheduleNow(this, UPDATE_PROGRESS);
+			scheduled = true;
+		}
 	}
 
 	public EnergyModelNetworkLink getEnergyModel() {
@@ -221,4 +230,12 @@ public class NetworkLink extends SimEntity {
 		return totalTrasferredData;
 	}
 
+	/**
+	 * Defines the logic to be performed by the network link when the simulation
+	 * ends.
+	 */
+	@Override
+	public void onSimulationEnd() {
+		// Do something when the simulation finishes.
+	}
 }

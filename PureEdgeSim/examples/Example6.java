@@ -26,7 +26,7 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract.Files;
 public class Example6 {
 	/**
 	 * This example shows how to use other simulation parameters files. The files
-	 * used in this example are located in the examples/Example7_settings/ folder.
+	 * used in this example are located in the examples/Example6_settings/ folder.
 	 * By default, if the user doesn't specify the simulation settings folder,
 	 * PureEdgeSim will use the default ones located in settings/ folder.
 	 * 

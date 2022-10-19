@@ -18,27 +18,45 @@
  *     
  *     @author Charaf Eddine Mechalikh
  **/
-package com.mechalikh.pureedgesim.tasksorchestration;
-
+package com.mechalikh.pureedgesim.taskorchestrator;
 import java.util.List;
-
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.simulationengine.SimEntity;
 import com.mechalikh.pureedgesim.simulationmanager.SimLog;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
-import com.mechalikh.pureedgesim.tasksgenerator.Task;
+import com.mechalikh.pureedgesim.taskgenerator.Task;
 
-public abstract class Orchestrator {
-	protected List<? extends ComputingNode> nodeList;
+public abstract class Orchestrator extends SimEntity {
+	protected List<ComputingNode> mistOnlyListSensorsExcluded;
+	protected List<ComputingNode> edgeOnlyList;
+	protected List<ComputingNode> cloudOnlyList;
+	protected List<ComputingNode> mistAndCloudListSensorsExcluded;
+	protected List<ComputingNode> edgeAndCloudList;
+	protected List<ComputingNode> mistAndEdgeListSensorsExcluded;
+	protected List<ComputingNode> allNodesListSensorsExcluded;
 	protected SimulationManager simulationManager;
 	protected SimLog simLog;
-	protected String algorithm;
+	public String algorithm;
 	protected String architecture;
 
-	public Orchestrator(SimulationManager simulationManager) {
+	protected Orchestrator(SimulationManager simulationManager) {
+		super(simulationManager.getSimulation());
 		this.simulationManager = simulationManager;
+		simulationManager.setOrchestrator(this);
 		simLog = simulationManager.getSimulationLogger();
-		nodeList = simulationManager.getDataCentersManager().getNodesList();
+		allNodesListSensorsExcluded = simulationManager.getDataCentersManager().getComputingNodesGenerator()
+				.getAllNodesListSensorsExcluded();
+		mistOnlyListSensorsExcluded = simulationManager.getDataCentersManager().getComputingNodesGenerator()
+				.getMistOnlyListSensorsExcluded();
+		edgeOnlyList = simulationManager.getDataCentersManager().getComputingNodesGenerator().getEdgeOnlyList();
+		cloudOnlyList = simulationManager.getDataCentersManager().getComputingNodesGenerator().getCloudOnlyList();
+		mistAndCloudListSensorsExcluded = simulationManager.getDataCentersManager().getComputingNodesGenerator()
+				.getMistAndCloudListSensorsExcluded();
+		edgeAndCloudList = simulationManager.getDataCentersManager().getComputingNodesGenerator().getEdgeAndCloudList();
+		mistAndEdgeListSensorsExcluded = simulationManager.getDataCentersManager().getComputingNodesGenerator()
+				.getMistAndEdgeListSensorsExcluded();
+
 		algorithm = simulationManager.getScenario().getStringOrchAlgorithm();
 		architecture = simulationManager.getScenario().getStringOrchArchitecture();
 	}
@@ -56,76 +74,85 @@ public abstract class Orchestrator {
 			edgeOnly(task);
 		} else if ("MIST_AND_CLOUD".equals(architecture)) {
 			mistAndCloud(task);
+		} else if ("MIST_AND_EDGE".equals(architecture)) {
+			mistAndEdge(task);
 		}
 	}
 
 	// If the orchestration scenario is MIST_ONLY send Tasks only to edge devices
-	private void mistOnly(Task task) {
-		String[] Architecture = { "Mist" };
-		assignTaskToComputingNode(findComputingNode(Architecture, task), task);
+	protected void mistOnly(Task task) {
+		String[] architecture = { "Mist" };
+		assignTaskToComputingNode(task, architecture, mistOnlyListSensorsExcluded);
 	}
 
 	// If the orchestration scenario is ClOUD_ONLY send Tasks (cloudlets) only to
 	// cloud virtual machines (vms)
-	private void cloudOnly(Task task) {
-		String[] Architecture = { "Cloud" };
-		assignTaskToComputingNode(findComputingNode(Architecture, task), task);
+	protected void cloudOnly(Task task) {
+		String[] architecture = { "Cloud" };
+		assignTaskToComputingNode(task, architecture, cloudOnlyList);
 	}
 
 	// If the orchestration scenario is EDGE_AND_CLOUD send Tasks only to edge data
 	// centers or cloud virtual machines (vms)
-	private void edgeAndCloud(Task task) {
-		String[] Architecture = { "Cloud", "Edge" };
-		assignTaskToComputingNode(findComputingNode(Architecture, task), task);
+	protected void edgeAndCloud(Task task) {
+		String[] architecture = { "Cloud", "Edge" };
+		assignTaskToComputingNode(task, architecture, edgeAndCloudList);
 	}
 
 	// If the orchestration scenario is MIST_AND_CLOUD send Tasks only to edge
 	// devices or cloud virtual machines (vms)
-	private void mistAndCloud(Task task) {
-		String[] Architecture = { "Cloud", "Mist" };
-		assignTaskToComputingNode(findComputingNode(Architecture, task), task);
+	protected void mistAndCloud(Task task) {
+		String[] architecture = { "Cloud", "Mist" };
+		assignTaskToComputingNode(task, architecture, mistAndCloudListSensorsExcluded);
 	}
 
 	// If the orchestration scenario is EDGE_ONLY send Tasks only to edge data
 	// centers
-	private void edgeOnly(Task task) {
-		String[] Architecture = { "Edge" };
-		assignTaskToComputingNode(findComputingNode(Architecture, task), task);
+	protected void edgeOnly(Task task) {
+		String[] architecture = { "Edge" };
+		assignTaskToComputingNode(task, architecture, edgeOnlyList);
+	}
+
+	// If the orchestration scenario is MIST_AND_Edge send Tasks only to edge
+	// devices or Fog virtual machines (vms)
+	protected void mistAndEdge(Task task) {
+		String[] architecture = { "Mist", "Edge" };
+		assignTaskToComputingNode(task, architecture, mistAndEdgeListSensorsExcluded);
 	}
 
 	// If the orchestration scenario is ALL send Tasks to any virtual machine (vm)
 	// or device
-	private void all(Task task) {
-		String[] Architecture = { "Cloud", "Edge", "Mist" };
-		assignTaskToComputingNode(findComputingNode(Architecture, task), task);
+	protected void all(Task task) {
+		String[] architecture = { "Cloud", "Edge", "Mist" };
+		assignTaskToComputingNode(task, architecture, allNodesListSensorsExcluded);
 	}
 
-	protected abstract int findComputingNode(String[] architecture, Task task);
+	protected abstract int findComputingNode(String[] architecture, Task task, List<ComputingNode> nodesList);
 
-	protected void assignTaskToComputingNode(int computingNode, Task task) {
+	protected void assignTaskToComputingNode(Task task, String[] architecture, List<ComputingNode> nodesList) {
 
-		if (computingNode != -1) {
+		int nodeIndex = findComputingNode(architecture, task, nodesList);
 
+		if (nodeIndex != -1) {
+			ComputingNode node = nodesList.get(nodeIndex);
 			try {
-				checkComputingNode(nodeList.get(computingNode));
+				checkComputingNode(node);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
 			// Send this task to this computing node
-			task.setComputingNode(nodeList.get(computingNode));
+			task.setOffloadingDestination(node);
 
 			// Application has been deployed
-			task.getEdgeDevice().setApplicationPlacementLocation(nodeList.get(computingNode));
-
+			task.getEdgeDevice().setApplicationPlacementLocation(node);
 			simLog.deepLog(simulationManager.getSimulation().clock() + ": " + this.getClass() + " Task: " + task.getId()
-					+ " assigned to " + nodeList.get(computingNode).getType() + " vm: "
-					+ nodeList.get(computingNode).getId());
+					+ " assigned to " + node.getType() + " Computing Node: " + node.getId());
 
 		}
 	}
 
-	private void checkComputingNode(ComputingNode computingNode) throws Exception {
+	protected void checkComputingNode(ComputingNode computingNode) {
 		if (computingNode.isSensor())
 			throw new IllegalArgumentException(
 					getClass().getSimpleName() + " - The forbidden happened! The orchestration algorithm \"" + algorithm
@@ -139,8 +166,8 @@ public abstract class Orchestrator {
 		return (distance <= RANGE);
 	}
 
-	protected boolean arrayContains(String[] Architecture, String value) {
-		for (String s : Architecture) {
+	protected boolean arrayContains(String[] architecture, String value) {
+		for (String s : architecture) {
 			if (s.equals(value))
 				return true;
 		}
@@ -153,22 +180,20 @@ public abstract class Orchestrator {
 																										// computing
 				|| (arrayContains(architecture, "Edge") && nodeType == SimulationParameters.TYPES.EDGE_DATACENTER // Edge
 																													// computing
-				// compare destination (edge data center) location and origin (edge device)
-				// location, if they
-				// are in same area offload to his device
-						&& (sameLocation(node, task.getEdgeDevice(), SimulationParameters.EDGE_DATACENTERS_RANGE)
-								// or compare the location of their orchestrators
-								|| (SimulationParameters.ENABLE_ORCHESTRATORS && sameLocation(node,
-										task.getOrchestrator(), SimulationParameters.EDGE_DATACENTERS_RANGE))))
+				// Compare destination (edge data server) and origin (edge device)
+				// locations, if they are in same area offload to this edge data server
+						&& (node == task.getEdgeDevice().getCurrentUpLink().getDst()
+								// or compare the location of the orchestrator
+								|| (node == task.getOrchestrator().getCurrentUpLink().getDst())))
 
 				|| (arrayContains(architecture, "Mist") && nodeType == SimulationParameters.TYPES.EDGE_DEVICE // Mist
 																												// computing
 				// compare destination (edge device) location and origin (edge device) location,
 				// if they are in same area offload to this device
-						&& (sameLocation(node, task.getEdgeDevice(), SimulationParameters.EDGE_DEVICES_RANGE)
+						&& (sameLocation(node, task.getEdgeDevice(), SimulationParameters.edgeDevicesRange)
 								// or compare the location of their orchestrators
-								|| (SimulationParameters.ENABLE_ORCHESTRATORS && sameLocation(node,
-										task.getOrchestrator(), SimulationParameters.EDGE_DEVICES_RANGE)))
+								|| (SimulationParameters.enableOrchestrators && sameLocation(node,
+										task.getOrchestrator(), SimulationParameters.edgeDevicesRange)))
 						&& !node.isDead() && !node.isSensor()));
 	}
 

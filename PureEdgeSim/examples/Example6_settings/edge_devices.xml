@@ -16,6 +16,7 @@
 		<battery>true</battery> <!-- relies on battery? -->
 		<percentage>30</percentage> <!-- percentage of this device type -->
 		<batteryCapacity>18.75</batteryCapacity> <!-- battery capacity in Watt-Hour -->
+		<initialBatteryLevel>100</initialBatteryLevel> <!-- initial battery percentage. e.g. set it to 50 in order to generate devices with 50% remaining energy-->
 		<idleConsumption>1</idleConsumption><!-- idle energy consumption in Watt-->
 		<maxConsumption>3.3</maxConsumption><!-- max energy consumption in Watt, 
 			when device cpu is use at 100% -->
@@ -37,6 +38,7 @@
 		<battery>false</battery>
 		<percentage>10</percentage>
 		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel> 
 		<idleConsumption>1.6</idleConsumption>
 		<maxConsumption>5.1</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
@@ -57,6 +59,7 @@
 		<battery>true</battery>
 		<percentage>20</percentage>
 		<batteryCapacity>56.2</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel> 
 		<idleConsumption>1.7</idleConsumption>
 		<maxConsumption>23.6</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
@@ -77,6 +80,7 @@
 		<battery>false</battery>
 		<percentage>40</percentage>
 		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel> 
 		<idleConsumption>1</idleConsumption>
 		<maxConsumption>2</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>

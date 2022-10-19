@@ -11,37 +11,38 @@ import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 /**
- * An interface to be implemented by event queues.
+ * An interface to be implemented by Task and Event queues.
  *
  * @author Marcos Dias de Assuncao
  * @author Manoel Campos da Silva Filho
- * @since CloudSim Plus 1.0
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 5.0
  */
-public interface EventQueue {
+public interface Queue<T> {
     /**
-     * Adds a new event to the queue. Adding a new event to the queue preserves the temporal order of
-     * the events in the queue.
+     * Adds a new queue element to the queue. Adding a new element to the queue preserves the temporal order of
+     * the elements in the queue.
      *
-     * @param newEvent The event to be put in the queue.
+     * @param queueElement The queueElement to be put in the queue.
      */
-    void addEvent(Event newEvent);
+    void add(T queueElement);
 
     /**
      * Returns an iterator to the elements into the queue.
      *
      * @return the iterator
      */
-    Iterator<Event> iterator();
+    Iterator<T> iterator();
 
     /**
      * Returns a stream to the elements into the queue.
      *
      * @return the stream
      */
-    Stream<Event> stream();
+    Stream<T> stream();
 
     /**
-     * Returns the size of this event queue.
+     * Returns the size of this queue.
      *
      * @return the size
      */
@@ -60,5 +61,5 @@ public interface EventQueue {
      * @return the first element
      * @throws NoSuchElementException when the queue is empty
      */
-    Event first() throws NoSuchElementException;
+    T first() throws NoSuchElementException;
 }

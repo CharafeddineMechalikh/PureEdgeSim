@@ -37,11 +37,12 @@ public class MapChart extends Chart {
 		super(title, xAxisTitle, yAxisTitle, simulationManager);
 		getChart().getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Scatter);
 		getChart().getStyler().setMarkerSize(4);
-		updateSize(0.0, (double) SimulationParameters.AREA_WIDTH, 0.0, (double) SimulationParameters.AREA_LENGTH);
+		updateSize(0.0, (double) SimulationParameters.simulationMapWidth, 0.0,
+				(double) SimulationParameters.simulationMapLength);
 
 	}
 
-	private void edgeDevices() {
+	protected void edgeDevices() {
 		// Initialize the X and Y series that will be used to draw the map
 		// Dead devices series
 		List<Double> x_deadEdgeDevicesList = new ArrayList<>();
@@ -51,9 +52,10 @@ public class MapChart extends Chart {
 		List<Double> y_idleEdgeDevicesList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
 		// Active devices series
 		List<Double> x_activeEdgeDevicesList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
-		List<Double> y_activeEdgeDevicesList = new ArrayList<>(simulationManager.getScenario().getDevicesCount()); 
+		List<Double> y_activeEdgeDevicesList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
 		// Browse all devices and create the series
-		for (ComputingNode device : simulationManager.getDataCentersManager().getEdgeDevicesList()) {
+		for (ComputingNode node :computingNodesGenerator.getMistOnlyList()) {
+			ComputingNode device = node;
 			double Xpos = device.getMobilityModel().getCurrentLocation().getXPos();
 			double Ypos = device.getMobilityModel().getCurrentLocation().getYPos();
 			if (device.isDead()) {
@@ -85,7 +87,7 @@ public class MapChart extends Chart {
 		// Display cloud CPU utilization
 	}
 
-	private void edgeDataCenters() {
+	protected void edgeDataCenters() {
 		// Only if Edge computing is used
 		if (simulationManager.getScenario().getStringOrchArchitecture().contains("EDGE")
 				|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL")) {
@@ -96,19 +98,19 @@ public class MapChart extends Chart {
 			List<Double> x_activeEdgeDataCentersList = new ArrayList<>();
 			List<Double> y_activeEdgeDataCentersList = new ArrayList<>();
 
-				for (ComputingNode edgeDataCenter : simulationManager.getDataCentersManager().getEdgeDatacenterList()) {
+			for (ComputingNode node : computingNodesGenerator.getEdgeOnlyList()) {
+				ComputingNode edgeDataCenter = node;
+				double Xpos = edgeDataCenter.getMobilityModel().getCurrentLocation().getXPos();
+				double Ypos = edgeDataCenter.getMobilityModel().getCurrentLocation().getYPos();
+				if (edgeDataCenter.isIdle()) {
+					x_idleEdgeDataCentersList.add(Xpos);
+					y_idleEdgeDataCentersList.add(Ypos);
+				} else {
+					x_activeEdgeDataCentersList.add(Xpos);
+					y_activeEdgeDataCentersList.add(Ypos);
 
-					double Xpos = edgeDataCenter.getMobilityModel().getCurrentLocation().getXPos();
-					double Ypos = edgeDataCenter.getMobilityModel().getCurrentLocation().getYPos();
-					if (edgeDataCenter.isIdle()) {
-						x_idleEdgeDataCentersList.add(Xpos);
-						y_idleEdgeDataCentersList.add(Ypos);
-					} else {
-						x_activeEdgeDataCentersList.add(Xpos);
-						y_activeEdgeDataCentersList.add(Ypos);
-
-					}
 				}
+			}
 
 			updateSeries(getChart(), "Idle Edge data centers", toArray(x_idleEdgeDataCentersList),
 					toArray(y_idleEdgeDataCentersList), SeriesMarkers.CROSS, Color.BLACK);

@@ -25,18 +25,18 @@ import java.util.LinkedList;
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
-import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters; 
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public class WanChart extends Chart {
 
-	private LinkedList<Double> wanUpUsage = new LinkedList<>();
-	private LinkedList<Double> wanDownUsage = new LinkedList<>();
+	protected LinkedList<Double> wanUpUsage = new LinkedList<>();
+	protected LinkedList<Double> wanDownUsage = new LinkedList<>();
 
 	public WanChart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
 		super(title, xAxisTitle, yAxisTitle, simulationManager);
 		getChart().getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
-		updateSize(0.0, 0.0, 0.0, SimulationParameters.WAN_BANDWIDTH_BITS_PER_SECOND / 1000000.0);// 0.0, clock, ...
+		updateSize(0.0, 0.0, 0.0, SimulationParameters.wanBandwidthBitsPerSecond / 1000000.0);// 0.0, clock, ...
 	}
 
 	public void update() {
@@ -47,7 +47,7 @@ public class WanChart extends Chart {
 		wanUpUsage.add(wanUp);
 		wanDownUsage.add(wanDown);
 
-		while (wanUpUsage.size() > 300 / SimulationParameters.CHARTS_UPDATE_INTERVAL) {
+		while (wanUpUsage.size() > 300 / SimulationParameters.chartsUpdateInterval) {
 			wanUpUsage.removeFirst();
 			wanDownUsage.removeFirst();
 		}
@@ -55,9 +55,9 @@ public class WanChart extends Chart {
 		double[] time = new double[wanUpUsage.size()];
 		double currentTime = simulationManager.getSimulation().clock();
 		for (int i = wanUpUsage.size() - 1; i > 0; i--)
-			time[i] = currentTime - ((wanUpUsage.size() - i) * SimulationParameters.CHARTS_UPDATE_INTERVAL);
+			time[i] = currentTime - ((wanUpUsage.size() - i) * SimulationParameters.chartsUpdateInterval);
 
-		updateSize(currentTime - 200, currentTime, 0.0, SimulationParameters.WAN_BANDWIDTH_BITS_PER_SECOND / 1000000.0);
+		updateSize(currentTime - 200, currentTime, 0.0, SimulationParameters.wanBandwidthBitsPerSecond / 1000000.0);
 		updateSeries(getChart(), "WanUp", time, toArray(wanUpUsage), SeriesMarkers.NONE, Color.BLACK);
 		updateSeries(getChart(), "WanDown", time, toArray(wanDownUsage), SeriesMarkers.NONE, Color.BLACK);
 	}

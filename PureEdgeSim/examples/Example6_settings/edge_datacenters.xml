@@ -3,7 +3,7 @@
 	<datacenter name="dc1">
 		<periphery>true</periphery>
 		<idleConsumption>100</idleConsumption>
-		<maxConsumption>150</maxConsumption>
+		<maxConsumption>250</maxConsumption>
 		<isOrchestrator>false</isOrchestrator>
 		<location>
 			<x_pos>100</x_pos>
@@ -15,6 +15,6 @@
 		<storage>200000</storage>
 	</datacenter>
 	<network_links>
-		<!-- To create a topology add links here. See example 10 -->
+		<!-- To create a topology add links here. See example 3 -->
 	</network_links>
 </edge_datacenters>

@@ -20,10 +20,12 @@
  **/
 package com.mechalikh.pureedgesim.datacentersmanager;
 
-import java.util.List;
+import java.lang.reflect.Constructor;
+
 import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
 import com.mechalikh.pureedgesim.network.InfrastructureGraph;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationmanager.SimLog;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager; 
 
 /**
  * The main class of the Data Centers Manager module, that manages the different
@@ -34,60 +36,102 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 
 public class DataCentersManager {
+	/**
+	 * The simulation manager.
+	 * 
+	 * @see com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager
+	 */
 	protected SimulationManager simulationManager;
-	private Class<? extends MobilityModel> mobilityModel; 
-	private Class<? extends ComputingNode> computingNodeClass;
-	private ComputingNodesGenerator computingNodesGenerator;
-	private TopologyCreator topologyCreator;
 
-	public DataCentersManager(SimulationManager simulationManager, Class<? extends MobilityModel> mobilityModel,
-			 Class<? extends ComputingNode> computingNodeClass) {
+	/**
+	 * The computing nodes generator used to generate all resources from the xml
+	 * files.
+	 * 
+	 * @see #generateComputingNodes()
+	 * @see com.mechalikh.pureedgesim.datacentersmanager.ComputingNodesGenerator
+	 */
+	protected ComputingNodesGenerator computingNodesGenerator;
+
+	/**
+	 * The topology creator that is used to generate the network topology.
+	 * 
+	 * @see com.mechalikh.pureedgesim.datacentersmanager.DefaultTopologyCreator
+	 */
+	protected TopologyCreator topologyCreator;
+
+	/**
+	 * Initializes the DataCentersManager
+	 *
+	 * @param simulationManager  The simulation Manager
+	 * @param mobilityModelClass The mobility model that will be used in the
+	 *                           simulation
+	 * @param computingNodeClass The computing node class that will be used to
+	 *                           generate computing resources
+	 * @param topologyCreator
+	 */
+	public DataCentersManager(SimulationManager simulationManager, Class<? extends MobilityModel> mobilityModelClass,
+			Class<? extends ComputingNode> computingNodeClass, Class<? extends TopologyCreator> topologyCreatorClass) {
 		this.simulationManager = simulationManager;
-		this.mobilityModel = mobilityModel;
-		this.computingNodeClass = computingNodeClass;
-
-		// Generate all data centers, servers, an devices
-		generateComputingNodes();
-
 		// Add this to the simulation manager and submit computing nodes to broker
 		simulationManager.setDataCentersManager(this);
 
+		// Generate all data centers, servers, an devices
+		generateComputingNodes(mobilityModelClass, computingNodeClass);
+
 		// Generate topology
-		createTopology();
+		createTopology(topologyCreatorClass);
 	}
 
-	private void generateComputingNodes() {
-		computingNodesGenerator = new ComputingNodesGenerator(simulationManager, mobilityModel,
+	/**
+	 * Generates all computing nodes.
+	 * 
+	 * @param computingNodeClass
+	 * @param mobilityModelClass
+	 */
+	protected void generateComputingNodes(Class<? extends MobilityModel> mobilityModelClass,
+			Class<? extends ComputingNode> computingNodeClass) {
+		SimLog.println(this.getClass().getSimpleName() + " - Generating computing nodes...");
+		computingNodesGenerator = new ComputingNodesGenerator(simulationManager, mobilityModelClass,
 				computingNodeClass);
 		computingNodesGenerator.generateDatacentersAndDevices();
-	} 
+	}
 
-	public void createTopology() {
-		topologyCreator = new TopologyCreator(simulationManager, this.computingNodesGenerator);
+	/**
+	 * Creates the network topology.
+	 * 
+	 * @param topologyCreatorClass
+	 */
+	public void createTopology(Class<? extends TopologyCreator> topologyCreatorClass) {
+		SimLog.println(this.getClass().getSimpleName() + " - Creating the network topology...");
+		Constructor<?> topologyCreatorConstructor;
+		try {
+			topologyCreatorConstructor = topologyCreatorClass.getConstructor(SimulationManager.class,
+					ComputingNodesGenerator.class);
+
+			topologyCreator = (TopologyCreator) topologyCreatorConstructor.newInstance(simulationManager,
+					computingNodesGenerator);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		topologyCreator.generateTopologyGraph();
 	}
 
+	/**
+	 * Gets the topology creator.
+	 * 
+	 * @return topologyCreator the topology creator.
+	 */
 	public InfrastructureGraph getTopology() {
 		return topologyCreator.getTopology();
 	}
 
-	public List<ComputingNode> getNodesList() {
-		return computingNodesGenerator.getComputingNodes();
+	/**
+	 * Gets the computing nodes generator.
+	 * 
+	 * @return computingNodesGenerator the computing nodes generator..
+	 */
+	public ComputingNodesGenerator getComputingNodesGenerator() {
+		return computingNodesGenerator;
 	}
 
-	public List<ComputingNode> getOrchestratorsList() {
-		return computingNodesGenerator.getOrchestratorsList();
-	}
-
-	public List<ComputingNode> getEdgeDatacenterList() {
-		return computingNodesGenerator.getEdgeDatacenterList();
-	}
-
-	public List<ComputingNode> getEdgeDevicesList() {
-		return computingNodesGenerator.getEdgeDevicesList();
-	}
-
-	public List<ComputingNode> getCloudDatacentersList() {
-		return computingNodesGenerator.getCloudDatacenterList();
-	}
 }

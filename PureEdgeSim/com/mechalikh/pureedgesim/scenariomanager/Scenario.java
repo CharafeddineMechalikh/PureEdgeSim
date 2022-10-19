@@ -21,9 +21,9 @@
 package com.mechalikh.pureedgesim.scenariomanager;
 
 public class Scenario {
-	private int devicesCount; // The number of edge devices in this scenario
-	private int orchArchitecture; // The used architecture/ computing paradigms
-	private int orchAlgorithm; // The tasks orchestration algorithm that will be used in this scenario
+	protected int devicesCount; // The number of edge devices in this scenario
+	protected int orchArchitecture; // The used architecture/ computing paradigms
+	protected int orchAlgorithm; // The tasks orchestration algorithm that will be used in this scenario
 
 	public Scenario(int devicesCount, int orchAlgorithm, int orchArchitecture) {
 		this.setOrchAlgorithm(orchAlgorithm);
@@ -56,11 +56,11 @@ public class Scenario {
 	}
 
 	public String getStringOrchArchitecture() { 
-		return SimulationParameters.ORCHESTRATION_ARCHITECTURES[orchArchitecture].trim();
+		return SimulationParameters.orchestrationArchitectures[orchArchitecture].trim();
 	}
 
 	public String getStringOrchAlgorithm() {
-		return SimulationParameters.ORCHESTRATION_AlGORITHMS[orchAlgorithm].trim();
+		return SimulationParameters.orchestrationAlgorithms[orchAlgorithm].trim();
 	}
 
 	public String toString() {

@@ -35,13 +35,13 @@ import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager; 
 
 public class SimulationVisualizer {
-	private JFrame simulationResultsFrame;
-	private SimulationManager simulationManager;
-	private List<Chart> charts = new ArrayList<Chart>(4);
-	private boolean firstTime = true;
+	protected JFrame simulationResultsFrame;
+	protected SimulationManager simulationManager;
+	protected List<Chart> charts = new ArrayList<Chart>(4);
+	protected boolean firstTime = true;
 
 	public SimulationVisualizer(SimulationManager simulationManager) {
 		this.simulationManager = simulationManager;
@@ -51,7 +51,7 @@ public class SimulationVisualizer {
 				simulationManager);
 		charts.addAll(List.of(mapChart, cpuUtilizationChart, tasksSuccessChart));
 
-		if (SimulationParameters.ONE_SHARED_WAN_NETWORK) {
+		if (SimulationParameters.useOneSharedWanLink) {
 			Chart networkUtilizationChart = new WanChart("Network utilization", "Time (s)", "Utilization (Mbps)",
 					simulationManager);
 			charts.add(networkUtilizationChart);
@@ -76,7 +76,7 @@ public class SimulationVisualizer {
 				+ " -  Algorithm = " + simulationManager.getScenario().getStringOrchAlgorithm());
 	}
 
-	private void repaint() {
+	protected void repaint() {
 		charts.forEach(chart -> chart.update());
 		simulationResultsFrame.repaint();
 	}
@@ -86,7 +86,7 @@ public class SimulationVisualizer {
 	}
 
 	public void saveCharts() throws IOException {
-		String folderName = SimulationParameters.OUTPUT_FOLDER + "/"
+		String folderName = SimulationParameters.outputFolder + "/"
 				+ simulationManager.getSimulationLogger().getSimStartTime() + "/simulation_"
 				+ simulationManager.getSimulationId() + "/iteration_" + simulationManager.getIteration() + "__"
 				+ simulationManager.getScenario().toString();

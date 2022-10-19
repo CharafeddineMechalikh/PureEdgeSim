@@ -1,14 +1,8 @@
 language: java
 jdk:
   - openjdk12
-
-before_script:
-  - bash <(curl -Ls https://coverage.codacy.com/get.sh) download
-
-after_success:
-  - bash <(curl -Ls https://coverage.codacy.com/get.sh)
   
 before_install:
   - rm -r /home/travis/build/CharafeddineMechalikh/PureEdgeSim/PureEdgeSim/examples/
   
-install: mvn test
+install: mvn clean install
