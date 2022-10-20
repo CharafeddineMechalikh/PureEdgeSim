@@ -34,7 +34,7 @@ public class Example1 {
 	 * default models provided by PureEdgeSim. 
 	 * 
 	 * @author Charafeddine Mechalikh
-	 * @since  PureEdgeSim 5.0
+	 * @since  PureEdgeSim 2.2
 	 */
 	public Example1() {	
 		//Create a PureEdgeSim simulation

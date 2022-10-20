@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package examples;
 
@@ -36,6 +36,9 @@ import com.mechalikh.pureedgesim.simulationmanager.Simulation;
  * algorithm complexity. Hence, shorter simulation time.
  * 
  * To use it you must add JFuzzy_Logic jar file PureEdgeSim/Libs/ folder
+ * 
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 3.0
  */
 public class Example8 {
 

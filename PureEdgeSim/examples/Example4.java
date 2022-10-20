@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package examples;
 
@@ -29,7 +29,7 @@ public class Example4 {
 	 * one.
 	 * 
 	 * @author Charafeddine Mechalikh
-	 * @since PureEdgeSim 5.0
+	 * @since PureEdgeSim 2.2
 	 */
 	public Example4() {
 

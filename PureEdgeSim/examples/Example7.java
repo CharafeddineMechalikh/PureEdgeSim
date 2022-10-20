@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package examples;
 
@@ -24,9 +24,7 @@ import com.mechalikh.pureedgesim.simulationmanager.Simulation;
 
 public class Example7 {
 
-	/** You must read this to understand **/
-
-	/**
+	/** You must read this to understand 
 	 * This is a simple example showing how to launch simulation using a custom
 	 * network model. The CustomNetworkModel.java is located under the examples/f
 	 * older. As you can see, this class extends the MainApplication class provided
@@ -37,9 +35,7 @@ public class Example7 {
 	 * Towards a Scalable and QoS-Aware Load Balancing Platform for Edge Computing
 	 * Environments. The 2019 International Conference on High Performance Computing
 	 * & Simulation (2019) 684-691
-	 */
-
-	/**
+	 *
 	 * Before running this example you need to
 	 * 
 	 * 1/ enable the registry in the simulation parameters file by setting
@@ -60,6 +56,9 @@ public class Example7 {
 	 * 
 	 * You will see that the cooperative caching algorithm decreases the WAN usage
 	 * remarkably.
+	 * 
+	 * @author Charafeddine Mechalikh
+	 * @since PureEdgeSim 2.3
 	 */
 
 	// Below is the path for the settings folder of this example

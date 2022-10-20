@@ -106,8 +106,7 @@ number of events produced at runtime. To reduce simulation duration, PureEdgeSim
 for balancing the precision of the simulation and its duration thanks to a set of dedicated 
 parameters. How precise the simulation will rely on the user’s settings, particularly the 
 update intervals. Thus, the simulation will be more precise and realistic the shorter these 
-intervals are, but it will also last longer. You can read more in the [WiKi](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki).
-</p>
+intervals are, but it will also last longer. You can read more in the <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki">WiKi</a></p>.
 
 <p align="center">
   <img  width="500" src="https://user-images.githubusercontent.com/46229052/196690369-54350b0f-5382-427a-8f12-c582f3f7f2b7.png">
@@ -120,7 +119,7 @@ intervals are, but it will also last longer. You can read more in the [WiKi](htt
 <a id="important"></a>
 
 >* <p align="justify">The development and maintenance of this project requires a considerable effort. Thus, any form of contribution is encouraged. </p>
->* <p align="justify">If you are willing to use the framework to implement your own project on top of it, creating a fork is a bad solution. You are not supposed to modify the code >base to implement your project, but extend it by creating some subclasses. Unless you plan to redistribute your changes, you will end up with an incompatible and >obsolete version of the framework. The project is constantly evolving and bug fixes are a priority. Your fork with personal changes will miss these updates and high >performance improvements.</p>
+>* <p align="justify">If you are willing to use the framework to implement your own project on top of it, creating a fork is a bad solution. You are not supposed to modify the code base to implement your project, but extend it by creating some subclasses. Unless you plan to redistribute your changes, you will end up with an incompatible and obsolete version of the framework. The project is constantly evolving and bug fixes are a priority. Your fork with personal changes will miss these updates and high performance improvements.</p>
 >* <p align="justify">If you just came across this project and want to check it out later, don't forget to add a star :star: :wink:.</p>
 
 
@@ -267,9 +266,7 @@ Accordingly, the model must be versatile enough to support all kinds of resource
 
 <img width= "20%" src="https://user-images.githubusercontent.com/46229052/196668625-54203eac-5472-4c0e-ade2-39bc1e6e5d21.png" align="right" />
 
-<p align="justify">
-Simulators can be used to determine which factors have the greatest impact on performance, by evaluating different configurations, for example, the number of generated entities, the types of resources, the network settings, etc. Dealing with all these parameters programmatically can be challenging. Software is said to be usable if it can be easily comprehended and run by any user. While the usability of PureEdgeSim may be limited by the fact that a lot of [specific foundational knowledge](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki) is required , from a technical standpoint, it is implemented as a simple application, with only a [few steps to follow to run the simulation](#how-to-use). The provided Javadoc documentation and [simulation examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples) offer proper guidance to the user, and the console directly informs the user of any type of incorrect input. To save time and effort, each module comes with a default implementation (e.g., the Default Mobility Model, the Default Computing Node class, etc.). These off-the-shelf models also provide a highly customizable environment with a multitude of settings, so users can adjust their behavior without changing their original code. These parameters are preset, which also decreases the complexity of the tool.
-</p>
+<p align="justify">Simulators can be used to determine which factors have the greatest impact on performance, by evaluating different configurations, for example, the number of generated entities, the types of resources, the network settings, etc. Dealing with all these parameters programmatically can be challenging. Software is said to be usable if it can be easily comprehended and run by any user. While the usability of PureEdgeSim may be limited by the fact that a lot of <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki">specific foundational knowledge</a> is required, from a technical standpoint, it is implemented as a simple application, with only a <a href="#how-to-use">few steps to follow to run the simulation</a>.The provided Javadoc documentation and <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples">simulation examples</a> offer proper guidance to the user, and the console directly informs the user of any type of incorrect input. To save time and effort, each module comes with a default implementation (e.g., the Default Mobility Model, the Default Computing Node class, etc.). These off-the-shelf models also provide a highly customizable environment with a multitude of settings, so users can adjust their behavior without changing their original code. These parameters are preset, which also decreases the complexity of the tool.</p>
 
 <br clear="left"/>
 
@@ -318,8 +315,9 @@ sim.launchSimulation();
 
 <p align="justify">
 The tool is said to be correct if it fully complies with the stated requirements, which can be verified by checking test cases. To verify PureEdgeSim’s correctness through unit and integration testing, several test cases have been implemented. Nevertheless, this alone does not provide an assessment of which portions of the code were tested and which were not, neither gives a percentage of the overall coverage of tests alongside the project source code. To evaluate the amount of code that the available unit tests cover, code coverage reports were added to the project with the help of the Java Code Coverage Library (JaCoCo). 
-It is important to clarify that the concern of such test cases is the technical feasibility of the scenarios and not the evaluation of the simulation outcome. It is simply a matter of testing whether the given results are logically reasonable and not of actually validating them. To validate the software, a case study was conducted using the simulator. [At least 90% of PureEdgeSim code is covered by those tests](https://app.codacy.com/gh/CharafeddineMechalikh/PureEdgeSim/dashboard?utm_source=github.com&utm_medium=referral&utm_content=CharafeddineMechalikh/PureEdgeSim&utm_campaign=Badge_Coverage). This achievement was made possible by testing all the new features and also by the considerable decrease in code duplication since duplicating code brings neglect of testing.
+It is important to clarify that the concern of such test cases is the technical feasibility of the scenarios and not the evaluation of the simulation outcome. It is simply a matter of testing whether the given results are logically reasonable and not of actually validating them. To validate the software, a case study was conducted using the simulator. <a href="https://app.codacy.com/gh/CharafeddineMechalikh/PureEdgeSim/dashboard?utm_source=github.com&utm_medium=referral&utm_content=CharafeddineMechalikh/PureEdgeSim&utm_campaign=Badge_Coverage">At least 90% of PureEdgeSim code is covered by those tests</a>. This achievement was made possible by testing all the new features and also by the considerable decrease in code duplication since duplicating code brings neglect of testing. </p>
 
+<p align="justify">
 In conclusion, we can say that the proposed simulator performs as intended. Every function has finished without abortions and gave the expected output; All the input files were parsed successfully, and all the personalized models were integrated and verified with the predicted results. The plotting of the simulation results gave a reasonable graphical output. In terms of intended errors, such as incorrect inputs, proper error messages were displayed, and correct information was written into the log file. Moreover, the parameters can be modified, stored, and loaded without any error.
 </p>
 
@@ -338,7 +336,7 @@ Reliability is the ability of a system to operate consistently under specified c
 <a id="how-to-use"></a>
 
 <p align="justify">
-There are several ways to use PureEdgeSim; however, it is strongly advisable to run PureEdgeSim via a Java development environment, like Eclipse IDE. A set of predefined examples is provided under the [“/examples“](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples) directory, which should allow anyone to become familiar with PureEdgeSim.
+There are several ways to use PureEdgeSim; however, it is strongly advisable to run PureEdgeSim via a Java development environment, like Eclipse IDE. A set of predefined examples is provided under the <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples">“/examples“</a> directory, which should allow anyone to become familiar with PureEdgeSim.
 </p>
 
 ### Using an IDE
@@ -349,15 +347,14 @@ The simplest and recommended method to run this project is to use an IDE like Ec
 
 <br clear="left"/>
 
-<p align="justify">
 1. Downloading and extracting the project source code archive from the project repository : This can be done using the web browser or the command line `git clone https://github.com/CharafeddineMechalikh/PureEdgeSim.git`.
-2. Importing the project to the IDE:
-  - In NetBeans, simply select the "Open project" option and chose the project directory.
-  - In Eclipse or IntelliJ IDEA, the project must be imported by selecting the location where it was extracted or cloned.
-3. The imported project consists of ten packages: the main application package, the above-mentioned modules, and the examples package. The main application and the modules are the simulator source code that normally should not be modified. The examples, however, are where the users can start.
-4. It is necessary to convert the project into a Maven project in order to download all the required libraries.
-5. Once all the necessary libraries are downloaded, users can start with the most basic examples by running any of the classes located in the “examples” package.
-6. To build a new simulation scenario, the simplest way is to create another class in this package.
+2. <p align="justify">Importing the project to the IDE:</P>
+  - <p align="justify">In NetBeans, simply select the "Open project" option and chose the project directory.</P>
+  - <p align="justify">In Eclipse or IntelliJ IDEA, the project must be imported by selecting the location where it was extracted or cloned.</p>
+3. <p align="justify">The imported project consists of ten packages: the main application package, the above-mentioned modules, and the examples package. The main application and the modules are the simulator source code that normally should not be modified. The examples, however, are where the users can start.</p>
+4. <p align="justify">It is necessary to convert the project into a Maven project in order to download all the required libraries.</p>
+5. <p align="justify">Once all the necessary libraries are downloaded, users can start with the most basic examples by running any of the classes located in the <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples">“examples“</a> package.</p>
+6. <p align="justify">To build a new simulation scenario, the simplest way is to create another class in this package.</p>
 </p>
 
 <p align="center">
@@ -405,7 +402,7 @@ Here are some works that are based on PureEdgeSim to give an idea about its wide
 
 ### Rienforcement and Deep Learning Scenarios
 
-1.    <p align="justify">Mechalikh, C., Taktak, H., & Moussa, F. (2020, April). A fuzzy decision tree based tasks orchestration algorithm for edge computing environments. In International Conference on Advanced Information Networking and Applications (pp. 193-203). Springer, Cham.  ([The algorithm can be found here](https://github.com/CharafeddineMechalikh/FDT_based_workload_orchestration)).</p>
+1.    <p align="justify">Mechalikh, C., Taktak, H., & Moussa, F. (2020, April). A fuzzy decision tree based tasks orchestration algorithm for edge computing environments. In International Conference on Advanced Information Networking and Applications (pp. 193-203). Springer, Cham. <a href="https://github.com/CharafeddineMechalikh/FDT_based_workload_orchestration">The algorithm can be found here</a>.</p>
 2.    <p align="justify">Safavifar, Z., Ghanadbashi, S., & Golpayegani, F. (2021, November). Adaptive Workload Orchestration in Pure Edge Computing: A Reinforcement-Learning Model. In 2021 IEEE 33rd International Conference on Tools with Artificial Intelligence (ICTAI) (pp. 856-860). IEEE.</p>
 3.    <p align="justify">Neelakantam, G., Onthoni, D. D., & Sahoo, P. K. (2020). Reinforcement learning based passengers assistance system for crowded public transportation in fog enabled smart city. Electronics, 9(9), 1501.</p>
 4.    <p align="justify">Iftikhar, S., Golec, M., Chowdhury, D., Gill, S. S., & Uhlig, S. (2022). FogDLearner: A Deep Learning-based Cardiac Health Diagnosis Framework using Fog Computing. In Australasian Computer Science Week 2022 (pp. 136-144).</p>

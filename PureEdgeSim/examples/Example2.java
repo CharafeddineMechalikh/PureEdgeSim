@@ -28,7 +28,7 @@ public class Example2 {
 	 * mobility model. by removing it, pureEdgeSim will use the default model.
 	 * 
 	 * @author Charafeddine Mechalikh
-	 * @since PureEdgeSim 5.0
+	 * @since PureEdgeSim 2.2
 	 */
 	public Example2() {
 		// Create a PureEdgeSim simulation

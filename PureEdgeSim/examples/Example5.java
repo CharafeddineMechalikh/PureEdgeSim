@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package examples;
 
@@ -28,6 +28,9 @@ public class Example5 {
 	 * orchesrator. The CustomEdgeOrchestrator.java is located under the examples/
 	 * folder. As you can see, this class extends the Main class provided by
 	 * PureEdgeSim, which is required for this example to work.
+	 * 
+	 * @author Charafeddine Mechalikh
+	 * @since PureEdgeSim 2.2
 	 */
 	public Example5() {
 

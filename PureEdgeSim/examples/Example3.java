@@ -16,7 +16,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
- *     @author Mechalikh
+ *     @author Charafeddine Mechalikh
  **/
 package examples;
 
@@ -28,7 +28,7 @@ public class Example3 {
 	 * centers/servers work cooperatively.
 	 * 
 	 * To do this, first, we defined the Edge data centers characteristics in the
-	 * edge_datacenters.xml file (in PureEdgeSim\examples\Example9_settings\)
+	 * edge_datacenters.xml file (in PureEdgeSim\examples\Example3_settings\)
 	 * 
 	 * Then, in the simulation_parameters.properties file, we used the
 	 * Edge_and_Cloud architecture, which means the tasks will be offloaded to the
@@ -46,6 +46,8 @@ public class Example3 {
 	 * tasks to the cloud , to another edge data center, or to execute them locally,
 	 * depending on the orchestration algorithm
 	 * 
+	 * @author Charafeddine Mechalikh
+	 * @since PureEdgeSim 3.1
 	 */
 	// Below is the path for the settings folder of this example
 	private static String settingsPath = "PureEdgeSim/examples/Example3_settings/";

@@ -24,13 +24,16 @@ import com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNode;
 import com.mechalikh.pureedgesim.simulationengine.Event; 
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
-/*
+/**
  * To create your own custom edge device/data center class, you need to extend the DataCenter class first.
  * Then you can add any methods you want. 
  * 
  * In this example we extended the DefaultDataCenter class (which extends the DataCenter class) instead of the DataCenter class, in order to remove code duplication 
  * (so we don't have to copy and paste the energy consumption and the CPU utilization functions of the DefaultDataCenter class). 
  * If we needed to change it, we would have extended the DataCenter class, and write our custom updateEnergyConsumption() function.
+ * 
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 2.2
  */
 public class Example4CustomComputingNode extends DefaultComputingNode {
 	private static final int DO_SOMETHING = 12000; // Avoid conflicting with CloudSim Plus Tags

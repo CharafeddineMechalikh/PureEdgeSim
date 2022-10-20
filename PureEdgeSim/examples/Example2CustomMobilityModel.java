@@ -34,7 +34,7 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  * use the "DefaultMobilityModel" provided by pureEdgeSim.
  * 
  * @author Charafeddine Mechalikh
- * @since PureEdgeSim 5.0
+ * @since PureEdgeSim 2.2
  */
 
 public class Example2CustomMobilityModel extends MobilityModel {
