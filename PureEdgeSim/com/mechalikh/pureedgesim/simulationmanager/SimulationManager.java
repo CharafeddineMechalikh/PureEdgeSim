@@ -113,7 +113,6 @@ public abstract class SimulationManager extends SimEntity {
 	 */
 	public void setDataCentersManager(DataCentersManager dataCentersManager) {
 		this.dataCentersManager = dataCentersManager; 
-		simLog.deepLog(this.getClass().getSimpleName()+"- Submitting VM list to the broker"); 
 	}
 	
 	/**

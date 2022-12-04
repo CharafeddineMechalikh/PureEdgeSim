@@ -75,7 +75,7 @@ public class ChartsGenerator {
 				records.add(line.split(","));
 			} 
 		} catch (Exception e) {
-			SimLog.println(this.getClass().getSimpleName() + " - Problem reading CSV file.");
+			SimLog.println("%s - Problem reading CSV file.",this.getClass().getSimpleName());
 		}
 	}
 

@@ -148,7 +148,7 @@ public class SimulationThread {
 						"######################################################################################################################################################################");
 
 			}
-			SimLog.println("Main- Simulation Finished!");
+			SimLog.println("%s - Simulation Finished!",this.getClass().getSimpleName());
 			// Generate and save charts.
 			generateCharts(simLog);
 

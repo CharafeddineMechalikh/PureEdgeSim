@@ -90,7 +90,7 @@ public class DataCentersManager {
 	 */
 	protected void generateComputingNodes(Class<? extends MobilityModel> mobilityModelClass,
 			Class<? extends ComputingNode> computingNodeClass) {
-		SimLog.println(this.getClass().getSimpleName() + " - Generating computing nodes...");
+		SimLog.println("%s - Generating computing nodes...",this.getClass().getSimpleName());
 		computingNodesGenerator = new ComputingNodesGenerator(simulationManager, mobilityModelClass,
 				computingNodeClass);
 		computingNodesGenerator.generateDatacentersAndDevices();
@@ -102,7 +102,7 @@ public class DataCentersManager {
 	 * @param topologyCreatorClass
 	 */
 	public void createTopology(Class<? extends TopologyCreator> topologyCreatorClass) {
-		SimLog.println(this.getClass().getSimpleName() + " - Creating the network topology...");
+		SimLog.println("%s - Creating the network topology...",this.getClass().getSimpleName());
 		Constructor<?> topologyCreatorConstructor;
 		try {
 			topologyCreatorConstructor = topologyCreatorClass.getConstructor(SimulationManager.class,

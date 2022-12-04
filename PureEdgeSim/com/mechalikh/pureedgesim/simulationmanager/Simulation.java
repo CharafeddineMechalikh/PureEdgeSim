@@ -57,9 +57,9 @@ import com.mechalikh.pureedgesim.scenariomanager.EdgeDevicesParser;
  * {@link com.mechalikh.pureedgesim.taskorchestrator.DefaultOrchestrator
  * DefaultOrchestrator}, the
  * {@link com.mechalikh.pureedgesim.network.DefaultNetworkModel
- * DefaultNetworkModel}, etc. Fortunately, PureEdgeSim allows users to
- * integrate their custom models into the simulation. Here, is a quick example of
- * how to do it:
+ * DefaultNetworkModel}, etc. Fortunately, PureEdgeSim allows users to integrate
+ * their custom models into the simulation. Here, is a quick example of how to
+ * do it:
  * <p>
  * **<blockquote>*
  * 
@@ -137,7 +137,7 @@ public class Simulation extends SimulationAbstract {
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationThread#startSimulation()
 	 */
 	public void launchSimulation() {
-		SimLog.println(getClass().getSimpleName() + " - Loading simulation files...");
+		SimLog.println("%s - Loading simulation files...", getClass().getSimpleName());
 
 		// Check files.
 		if (!checkFiles())
@@ -162,9 +162,10 @@ public class Simulation extends SimulationAbstract {
 		Date finishTime = Calendar.getInstance().getTime();
 
 		// Then, print the simulation duration
-		SimLog.println(getClass().getSimpleName() + " - Simulation took : " + simulatioDuration(startTime, finishTime));
-		SimLog.println(getClass().getSimpleName() + " - results were saved to the folder: "
-				+ SimulationParameters.outputFolder);
+		SimLog.println("%s - Simulation took : %s", getClass().getSimpleName(),
+				simulatioDuration(startTime, finishTime));
+		SimLog.println("%s - results were saved to the folder: %s", SimulationParameters.outputFolder,
+				getClass().getSimpleName());
 
 	}
 
@@ -252,6 +253,5 @@ public class Simulation extends SimulationAbstract {
 	public List<Scenario> getScenarios() {
 		return this.iterations;
 	}
-
 
 }

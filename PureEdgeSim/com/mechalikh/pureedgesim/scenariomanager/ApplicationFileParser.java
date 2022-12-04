@@ -30,7 +30,7 @@ public class ApplicationFileParser extends XmlFileParser {
 	protected boolean checkAppFile() {
 		String condition = "> 0. Check the \"";
 		String application = "\" application in \"";
-		SimLog.println(this.getClass().getSimpleName() + " - Checking applications file.");
+		SimLog.println("%s - Checking applications file.",this.getClass().getSimpleName());
 		SimulationParameters.applicationList = new ArrayList<>();
 		Document doc;
 		try (InputStream applicationFile = new FileInputStream(file)) {
@@ -90,12 +90,12 @@ public class ApplicationFileParser extends XmlFileParser {
 			}
 
 		} catch (Exception e) {
-			SimLog.println(this.getClass().getSimpleName() + " - Applications XML file cannot be parsed!");
+			SimLog.println("%s - Applications XML file cannot be parsed!",this.getClass().getSimpleName());
 			e.printStackTrace();
 			return false;
 		}
 
-		SimLog.println(this.getClass().getSimpleName() + " - Applications XML file successfully loaded!");
+		SimLog.println("%s - Applications XML file successfully loaded!",this.getClass().getSimpleName());
 		return true;
 	}
 

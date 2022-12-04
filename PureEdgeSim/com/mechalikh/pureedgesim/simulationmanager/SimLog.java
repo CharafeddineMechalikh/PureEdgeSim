@@ -454,7 +454,7 @@ public class SimLog {
 		writeFile(getFileName(".csv"), getResultsList());
 
 		if (!SimulationParameters.saveLog) {
-			println(getClass().getSimpleName() + " - No log saving");
+			println("%s - No log saving", getClass().getSimpleName());
 			return;
 		}
 
@@ -489,10 +489,9 @@ public class SimLog {
 		return outputFilesName + extension;
 	}
 
-	public void print(String line, int flag) {
-		String newLine = line;
+	public void print(int flag, String newLine, Object... args) {
 		if (simulationManager == null) {
-			System.out.println("    0.0" + " : " + newLine);
+			System.out.format("    0.0 : %s \n", newLine, args);
 		} else {
 			switch (flag) {
 			case DEFAULT:
@@ -513,29 +512,29 @@ public class SimLog {
 		}
 	}
 
-	public void print(String line) {
-		print(line, DEFAULT);
+	public void print(String line, Object... args) {
+		print(DEFAULT, line, args);
 	}
 
-	public static void println(String line) {
-		System.out.println(line);
+	public static void println(String line, Object... args) {
+		System.out.format(line + "\n", args);
 	}
 
-	public void deepLog(String line) {
+	public void deepLog(String line, Object... args) {
 		if (SimulationParameters.deepLoggingEnabled) {
-			print(line, DEFAULT);
+			print(DEFAULT, line, args);
 			System.out.println(line);
 		}
 	}
 
-	public void deepLog(String line, int flag) {
+	public void deepLog(int flag, String line, Object... args) {
 		if (SimulationParameters.deepLoggingEnabled) {
-			print(line, flag);
+			print(flag, line, args);
 		}
 	}
 
-	public void printWithoutTime(String line) {
-		print(line, NO_TIME);
+	public void printWithoutTime(String line, Object... args) {
+		print(NO_TIME, line, args);
 	}
 
 	public void printSameLine(String line, String color) {

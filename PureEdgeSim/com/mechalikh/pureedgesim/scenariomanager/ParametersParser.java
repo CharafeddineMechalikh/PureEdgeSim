@@ -20,7 +20,7 @@ public class ParametersParser extends FileParserAbstract {
 	}
 
 	protected boolean checkSimulationProperties() {
-		SimLog.println(getClass().getSimpleName() + " - Checking simulation properties file...");
+		SimLog.println("%s - Checking simulation properties file...",getClass().getSimpleName());
 		boolean result = false;
 		try (InputStream input = new FileInputStream(file)) {
 
@@ -149,7 +149,7 @@ public class ParametersParser extends FileParserAbstract {
 			SimulationParameters.orchestrationAlgorithms = prop.getProperty("orchestration_algorithms").split(",");
 
 			result = true;
-			SimLog.println(getClass().getSimpleName() + " - Properties file successfully Loaded propoerties file!");
+			SimLog.println("%s - Properties file successfully Loaded propoerties file!",getClass().getSimpleName());
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}

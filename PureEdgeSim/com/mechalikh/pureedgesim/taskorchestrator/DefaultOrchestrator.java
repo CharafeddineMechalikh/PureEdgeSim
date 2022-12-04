@@ -21,7 +21,6 @@
 package com.mechalikh.pureedgesim.taskorchestrator;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
@@ -36,28 +35,28 @@ public class DefaultOrchestrator extends Orchestrator {
 	public DefaultOrchestrator(SimulationManager simulationManager) {
 		super(simulationManager);
 		// Initialize the history map
-		for (int i = 0; i < allNodesListSensorsExcluded.size(); i++)
+		for (int i = 0; i < nodeList.size(); i++)
 			historyMap.put(i, 0);
 	}
 
-	protected int findComputingNode(String[] architecture, Task task, List< ComputingNode> nodesList) {
-		if ("ROUND_ROBIN".equals(algorithm)) {
-			return roundRobin(architecture, task, nodesList);
-		} else if ("TRADE_OFF".equals(algorithm)) {
-			return tradeOff(architecture, task, nodesList);
+	protected int findComputingNode(String[] architecture, Task task) {
+		if ("ROUND_ROBIN".equals(algorithmName)) {
+			return roundRobin(architecture, task);
+		} else if ("TRADE_OFF".equals(algorithmName)) {
+			return tradeOff(architecture, task);
 		} else {
 			throw new IllegalArgumentException(getClass().getSimpleName() + " - Unknown orchestration algorithm '"
-					+ algorithm + "', please check the simulation parameters file...");
+					+ algorithmName + "', please check the simulation parameters file...");
 		}
 	}
 
-	protected int tradeOff(String[] architecture, Task task, List< ComputingNode> nodesList) {
+	protected int tradeOff(String[] architecture, Task task) {
 		int selected = -1;
 		double min = -1;
 		double newMin;// the computing node with minimum weight;
 		ComputingNode node; // get best computing node for this task
-		for (int i = 0; i < nodesList.size(); i++) {
-			node = nodesList.get(i);
+		for (int i = 0; i < nodeList.size(); i++) {
+			node = nodeList.get(i);
 			if (offloadingIsPossible(task, node, architecture)) {
 				// the weight below represent the priority, the less it is, the more it is //
 				// suitable for offlaoding, you can change it as you want
@@ -88,11 +87,11 @@ public class DefaultOrchestrator extends Orchestrator {
 		return selected;
 	}
 
-	public int roundRobin(String[] architecture, Task task, List< ComputingNode> nodesList) {
+	public int roundRobin(String[] architecture, Task task) {
 		int selected = -1;
 		int minTasksCount = -1; // Computing node with minimum assigned tasks.
-		for (int i = 0; i < nodesList.size(); i++) {
-			if (offloadingIsPossible(task, nodesList.get(i), architecture)
+		for (int i = 0; i < nodeList.size(); i++) {
+			if (offloadingIsPossible(task, nodeList.get(i), architecture)
 					&& (minTasksCount == -1 || minTasksCount > historyMap.get(i))) {
 				minTasksCount = historyMap.get(i);
 				// if this is the first time,

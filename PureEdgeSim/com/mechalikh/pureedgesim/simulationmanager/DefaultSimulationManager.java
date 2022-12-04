@@ -102,7 +102,7 @@ public class DefaultSimulationManager extends SimulationManager {
 		if (SimulationParameters.displayRealTimeCharts && !SimulationParameters.parallelism_enabled)
 			simulationVisualizer = new SimulationVisualizer(this);
 
-		simLog.print(getClass().getSimpleName() + " -  " + scenario.toString());
+		simLog.print("%s -  %s", getClass().getSimpleName(), scenario.toString());
 		simulation.start();
 	}
 
@@ -116,16 +116,15 @@ public class DefaultSimulationManager extends SimulationManager {
 		simLog.setGeneratedTasks(taskList.size());
 		simLog.setCurrentOrchPolicy(scenario.getStringOrchArchitecture());
 
-		
-		simLog.print(getClass().getSimpleName() + " - Simulation: " + getSimulationId() + "  , iteration: "
-				+ getIteration());
+		simLog.print("%s - Simulation: %d  , iteration: %d", getClass().getSimpleName(), getSimulationId(),
+				getIteration());
 
 		// Schedule the tasks offloading (first batch).
 		for (int i = 0; i < Math.min(taskList.size(), SimulationParameters.batchSize); i++) {
 			schedule(this, taskList.first().getTime() - simulation.clock(), SEND_TO_ORCH, taskList.first());
 			taskList.remove(taskList.first());
 		}
-		
+
 		// Schedule the offlaoding of next batch
 		if (taskList.size() > 0)
 			schedule(this, taskList.first().getTime() - simulation.clock(), NEXT_BATCH);
@@ -167,7 +166,7 @@ public class DefaultSimulationManager extends SimulationManager {
 			if (taskList.size() > 0)
 				schedule(this, taskList.first().getTime() - simulation.clock(), NEXT_BATCH);
 			break;
-		case SEND_TO_ORCH: 
+		case SEND_TO_ORCH:
 			// Send the offloading request to the closest orchestrator.
 			sendTaskToOrchestrator(task);
 			sentTasks++;
@@ -213,7 +212,7 @@ public class DefaultSimulationManager extends SimulationManager {
 				} else
 					simLog.printSameLine("#", "red");
 			}
-			schedule(this, SimulationParameters.simulationDuration/100, SHOW_PROGRESS);
+			schedule(this, SimulationParameters.simulationDuration / 100, SHOW_PROGRESS);
 			break;
 
 		case UPDATE_REAL_TIME_CHARTS:
@@ -261,7 +260,7 @@ public class DefaultSimulationManager extends SimulationManager {
 			simulation.terminate();
 			break;
 		default:
-			simLog.print(this.getClass().getSimpleName() + " - Unknown event type");
+			simLog.print("%s - Unknown event type",this.getClass().getSimpleName());
 			break;
 		}
 

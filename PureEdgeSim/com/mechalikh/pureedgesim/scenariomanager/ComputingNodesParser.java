@@ -25,7 +25,7 @@ public abstract class ComputingNodesParser extends XmlFileParser {
 	}
 
 	protected boolean checkComputingNodesFile() {
-		SimLog.println(this.getClass().getSimpleName() + " - Checking file: " + file);
+		SimLog.println("%s - Checking file: %s ",this.getClass().getSimpleName(), file);
 		try (InputStream computingNodesFile = new FileInputStream(file)) {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 
@@ -37,11 +37,11 @@ public abstract class ComputingNodesParser extends XmlFileParser {
 			xmlDoc.getDocumentElement().normalize();
 			typeSpecificChecking(xmlDoc);
 		} catch (Exception e) {
-			SimLog.println(getClass().getSimpleName() + " - Failed to load " + file + " file!");
+			SimLog.println("%s - Failed to load %s file!",getClass().getSimpleName(), file);
 			e.printStackTrace();
 			return false;
 		}
-		SimLog.println(getClass().getSimpleName() + " - " + file + " file successfully Loaded!");
+		SimLog.println("%s - %s file successfully Loaded!",getClass().getSimpleName(),file);
 		return true;
 	}
 
