@@ -200,7 +200,7 @@ public class ComputingNodesGenerator {
 		generateEdgeDevices();
 
 		getSimulationManager().getSimulationLogger()
-				.print(getClass().getSimpleName() + " - Datacenters and devices were generated");
+				.print("%s - Datacenters and devices were generated", getClass().getSimpleName());
 
 	}
 
@@ -231,8 +231,7 @@ public class ComputingNodesGenerator {
 
 			// if percentage of generated devices is < 100%.
 			if (mistOnlyList.size() < getSimulationManager().getScenario().getDevicesCount())
-				getSimulationManager().getSimulationLogger().print(getClass().getSimpleName()
-						+ " - Wrong percentages values (the sum is inferior than 100%), check edge_devices.xml file !");
+				getSimulationManager().getSimulationLogger().print("%s - Wrong percentages values (the sum is inferior than 100%), check edge_devices.xml file !", getClass().getSimpleName());
 			// Add more devices.
 			if (edgeElement != null) {
 				int missingInstances = getSimulationManager().getScenario().getDevicesCount() - mistOnlyList.size();
@@ -275,8 +274,7 @@ public class ComputingNodesGenerator {
 
 		for (int j = 0; j < devicesInstances; j++) {
 			if (mistOnlyList.size() > getSimulationManager().getScenario().getDevicesCount()) {
-				getSimulationManager().getSimulationLogger().print(getClass().getSimpleName()
-						+ " - Wrong percentages values (the sum is superior than 100%), check edge_devices.xml file !");
+				getSimulationManager().getSimulationLogger().print("%s - Wrong percentages values (the sum is superior than 100%), check edge_devices.xml file !",getClass().getSimpleName());
 				break;
 			}
 

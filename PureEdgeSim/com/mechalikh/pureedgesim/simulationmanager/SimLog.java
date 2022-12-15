@@ -163,13 +163,13 @@ public class SimLog {
 						: 0;
 
 		print("Average CPU utilization                                                 :"
-				+ padLeftSpaces(decimalFormat.format(averageCpuUtilization), 20) + " %");
+				+ padLeftSpaces(decimalFormat.format(averageCpuUtilization), 20) + " %%");
 		print("Average CPU utilization per level                                       :Cloud= "
-				+ padLeftSpaces(decimalFormat.format(averageCloudCpuUtilization), 13) + " %");
+				+ padLeftSpaces(decimalFormat.format(averageCloudCpuUtilization), 13) + " %%");
 		print("                                                                          Edge= "
-				+ padLeftSpaces(decimalFormat.format(averageEdgeCpuUtilization), 13) + " %");
+				+ padLeftSpaces(decimalFormat.format(averageEdgeCpuUtilization), 13) + " %%");
 		print("                                                                          Mist= "
-				+ padLeftSpaces(decimalFormat.format(averageMistCpuUtilization), 13) + " %");
+				+ padLeftSpaces(decimalFormat.format(averageMistCpuUtilization), 13) + " %%");
 
 		resultsList.set(resultsList.size() - 1,
 				resultsList.get(resultsList.size() - 1) + decimalFormat.format(averageCpuUtilization) + ","
@@ -191,12 +191,12 @@ public class SimLog {
 		print("------------------------------------------------------- OUTPUT -------------------------------------------------------");
 		print("");
 		print("Tasks not sent because device died (low energy)                         :"
-				+ padLeftSpaces(decimalFormat.format(notGeneratedBecDeviceDead / generatedTasksCount), 20) + " % ("
+				+ padLeftSpaces(decimalFormat.format(notGeneratedBecDeviceDead / generatedTasksCount), 20) + " %% ("
 				+ notGeneratedBecDeviceDead + " tasks)");
 		print("Tasks sent from edge devices                                            :"
 				+ padLeftSpaces("" + decimalFormat.format(((double) tasksSent * 100) / ((double) generatedTasksCount)),
 						20)
-				+ " % (" + tasksSent + " among " + generatedTasksCount + " generated tasks)");
+				+ " %% (" + tasksSent + " among " + generatedTasksCount + " generated tasks)");
 
 		print("-------------------------------------All values below are based on the sent tasks-------------------------------------");
 		print("Total tasks execution time                                              :"
@@ -209,20 +209,20 @@ public class SimLog {
 				+ padLeftSpaces(decimalFormat.format(totalWaitingTime / executedTasksCount), 20) + " seconds");
 		print("Tasks successfully executed                                             :"
 				+ padLeftSpaces("" + decimalFormat.format((double) (tasksSent - tasksFailed) * 100 / tasksSent), 20)
-				+ " % (" + (tasksSent - tasksFailed) + " among " + tasksSent + " sent tasks)");
+				+ " %% (" + (tasksSent - tasksFailed) + " among " + tasksSent + " sent tasks)");
 
 		print("Tasks failures");
 		print("                              Not executed due to resource unavailablity:"
 				+ padLeftSpaces(decimalFormat.format((double) tasksFailedRessourcesUnavailable * 100 / tasksSent), 20)
-				+ " % (" + tasksFailedRessourcesUnavailable + " tasks)");
+				+ " %% (" + tasksFailedRessourcesUnavailable + " tasks)");
 		print("                                   Executed but failed due to high delay:"
-				+ padLeftSpaces(decimalFormat.format((double) tasksFailedLatency * 100 / tasksSent), 20) + " % ("
+				+ padLeftSpaces(decimalFormat.format((double) tasksFailedLatency * 100 / tasksSent), 20) + " %% ("
 				+ tasksFailedLatency + " tasks from " + tasksSent + " successfully sent tasks)");
 		print("               Tasks execution results not returned due to devices death:"
 				+ padLeftSpaces(decimalFormat.format((double) tasksFailedBeacauseDeviceDead * 100 / tasksSent), 20)
-				+ " % (" + tasksFailedBeacauseDeviceDead + " tasks)");
+				+ " %% (" + tasksFailedBeacauseDeviceDead + " tasks)");
 		print("            Tasks execution results not returned due to devices mobility:"
-				+ padLeftSpaces(decimalFormat.format((double) tasksFailedMobility * 100 / tasksSent), 20) + " % ("
+				+ padLeftSpaces(decimalFormat.format((double) tasksFailedMobility * 100 / tasksSent), 20) + " %% ("
 				+ tasksFailedMobility + " tasks)");
 
 		print("Tasks executed on each level                                            :" + "Cloud= "
@@ -254,20 +254,20 @@ public class SimLog {
 		print("                                                                         " + "  Wan="
 				+ padLeftSpaces(decimalFormat.format(totalWanUsage), 14) + " seconds ("
 				+ decimalFormat.format(totalWanUsage * 100 / (totalLanUsage + totalManUsage + totalWanUsage))
-				+ " % of total usage, WAN used when downloading containers="
+				+ " %% of total usage, WAN used when downloading containers="
 				+ decimalFormat.format(totalWanUsage == 0 ? 0 : containersWanUsage * 100 / totalWanUsage)
-				+ " % of WAN usage )");
+				+ " %% of WAN usage )");
 		print("                                                                         " + "  Man="
 				+ padLeftSpaces(decimalFormat.format(totalManUsage), 14) + " seconds ("
 				+ decimalFormat.format(totalManUsage * 100 / (totalLanUsage + totalManUsage + totalWanUsage))
-				+ " % of total usage, MAN used when downloading containers="
+				+ " %% of total usage, MAN used when downloading containers="
 				+ decimalFormat.format(totalManUsage == 0 ? 0 : containersManUsage * 100 / totalManUsage)
-				+ " % of MAN usage )");
+				+ " %% of MAN usage )");
 		print("                                                                         " + "  Lan="
 				+ padLeftSpaces(decimalFormat.format(totalLanUsage), 14) + " seconds ("
 				+ decimalFormat.format(totalLanUsage * 100 / (totalLanUsage + totalManUsage + totalWanUsage))
-				+ " % of total usage, LAN used when downloading containers="
-				+ decimalFormat.format(containersLanUsage * 100 / totalLanUsage) + " % of LAN usage )");
+				+ " %% of total usage, LAN used when downloading containers="
+				+ decimalFormat.format(containersLanUsage * 100 / totalLanUsage) + " %% of LAN usage )");
 		print("Average transfer speed                                                  :"
 				+ padLeftSpaces(decimalFormat.format(totalBandwidth / transfersCount), 20) + " Mbps  ");
 		// Add these values to the las item of the results list
@@ -396,10 +396,10 @@ public class SimLog {
 				+ padLeftSpaces(decimalFormat.format(deadEdgeDevicesCount), 20) + " devices (Among "
 				+ batteryPoweredDevicesCount + " devices with batteries ("
 				+ decimalFormat.format(((double) deadEdgeDevicesCount) * 100 / (double) batteryPoweredDevicesCount)
-				+ " %))");
+				+ " %%))");
 		print("Average remaining power (devices with batteries that are still alive)   :"
 				+ padLeftSpaces(decimalFormat.format(averageRemainingPowerWh), 20) + " Wh (Average: "
-				+ decimalFormat.format(averageRemainingPower) + " %)");
+				+ decimalFormat.format(averageRemainingPower) + " %%)");
 		if (firstDeviceDeathTime != -1)
 			print("First device died at                                                    :"
 					+ padLeftSpaces("" + firstDeviceDeathTime, 20) + " seconds");
@@ -490,11 +490,15 @@ public class SimLog {
 	}
 
 	public void print(int flag, String newLine, Object... args) {
+		if(args!=null)
+			newLine= String.format(newLine, args);
+		
 		if (simulationManager == null) {
 			System.out.format("    0.0 : %s \n", newLine, args);
 		} else {
 			switch (flag) {
 			case DEFAULT:
+			
 				newLine = padLeftSpaces(decimalFormat.format(simulationManager.getSimulation().clock()), 7) + " (s) : "
 						+ newLine;
 				log.add(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + " - simulation time "
@@ -504,7 +508,7 @@ public class SimLog {
 				log.add(newLine);
 				break;
 			case SAME_LINE:
-				log.set(log.size() - 1, log.get(log.size() - 1) + newLine);
+				log.set(log.size() - 1, log.get(log.size() - 1) + String.format(newLine, args));
 				break;
 			default:
 				break;
@@ -523,7 +527,7 @@ public class SimLog {
 	public void deepLog(String line, Object... args) {
 		if (SimulationParameters.deepLoggingEnabled) {
 			print(DEFAULT, line, args);
-			System.out.println(line);
+			System.out.format(line, args);
 		}
 	}
 

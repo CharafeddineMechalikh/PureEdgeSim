@@ -164,8 +164,7 @@ public class Simulation extends SimulationAbstract {
 		// Then, print the simulation duration
 		SimLog.println("%s - Simulation took : %s", getClass().getSimpleName(),
 				simulatioDuration(startTime, finishTime));
-		SimLog.println("%s - results were saved to the folder: %s", SimulationParameters.outputFolder,
-				getClass().getSimpleName());
+		SimLog.println("%s - results were saved to the folder: %s", getClass().getSimpleName(), SimulationParameters.outputFolder);
 
 	}
 
