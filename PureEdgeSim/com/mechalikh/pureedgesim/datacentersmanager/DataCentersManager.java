@@ -20,7 +20,6 @@
  **/
 package com.mechalikh.pureedgesim.datacentersmanager;
 
-import java.lang.Class;
 import java.lang.reflect.Constructor;
 
 import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
