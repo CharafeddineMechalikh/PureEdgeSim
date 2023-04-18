@@ -40,7 +40,7 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
 	 * The type of this node, whether a cloud data center, an edge data center, or
 	 * an edge/IoT device.
 	 * 
-	 * @see com.mechalikh.pureedgesim.datacentersmanager.ComputingNodesGenerator#generateDatacentersAndDevices()
+	 * @see com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNodesGenerator#generateDatacentersAndDevices()
 	 */
 	protected SimulationParameters.TYPES nodeType;
 
@@ -185,7 +185,7 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
 	/**
 	 * Whether this computing node generates tasks (e.g. an IoT sensor).
 	 * 
-	 * @see ComputingNodesGenerator#generateEdgeDevices()
+	 * @see com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNodesGenerator#generateEdgeDevices()
 	 */
 	public void enableTaskGeneration(boolean generateTasks) {
 		this.isGeneratingTasks = generateTasks;
@@ -195,7 +195,7 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
 	 * @return isGeneratingTasks: If this computing node generates tasks (e.g. an
 	 *         IoT sensor), or not.
 	 * 
-	 * @see ComputingNodesGenerator#generateEdgeDevices()
+	 * @see com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNodesGenerator#generateEdgeDevices()
 	 */
 	public boolean isGeneratingTasks() {
 		return this.isGeneratingTasks;
