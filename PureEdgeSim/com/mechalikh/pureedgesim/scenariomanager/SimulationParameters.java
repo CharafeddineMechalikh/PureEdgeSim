@@ -187,7 +187,7 @@ public class SimulationParameters {
 	/**
 	 * The types of computing nodes.
 	 * 
-	 * @see com.mechalikh.pureedgesim.datacentersmanager.ComputingNodesGenerator#generateDatacentersAndDevices()
+	 * @see com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNodesGenerator#generateDatacentersAndDevices()
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.ComputingNode#setType(TYPES)
 	 */
 	public enum TYPES {
