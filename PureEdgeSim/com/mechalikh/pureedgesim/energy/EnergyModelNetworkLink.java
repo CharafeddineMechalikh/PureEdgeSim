@@ -46,7 +46,7 @@ public class EnergyModelNetworkLink {
 	 * An attribute that implements the Null Object Design Pattern to avoid {@link NullPointerException} when using the
 	 * NULL object instead of attributing null to EnergyModelNetworkLink variables.
 	 */
-	public static final EnergyModelNetworkLink NULL = new EnergyModelNetworkLinkNull();
+	public static final EnergyModelNetworkLink NULL = EnergyModelNetworkLinkNull.getInstance();
 
 	public EnergyModelNetworkLink(final double energyPerBit, NetworkLink link) {
 		this.energyPerBit = energyPerBit;

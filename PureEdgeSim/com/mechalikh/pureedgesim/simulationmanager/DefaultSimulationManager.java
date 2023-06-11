@@ -260,7 +260,7 @@ public class DefaultSimulationManager extends SimulationManager {
 			simulation.terminate();
 			break;
 		default:
-			simLog.print("%s - Unknown event type",this.getClass().getSimpleName());
+			simLog.print("%s - Unknown event type", this.getClass().getSimpleName());
 			break;
 		}
 
@@ -393,8 +393,8 @@ public class DefaultSimulationManager extends SimulationManager {
 		}
 		if (phase == 2 && task.getOffloadingDestination() != ComputingNode.NULL
 				&& task.getOffloadingDestination().getType() != SimulationParameters.TYPES.CLOUD
-				&& !sameLocation(task.getEdgeDevice(), task.getOrchestrator())
-				&& !sameLocation(task.getOrchestrator(), task.getOffloadingDestination())) {
+				&& (!sameLocation(task.getEdgeDevice(), task.getOrchestrator())
+						|| !sameLocation(task.getOrchestrator(), task.getOffloadingDestination()))) {
 			task.setFailureReason(Task.FailureReason.FAILED_DUE_TO_DEVICE_MOBILITY);
 			simLog.incrementTasksFailedMobility(task);
 			return setFailed(task, phase);

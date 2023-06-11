@@ -27,7 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.List; 
+import java.util.List;
 import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -57,9 +57,9 @@ import com.mechalikh.pureedgesim.taskgenerator.Task;
 public class ComputingNodesGenerator {
 
 	/**
-	 * The list that contains all orchestrators. It is used by the computing
-	 * node. In this case, the tasks are sent over the network to one of the
-	 * orchestrators to make decisions.
+	 * The list that contains all orchestrators. It is used by the computing node.
+	 * In this case, the tasks are sent over the network to one of the orchestrators
+	 * to make decisions.
 	 * 
 	 * @see #generateDataCenters(String, TYPES)
 	 * @see com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager#sendTaskToOrchestrator(Task)
@@ -95,8 +95,8 @@ public class ComputingNodesGenerator {
 	protected List<ComputingNode> mistOnlyList;
 
 	/**
-	 * A list that contains all edge devices except sensors (i.e., devices
-	 * without computing capacities).
+	 * A list that contains all edge devices except sensors (i.e., devices without
+	 * computing capacities).
 	 * 
 	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#mistOnly(Task
 	 *      task)
@@ -159,29 +159,27 @@ public class ComputingNodesGenerator {
 	protected List<ComputingNode> allNodesListSensorsExcluded;
 
 	/**
-	 * Initializes the Computing nodes generator.
-	 *
-	 * @param simulationManager  The simulation Manager
-	 * @param mobilityModelClass The mobility model that will be used in the
-	 *                           simulation
-	 * @param computingNodeClass The computing node class that will be used to
-	 *                           generate computing resources
+	 * Constructs a new instance of the computing nodes generator.
+	 * 
+	 * @param simulationManager  The simulation manager to use.
+	 * @param mobilityModelClass The mobility model to use.
+	 * @param computingNodeClass The computing node class to use.
 	 */
 	public ComputingNodesGenerator(SimulationManager simulationManager,
 			Class<? extends MobilityModel> mobilityModelClass, Class<? extends ComputingNode> computingNodeClass) {
+		this.simulationManager = simulationManager;
 		this.mobilityModelClass = mobilityModelClass;
 		this.computingNodeClass = computingNodeClass;
-		this.simulationManager = simulationManager;
-		orchestratorsList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
-		mistOnlyList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
-		mistOnlyListSensorsExcluded = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
-		mistAndCloudListSensorsExcluded = new ArrayList<>(
+		this.orchestratorsList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
+		this.mistOnlyList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
+		this.mistOnlyListSensorsExcluded = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
+		this.mistAndCloudListSensorsExcluded = new ArrayList<>(
 				simulationManager.getScenario().getDevicesCount() + SimulationParameters.numberOfCloudDataCenters);
-		mistAndEdgeListSensorsExcluded = new ArrayList<>(
+		this.mistAndEdgeListSensorsExcluded = new ArrayList<>(
 				simulationManager.getScenario().getDevicesCount() + SimulationParameters.numberOfEdgeDataCenters);
-		allNodesList = new ArrayList<>(simulationManager.getScenario().getDevicesCount()
+		this.allNodesList = new ArrayList<>(simulationManager.getScenario().getDevicesCount()
 				+ SimulationParameters.numberOfEdgeDataCenters + SimulationParameters.numberOfCloudDataCenters);
-		allNodesListSensorsExcluded = new ArrayList<>(simulationManager.getScenario().getDevicesCount()
+		this.allNodesListSensorsExcluded = new ArrayList<>(simulationManager.getScenario().getDevicesCount()
 				+ SimulationParameters.numberOfEdgeDataCenters + SimulationParameters.numberOfCloudDataCenters);
 	}
 
@@ -192,15 +190,15 @@ public class ComputingNodesGenerator {
 	public void generateDatacentersAndDevices() {
 
 		// Generate Edge and Cloud data centers.
-		generateDataCenters(SimulationParameters.cloudDataCentersFile, SimulationParameters.TYPES.CLOUD); 
+		generateDataCenters(SimulationParameters.cloudDataCentersFile, SimulationParameters.TYPES.CLOUD);
 
-		generateDataCenters(SimulationParameters.edgeDataCentersFile, SimulationParameters.TYPES.EDGE_DATACENTER); 
+		generateDataCenters(SimulationParameters.edgeDataCentersFile, SimulationParameters.TYPES.EDGE_DATACENTER);
 
 		// Generate edge devices.
 		generateEdgeDevices();
 
-		getSimulationManager().getSimulationLogger()
-				.print("%s - Datacenters and devices were generated", getClass().getSimpleName());
+		getSimulationManager().getSimulationLogger().print("%s - Datacenters and devices were generated",
+				getClass().getSimpleName());
 
 	}
 
@@ -231,7 +229,9 @@ public class ComputingNodesGenerator {
 
 			// if percentage of generated devices is < 100%.
 			if (mistOnlyList.size() < getSimulationManager().getScenario().getDevicesCount())
-				getSimulationManager().getSimulationLogger().print("%s - Wrong percentages values (the sum is inferior than 100%), check edge_devices.xml file !", getClass().getSimpleName());
+				getSimulationManager().getSimulationLogger().print(
+						"%s - Wrong percentages values (the sum is inferior than 100%), check edge_devices.xml file !",
+						getClass().getSimpleName());
 			// Add more devices.
 			if (edgeElement != null) {
 				int missingInstances = getSimulationManager().getScenario().getDevicesCount() - mistOnlyList.size();
@@ -274,7 +274,9 @@ public class ComputingNodesGenerator {
 
 		for (int j = 0; j < devicesInstances; j++) {
 			if (mistOnlyList.size() > getSimulationManager().getScenario().getDevicesCount()) {
-				getSimulationManager().getSimulationLogger().print("%s - Wrong percentages values (the sum is superior than 100%), check edge_devices.xml file !",getClass().getSimpleName());
+				getSimulationManager().getSimulationLogger().print(
+						"%s - Wrong percentages values (the sum is superior than 100%%), check edge_devices.xml file !",
+						getClass().getSimpleName());
 				break;
 			}
 
@@ -473,8 +475,8 @@ public class ComputingNodesGenerator {
 	}
 
 	/**
-	 * Gets the list containing all generated edge devices including sensors
-	 * (i.e., devices with no computing resources).
+	 * Gets the list containing all generated edge devices including sensors (i.e.,
+	 * devices with no computing resources).
 	 * 
 	 * @see #generateDevicesInstances(Element)
 	 * 
@@ -531,8 +533,7 @@ public class ComputingNodesGenerator {
 	}
 
 	/**
-	 * Gets the list containing edge data centers and edge devices (except
-	 * sensors).
+	 * Gets the list containing edge data centers and edge devices (except sensors).
 	 * 
 	 * @see #generateDataCenters(String, TYPES)
 	 * @see #generateDevicesInstances(Element)

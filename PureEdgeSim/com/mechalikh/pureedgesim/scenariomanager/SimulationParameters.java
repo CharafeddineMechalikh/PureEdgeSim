@@ -191,7 +191,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.ComputingNode#setType(TYPES)
 	 */
 	public enum TYPES {
-		CLOUD, EDGE_DATACENTER, EDGE_DEVICE
+		CLOUD, EDGE_DATACENTER, EDGE_DEVICE, NULL
 	}
 
 	/**

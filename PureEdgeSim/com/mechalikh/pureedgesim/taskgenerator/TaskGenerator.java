@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
-import com.mechalikh.pureedgesim.simulationengine.FutureQueue; 
+import com.mechalikh.pureedgesim.simulationengine.FutureQueue;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 public abstract class TaskGenerator {
@@ -62,10 +62,8 @@ public abstract class TaskGenerator {
 	public TaskGenerator(SimulationManager simulationManager) {
 		taskList = new FutureQueue<>();
 		setSimulationManager(simulationManager);
-		for (int i = 0; i < getSimulationManager().getDataCentersManager().getComputingNodesGenerator()
-				.getMistOnlyList().size(); i++)
-			devicesList.add(getSimulationManager().getDataCentersManager().getComputingNodesGenerator()
-					.getMistOnlyList().get(i));
+		devicesList
+				.addAll(getSimulationManager().getDataCentersManager().getComputingNodesGenerator().getMistOnlyList());
 	}
 
 	/**

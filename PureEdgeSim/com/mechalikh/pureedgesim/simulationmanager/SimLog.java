@@ -42,6 +42,7 @@ import com.mechalikh.pureedgesim.energy.EnergyModelNetworkLink;
 import com.mechalikh.pureedgesim.network.NetworkLink;
 import com.mechalikh.pureedgesim.network.TransferProgress;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.taskgenerator.Task;
 
 public class SimLog {
@@ -122,7 +123,7 @@ public class SimLog {
 	public void showIterationResults(List<Task> finishedTasks) {
 		printTasksRelatedResults();
 		printNetworkRelatedResults();
-		printCPUutilizationResults();
+		printCPUUtilizationResults();
 		printPowerConsumptionResults(finishedTasks);
 		StringBuilder s = new StringBuilder("\n");
 		for (String value : log) {
@@ -133,34 +134,23 @@ public class SimLog {
 		saveLog();
 	}
 
-	protected void printCPUutilizationResults() {
+	protected void printCPUUtilizationResults() {
 		double averageCpuUtilization = 0;
-		double averageCloudCpuUtilization = 0;
-		double averageMistCpuUtilization = 0;
-		double averageEdgeCpuUtilization = 0;
+		double averageCloudCpuUtilization = getCpuUtilizationForNodeType(SimulationParameters.TYPES.CLOUD);
+		double averageEdgeCpuUtilization = getCpuUtilizationForNodeType(SimulationParameters.TYPES.EDGE_DATACENTER);
+		double averageMistCpuUtilization = getCpuUtilizationForNodeType(SimulationParameters.TYPES.EDGE_DEVICE);
 
-		averageCloudCpuUtilization = getCpuUtilization(
-				simulationManager.getDataCentersManager().getComputingNodesGenerator().getCloudOnlyList());
-		averageEdgeCpuUtilization = getCpuUtilization(
-				simulationManager.getDataCentersManager().getComputingNodesGenerator().getEdgeOnlyList());
+		int totalNodes = simulationManager.getDataCentersManager()
+				.getComputingNodesGenerator().getMistOnlyListSensorsExcluded().size() + SimulationParameters.numberOfEdgeDataCenters
+				+ SimulationParameters.numberOfCloudDataCenters;
+		if (totalNodes > 0) {
+			averageCpuUtilization = (averageCloudCpuUtilization + averageMistCpuUtilization + averageEdgeCpuUtilization)
+					/ totalNodes;
+		}
 
-		// only devices with computing capability the devices that have no VM are
-		// considered simple sensors, and will not be counted here
-		averageMistCpuUtilization = getCpuUtilization(simulationManager.getDataCentersManager()
-				.getComputingNodesGenerator().getMistOnlyListSensorsExcluded());
-
-		averageCpuUtilization = (averageCloudCpuUtilization + averageMistCpuUtilization + averageEdgeCpuUtilization)
-				/ (simulationManager.getDataCentersManager().getComputingNodesGenerator()
-						.getMistOnlyListSensorsExcluded().size() + SimulationParameters.numberOfEdgeDataCenters
-						+ SimulationParameters.numberOfCloudDataCenters);
-
-		averageCloudCpuUtilization = averageCloudCpuUtilization / SimulationParameters.numberOfCloudDataCenters;
-		averageEdgeCpuUtilization = averageEdgeCpuUtilization / SimulationParameters.numberOfEdgeDataCenters;
-		averageMistCpuUtilization = simulationManager.getDataCentersManager().getComputingNodesGenerator()
-				.getMistOnlyListSensorsExcluded().size() > 0
-						? averageMistCpuUtilization / simulationManager.getDataCentersManager()
-								.getComputingNodesGenerator().getMistOnlyListSensorsExcluded().size()
-						: 0;
+		averageCloudCpuUtilization /= SimulationParameters.numberOfCloudDataCenters;
+		averageEdgeCpuUtilization /= SimulationParameters.numberOfEdgeDataCenters;
+		averageMistCpuUtilization /= simulationManager.getDataCentersManager().getComputingNodesGenerator().getMistOnlyListSensorsExcluded().size();
 
 		print("Average CPU utilization                                                 :"
 				+ padLeftSpaces(decimalFormat.format(averageCpuUtilization), 20) + " %%");
@@ -176,6 +166,21 @@ public class SimLog {
 						+ decimalFormat.format(averageCloudCpuUtilization) + ","
 						+ decimalFormat.format(averageEdgeCpuUtilization) + ","
 						+ decimalFormat.format(averageMistCpuUtilization) + ",");
+	}
+
+
+
+	private double getCpuUtilizationForNodeType(SimulationParameters.TYPES nodeType) {
+		List<ComputingNode> nodes = getNodesByType(nodeType);
+		return getCpuUtilization(nodes);
+	}
+
+	public List<ComputingNode> getNodesByType(SimulationParameters.TYPES nodeType) {
+	    return simulationManager.getDataCentersManager().getComputingNodesGenerator()
+	            .getAllNodesList()
+	            .stream()
+	            .filter(node -> node.getType().equals(nodeType))
+	            .collect(Collectors.toList());
 	}
 
 	protected double getCpuUtilization(List<ComputingNode> list) {
@@ -490,15 +495,15 @@ public class SimLog {
 	}
 
 	public void print(int flag, String newLine, Object... args) {
-		if(args!=null)
-			newLine= String.format(newLine, args);
-		
+		if (args != null)
+			newLine = String.format(newLine, args);
+
 		if (simulationManager == null) {
 			System.out.format("    0.0 : %s \n", newLine, args);
 		} else {
 			switch (flag) {
 			case DEFAULT:
-			
+
 				newLine = padLeftSpaces(decimalFormat.format(simulationManager.getSimulation().clock()), 7) + " (s) : "
 						+ newLine;
 				log.add(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + " - simulation time "

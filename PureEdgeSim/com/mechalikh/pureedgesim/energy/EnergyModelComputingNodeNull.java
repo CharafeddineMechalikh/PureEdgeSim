@@ -20,6 +20,7 @@
  **/
 package com.mechalikh.pureedgesim.energy;
 
+
 /**
  * A class that implements the Null Object Design Pattern for the
  * {@link EnergyModelComputingNode} class. Needed to avoid
@@ -28,8 +29,29 @@ package com.mechalikh.pureedgesim.energy;
  */
 public class EnergyModelComputingNodeNull extends EnergyModelComputingNode {
 
-	public EnergyModelComputingNodeNull(double maxActiveConsumption, double idleConsumption) {
-		super(maxActiveConsumption, idleConsumption);
+	/**
+	 * 
+	 * Represents a null energy model, used as a placeholder when a energy model
+	 * is expected but none is available or applicable.
+	 */
+	private static final EnergyModelComputingNodeNull instance = new EnergyModelComputingNodeNull();
+	
+
+	/**
+	 * Returns the singleton instance of the ComputingNodeNullObject.
+	 * 
+	 * @return the singleton instance of the ComputingNodeNullObject
+	 */
+	public static EnergyModelComputingNodeNull getInstance() {
+		return instance;
+	}
+	
+	/**
+	 * 
+	 * Private constructor to prevent instantiation from outside the class.
+	 */
+	private EnergyModelComputingNodeNull() {
+		super(0, 0);
 	}
 
 	@Override
@@ -71,5 +93,7 @@ public class EnergyModelComputingNodeNull extends EnergyModelComputingNode {
 	public String getConnectivityType() {
 		return "";
 	}
+
+	
 
 }

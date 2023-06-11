@@ -17,48 +17,70 @@
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
  *     @author Charafeddine Mechalikh
+ *     @since PureEdgeSim 2.0
  **/
 package com.mechalikh.pureedgesim.simulationvisualizer;
 
 import java.awt.Color;
-import java.util.LinkedList;
+import java.util.ArrayList; 
 import org.knowm.xchart.XYSeries.XYSeriesRenderStyle;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters; 
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
+/**
+ * A chart that displays the WAN up and down utilization over time.
+ */
 public class WanChart extends Chart {
+    
+    // We can use an ArrayList instead of a LinkedList for better random access performance.
+    protected ArrayList<Double> wanUpUsage = new ArrayList<>();
+    protected ArrayList<Double> wanDownUsage = new ArrayList<>();
 
-	protected LinkedList<Double> wanUpUsage = new LinkedList<>();
-	protected LinkedList<Double> wanDownUsage = new LinkedList<>();
+    /**
+     * Constructs a new WAN chart with the given title, X and Y axis titles, and simulation manager.
+     *
+     * @param title             the title of the chart
+     * @param xAxisTitle        the title of the X axis
+     * @param yAxisTitle        the title of the Y axis
+     * @param simulationManager the simulation manager
+     */
+    public WanChart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
+        super(title, xAxisTitle, yAxisTitle, simulationManager);
+        getChart().getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
+        // We can use the constant directly instead of computing it every time.
+        updateSize(0.0, 0.0, 0.0, SimulationParameters.wanBandwidthBitsPerSecond / 1000000.0);
+    }
 
-	public WanChart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
-		super(title, xAxisTitle, yAxisTitle, simulationManager);
-		getChart().getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Line);
-		updateSize(0.0, 0.0, 0.0, SimulationParameters.wanBandwidthBitsPerSecond / 1000000.0);// 0.0, clock, ...
-	}
+    /**
+     * Updates the WAN up and down utilization data for the chart.
+     */
+    public void update() {
+        // Get WAN usage in Mbps.
+        double wanUp = simulationManager.getNetworkModel().getWanUpUtilization() / 1000000.0;
+        double wanDown = simulationManager.getNetworkModel().getWanDownUtilization() / 1000000.0;
 
-	public void update() {
-		// get wan usage in Mbps
-		double wanUp = simulationManager.getNetworkModel().getWanUpUtilization() / 1000000.0;
-		double wanDown = simulationManager.getNetworkModel().getWanDownUtilization() / 1000000.0;
+        wanUpUsage.add(wanUp);
+        wanDownUsage.add(wanDown);
 
-		wanUpUsage.add(wanUp);
-		wanDownUsage.add(wanDown);
+        // Remove old data points.
+        int maxDataPoints = (int) (300 / SimulationParameters.chartsUpdateInterval);
+        while (wanUpUsage.size() > maxDataPoints) {
+            wanUpUsage.remove(0);
+            wanDownUsage.remove(0);
+        }
 
-		while (wanUpUsage.size() > 300 / SimulationParameters.chartsUpdateInterval) {
-			wanUpUsage.removeFirst();
-			wanDownUsage.removeFirst();
-		}
+        // Compute the time values for the data points.
+        double[] time = new double[wanUpUsage.size()];
+        double currentTime = simulationManager.getSimulation().clock();
+        for (int i = wanUpUsage.size() - 1; i >= 0; i--) {
+            time[i] = currentTime - ((wanUpUsage.size() - i) * SimulationParameters.chartsUpdateInterval);
+        }
 
-		double[] time = new double[wanUpUsage.size()];
-		double currentTime = simulationManager.getSimulation().clock();
-		for (int i = wanUpUsage.size() - 1; i > 0; i--)
-			time[i] = currentTime - ((wanUpUsage.size() - i) * SimulationParameters.chartsUpdateInterval);
-
-		updateSize(currentTime - 200, currentTime, 0.0, SimulationParameters.wanBandwidthBitsPerSecond / 1000000.0);
-		updateSeries(getChart(), "WanUp", time, toArray(wanUpUsage), SeriesMarkers.NONE, Color.BLACK);
-		updateSeries(getChart(), "WanDown", time, toArray(wanDownUsage), SeriesMarkers.NONE, Color.BLACK);
-	}
+        // Update the chart with the new data.
+        updateSize(currentTime - 200, currentTime, 0.0, SimulationParameters.wanBandwidthBitsPerSecond / 1000000.0);
+        updateSeries(getChart(), "WanUp", time, toArray(wanUpUsage), SeriesMarkers.NONE, Color.BLACK);
+        updateSeries(getChart(), "WanDown", time, toArray(wanDownUsage), SeriesMarkers.NONE, Color.BLACK);
+    }
 }

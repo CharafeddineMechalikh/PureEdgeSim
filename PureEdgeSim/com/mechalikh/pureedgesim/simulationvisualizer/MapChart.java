@@ -31,63 +31,91 @@ import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
+/**
+ * 
+ * This class represents a Map Chart that displays the current state of the
+ * simulation in a scatter plot.
+ * 
+ * It extends the Chart class and implements methods to update the chart with
+ * information about edge devices,
+ * 
+ * edge data centers and cloud CPU utilization.
+ */
 public class MapChart extends Chart {
 
+	/**
+	 * 
+	 * Constructor for MapChart. Initializes the chart with the given title, x and y
+	 * axis titles and the SimulationManager. Sets the default series render style
+	 * to Scatter and the marker size to 4. Calls the updateSize method to set the
+	 * chart size based on the simulation map dimensions.
+	 * 
+	 * @param title             the title of the chart
+	 * @param xAxisTitle        the title of the x axis
+	 * @param yAxisTitle        the title of the y axis
+	 * @param simulationManager the SimulationManager instance
+	 */
 	public MapChart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
 		super(title, xAxisTitle, yAxisTitle, simulationManager);
 		getChart().getStyler().setDefaultSeriesRenderStyle(XYSeriesRenderStyle.Scatter);
 		getChart().getStyler().setMarkerSize(4);
 		updateSize(0.0, (double) SimulationParameters.simulationMapWidth, 0.0,
 				(double) SimulationParameters.simulationMapLength);
-
 	}
 
-	protected void edgeDevices() {
-		// Initialize the X and Y series that will be used to draw the map
-		// Dead devices series
-		List<Double> x_deadEdgeDevicesList = new ArrayList<>();
-		List<Double> y_deadEdgeDevicesList = new ArrayList<>();
-		// Idle devices series
-		List<Double> x_idleEdgeDevicesList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
-		List<Double> y_idleEdgeDevicesList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
-		// Active devices series
-		List<Double> x_activeEdgeDevicesList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
-		List<Double> y_activeEdgeDevicesList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
-		// Browse all devices and create the series
-		for (ComputingNode node :computingNodesGenerator.getMistOnlyList()) {
+	/**
+	 * Updates the map with the current edge devices and their status.
+	 */
+	protected void updateEdgeDevices() {
+		List<Double> xDeadDevices = new ArrayList<>();
+		List<Double> yDeadDevices = new ArrayList<>();
+		List<Double> xIdleDevices = new ArrayList<>();
+		List<Double> yIdleDevices = new ArrayList<>();
+		List<Double> xActiveDevices = new ArrayList<>();
+		List<Double> yActiveDevices = new ArrayList<>();
+
+		for (ComputingNode node : computingNodesGenerator.getMistOnlyList()) {
 			ComputingNode device = node;
-			double Xpos = device.getMobilityModel().getCurrentLocation().getXPos();
-			double Ypos = device.getMobilityModel().getCurrentLocation().getYPos();
+			double xPos = device.getMobilityModel().getCurrentLocation().getXPos();
+			double yPos = device.getMobilityModel().getCurrentLocation().getYPos();
+
 			if (device.isDead()) {
-				x_deadEdgeDevicesList.add(Xpos);
-				y_deadEdgeDevicesList.add(Ypos);
+				xDeadDevices.add(xPos);
+				yDeadDevices.add(yPos);
 			} else if (device.isIdle()) {
-				x_idleEdgeDevicesList.add(Xpos);
-				y_idleEdgeDevicesList.add(Ypos);
-			} else { // If the device is busy
-				x_activeEdgeDevicesList.add(Xpos);
-				y_activeEdgeDevicesList.add(Ypos);
+				xIdleDevices.add(xPos);
+				yIdleDevices.add(yPos);
+			} else {
+				xActiveDevices.add(xPos);
+				yActiveDevices.add(yPos);
 			}
 		}
-		updateSeries(getChart(), "Idle devices", toArray(x_idleEdgeDevicesList), toArray(y_idleEdgeDevicesList),
-				SeriesMarkers.CIRCLE, Color.blue);
 
-		updateSeries(getChart(), "Active devices", toArray(x_activeEdgeDevicesList), toArray(y_activeEdgeDevicesList),
+		updateSeries(getChart(), "Idle devices", toArray(xIdleDevices), toArray(yIdleDevices), SeriesMarkers.CIRCLE,
+				Color.blue);
+		updateSeries(getChart(), "Active devices", toArray(xActiveDevices), toArray(yActiveDevices),
 				SeriesMarkers.CIRCLE, Color.red);
-
-		updateSeries(getChart(), "Dead devices", toArray(x_deadEdgeDevicesList), toArray(y_deadEdgeDevicesList),
-				SeriesMarkers.CIRCLE, Color.LIGHT_GRAY);
+		updateSeries(getChart(), "Dead devices", toArray(xDeadDevices), toArray(yDeadDevices), SeriesMarkers.CIRCLE,
+				Color.LIGHT_GRAY);
 	}
 
+	/**
+	 * 
+	 * Updates the map with information about edge devices, edge data centers and
+	 * cloud CPU utilization.
+	 */
 	public void update() {
 		// Add edge devices to map and display their CPU utilization
-		edgeDevices();
+		updateEdgeDevices();
 		// Add edge data centers to the map and display their CPU utilization
-		edgeDataCenters();
-		// Display cloud CPU utilization
+		updateEdgeDataCenters();
 	}
+	
 
-	protected void edgeDataCenters() {
+	/**
+	 * Updates the map with the current edge data centers and their status.
+	 */
+	protected void updateEdgeDataCenters() {
 		// Only if Edge computing is used
 		if (simulationManager.getScenario().getStringOrchArchitecture().contains("EDGE")
 				|| simulationManager.getScenario().getStringOrchArchitecture().equals("ALL")) {

@@ -27,7 +27,7 @@ import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
 import com.mechalikh.pureedgesim.network.NetworkLink;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager;
-import com.mechalikh.pureedgesim.taskgenerator.Task; 
+import com.mechalikh.pureedgesim.taskgenerator.Task;
 
 /**
  * An interface to be implemented by each class that provides "computing node"
@@ -40,20 +40,31 @@ import com.mechalikh.pureedgesim.taskgenerator.Task;
  * @since PureEdgeSim 5.0
  */
 public interface ComputingNode {
+	
+	/**
+	 * An enum representing the orientation of a network link.
+	 * 
+	 * UP_LINK: Represents an upward link from the device to the network. DOWN_LINK:
+	 * Represents a downward link from the network to the device. DEVICE_TO_DEVICE:
+	 * Represents a link between two devices.
+	 */
+	public enum LinkOrientation {
+		UP_LINK, DOWN_LINK, DEVICE_TO_DEVICE;
+	}
 
 	/**
 	 * An attribute that implements the Null Object Design Pattern to avoid
-	 * NullPointerException when using the NULL object instead of attributing null
-	 * to EnergyModelNetworkLink variables.
+	 * NullPointerException when using the NULL_COMPUTING_NODE object instead of
+	 * attributing null to ComputingNode variables.
 	 */
-	ComputingNode NULL = new ComputingNodeNull();
+	ComputingNode NULL = ComputingNodeNull.getInstance();
 
 	/**
 	 * Called when a task has been offloaded to this computing node. The task will
 	 * be added to the execution queue.
 	 * 
 	 * @param task the task to execute.
-	 * @return 
+	 * @return
 	 */
 	void submitTask(Task task);
 
@@ -119,7 +130,7 @@ public interface ComputingNode {
 	 * @see #isOrchestrator()
 	 */
 	void setAsOrchestrator(boolean isOrchestrator);
-	
+
 	/**
 	 * Sets the node that orchestrates the tasks on behalf of this one. Used only
 	 * when the type of this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}
@@ -168,19 +179,16 @@ public interface ComputingNode {
 	boolean isGeneratingTasks();
 
 	/**
-	 * Gets the network link that is used currently to send data to the cloud or
-	 * edge data centers. Used only when the type of this node is
-	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * Returns the current network link of the specified type. For example, if the
+	 * type is {@link LinkOrientation#UP_LINK}, it returns the link that is used
+	 * currently to send data to the cloud or edge data centers. Used only when the
+	 * type of this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
-	 * @return the network link used to transfer data to the cloud or edge data
-	 *         centers.
-	 * @see #setCurrentUpLink(NetworkLink)
-	 * @see #setCurrentDownLink(NetworkLink)
-	 * @see #getCurrentDownLink()
-	 * @see #getCurrentWiFiLink()
-	 * @see #setCurrentWiFiLink(NetworkLink)
+	 * @param linkType the type of the link to retrieve
+	 * @return the current network link of the specified type
+	 * @see #setCurrentLink(NetworkLink,LinkOrientation)
 	 */
-	NetworkLink getCurrentUpLink();
+	NetworkLink getCurrentLink(LinkOrientation linkType);
 
 	/**
 	 * Sets the network link that is used currently to send data to the cloud or
@@ -188,72 +196,9 @@ public interface ComputingNode {
 	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
 	 * @param currentUpLink the network link.
-	 * @see #getCurrentUpLink()
-	 * @see #getCurrentDownLink()
-	 * @see #setCurrentDownLink(NetworkLink)
-	 * @see #getCurrentWiFiLink()
-	 * @see #setCurrentWiFiLink(NetworkLink)
+	 * @see #getCurrentLink(LinkOrientation)
 	 */
-	void setCurrentUpLink(NetworkLink currentUpLink);
-
-	/**
-	 * Gets the network link that is used currently to receive data from the cloud
-	 * or edge data centers. Used only when the type of this node is
-	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
-	 * 
-	 * @return the network link used to transfer data from the cloud or edge data
-	 *         centers to this device.
-	 * @see #setCurrentDownLink(NetworkLink)
-	 * @see #setCurrentUpLink(NetworkLink)
-	 * @see #getCurrentUpLink()
-	 * @see #getCurrentWiFiLink()
-	 * @see #setCurrentWiFiLink(NetworkLink)
-	 */
-	NetworkLink getCurrentDownLink();
-
-	/**
-	 * Sets the network link that is used currently to receive data from the cloud
-	 * or edge data centers. Used only when the type of this node is
-	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
-	 * 
-	 * @see #setCurrentUpLink(NetworkLink)
-	 * @see #getCurrentUpLink()
-	 * @see #getCurrentDownLink()
-	 * @see #getCurrentWiFiLink()
-	 * @see #setCurrentWiFiLink(NetworkLink)
-	 * 
-	 * @param currentDownLink the network link.
-	 */
-	void setCurrentDownLink(NetworkLink currentDownLink);
-
-	/**
-	 * Gets the network link that is used currently to send data to nearby edge
-	 * devices (peer to peer).Used only when the type of this node is
-	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
-	 * 
-	 * @return the network link used to transfer to nearby edge devices.
-	 * @see #setCurrentWiFiLink(NetworkLink)
-	 * @see #getCurrentUpLink()
-	 * @see #getCurrentDownLink()
-	 * @see #setCurrentDownLink(NetworkLink)
-	 * @see #setCurrentUpLink(NetworkLink)
-	 */
-	NetworkLink getCurrentWiFiLink();
-
-	/**
-	 * Sets the network link that is used currently to send data to nearby edge
-	 * devices (peer to peer). Used only when the type of this node is
-	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
-	 * 
-	 * @param currentWiFiDeviceToDeviceLink the network link used to transfer to
-	 *                                      nearby edge devices.
-	 * @see #getCurrentWiFiLink()
-	 * @see #getCurrentUpLink()
-	 * @see #getCurrentDownLink()
-	 * @see #setCurrentDownLink(NetworkLink)
-	 * @see #setCurrentUpLink(NetworkLink)
-	 */
-	void setCurrentWiFiLink(NetworkLink currentWiFiDeviceToDeviceLink);
+	void setCurrentLink(NetworkLink link, LinkOrientation linkType);
 
 	/**
 	 * Whether this device is out of battery. Used only when the type of this node
@@ -397,14 +342,16 @@ public interface ComputingNode {
 	void setApplicationType(int applicationType);
 
 	/**
-	 * Gets the amount storage (in Megabytes) that is available on this computing node.
+	 * Gets the amount storage (in Megabytes) that is available on this computing
+	 * node.
 	 * 
 	 * @return the available storage.
 	 */
 	double getAvailableStorage();
 
 	/**
-	 * Sets the amount storage (in Megabytes) that is available on this computing node.
+	 * Sets the amount storage (in Megabytes) that is available on this computing
+	 * node.
 	 * 
 	 * @param availableStorage the available storage.
 	 */
@@ -512,7 +459,8 @@ public interface ComputingNode {
 	double getRamCapacity();
 
 	/**
-	 * Gets the amount of RAM (in Megabytes) that is available on this computing node.
+	 * Gets the amount of RAM (in Megabytes) that is available on this computing
+	 * node.
 	 * 
 	 * @return the amount of available RAM.
 	 * 
@@ -534,7 +482,8 @@ public interface ComputingNode {
 	void setRam(double ram);
 
 	/**
-	 * Sets the amount of RAM (in Megabytes) that is available on this computing node.
+	 * Sets the amount of RAM (in Megabytes) that is available on this computing
+	 * node.
 	 * 
 	 * @param ram the available RAM.
 	 * 

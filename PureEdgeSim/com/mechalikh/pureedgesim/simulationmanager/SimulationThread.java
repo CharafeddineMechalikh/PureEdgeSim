@@ -195,11 +195,15 @@ public class SimulationThread {
 		Constructor<?> networkConstructor = simulation.networkModel.getConstructor(SimulationManager.class);
 		networkConstructor.newInstance(simulationManager);
 
+		long startTime = System.currentTimeMillis();
+
 		// Generate all data centers, servers, an devices
 		SimLog.println(this.getClass().getSimpleName() + " - Initializing the Datacenters Manager Module...");
 		new DataCentersManager(simulationManager, simulation.mobilityModel, simulation.computingNode,
 				simulation.topologyCreator);
-
+		long endTime = System.currentTimeMillis();
+		System.out.println("Time taken: " + (endTime - startTime) + " milliseconds");
+		
 		// Generate tasks list
 		SimLog.println(this.getClass().getSimpleName() + " - Initializing the Task Generator...");
 		Constructor<?> tasksGeneratorConstructor = simulation.tasksGenerator.getConstructor(SimulationManager.class);
