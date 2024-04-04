@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mechalikh</groupId>
 	<artifactId>pureedgesim</artifactId>
-	<version>5.1.0</version>
+	<version>5.2.0</version>
 	<name>PureEdgeSim</name>
 	<url>https://github.com/CharafeddineMechalikh/PureEdgeSim</url>
 	<description>A simualtor for edge computing environments</description>
@@ -360,10 +360,22 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>de.biomedical-imaging.edu.wlu.cs.levy.cg</groupId>
+			<artifactId>kdtree</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>4.0.0</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.jFuzzyLogic</groupId>
+			<artifactId>jFuzzyLogic</artifactId>
+			<version>3.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/PureEdgeSim/libs/jFuzzyLogic_v3.0.jar</systemPath>
 		</dependency>
 	</dependencies>
 </project>

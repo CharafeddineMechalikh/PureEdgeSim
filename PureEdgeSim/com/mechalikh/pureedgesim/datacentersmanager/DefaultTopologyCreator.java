@@ -23,6 +23,7 @@ package com.mechalikh.pureedgesim.datacentersmanager;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream; 
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,6 +33,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode.LinkOrientation;
 import com.mechalikh.pureedgesim.network.InfrastructureGraph;
 import com.mechalikh.pureedgesim.network.NetworkLink;
 import com.mechalikh.pureedgesim.network.NetworkLink.NetworkLinkTypes;
@@ -47,77 +49,83 @@ import com.mechalikh.pureedgesim.network.NetworkLinkWifiUp;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
+
+/**
+ * A class that generates a default topology graph for the simulation. It reads
+ * the topology information from an XML file and creates the corresponding
+ * infrastructure graph.
+ * 
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 5.0
+ */
 public class DefaultTopologyCreator extends TopologyCreator {
+
+	/**
+	 * Creates a new DefaultTopologyCreator object with the specified simulation
+	 * manager and computing nodes generator.
+	 * 
+	 * @param simulationManager       the simulation manager
+	 * @param computingNodesGenerator the computing nodes generator
+	 */
 	public DefaultTopologyCreator(SimulationManager simulationManager,
 			ComputingNodesGenerator computingNodesGenerator) {
 		super(simulationManager, computingNodesGenerator);
 	}
 
+	/**
+	 * Generates the topology graph by reading the topology information from an XML
+	 * file and creating the corresponding infrastructure graph.
+	 */
 	@Override
 	public void generateTopologyGraph() {
-		// Here we will generate our topology.
-		// In edge devices.xml file, devices can connect using 4G LTE, WiFi, and
-		// Ethernet.
-		// Let's connect all the edge devices to the cloud.
+		// Create a WAN link to connect all the edge devices to the cloud data center
 		ComputingNode wanNode = createWanLink();
 
-		// Now, we link each edge device with that cloud data center
-		for (int i = 0; i < computingNodesGenerator.getMistOnlyList().size(); i++)
-			// The link is obviously a WAN link, but can be either 4G LTE, WiFi, or
-			// Ethernet, according to the edge_devices.xml file
-			connect(computingNodesGenerator.getMistOnlyList().get(i), wanNode, NetworkLinkTypes.WAN);
-
-		// Now that we have linked all the devices to the cloud, let's link edge data
-		// centers together (in this case the link is a MAN link).
-		// To make it easy, the links are defined in edge_datacenters.xml file. We just
-		// have to call the function below.
-		// In this scenario (see edge_data centers.xml file). We have three data
-		// centers. The first one is not peripheral, which means edge devices cannot be
-		// linked to it directly. The other two are peripheral, meaning edge devices can
-		// connect to them directly.
-		// These data centers are interconnected (a link from 1 to 2, 2 to 3, and 3 to
-		// 1)
-		generateTopologyFromXmlFile();
-
-		// At this stage we have connected all edge devices to the cloud, and connected
-		// the edge data centers together. But we didn't connect any edge data center
-		// with the cloud. Let's connect at least one of them. We chose the first one.
-		infrastructureTopology.addLink(
-				new NetworkLinkWanUp(getDataCenterByName("dc1"), wanNode, simulationManager, NetworkLinkTypes.WAN));
-		infrastructureTopology.addLink(
-				new NetworkLinkWanDown(wanNode, getDataCenterByName("dc1"), simulationManager, NetworkLinkTypes.WAN));
-
-		// What remains is to link edge devices with the closest edge data center
-		for (ComputingNode device : computingNodesGenerator.getMistOnlyList()) {
-			// Link this device with a close edge data center
-			double range = SimulationParameters.edgeDataCentersRange;
-			ComputingNode closestDC = ComputingNode.NULL;
-			for (ComputingNode edgeDC : computingNodesGenerator.getEdgeOnlyList()) {
-				if (device.getMobilityModel().distanceTo(edgeDC) <= range && edgeDC.isPeripheral()) {
-					range = device.getMobilityModel().distanceTo(edgeDC);
-					closestDC = edgeDC;
-				}
-			}
-			// Notice that this link is given the LAN tag. When mobile devices change there
-			// location, they will automatically connect with the closes peripheral edge
-			// data center.
-
-			connect(device, closestDC, NetworkLinkTypes.LAN);
-
-			// Now for each device, we will create a (device to device LAN link). This link
-			// will be used for peer to peer communications (from edge device to edge
-			// device). We set the destination to the closest data center just for now.
-			// It will be replaced by a nearby edge device when needed.
-			// No need to add this link to the infrastructure graph, as it is needed when
-			// computing shortest paths. If we do so, it will only increase the complexity.
-			device.setCurrentWiFiLink(
-					new NetworkLinkWifiDeviceToDevice(device, closestDC, simulationManager, NetworkLinkTypes.LAN));
+		// Connect each edge device to the cloud data center using WAN link
+		for (ComputingNode edgeDevice : computingNodesGenerator.getMistOnlyList()) {
+			connect(edgeDevice, wanNode, NetworkLinkTypes.WAN);
 		}
 
-		infrastructureTopology.savePathsToMap(
-				simulationManager.getDataCentersManager().getComputingNodesGenerator().getEdgeAndCloudList());
+		// Generate the topology of edge data centers from an XML file
+		generateTopologyFromXmlFile();
+
+		// Connect one edge data center with the cloud data center using WAN link
+		ComputingNode dc1 = getDataCenterByName("dc1");
+		infrastructureTopology.addLink(new NetworkLinkWanUp(dc1, wanNode, simulationManager, NetworkLinkTypes.WAN));
+		infrastructureTopology.addLink(new NetworkLinkWanDown(wanNode, dc1, simulationManager, NetworkLinkTypes.WAN));
+
+		// Connect each edge device with the closest edge data center using LAN link
+		double range = SimulationParameters.edgeDataCentersRange;
+		for (ComputingNode edgeDevice : computingNodesGenerator.getMistOnlyList()) {
+			ComputingNode closestDC = ComputingNode.NULL;
+			double shortestDistance = Double.MAX_VALUE;
+			for (ComputingNode edgeDC : computingNodesGenerator.getEdgeOnlyList()) {
+				if (edgeDC.isPeripheral()) {
+					double distance = edgeDevice.getMobilityModel().distanceTo(edgeDC);
+					if (distance <= range && distance < shortestDistance) {
+						shortestDistance = distance;
+						closestDC = edgeDC;
+					}
+				}
+			}
+			connect(edgeDevice, closestDC, NetworkLinkTypes.LAN);
+
+			// Set the current link of the edge device to the closest edge data center
+			edgeDevice.setCurrentLink(
+					new NetworkLinkWifiDeviceToDevice(edgeDevice, closestDC, simulationManager, NetworkLinkTypes.LAN),
+					LinkOrientation.DEVICE_TO_DEVICE);
+		}
+
+		// Save the shortest paths between all computing nodes
+		infrastructureTopology.savePathsToMap(computingNodesGenerator.getEdgeAndCloudList());
 	}
 
+	/**
+	 * This function creates a WAN link between the cloud data center and the
+	 * infrastructure node.
+	 * 
+	 * @return the WAN node used for linking edge devices to the cloud.
+	 */
 	protected ComputingNode createWanLink() {
 
 		// To do so, first let's get the cloud data center.
@@ -147,8 +155,10 @@ public class DefaultTopologyCreator extends TopologyCreator {
 
 	}
 
+	/**
+	 * Generates the network topology from the edge data centers file.
+	 */
 	protected void generateTopologyFromXmlFile() {
-		// Fill list with edge data centers
 		try (InputStream serversFile = new FileInputStream(SimulationParameters.edgeDataCentersFile)) {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 
@@ -164,70 +174,113 @@ public class DefaultTopologyCreator extends TopologyCreator {
 				Element networkLink = (Element) networkLinks.item(i);
 				createNetworkLink(networkLink);
 			}
-		} catch (SAXException | IOException | ParserConfigurationException e) {
+		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Creates a network link between two data centers.
+	 *
+	 * @param networkLinkElement the XML element containing the network link
+	 *                           information. It should have "from" and "to" child
+	 *                           elements with the names of the data centers to
+	 *                           connect.
+	 */
 	protected void createNetworkLink(Element networkLinkElement) {
 		ComputingNode dcFrom = getDataCenterByName(
 				networkLinkElement.getElementsByTagName("from").item(0).getTextContent());
 		ComputingNode dcTo = getDataCenterByName(
 				networkLinkElement.getElementsByTagName("to").item(0).getTextContent());
+		// Connect the data centers with a MAN link in both directions
 		infrastructureTopology.addLink(new NetworkLinkMan(dcFrom, dcTo, simulationManager, NetworkLinkTypes.MAN));
 		infrastructureTopology.addLink(new NetworkLinkMan(dcTo, dcFrom, simulationManager, NetworkLinkTypes.MAN));
 	}
 
+	/**
+	 * Finds a data center in the list of edge data centers by name.
+	 *
+	 * @param name the name of the data center to find.
+	 * @return the data center with the given name, or ComputingNode.NULL if it was
+	 *         not found. Time complexity: O(n), where n is the number of edge data
+	 *         centers.
+	 */
 	protected ComputingNode getDataCenterByName(String name) {
-		// Check the edge data centers list
-		for (int i = 0; i < computingNodesGenerator.getEdgeOnlyList().size(); i++) {
-			ComputingNode edgeDC = computingNodesGenerator.getEdgeOnlyList().get(i);
-			if (edgeDC.getName().equals(name))
-				return edgeDC;
+		for (ComputingNode dc : computingNodesGenerator.getEdgeOnlyList()) {
+			if (dc.getName().equals(name)) {
+				return dc;
+			}
 		}
 		return ComputingNode.NULL;
 	}
 
-	protected void connect(ComputingNode computingNode1, ComputingNode computingNode2, NetworkLinkTypes type) {
+	/**
+	 * Connects two computing nodes with a network link of the specified type.
+	 *
+	 * @param computingNode1 the first computing node to connect
+	 * @param computingNode2 the second computing node to connect
+	 * @param type           the type of network link to create
+	 * @throws IllegalArgumentException if the connectivity type of either computing
+	 *                                  node is not wifi, ethernet, or cellular
+	 *                                  (case-sensitive)
+	 */
+	protected void connect(ComputingNode computingNode1, ComputingNode computingNode2, NetworkLinkTypes type)
+			throws IllegalArgumentException {
 		NetworkLink up;
 		NetworkLink down;
 
-		// If this device is connected using WiFi, then create a WiFi link
-		if ("wifi".equals(computingNode1.getEnergyModel().getConnectivityType())) {
+		// Determine the connectivity type of the first computing node
+		String connectivityType = computingNode1.getEnergyModel().getConnectivityType();
+
+		// Create the appropriate network link based on the connectivity type
+		switch (connectivityType) {
+		case "wifi":
 			up = new NetworkLinkWifiUp(computingNode1, computingNode2, simulationManager, type);
 			down = new NetworkLinkWifiDown(computingNode2, computingNode1, simulationManager, type);
-		} else
-		// If this device is connected using cellular network, then create a cellular
-		// link
-		if ("cellular".equals(computingNode1.getEnergyModel().getConnectivityType())) {
+			break;
+		case "cellular":
 			up = new NetworkLinkCellularUp(computingNode1, computingNode2, simulationManager, type);
 			down = new NetworkLinkCellularDown(computingNode2, computingNode1, simulationManager, type);
-		} else
-		// If this device is connected using Ethernet, then create an Ethernet link
-		if ("ethernet".equals(computingNode1.getEnergyModel().getConnectivityType())) {
+			break;
+		case "ethernet":
 			up = new NetworkLinkEthernet(computingNode1, computingNode2, simulationManager, type);
 			down = new NetworkLinkEthernet(computingNode2, computingNode1, simulationManager, type);
-		} else {
-			throw new IllegalArgumentException(getClass().getSimpleName()
-					+ " - Unknown connectivity type, check the edge_devices.xml file, available types for edge devices are: wifi, ethernet, and cellular (case sensitive)");
+			break;
+		default:
+			throw new IllegalArgumentException(
+					getClass().getSimpleName() + " - Unknown connectivity type: " + connectivityType
+							+ ". Available types for edge devices are: wifi, ethernet, and cellular (case sensitive)");
 		}
 
-		// Add those links to the topology
+		// Add the links to the topology
 		infrastructureTopology.addLink(up);
 		infrastructureTopology.addLink(down);
 
-		// If this link is used to connect with the closest edge server
+		// If this link is used to connect with the closest edge server, set the current
+		// links of computingNode1
 		if (type == NetworkLinkTypes.LAN) {
-			computingNode1.setCurrentUpLink(up);
-			computingNode1.setCurrentDownLink(down);
+			computingNode1.setCurrentLink(up, LinkOrientation.UP_LINK);
+			computingNode1.setCurrentLink(down, LinkOrientation.DOWN_LINK);
 		}
 	}
 
+	/**
+	 * Returns the simulation manager responsible for running the simulation.
+	 *
+	 * @return the simulation manager
+	 */
 	public SimulationManager getSimulationManager() {
 		return simulationManager;
 	}
 
-	public InfrastructureGraph getTopology() {
+	/**
+	 * Returns the topology of the infrastructure as an {@link InfrastructureGraph}
+	 * object.
+	 *
+	 * @return the infrastructure topology
+	 */
+	public InfrastructureGraph getInfrastructureTopology() {
 		return infrastructureTopology;
 	}
+
 }

@@ -33,15 +33,49 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * An abstract class that represents a chart.
+ */
 public abstract class Chart {
 
+	/**
+	 * The computing nodes generator used to generate data.
+	 */
 	protected ComputingNodesGenerator computingNodesGenerator;
+
+	/**
+	 * The XYChart used to display data.
+	 */
 	protected XYChart chart;
+
+	/**
+	 * The height of the chart.
+	 */
 	protected static int height = 270;
+
+	/**
+	 * The width of the chart.
+	 */
 	protected static int width = 450;
+
+	/**
+	 * The clock used to track the simulation time.
+	 */
 	protected int clock = -1;
+
+	/**
+	 * The simulation manager used to manage the simulation.
+	 */
 	protected SimulationManager simulationManager;
 
+	/**
+	 * Constructs a new Chart object.
+	 * 
+	 * @param title             the title of the chart
+	 * @param xAxisTitle        the title of the X axis
+	 * @param yAxisTitle        the title of the Y axis
+	 * @param simulationManager the simulation manager used to manage the simulation
+	 */
 	public Chart(String title, String xAxisTitle, String yAxisTitle, SimulationManager simulationManager) {
 		chart = new XYChartBuilder().height(height).width(width).theme(ChartTheme.Matlab).title(title)
 				.xAxisTitle(xAxisTitle).yAxisTitle(yAxisTitle).build();
@@ -49,10 +83,22 @@ public abstract class Chart {
 		chart.getStyler().setLegendVisible(true);
 		this.simulationManager = simulationManager;
 		computingNodesGenerator = simulationManager.getDataCentersManager().getComputingNodesGenerator();
+
 	}
 
+	/**
+	 * Updates the chart.
+	 */
 	protected abstract void update();
 
+	/**
+	 * Updates the size of the chart.
+	 * 
+	 * @param minXValue the minimum value of the X axis
+	 * @param maxXValue the maximum value of the X axis
+	 * @param minYValue the minimum value of the Y axis
+	 * @param maxYValue the maximum value of the Y axis
+	 */
 	protected void updateSize(Double minXValue, Double maxXValue, Double minYValue, Double maxYValue) {
 		chart.getStyler().setXAxisMin(minXValue);
 		chart.getStyler().setXAxisMax(maxXValue);
@@ -60,6 +106,16 @@ public abstract class Chart {
 		chart.getStyler().setYAxisMax(maxYValue);
 	}
 
+	/**
+	 * Updates a series in the chart.
+	 * 
+	 * @param chart  the chart to update
+	 * @param name   the name of the series
+	 * @param X      the X values of the series
+	 * @param Y      the Y values of the series
+	 * @param marker the marker type of the series
+	 * @param color  the color of the series
+	 */
 	protected static void updateSeries(XYChart chart, String name, double[] X, double[] Y, Marker marker, Color color) {
 		if (chart.getSeriesMap().containsKey(name)) {
 			chart.updateXYSeries(name, X, Y, null);
@@ -71,17 +127,25 @@ public abstract class Chart {
 		}
 	}
 
+	/**
+	 * Gets the chart.
+	 * 
+	 * @return the chart
+	 */
 	public XYChart getChart() {
 		return chart;
 	}
 
+	/**
+	 * Converts a list of doubles to an array of doubles.
+	 * 
+	 * @param list the list to convert
+	 * @return the array of doubles
+	 */
 	protected double[] toArray(List<Double> list) {
-		int size = Math.max(list.size(), 1); // To prevent returning empty arrays
-		double[] array = new double[size];
-		array[0] = -100; // To prevent returning empty arrays
-		for (int i = 0; i < list.size(); i++) {
-			array[i] = list.get(i);
-		}
-		return array;
+		if (list.size() == 0)
+			list.add(-100.0);
+		return list.stream().mapToDouble(Double::doubleValue).toArray();
 	}
+
 }

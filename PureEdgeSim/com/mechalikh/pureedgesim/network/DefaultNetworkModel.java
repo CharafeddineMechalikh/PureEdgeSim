@@ -26,6 +26,7 @@ import java.util.List;
 import org.jgrapht.GraphPath;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
+import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode.LinkOrientation;
 import com.mechalikh.pureedgesim.energy.EnergyModelComputingNode;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
@@ -78,31 +79,31 @@ public class DefaultNetworkModel extends NetworkModel {
 
 		// If both are edge devices (one hop far from each other), send directly.
 		if (from.getType() == TYPES.EDGE_DEVICE && to.getType() == TYPES.EDGE_DEVICE) {
-			from.getCurrentWiFiLink().setDst(to);
+			from.getCurrentLink(LinkOrientation.DEVICE_TO_DEVICE).setDst(to);
 			vertexList.addAll(List.of(from, to));
-			edgeList.add(from.getCurrentWiFiLink());
+			edgeList.add(from.getCurrentLink(LinkOrientation.DEVICE_TO_DEVICE));
 
 		} // Otherwise, if the first is a mobile edge device
 		else if (from.getType() == TYPES.EDGE_DEVICE && to.getType() == TYPES.EDGE_DATACENTER) { 
 			long id = simulationManager.getDataCentersManager().getTopology()
-					.getUniqueId(from.getCurrentUpLink().getDst().getId(), to.getId());
+					.getUniqueId(from.getCurrentLink(LinkOrientation.UP_LINK).getDst().getId(), to.getId());
 			GraphPath<ComputingNode, NetworkLink> path = simulationManager.getDataCentersManager().getTopology()
 					.getPathsMap().get(id);
 			vertexList.add(from);
 			vertexList.addAll(path.getVertexList());
-			edgeList.add(from.getCurrentUpLink());
+			edgeList.add(from.getCurrentLink(LinkOrientation.UP_LINK));
 			edgeList.addAll(path.getEdgeList());
 
 		} // Else, if the second is a mobile edge device
 		else if (from.getType() == TYPES.EDGE_DATACENTER && to.getType() == TYPES.EDGE_DEVICE) {
 			long id = simulationManager.getDataCentersManager().getTopology().getUniqueId(from.getId(),
-					to.getCurrentDownLink().getSrc().getId());
+					to.getCurrentLink(LinkOrientation.DOWN_LINK).getSrc().getId());
 			GraphPath<ComputingNode, NetworkLink> path = simulationManager.getDataCentersManager().getTopology()
 					.getPathsMap().get(id);
 			vertexList.addAll(path.getVertexList());
 			vertexList.add(from);
 			edgeList.addAll(path.getEdgeList());
-			edgeList.add(to.getCurrentDownLink()); 
+			edgeList.add(to.getCurrentLink(LinkOrientation.DOWN_LINK)); 
 			
 		} 
 		else { // Otherwise, if one of them is and edge device but not mobile, or the other is a cloud, or any other cases.

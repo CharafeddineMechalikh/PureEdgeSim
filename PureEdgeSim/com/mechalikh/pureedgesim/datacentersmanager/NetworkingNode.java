@@ -23,43 +23,67 @@ package com.mechalikh.pureedgesim.datacentersmanager;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mechalikh.pureedgesim.network.NetworkLink; 
+import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode.LinkOrientation;
+import com.mechalikh.pureedgesim.network.NetworkLink;
+import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
-public abstract class NetworkingNode extends AbstractNode {
+public abstract class NetworkingNode extends AbstractNode  {
 	protected NetworkLink currentUpLink = NetworkLink.NULL;
 	protected NetworkLink currentDownLink = NetworkLink.NULL;
-	protected NetworkLink currentDeviceToDeviceWifiLink = NetworkLink.NULL; 
+	protected NetworkLink currentDeviceToDeviceWifiLink = NetworkLink.NULL;
 	List<ComputingNode> vertexList = new ArrayList<>();
 	List<NetworkLink> edgeList = new ArrayList<>();
-	
+
 	protected NetworkingNode(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
 
-	public NetworkLink getCurrentUpLink() {
-		return currentUpLink;
+	/**
+	 * Returns the current network link of the specified type. For example, if the
+	 * type is {@link LinkOrientation#UP_LINK}, it returns the link that is used currently
+	 * to send data to the cloud or edge data centers. Used only when the type of
+	 * this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * 
+	 * @param linkType the type of the link to retrieve
+	 * @return the current network link of the specified type
+	 * @see #setCurrentLink(NetworkLink,LinkOrientation)
+	 */
+	public NetworkLink getCurrentLink(LinkOrientation linkType) {
+		switch (linkType) {
+		case UP_LINK:
+			return this.currentUpLink;
+		case DOWN_LINK:
+			return this.currentUpLink;
+		case DEVICE_TO_DEVICE:
+			return this.currentDeviceToDeviceWifiLink;
+		default:
+			throw new IllegalArgumentException("Invalid link type: " + linkType);
+		}
 	}
 
-	public void setCurrentUpLink(NetworkLink currentUpLink) {
-		this.currentUpLink = currentUpLink;
+	/**
+	 * Sets the network link that is used currently to send data to the cloud or
+	 * edge data centers.Used only when the type of this node is
+	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * 
+	 * @param currentUpLink the network link.
+	 * @see #getCurrentLink(LinkOrientation)
+	 */
+	public void setCurrentLink(NetworkLink link, LinkOrientation linkType) {
+		switch (linkType) {
+		case UP_LINK:
+			this.currentUpLink = link;
+			break;
+		case DOWN_LINK:
+			this.currentUpLink = link;
+			break;
+		case DEVICE_TO_DEVICE:
+			this.currentDeviceToDeviceWifiLink = link;
+			break;
+		default:
+			throw new IllegalArgumentException("Invalid link type: " + linkType);
+		}
 	}
-
-	public NetworkLink getCurrentDownLink() {
-		return currentDownLink;
-	}
-
-	public void setCurrentDownLink(NetworkLink currentDownLink) {
-		this.currentDownLink = currentDownLink;
-	}
-
-	public NetworkLink getCurrentWiFiLink() {
-		return currentDeviceToDeviceWifiLink;
-	}
-
-	public void setCurrentWiFiLink(NetworkLink currentWiFiDeviceToDeviceLink) {
-		this.currentDeviceToDeviceWifiLink = currentWiFiDeviceToDeviceLink;
-	}
-	
 
 }

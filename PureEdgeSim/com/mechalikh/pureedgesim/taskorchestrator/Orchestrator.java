@@ -21,6 +21,7 @@
 package com.mechalikh.pureedgesim.taskorchestrator;
 import java.util.List;
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
+import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode.LinkOrientation;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationengine.SimEntity;
 import com.mechalikh.pureedgesim.simulationmanager.SimLog;
@@ -178,9 +179,9 @@ public abstract class Orchestrator extends SimEntity {
 																													// computing
 				// Compare destination (edge data server) and origin (edge device)
 				// locations, if they are in same area offload to this edge data server
-						&& (node == task.getEdgeDevice().getCurrentUpLink().getDst()
+						&& (node == task.getEdgeDevice().getCurrentLink(LinkOrientation.UP_LINK).getDst()
 								// or compare the location of the orchestrator
-								|| (node == task.getOrchestrator().getCurrentUpLink().getDst())))
+								|| (node == task.getOrchestrator().getCurrentLink(LinkOrientation.UP_LINK).getDst())))
 
 				|| (arrayContains(architectureLayers, "Mist") && nodeType == SimulationParameters.TYPES.EDGE_DEVICE // Mist
 																												// computing

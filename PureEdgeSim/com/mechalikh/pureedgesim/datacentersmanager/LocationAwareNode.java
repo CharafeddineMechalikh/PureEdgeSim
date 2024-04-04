@@ -51,11 +51,11 @@ public abstract class LocationAwareNode extends EnergyAwareNode {
 	}
 
 	protected void connectWith(ComputingNode closestEdgeDataCenter) {
-		getCurrentUpLink().setDst(closestEdgeDataCenter);
-		getCurrentDownLink().setSrc(closestEdgeDataCenter);
+		getCurrentLink(LinkOrientation.UP_LINK).setDst(closestEdgeDataCenter);
+		getCurrentLink(LinkOrientation.DOWN_LINK).setSrc(closestEdgeDataCenter);
 
-		if (getCurrentWiFiLink().getDst() != ComputingNode.NULL && getMobilityModel()
-				.distanceTo(getCurrentWiFiLink().getDst()) >= SimulationParameters.edgeDataCentersRange) {
+		if (getCurrentLink(LinkOrientation.DEVICE_TO_DEVICE).getDst() != ComputingNode.NULL && getMobilityModel()
+				.distanceTo(getCurrentLink(LinkOrientation.DEVICE_TO_DEVICE).getDst()) >= SimulationParameters.edgeDataCentersRange) {
 			setApplicationPlaced(false);
 		}
 	}

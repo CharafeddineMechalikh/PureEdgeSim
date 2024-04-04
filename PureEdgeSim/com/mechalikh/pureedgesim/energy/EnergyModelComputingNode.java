@@ -47,7 +47,7 @@ public class EnergyModelComputingNode {
 	 * {@link NullPointerException} when using the NULL object instead of
 	 * attributing null to EnergyModelComputingNode variables.
 	 */
-	public static final EnergyModelComputingNode NULL = new EnergyModelComputingNodeNull(0, 0);
+	public static final EnergyModelComputingNode NULL = EnergyModelComputingNodeNull.getInstance();
 	protected double networkEnergyConsumption;
 	protected double transmissionEnergyPerBits;
 	protected double receptionEnergyPerBits;

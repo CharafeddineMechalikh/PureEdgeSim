@@ -36,67 +36,116 @@ import org.knowm.xchart.XYChart;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager; 
-
+/**
+ * The {@code SimulationVisualizer} class provides a GUI to visualize the
+ * simulation results in the form of charts.
+ */
 public class SimulationVisualizer {
-	protected JFrame simulationResultsFrame;
-	protected SimulationManager simulationManager;
-	protected List<Chart> charts = new ArrayList<Chart>(4);
-	protected boolean firstTime = true;
 
-	public SimulationVisualizer(SimulationManager simulationManager) {
-		this.simulationManager = simulationManager;
-		Chart mapChart = new MapChart("Simulation map", "Width (meters)", "Length (meters)", simulationManager);
-		Chart cpuUtilizationChart = new CPUChart("CPU utilization", "Time (s)", "Utilization (%)", simulationManager);
-		Chart tasksSuccessChart = new TasksChart("Tasks success rate", "Time (minutes)", "Success rate (%)",
-				simulationManager);
-		charts.addAll(List.of(mapChart, cpuUtilizationChart, tasksSuccessChart));
+	 // JFrame that displays the charts
+    protected JFrame simulationResultsFrame;
 
-		if (SimulationParameters.useOneSharedWanLink) {
-			Chart networkUtilizationChart = new WanChart("Network utilization", "Time (s)", "Utilization (Mbps)",
-					simulationManager);
-			charts.add(networkUtilizationChart);
-		}
-	}
+    // SimulationManager instance that manages the simulation
+    protected SimulationManager simulationManager;
 
-	public void updateCharts() {
-		if (firstTime) {
-			SwingWrapper<XYChart> swingWrapper = new SwingWrapper<>(
-					charts.stream().map(Chart::getChart).collect(Collectors.toList()));
-			simulationResultsFrame = swingWrapper.displayChartMatrix(); // Display charts
-			simulationResultsFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-		}
-		firstTime = false;
-		repaint();
+    // List of charts to display
+    protected List<Chart> charts = new ArrayList<Chart>(4);
 
-		// Display simulation time
-		double time = simulationManager.getSimulation().clock();
-		simulationResultsFrame.setTitle("Simulation time = " + ((int) time / 60) + " min : " + ((int) time % 60)
-				+ " seconds  -  number of edge devices = " + simulationManager.getScenario().getDevicesCount()
-				+ " -  Architecture = " + simulationManager.getScenario().getStringOrchArchitecture()
-				+ " -  Algorithm = " + simulationManager.getScenario().getStringOrchAlgorithm());
-	}
+    // Flag that indicates if it is the first time charts are updated
+    protected boolean firstTime = true;
 
-	protected void repaint() {
-		charts.forEach(chart -> chart.update());
-		simulationResultsFrame.repaint();
-	}
+    /**
+     * Constructs a new simulation visualizer with the given simulation manager.
+     * The visualizer contains a list of charts that display the simulation
+     * results.
+     *
+     * @param simulationManager the simulation manager
+     */
+    public SimulationVisualizer(SimulationManager simulationManager) {
+        this.simulationManager = simulationManager;
 
-	public void close() {
-		simulationResultsFrame.dispose();
-	}
+        // Create charts
+        Chart mapChart = new MapChart("Simulation map", "Width (meters)", "Length (meters)", simulationManager);
+        Chart cpuUtilizationChart = new CPUChart("CPU utilization", "Time (s)", "Utilization (%)", simulationManager);
+        Chart tasksSuccessChart = new TasksChart("Tasks success rate", "Time (minutes)", "Success rate (%)",
+                simulationManager);
+        charts.addAll(List.of(mapChart, cpuUtilizationChart, tasksSuccessChart));
 
-	public void saveCharts() throws IOException {
-		String folderName = SimulationParameters.outputFolder + "/"
-				+ simulationManager.getSimulationLogger().getSimStartTime() + "/simulation_"
-				+ simulationManager.getSimulationId() + "/iteration_" + simulationManager.getIteration() + "__"
-				+ simulationManager.getScenario().toString();
-		new File(folderName).mkdirs();
-		BitmapEncoder.saveBitmapWithDPI(charts.get(0).getChart(), folderName + "/map_chart", BitmapFormat.PNG, 300);
-		BitmapEncoder.saveBitmapWithDPI(charts.get(1).getChart(), folderName + "/cpu_usage", BitmapFormat.PNG, 300);
-		BitmapEncoder.saveBitmapWithDPI(charts.get(2).getChart(), folderName + "/tasks_success_rate", BitmapFormat.PNG,
-				300);
-		BitmapEncoder.saveBitmapWithDPI(charts.get(3).getChart(), folderName + "/network_usage", BitmapFormat.PNG, 300);
+        // Add network utilization chart if the useOneSharedWanLink parameter is true
+        if (SimulationParameters.useOneSharedWanLink) {
+            Chart networkUtilizationChart = new WanChart("Network utilization", "Time (s)", "Utilization (Mbps)",
+                    simulationManager);
+            charts.add(networkUtilizationChart);
+        }
+    }
 
-	}
+    /**
+     * Updates the charts with the latest simulation results and displays them if
+     * it is the first time. The method also updates the simulation time in the
+     * frame title.
+     */
+    public void updateCharts() {
+        if (firstTime) {
+            SwingWrapper<XYChart> swingWrapper = new SwingWrapper<>(
+                    charts.stream().map(Chart::getChart).collect(Collectors.toList()));
+            simulationResultsFrame = swingWrapper.displayChartMatrix(); // Display charts
+            simulationResultsFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        }
+        firstTime = false;
+        repaint();
+
+        // Display simulation time and other scenario parameters
+        double time = simulationManager.getSimulation().clock();
+        simulationResultsFrame.setTitle("Simulation time = " + ((int) time / 60) + " min : " + ((int) time % 60)
+                + " seconds  -  number of edge devices = " + simulationManager.getScenario().getDevicesCount()
+                + " -  Architecture = " + simulationManager.getScenario().getStringOrchArchitecture()
+                + " -  Algorithm = " + simulationManager.getScenario().getStringOrchAlgorithm());
+    }
+
+    /**
+     * Repaints the charts with the latest simulation results.
+     */
+    protected void repaint() {
+        charts.forEach(Chart::update);
+        simulationResultsFrame.repaint();
+    }
+
+    /**
+     * Closes the simulation results window.
+     */
+    public void close() {
+        simulationResultsFrame.dispose();
+    }
+
+    /**
+     * Saves the charts to disk as PNG images with a resolution of 300 DPI.
+     * 
+     * @throws IOException if an error occurs while saving the images
+     */
+    /**
+     * Saves the generated charts as PNG images in a specified directory.
+     * The directory structure will be as follows:
+     * outputFolder/simStartTime/simulation_simulationId/iteration_iterationNumber__scenarioString/
+     * 
+     * @throws IOException if there is an error creating the directory or saving the images
+     */
+    public void saveCharts() throws IOException {
+        // Create the directory path for saving the images
+        String folderName = SimulationParameters.outputFolder + "/"
+                + simulationManager.getSimulationLogger().getSimStartTime() + "/simulation_"
+                + simulationManager.getSimulationId() + "/iteration_" + simulationManager.getIteration() + "__"
+                + simulationManager.getScenario().toString();
+        // Create the directory if it does not exist
+        new File(folderName).mkdirs();
+        
+        // Save the charts as PNG images
+        BitmapEncoder.saveBitmapWithDPI(charts.get(0).getChart(), folderName + "/map_chart", BitmapFormat.PNG, 300);
+        BitmapEncoder.saveBitmapWithDPI(charts.get(1).getChart(), folderName + "/cpu_usage", BitmapFormat.PNG, 300);
+        BitmapEncoder.saveBitmapWithDPI(charts.get(2).getChart(), folderName + "/tasks_success_rate", BitmapFormat.PNG, 300);
+        if (SimulationParameters.useOneSharedWanLink) {
+            BitmapEncoder.saveBitmapWithDPI(charts.get(3).getChart(), folderName + "/network_usage", BitmapFormat.PNG, 300);
+        }
+    }
+
 
 }

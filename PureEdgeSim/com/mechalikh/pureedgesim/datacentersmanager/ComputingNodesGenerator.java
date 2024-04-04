@@ -22,6 +22,7 @@ package com.mechalikh.pureedgesim.datacentersmanager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.w3c.dom.Element;
 
@@ -42,9 +43,9 @@ import com.mechalikh.pureedgesim.taskgenerator.Task;
 public abstract class ComputingNodesGenerator {
 
 	/**
-	 * The list that contains all orchestrators. It is used by the computing
-	 * node. In this case, the tasks are sent over the network to one of the
-	 * orchestrators to make decisions.
+	 * The list that contains all orchestrators. It is used by the computing node.
+	 * In this case, the tasks are sent over the network to one of the orchestrators
+	 * to make decisions.
 	 * 
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNodesGenerator#generateDataCenters(String, TYPES)
 	 * @see com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager#sendTaskToOrchestrator(Task)
@@ -80,8 +81,8 @@ public abstract class ComputingNodesGenerator {
 	protected List<ComputingNode> mistOnlyList;
 
 	/**
-	 * A list that contains all edge devices except sensors (i.e., devices
-	 * without computing capacities).
+	 * A list that contains all edge devices except sensors (i.e., devices without
+	 * computing capacities).
 	 * 
 	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#mistOnly(Task
 	 *      task)
@@ -144,38 +145,37 @@ public abstract class ComputingNodesGenerator {
 	protected List<ComputingNode> allNodesListSensorsExcluded;
 
 	/**
-	 * Initializes the Computing nodes generator.
-	 *
-	 * @param simulationManager  The simulation Manager
-	 * @param mobilityModelClass The mobility model that will be used in the
-	 *                           simulation
-	 * @param computingNodeClass The computing node class that will be used to
-	 *                           generate computing resources
+	 * Constructs a new instance of the computing nodes generator.
+	 * 
+	 * @param simulationManager  The simulation manager to use.
+	 * @param mobilityModelClass The mobility model to use.
+	 * @param computingNodeClass The computing node class to use.
 	 */
 	public ComputingNodesGenerator(SimulationManager simulationManager,
 			Class<? extends MobilityModel> mobilityModelClass, Class<? extends ComputingNode> computingNodeClass) {
+		this.simulationManager = simulationManager;
 		this.mobilityModelClass = mobilityModelClass;
 		this.computingNodeClass = computingNodeClass;
-		this.simulationManager = simulationManager;
-		orchestratorsList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
-		mistOnlyList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
-		mistOnlyListSensorsExcluded = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
-		mistAndCloudListSensorsExcluded = new ArrayList<>(
+		this.orchestratorsList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
+		this.mistOnlyList = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
+		this.mistOnlyListSensorsExcluded = new ArrayList<>(simulationManager.getScenario().getDevicesCount());
+		this.mistAndCloudListSensorsExcluded = new ArrayList<>(
 				simulationManager.getScenario().getDevicesCount() + SimulationParameters.numberOfCloudDataCenters);
-		mistAndEdgeListSensorsExcluded = new ArrayList<>(
+		this.mistAndEdgeListSensorsExcluded = new ArrayList<>(
 				simulationManager.getScenario().getDevicesCount() + SimulationParameters.numberOfEdgeDataCenters);
-		allNodesList = new ArrayList<>(simulationManager.getScenario().getDevicesCount()
+		this.allNodesList = new ArrayList<>(simulationManager.getScenario().getDevicesCount()
 				+ SimulationParameters.numberOfEdgeDataCenters + SimulationParameters.numberOfCloudDataCenters);
-		allNodesListSensorsExcluded = new ArrayList<>(simulationManager.getScenario().getDevicesCount()
+		this.allNodesListSensorsExcluded = new ArrayList<>(simulationManager.getScenario().getDevicesCount()
 				+ SimulationParameters.numberOfEdgeDataCenters + SimulationParameters.numberOfCloudDataCenters);
 	}
 
 	/**
 	 * Generates all computing nodes, including the Cloud data centers, the edge
 	 * ones, and the edge devices.
-	 */
-	public abstract void generateDatacentersAndDevices();
+	 */ 
+public abstract void generateDatacentersAndDevices();
 	
+
 	/**
 	 * Returns the list containing computing nodes that have been selected as
 	 * orchestrators (i.e. to make offloading decisions).
@@ -207,8 +207,8 @@ public abstract class ComputingNodesGenerator {
 	}
 
 	/**
-	 * Gets the list containing all generated edge devices including sensors
-	 * (i.e., devices with no computing resources).
+	 * Gets the list containing all generated edge devices including sensors (i.e.,
+	 * devices with no computing resources).
 	 * 
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNodesGenerator#generateDevicesInstances(Element)
 	 * 
@@ -265,8 +265,7 @@ public abstract class ComputingNodesGenerator {
 	}
 
 	/**
-	 * Gets the list containing edge data centers and edge devices (except
-	 * sensors).
+	 * Gets the list containing edge data centers and edge devices (except sensors).
 	 * 
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNodesGenerator#generateDataCenters(String, TYPES)
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNodesGenerator#generateDevicesInstances(Element)

@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 5.2 Changelog (June 11th 2023)
+
+*   Improved performance
+*   Improved code readability
+
 ## Version 5.1 Changelog (October 13th 2022)
 
 *   Updated the energy model with the ability to set an initial battery level for generated devices, either programmatically or via the xml file. 
