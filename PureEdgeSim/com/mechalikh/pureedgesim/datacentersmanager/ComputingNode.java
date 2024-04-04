@@ -157,7 +157,7 @@ public interface ComputingNode {
 	 * only when the type of this node is
 	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
-	 * @see ComputingNodesGenerator#generateEdgeDevices()
+	 * @see com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNodesGenerator#generateEdgeDevices()
 	 * @see #isGeneratingTasks()
 	 * 
 	 * @param generateTasks true when this edge device can generate tasks, false
@@ -173,7 +173,7 @@ public interface ComputingNode {
 	 * @return whether this computing node generates tasks (e.g. an IoT sensor), or
 	 *         not.
 	 * 
-	 * @see ComputingNodesGenerator#generateEdgeDevices()
+	 * @see com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNodesGenerator#generateEdgeDevices()
 	 * @see #enableTaskGeneration(boolean)
 	 */
 	boolean isGeneratingTasks();

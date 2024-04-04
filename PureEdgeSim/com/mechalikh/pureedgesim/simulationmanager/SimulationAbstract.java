@@ -21,7 +21,9 @@
 package com.mechalikh.pureedgesim.simulationmanager;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
+import com.mechalikh.pureedgesim.datacentersmanager.ComputingNodesGenerator;
 import com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNode;
+import com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNodesGenerator;
 import com.mechalikh.pureedgesim.datacentersmanager.DefaultTopologyCreator;
 import com.mechalikh.pureedgesim.datacentersmanager.TopologyCreator;
 import com.mechalikh.pureedgesim.locationmanager.DefaultMobilityModel;
@@ -96,6 +98,13 @@ public abstract class SimulationAbstract {
 	protected Class<? extends TopologyCreator> topologyCreator = DefaultTopologyCreator.class;
 	
 	/**
+	 * The Computing Nodes Generator class that is used in the simulation.
+	 * 
+	 * @see #setCustomComputingNodesGenerator(Class)
+	 */
+	protected Class<? extends ComputingNodesGenerator> computingNodesGenerator = DefaultComputingNodesGenerator.class;
+	
+	/**
 	 * Allows to use a custom computing node class in the simulation. The class must
 	 * extend the {@link ComputingNode} provided by PureEdgeSim.
 	 * 
@@ -164,6 +173,16 @@ public abstract class SimulationAbstract {
 	 */
 	public void setCustomSimulationManager(Class<? extends SimulationManager> simulationManager) {
 		this.simulationManager = simulationManager;
+	}
+	
+	/**
+	 * Allows to use a custom computing nodes generator in the simulation. The class must extend
+	 * the {@link ComputingNodesGenerator} provided by PureEdgeSim.
+	 * 
+	 * @param computingNodesGenerator the custom computing nodes generator class to use.
+	 */
+	public void setCustomComputingNodesGenerator(Class<? extends ComputingNodesGenerator> computingNodesGenerator) {
+		this.computingNodesGenerator = computingNodesGenerator;
 	}
 
 	/**
