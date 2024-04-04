@@ -18,12 +18,13 @@ package com.mechalikh.pureedgesim.datacentersmanager;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationengine.Event;
+import com.mechalikh.pureedgesim.simulationengine.OnSimulationStartListener;
 import com.mechalikh.pureedgesim.simulationengine.SimEntity;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 /**
  * This abstract class represents a computing node in the simulation.
  */
-public abstract class AbstractNode extends SimEntity implements ComputingNode {
+public abstract class AbstractNode extends SimEntity implements ComputingNode, OnSimulationStartListener {
     
     /**
      * The update status event ID.
@@ -82,7 +83,8 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode {
      * Defines the logic to be performed by the computing node when the simulation
      * starts.
      */
-    public void startInternal() {
+    @Override
+    public void onSimulationStart() {
         scheduleNow(this, UPDATE_STATUS);
     }
 

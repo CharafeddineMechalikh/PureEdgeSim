@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 5.3 Changelog (April 4th 2024)
+
+*   Improved code quality (Listener Design Pattern)
+*   Switched back to Java 8 for broader compatibility
+
 ## Version 5.2 Changelog (June 11th 2023)
 
 *   Improved performance

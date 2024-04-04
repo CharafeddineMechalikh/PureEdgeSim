@@ -1,5 +1,6 @@
 package com.mechalikh.pureedgesim.scenariomanager;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -34,9 +35,9 @@ public class EdgeDevicesParser extends ComputingNodesParser {
 	}
 
 	protected void checkEdgeDevice(Element deviceElement) {
-		for (String element : List.of("connectivity", "mobility", "battery", "percentage", "speed", "minPauseDuration",
+		for (String element : Arrays.asList(new String[]{"connectivity", "mobility", "battery", "percentage", "speed", "minPauseDuration",
 				"maxPauseDuration", "minMobilityDuration", "maxMobilityDuration", "batteryCapacity", "generateTasks",
-				"isOrchestrator", "idleConsumption", "maxConsumption", "cores", "mips", "ram", "storage"))
+				"isOrchestrator", "idleConsumption", "maxConsumption", "cores", "mips", "ram", "storage"}))
 			isElementPresent(deviceElement, element);
 
 		for (String element : List.of("speed", "minPauseDuration", "minMobilityDuration", "batteryCapacity",

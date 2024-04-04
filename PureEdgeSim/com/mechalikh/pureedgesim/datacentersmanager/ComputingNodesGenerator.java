@@ -22,8 +22,6 @@ package com.mechalikh.pureedgesim.datacentersmanager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
 import org.w3c.dom.Element;
 
 import com.mechalikh.pureedgesim.locationmanager.MobilityModel;

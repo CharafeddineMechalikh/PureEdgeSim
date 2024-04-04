@@ -110,18 +110,7 @@ public class DefaultOrchestrator extends Orchestrator {
 		// Do something with the task that has been finished
 
 	}
-
-	@Override
-	public void startInternal() {
-		// Do something when the simulation starts. e.g., schedule some events
-	}
-
-	@Override
-	public void onSimulationEnd() {
-		// Do something when the simulation finishes. e.g., print some results.
-		
-	}
-
+ 
 	@Override
 	public void processEvent(Event e) {
 		// Process the scheduled events, if any.

@@ -1,8 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mechalikh</groupId>
 	<artifactId>pureedgesim</artifactId>
-	<version>5.2.0</version>
+	<version>5.3.0</version>
 	<name>PureEdgeSim</name>
 	<url>https://github.com/CharafeddineMechalikh/PureEdgeSim</url>
 	<description>A simualtor for edge computing environments</description>
@@ -30,7 +32,8 @@
 
 	<scm>
 		<connection>scm:git:git@github.com:CharafeddineMechalikh/PureEdgeSim.git</connection>
-		<developerConnection>scm:git:git@github.com:CharafeddineMechalikh/PureEdgeSim.git</developerConnection>
+		<developerConnection>
+			scm:git:git@github.com:CharafeddineMechalikh/PureEdgeSim.git</developerConnection>
 		<url>https://github.com/CharafeddineMechalikh/PureEdgeSim</url>
 	</scm>
 
@@ -49,12 +52,15 @@
 
 
 	<profiles>
-		<!-- The profiles 'default' and 'integration-tests' are specified to allow 
+		<!-- The profiles 'default' and 'integration-tests' are specified to
+		allow 
 			using the maven-surefire-plugin instead of the maven-failsafe-plugin to run 
-			Integration/Functional tests. By this way, it is possible to see the Integration/Functional 
+			Integration/Functional tests. By this way, it is possible to see the
+		Integration/Functional 
 			tests results directly at the NetBeans JUnit graphical test results interface. -->
 		<profile>
-			<!-- This is the default profile that runs just the Unit Tests, ignoring 
+			<!-- This is the default profile that runs just the Unit Tests,
+			ignoring 
 				the Integration/Functional tests. -->
 			<id>default</id>
 			<activation>
@@ -106,7 +112,8 @@
 		</profile>
 
 		<profile>
-			<!-- This is the profile that runs all the Unit and Integration/Functional 
+			<!-- This is the profile that runs all the Unit and
+			Integration/Functional 
 				Tests. -->
 			<id>integration-tests</id>
 			<build>
@@ -120,24 +127,29 @@
 		</profile>
 
 		<profile>
-			<!-- A profile used to execute all goals required to deploy the project 
+			<!-- A profile used to execute all goals required to deploy the
+			project 
 				to the Maven Central. To execute use: mvn clean deploy -P sonatype To check 
 				the deployed artifact and probably release it to maven central you should 
-				visit https://oss.sonatype.org. MAKE SURE YOU ARE LOGGED IN TO SEE YOUR DEPLOYMENTS. -->
+				visit https://oss.sonatype.org. MAKE SURE YOU ARE LOGGED IN TO SEE YOUR
+			DEPLOYMENTS. -->
 			<id>sonatype</id>
 
-			<!-- URLs to deploy the project at the Maven Central (http://mvnrepository.com) 
+			<!-- URLs to deploy the project at the Maven Central
+			(http://mvnrepository.com) 
 				using a Sonatype account (http://central.sonatype.org) See the "all" profile 
 				in this pom for deployment information. -->
 			<!-- repository for uploading -->
 			<distributionManagement>
 				<snapshotRepository>
 					<id>ossrh</id>
-					<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+					<url>
+						https://s01.oss.sonatype.org/content/repositories/snapshots</url>
 				</snapshotRepository>
 				<repository>
 					<id>ossrh</id>
-					<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+					<url>
+						https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 				</repository>
 			</distributionManagement>
 
@@ -179,7 +191,8 @@
 						</executions>
 					</plugin>
 
-					<!-- Signs the generated jar using GPG, as required for deploying at 
+					<!-- Signs the generated jar using GPG, as required for
+					deploying at 
 						the Maven Central. Configurations are defined into the local repo settings.xml -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -211,7 +224,8 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<!-- There is some problem with the version 2.19.1 or with Netbeans 
+					<!-- There is some problem with the version 2.19.1 or with
+					Netbeans 
 						8.0.2 that the JUnit GUI is not shown at the IDE -->
 					<version>3.0.0-M5</version>
 					<configuration>
@@ -248,15 +262,18 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<!-- Adds dependencies to classpath into the manifest file inside 
+							<!-- Adds dependencies to classpath into the
+							manifest file inside 
 								the jar ! -->
 							<addClasspath>true</addClasspath>
 
-							<!-- Defines that the dependencies will follow the same hierarchical 
+							<!-- Defines that the dependencies will follow the
+							same hierarchical 
 								directory structure of a maven repository ! -->
 							<classpathLayoutType>repository</classpathLayoutType>
 
-							<!-- Defines the root folder where the dependencies are. In this case 
+							<!-- Defines the root folder where the dependencies
+							are. In this case 
 								is the the root of the local maven repository. ! -->
 							<classpathPrefix>${user.home}/.m2/repository/</classpathPrefix>
 						</manifest>
@@ -275,11 +292,13 @@
 						<exclude>**/examples/Example1.java</exclude>
 						<exclude>**/examples/Example5.java</exclude>
 					</excludes>
-					<release>17</release>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 
-			<!-- Plugin for code coverage, enabling generation of reports on IDE to 
+			<!-- Plugin for code coverage, enabling generation of reports on IDE
+			to 
 				see percentage of the project's code that is being covered by unit tests. -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -318,7 +337,8 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.2.0</version>
 				<reportSets>
-					<!-- https://maven.apache.org/plugins/maven-javadoc-plugin/examples/javadoc-nofork.html -->
+					<!--
+					https://maven.apache.org/plugins/maven-javadoc-plugin/examples/javadoc-nofork.html -->
 					<reportSet>
 						<reports>
 							<report>javadoc-no-fork</report>

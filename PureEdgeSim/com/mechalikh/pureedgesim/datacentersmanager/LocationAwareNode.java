@@ -35,8 +35,8 @@ public abstract class LocationAwareNode extends EnergyAwareNode {
 	}
 
 	@Override
-	public void startInternal() {
-		super.startInternal();
+	public void onSimulationStart() {
+		super.onSimulationStart();
 		mobilityModel.generatePath();
 	}
 

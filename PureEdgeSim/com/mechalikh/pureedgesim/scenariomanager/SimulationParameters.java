@@ -86,7 +86,7 @@ public class SimulationParameters {
 	/**
 	 * Simualtion time in seconds.
 	 * 
-	 * @see com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager#startInternal()
+	 * @see com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager#onSimulationStart()
 	 */
 	public static double simulationDuration;
 
@@ -459,7 +459,7 @@ public class SimulationParameters {
 	/**
 	 * The network model update interval.
 	 * 
-	 * @see com.mechalikh.pureedgesim.network.NetworkLink#startInternal()
+	 * @see com.mechalikh.pureedgesim.network.NetworkLink#onSimulationStart()
 	 */
 	public static double networkUpdateInterval;
 

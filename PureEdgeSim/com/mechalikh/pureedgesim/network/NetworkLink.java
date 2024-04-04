@@ -80,15 +80,6 @@ public class NetworkLink extends SimEntity {
 		return this;
 	}
 
-	/**
-	 * Defines the logic to be performed by the network link when the simulation
-	 * starts.
-	 */
-	@Override
-	public void startInternal() {
-		// Do nothing for now.
-	}
-
 	public ComputingNode getSrc() {
 		return src;
 	}
@@ -230,12 +221,4 @@ public class NetworkLink extends SimEntity {
 		return totalTrasferredData;
 	}
 
-	/**
-	 * Defines the logic to be performed by the network link when the simulation
-	 * ends.
-	 */
-	@Override
-	public void onSimulationEnd() {
-		// Do something when the simulation finishes.
-	}
 }

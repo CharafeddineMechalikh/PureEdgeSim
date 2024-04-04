@@ -257,21 +257,5 @@ public class DefaultNetworkModel extends NetworkModel {
 		scheduleNow(simulationManager, DefaultSimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, transfer.getTask());
 	}
 
-	/**
-	 * Defines the logic to be performed by the default network model when the
-	 * simulation starts.
-	 */
-	@Override
-	public void startInternal() {
-		// Do nothing.
-	}
-
-	/**
-	 * Defines the logic to be performed by the default network model when the
-	 * simulation ends.
-	 */
-	@Override
-	public void onSimulationEnd() {
-		// Do something when the simulation finishes.
-	}
+	
 }

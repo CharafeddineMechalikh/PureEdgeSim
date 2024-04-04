@@ -173,14 +173,14 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 					cloudOnlyList.add(computingNode);
 					mistAndCloudListSensorsExcluded.add(computingNode);
 					if (SimulationParameters.enableOrchestrators
-							&& SimulationParameters.deployOrchestrators == "CLOUD") {
+							&& "CLOUD".equals(SimulationParameters.deployOrchestrators)) {
 						orchestratorsList.add(computingNode);
 					}
 				} else {
 					edgeOnlyList.add(computingNode);
 					mistAndEdgeListSensorsExcluded.add(computingNode);
 					if (SimulationParameters.enableOrchestrators
-							&& SimulationParameters.deployOrchestrators == "EDGE") {
+							&& "EDGE".equals(SimulationParameters.deployOrchestrators)) {
 						orchestratorsList.add(computingNode);
 					}
 				}

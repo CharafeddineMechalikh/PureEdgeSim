@@ -193,10 +193,8 @@ public class SimulationThread {
 		// Initialize the network model
 		SimLog.println(this.getClass().getSimpleName() + " - Initializing the Network Module...");
 		Constructor<?> networkConstructor = simulation.networkModel.getConstructor(SimulationManager.class);
-		networkConstructor.newInstance(simulationManager);
-
-		long startTime = System.currentTimeMillis();
-
+		networkConstructor.newInstance(simulationManager); 
+		
 		// Generate all data centers, servers, an devices
 		SimLog.println(this.getClass().getSimpleName() + " - Initializing the Datacenters Manager Module...");
 		new DataCentersManager(simulationManager, simulation.mobilityModel, simulation.computingNode,
