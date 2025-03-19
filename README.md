@@ -13,6 +13,8 @@ PureEdgeSim: A simulation framework for performance evaluation of cloud, edge an
 
 Mechalikh, C., Taktak, H., & Moussa, F. (2021). PureEdgeSim: A simulation framework for performance evaluation of cloud, edge and mist computing environments. Computer Science and Information Systems, 18(1), 43-66.
 
+Mechalikh, C., Safavifar, Z., & Golpayegani, F. (2025). Quality matters: A comprehensive comparative study of edge computing simulators. Simulation Modelling Practice and Theory, 138, 103042.
+
 Bibtex:
 
 ```js
@@ -24,6 +26,18 @@ Bibtex:
   number={1},
   pages={43--66},
   year={2021}
+}
+
+
+
+@article{mechalikh2025quality,
+  title={Quality matters: A comprehensive comparative study of edge computing simulators},
+  author={Mechalikh, Charafeddine and Safavifar, Zahra and Golpayegani, Fatemeh and others},
+  journal={Simulation Modelling Practice and Theory},
+  volume={138},
+  pages={103042},
+  year={2025},
+  publisher={Elsevier}
 }
 ```
 
