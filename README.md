@@ -17,12 +17,46 @@
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src=".github/badges/branches.svg" alt="JaCoCo branch coverage"></a>
 </p>
 
+## Citation
+
+If you use PureEdgeSim in your research, please cite the following papers. Kindly cite the papers rather than the GitHub repository.
+
+Mechalikh, C., Taktak, H., & Moussa, F. (2021). PureEdgeSim: A simulation framework for performance evaluation of cloud, edge and mist computing environments. *Computer Science and Information Systems*, 18(1), 43-66. https://doi.org/10.2298/CSIS200301042M
+
+Mechalikh, C., Silem, A. E. H., Safavifar, Z., & Golpayegani, F. (2025). Quality matters: A comprehensive comparative study of edge computing simulators. *Simulation Modelling Practice and Theory*, 138, 103042. https://doi.org/10.1016/j.simpat.2024.103042
+
+BibTeX:
+
+```bibtex
+@article{mechalikh2021pureedgesim,
+  title   = {PureEdgeSim: A simulation framework for performance evaluation of cloud, edge and mist computing environments},
+  author  = {Mechalikh, Charafeddine and Taktak, Hajer and Moussa, Faouzi},
+  journal = {Computer Science and Information Systems},
+  volume  = {18},
+  number  = {1},
+  pages   = {43--66},
+  year    = {2021},
+  doi     = {10.2298/CSIS200301042M}
+}
+
+@article{mechalikh2025quality,
+  title   = {Quality matters: A comprehensive comparative study of edge computing simulators},
+  author  = {Mechalikh, Charafeddine and Silem, Abd El Heq and Safavifar, Zahra and Golpayegani, Fatemeh},
+  journal = {Simulation Modelling Practice and Theory},
+  volume  = {138},
+  pages   = {103042},
+  year    = {2025},
+  doi     = {10.1016/j.simpat.2024.103042}
+}
+```
+
 <p align="center">
   <img width="820" src="https://user-images.githubusercontent.com/46229052/196698541-569de31b-0df8-470b-907c-02ba5eb5015f.png" alt="PureEdgeSim simulation dashboard showing the simulated edge computing environment">
 </p>
 
 ## Contents
 
+- [Citation](#citation)
 - [What is PureEdgeSim?](#what-is-pureedgesim)
 - [Key features](#key-features)
 - [Quick start](#quick-start)
@@ -31,7 +65,6 @@
 - [Performance and scalability](#performance-and-scalability)
 - [Design goals and validation](#design-goals-and-validation)
 - [Selected publications using PureEdgeSim](#selected-publications-using-pureedgesim)
-- [Citation](#citation)
 - [Version history](#version-history)
 - [Contributing and support](#contributing-and-support)
 - [License](#license)
@@ -344,39 +377,6 @@ PureEdgeSim has been used to evaluate research on task orchestration, reinforcem
 </details>
 
 If your paper uses PureEdgeSim, feel free to open a pull request and add it to this list.
-
-## Citation
-
-If you use PureEdgeSim in your research, please cite the following papers. Kindly cite the papers rather than the GitHub repository.
-
-Mechalikh, C., Taktak, H., & Moussa, F. (2021). PureEdgeSim: A simulation framework for performance evaluation of cloud, edge and mist computing environments. *Computer Science and Information Systems*, 18(1), 43-66. https://doi.org/10.2298/CSIS200301042M
-
-Mechalikh, C., Silem, A. E. H., Safavifar, Z., & Golpayegani, F. (2025). Quality matters: A comprehensive comparative study of edge computing simulators. *Simulation Modelling Practice and Theory*, 138, 103042. https://doi.org/10.1016/j.simpat.2024.103042
-
-BibTeX:
-
-```bibtex
-@article{mechalikh2021pureedgesim,
-  title   = {PureEdgeSim: A simulation framework for performance evaluation of cloud, edge and mist computing environments},
-  author  = {Mechalikh, Charafeddine and Taktak, Hajer and Moussa, Faouzi},
-  journal = {Computer Science and Information Systems},
-  volume  = {18},
-  number  = {1},
-  pages   = {43--66},
-  year    = {2021},
-  doi     = {10.2298/CSIS200301042M}
-}
-
-@article{mechalikh2025quality,
-  title   = {Quality matters: A comprehensive comparative study of edge computing simulators},
-  author  = {Mechalikh, Charafeddine and Silem, Abd El Heq and Safavifar, Zahra and Golpayegani, Fatemeh},
-  journal = {Simulation Modelling Practice and Theory},
-  volume  = {138},
-  pages   = {103042},
-  year    = {2025},
-  doi     = {10.1016/j.simpat.2024.103042}
-}
-```
 
 ## Version history
 
