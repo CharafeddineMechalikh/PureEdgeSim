@@ -6,7 +6,7 @@
 *   Reached 98% instruction and 94% branch coverage with JaCoCo.
 *   Added a Maven `unit-tests` profile that excludes integration-tagged tests, allowing unit-only coverage measurement.
 *   Added a GitHub Actions coverage workflow that runs the tests and updates the JaCoCo coverage badges and report.
-*   Removed the non-functional Codacy coverage reporter and its badges.
+*   Removed the non-functional Codacy coverage reporter and its coverage badge. The code quality badge remains.
 *   Fixed a null check in `Event.compareTo`.
 
 ## Version 5.3 Changelog (April 4th 2024)
