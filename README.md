@@ -11,10 +11,10 @@
 <p align="center">
   <a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="GPL v3 license"></a>
   <a href="https://search.maven.org/search?q=g:%22com.mechalikh%22%20AND%20a:%22pureedgesim%22"><img src="https://img.shields.io/maven-central/v/com.mechalikh/pureedgesim.svg?label=Maven%20Central" alt="Maven Central version"></a>
-  <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/stargazers"><img src="https://img.shields.io/github/stars/CharafeddineMechalikh/PureEdgeSim?style=social" alt="GitHub stars"></a>
   <a href="https://app.travis-ci.com/CharafeddineMechalikh/PureEdgeSim"><img src="https://app.travis-ci.com/CharafeddineMechalikh/PureEdgeSim.svg?token=qNkfvhf2yHSENsapmmtY&branch=master" alt="Travis CI build status"></a>
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src=".github/badges/jacoco.svg" alt="JaCoCo instruction coverage"></a>
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src=".github/badges/branches.svg" alt="JaCoCo branch coverage"></a>
+  <a href="https://www.codacy.com/gh/CharafeddineMechalikh/PureEdgeSim/dashboard"><img src="https://app.codacy.com/project/badge/Grade/7bcee5c75c3741b5923e0158c6e79b37" alt="Codacy code quality"></a>
 </p>
 
 ## Citation
