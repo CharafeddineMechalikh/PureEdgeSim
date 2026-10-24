@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 5.6 Changelog (October 25th 2026)
+
+*   Rewrote the shipped simulation parameter file with sectioned documentation covering units, defaults, valid ranges, and runtime effects for every parameter.
+*   Applied the same structure to the Example 3, 6, 7, and 8 settings, preserving their scenario-specific values and notes; removed the unused `initialization_time` key from Example 7.
+*   Corrected misleading guidance for `edge_devices_range`, `edge_datacenters_coverage`, `deploy_orchestrator`, and `registry_mode`.
+*   Changed the default `registry_mode` from `CACHE` to `CLOUD` so that enabling the registry works with the default network model. `CACHE` remains available through Example 7's custom network model.
+*   Documented the test settings file and synchronized the duplicated example settings directories.
+*   Bumped the project version to 5.6.
+
 ## Version 5.5 Changelog (October 24th 2026)
 
 *   Added a comprehensive JUnit 5 test suite (500+ tests) covering the simulation engine, network, energy, mobility, data centers, task generation, orchestration, and visualization packages.

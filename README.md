@@ -383,6 +383,7 @@ If your paper uses PureEdgeSim, feel free to open a pull request and add it to t
 
 The full release notes are maintained in [CHANGELOG.md](CHANGELOG.md).
 
+- **5.6**: self-documenting simulation parameter files for the default, example, and test configurations, with corrected guidance for ranges, orchestrators, and registry modes.
 - **5.5**: comprehensive JUnit 5 test suite, JaCoCo coverage reporting, and a GitHub Actions coverage workflow.
 - **5.1**: faster simulations, batched task scheduling, improved extensibility, and the initial energy model improvements.
 

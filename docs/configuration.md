@@ -70,7 +70,7 @@ If you enlarge the map, update the edge data center locations in `edge_datacente
 | Parameter | Default | Constraint | Effect |
 | --- | --- | --- | --- |
 | `enable_registry` | `false` | boolean | When true, the destination may need to download the application container before executing a task. |
-| `registry_mode` | `CACHE` | `CACHE` or `CLOUD` | With the default network model, container download happens only when the value is `CLOUD` and the destination is not a cloud node. The `CACHE` mode is demonstrated by `Example7CustomNetworkModel`. |
+| `registry_mode` | `CLOUD` | `CLOUD` or `CACHE` | With the default network model, `CLOUD` downloads the container from the first cloud node when the destination is not a cloud node. `CACHE` is recognized only by `Example7CustomNetworkModel`; with the default network model it performs no download. The value has no effect when `enable_registry=false`. |
 
 The registry location itself is the first cloud node, assigned to every task during generation. A custom network model can override `getRegistry` behavior by setting a different node on each task.
 

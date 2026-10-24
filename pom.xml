@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mechalikh</groupId>
 	<artifactId>pureedgesim</artifactId>
-	<version>5.5</version>
+	<version>5.6</version>
 	<name>PureEdgeSim</name>
 	<url>https://github.com/CharafeddineMechalikh/PureEdgeSim</url>
 	<description>A simualtor for edge computing environments</description>
