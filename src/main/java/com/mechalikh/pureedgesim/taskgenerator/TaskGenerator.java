@@ -27,6 +27,14 @@ import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.simulationengine.FutureQueue;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
+/**
+ * Base class for task generators. Implementations decide when each edge device
+ * produces a task and with which profile; the resulting queue is consumed by
+ * the simulation manager in arrival-time order.
+ *
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 3.0
+ */
 public abstract class TaskGenerator {
 	/**
 	 * The Task class that is used in the simulation.
@@ -57,7 +65,10 @@ public abstract class TaskGenerator {
 	protected SimulationManager simulationManager;
 
 	/**
-	 * Creates a task generator.
+	 * Creates a task generator and registers all edge devices as potential task
+	 * sources.
+	 *
+	 * @param simulationManager the simulation manager
 	 */
 	public TaskGenerator(SimulationManager simulationManager) {
 		taskList = new FutureQueue<>();
@@ -95,7 +106,8 @@ public abstract class TaskGenerator {
 
 	/**
 	 * Generates the tasks that will be offloaded during the simulation.
-	 * 
+	 *
+	 * @return the generated tasks, ordered by arrival time
 	 */
 	public abstract FutureQueue<Task> generate();
 

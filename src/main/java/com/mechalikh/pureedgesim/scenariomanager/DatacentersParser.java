@@ -9,8 +9,18 @@ import org.w3c.dom.NodeList;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
 
+/**
+ * Validates a data center XML file. The same parser is used for cloud and edge
+ * data centers; edge data centers additionally require a location.
+ */
 public class DatacentersParser extends ComputingNodesParser {
 
+	/**
+	 * Creates a parser for a data center file.
+	 *
+	 * @param file path to the XML file.
+	 * @param type whether the file describes cloud or edge data centers.
+	 */
 	public DatacentersParser(String file, TYPES type) {
 		super(file, type);
 	}

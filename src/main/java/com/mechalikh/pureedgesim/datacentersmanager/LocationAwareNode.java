@@ -24,22 +24,46 @@ import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
+/**
+ * An energy-aware node that has a position and, optionally, a mobility model.
+ * Peripheral nodes are the ones mobile devices can connect to when they are in
+ * range.
+ *
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 2.0
+ */
 public abstract class LocationAwareNode extends EnergyAwareNode {
+	/** Mobility model that provides the node position over simulation time. */
 	protected MobilityModel mobilityModel = MobilityModel.NULL;
+	/** Whether this node is peripheral and can serve as an uplink candidate. */
 	protected boolean peripheral = false;
+	/** The node currently executing this device's application. */
 	protected ComputingNode applicationPlacementLocation = ComputingNode.NULL;
+	/** Whether this device's application has already been placed on a node. */
 	protected boolean isApplicationPlaced = false;
 
+	/**
+	 * Creates a location-aware node.
+	 *
+	 * @param simulationManager the simulation manager
+	 */
 	protected LocationAwareNode(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
 
+	/**
+	 * Generates the mobility path when the simulation starts.
+	 */
 	@Override
 	public void onSimulationStart() {
 		super.onSimulationStart();
 		mobilityModel.generatePath();
 	}
 
+	/**
+	 * Updates the location of mobile nodes and reconnects them to the closest edge
+	 * data center.
+	 */
 	@Override
 	protected void updateStatus() {
 		super.updateStatus();
@@ -50,6 +74,14 @@ public abstract class LocationAwareNode extends EnergyAwareNode {
 		}
 	}
 
+	/**
+	 * Points the current uplink and downlink toward the given edge data center.
+	 * When this device has a device-to-device link and has moved beyond the edge
+	 * data center range from its peer, the application is marked as no longer
+	 * placed so that it will be placed again on the next task.
+	 *
+	 * @param closestEdgeDataCenter the edge data center to connect to
+	 */
 	protected void connectWith(ComputingNode closestEdgeDataCenter) {
 		getCurrentLink(LinkOrientation.UP_LINK).setDst(closestEdgeDataCenter);
 		getCurrentLink(LinkOrientation.DOWN_LINK).setSrc(closestEdgeDataCenter);
@@ -60,6 +92,18 @@ public abstract class LocationAwareNode extends EnergyAwareNode {
 		}
 	}
 
+	/**
+	 * Returns the node that orchestrates tasks for this node.
+	 *
+	 * The location depends on the {@code deployOrchestrators} parameter: an empty
+	 * value or {@code CLOUD} uses the first cloud node, {@code EDGE} uses the
+	 * closest edge data center, {@code MIST} uses this node itself, and any other
+	 * value selects the node in the orchestrators list with the lowest topology
+	 * delay. When orchestrators are disabled, this node orchestrates its own
+	 * tasks. The result is cached after the first call.
+	 *
+	 * @return the orchestrator node
+	 */
 	@Override
 	public ComputingNode getOrchestrator() {
 		if (orchestrator == ComputingNode.NULL && SimulationParameters.enableOrchestrators) {
@@ -87,30 +131,65 @@ public abstract class LocationAwareNode extends EnergyAwareNode {
 		return orchestrator;
 	}
 
+	/**
+	 * Returns the mobility model of this node.
+	 *
+	 * @return the mobility model
+	 */
 	public MobilityModel getMobilityModel() {
 		return mobilityModel;
 	}
 
+	/**
+	 * Sets the mobility model of this node.
+	 *
+	 * @param mobilityModel the mobility model
+	 */
 	public void setMobilityModel(MobilityModel mobilityModel) {
 		this.mobilityModel = mobilityModel;
 	}
 
+	/**
+	 * Returns whether this node is peripheral.
+	 *
+	 * @return {@code true} if the node is peripheral
+	 */
 	public boolean isPeripheral() {
 		return peripheral;
 	}
 
+	/**
+	 * Sets whether this node is peripheral.
+	 *
+	 * @param periphery {@code true} if the node is peripheral
+	 */
 	public void setPeriphery(boolean periphery) {
 		this.peripheral = periphery;
 	}
 
+	/**
+	 * Returns the node where this device's application is placed.
+	 *
+	 * @return the application placement location
+	 */
 	public ComputingNode getApplicationPlacementLocation() {
 		return this.applicationPlacementLocation;
 	}
 
+	/**
+	 * Returns whether this device's application has been placed.
+	 *
+	 * @return {@code true} if the application is placed
+	 */
 	public boolean isApplicationPlaced() {
 		return isApplicationPlaced;
 	}
 
+	/**
+	 * Sets whether this device's application has been placed.
+	 *
+	 * @param isApplicationPlaced {@code true} if the application is placed
+	 */
 	public void setApplicationPlaced(boolean isApplicationPlaced) {
 		this.isApplicationPlaced = isApplicationPlaced;
 	}

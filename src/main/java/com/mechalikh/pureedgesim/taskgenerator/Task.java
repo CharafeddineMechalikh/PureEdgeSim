@@ -39,15 +39,30 @@ public interface Task extends QueueElement {
 	 * Enumeration for failure reasons of a Task.
 	 */
 	enum FailureReason {
-		FAILED_DUE_TO_LATENCY, FAILED_BECAUSE_DEVICE_DEAD, FAILED_DUE_TO_DEVICE_MOBILITY,
-		NOT_GENERATED_BECAUSE_DEVICE_DEAD, NO_OFFLOADING_DESTINATIONS, INSUFFICIENT_RESOURCES, INSUFFICIENT_POWER
+		/** The task could not finish within its maximum latency. */
+		FAILED_DUE_TO_LATENCY,
+		/** The source or destination device ran out of battery during the task. */
+		FAILED_BECAUSE_DEVICE_DEAD,
+		/** The source device moved out of range while the task was being processed. */
+		FAILED_DUE_TO_DEVICE_MOBILITY,
+		/** The task was never generated because its device was already dead. */
+		NOT_GENERATED_BECAUSE_DEVICE_DEAD,
+		/** The orchestrator found no destination allowed by the architecture. */
+		NO_OFFLOADING_DESTINATIONS,
+		/** The destination lacked the CPU, memory, or storage required by the task. */
+		INSUFFICIENT_RESOURCES,
+		/** The destination did not have enough battery energy for the task. */
+		INSUFFICIENT_POWER
 	}
 
 	/**
 	 * Enumeration for status of a Task.
 	 */
 	enum Status {
-		SUCCESS, FAILED
+		/** The task completed within its latency requirement. */
+		SUCCESS,
+		/** The task failed; see {@link #getFailureReason()}. */
+		FAILED
 	}
 
 	/**

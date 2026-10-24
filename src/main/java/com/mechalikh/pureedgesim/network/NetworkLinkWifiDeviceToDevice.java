@@ -30,6 +30,14 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 public class NetworkLinkWifiDeviceToDevice extends NetworkLinkWifi {
 
+	/**
+	 * Creates a direct WiFi link between two devices.
+	 *
+	 * @param src               the sending device.
+	 * @param dst               the receiving device.
+	 * @param simulationManager the simulation manager.
+	 * @param type              the link category.
+	 */
 	public NetworkLinkWifiDeviceToDevice(ComputingNode src, ComputingNode dst, SimulationManager simulationManager,
 			NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);

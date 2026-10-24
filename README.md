@@ -80,7 +80,7 @@ The **Datacenters Manager** module creates data centers, servers, and heterogene
 
 PureEdgeSim combines analytical and numerical modeling techniques. The network, for example, is modeled with adjustable mathematical equations rather than at a low level. This abstraction makes it possible to simulate thousands of edge devices while keeping the simulation state observable at any moment. Because it is a discrete-event simulator, characteristics such as network traffic and resource utilization evolve over time, which enables the evaluation of online decision-making algorithms.
 
-Each module provides a default implementation and a set of adjustable settings. Researchers can therefore prototype and evaluate their approaches without specifying low-level details, and they can extend the framework with custom models without modifying its codebase. See the [Wiki](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki) for the full documentation.
+Each module provides a default implementation and a set of adjustable settings. Researchers can therefore prototype and evaluate their approaches without specifying low-level details, and they can extend the framework with custom models without modifying its codebase. See the [documentation manual](docs/README.md) for the full documentation.
 
 <p align="center">
   <img width="520" src="https://user-images.githubusercontent.com/46229052/196690369-54350b0f-5382-427a-8f12-c582f3f7f2b7.png" alt="Representation of the edge, fog, mist, and cloud computing scenarios supported by PureEdgeSim">
@@ -210,6 +210,7 @@ dependencies {
 
 ## Documentation and examples
 
+- [Documentation manual](docs/README.md): step-by-step tutorials, architecture, models, output metrics, and a research guide for new users.
 - [Wiki](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki): installation, configuration files, modules, and tutorials.
 - [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/src/main/java/com/mechalikh/pureedgesim/examples): runnable scenarios covering cloud, edge, and mist computing.
 - [Javadoc](https://javadoc.io/doc/com.mechalikh/pureedgesim): API documentation.

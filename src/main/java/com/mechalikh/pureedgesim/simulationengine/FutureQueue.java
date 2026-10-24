@@ -31,11 +31,13 @@ public class FutureQueue<T extends QueueElement> implements Queue<T> {
 	 */
 	protected final SortedSet<T> sortedSet = new TreeSet<>();
 
+	/** Next serial assigned to an element added at the tail. */
 	protected long serial;
 
+	/** Next serial assigned to an element added at the head (decreasing). */
 	protected long lowestSerial;
 
-	/** @see #getMaxTsNumber() */
+	/** Largest number of elements the queue has contained. */
 	protected long maxTsNumber;
 
 	@Override

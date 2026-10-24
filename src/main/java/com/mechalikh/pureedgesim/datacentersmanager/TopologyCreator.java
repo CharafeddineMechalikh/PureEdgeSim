@@ -23,23 +23,47 @@ package com.mechalikh.pureedgesim.datacentersmanager;
 import com.mechalikh.pureedgesim.network.InfrastructureGraph;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
+/**
+ * Base class for topology creators. A creator receives the generated computing
+ * nodes and adds the network links that connect them.
+ */
 public abstract class TopologyCreator {
+	/** Generator that provides the generated cloud, edge, and mist nodes. */
 	protected ComputingNodesGenerator computingNodesGenerator;
+	/** Simulation manager. */
 	protected SimulationManager simulationManager;
+	/** Topology under construction. */
 	protected InfrastructureGraph infrastructureTopology;
 
+	/**
+	 * Creates a topology creator.
+	 *
+	 * @param simulationManager        the simulation manager.
+	 * @param computingNodesGenerator the generator that provides the nodes.
+	 */
 	public TopologyCreator(SimulationManager simulationManager, ComputingNodesGenerator computingNodesGenerator) {
 		infrastructureTopology = new InfrastructureGraph();
 		this.simulationManager = simulationManager;
 		this.computingNodesGenerator = computingNodesGenerator;
 	}
 
+	/** Builds the topology graph. Called once during initialization. */
 	public abstract void generateTopologyGraph();
 	
+	/**
+	 * Returns the simulation manager.
+	 *
+	 * @return the simulation manager.
+	 */
 	public SimulationManager getSimulationManager() {
 		return simulationManager;
 	}
 
+	/**
+	 * Returns the generated topology.
+	 *
+	 * @return the infrastructure graph.
+	 */
 	public InfrastructureGraph getTopology() {
 		return infrastructureTopology;
 	}

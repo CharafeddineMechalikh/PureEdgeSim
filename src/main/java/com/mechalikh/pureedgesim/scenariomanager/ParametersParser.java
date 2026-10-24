@@ -8,17 +8,42 @@ import java.util.function.Predicate;
 
 import com.mechalikh.pureedgesim.simulationmanager.SimLog;
 
+/**
+ * Parses the simulation parameters properties file and loads its values into
+ * {@link SimulationParameters}. Missing or invalid values fail immediately with
+ * an explanatory exception.
+ *
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 5.0
+ */
 public class ParametersParser extends FileParserAbstract {
 
+	/**
+	 * Creates a parser for the given properties file.
+	 *
+	 * @param file path to the simulation parameters file
+	 */
 	public ParametersParser(String file) {
 		super(file);
 	}
 
+	/**
+	 * Parses the properties file.
+	 *
+	 * @return {@code true} when the file was loaded successfully, {@code false}
+	 *         when it could not be read
+	 */
 	@Override
 	public boolean parse() {
 		return checkSimulationProperties();
 	}
 
+	/**
+	 * Loads and validates every simulation parameter.
+	 *
+	 * @return {@code true} when all properties were loaded successfully,
+	 *         {@code false} when the file could not be read
+	 */
 	protected boolean checkSimulationProperties() {
 		SimLog.println("%s - Checking simulation properties file...",getClass().getSimpleName());
 		boolean result = false;
@@ -157,6 +182,17 @@ public class ParametersParser extends FileParserAbstract {
 
 	}
 
+	/**
+	 * Reads a numeric property and checks it against a predicate.
+	 *
+	 * @param prop      the loaded properties
+	 * @param parameter the property name
+	 * @param p         the condition the value must satisfy
+	 * @param message   description of the expected condition, used in the error
+	 *                  message
+	 * @return the parsed value
+	 * @throws IllegalArgumentException if the value does not satisfy the condition
+	 */
 	protected double assertDouble(Properties prop, String parameter, Predicate<Double> p, String message) {
 		double number = Double.parseDouble(prop.getProperty(parameter).trim());
 		if (!p.test(number))

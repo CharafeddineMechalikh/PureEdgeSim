@@ -186,7 +186,7 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode, O
      * 
      * @param generateTasks true if this computing node generates tasks, false otherwise.
      * 
-     * @see ComputingNodesGenerator#generateEdgeDevices()
+     * @see DefaultComputingNodesGenerator#generateEdgeDevices()
      */
     public void enableTaskGeneration(boolean generateTasks) {
         this.canGenerateTasks = generateTasks;
@@ -197,7 +197,7 @@ public abstract class AbstractNode extends SimEntity implements ComputingNode, O
      * 
      * @return true if this computing node generates tasks, false otherwise.
      * 
-     * @see ComputingNodesGenerator#generateEdgeDevices()
+     * @see DefaultComputingNodesGenerator#generateEdgeDevices()
      */
     public boolean isGeneratingTasks() {
         return this.canGenerateTasks;

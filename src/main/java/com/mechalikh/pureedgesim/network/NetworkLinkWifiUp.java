@@ -30,6 +30,14 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 public class NetworkLinkWifiUp extends NetworkLinkWifi {
 
+	/**
+	 * Creates a WiFi uplink from a device to an access point.
+	 *
+	 * @param src               the device.
+	 * @param dst               the access point.
+	 * @param simulationManager the simulation manager.
+	 * @param type              the link category.
+	 */
 	public NetworkLinkWifiUp(ComputingNode src, ComputingNode dst, SimulationManager simulationManager,
 			NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);

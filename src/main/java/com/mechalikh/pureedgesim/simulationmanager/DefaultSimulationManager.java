@@ -56,7 +56,9 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 	/**
 	 * Simulation progress parameters.
 	 **/
+	/** Number of tasks already reported in the progress display. */
 	protected int lastWrittenNumber = 0;
+	/** Last displayed progress percentage, or -1 before the first update. */
 	protected int oldProgress = -1;
 
 	/**
@@ -413,7 +415,11 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 	 * Sets the task as failed.
 	 *
 	 * @param task  The task that has been offloaded.
-	 * @param phase
+	 * @param phase The phase at which the failure was detected: 1 before the task
+	 *              reaches the orchestrator, 2 at the offloading destination, 3
+	 *              when the results are returned.
+	 *
+	 * @return always {@code true}, so callers can return it directly.
 	 */
 	protected boolean setFailed(Task task, int phase) {
 
@@ -436,6 +442,9 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 
 	/**
 	 * Checks if computing nodes can communicate directly (1 hop).
+	 * 
+	 * @param Dev1 the first computing node.
+	 * @param Dev2 the second computing node.
 	 * 
 	 * @return true if these computing nodes can communicate through a single hop.
 	 */

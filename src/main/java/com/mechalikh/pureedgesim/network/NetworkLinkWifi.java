@@ -30,6 +30,14 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 public abstract class NetworkLinkWifi extends NetworkLink {
  
+	/**
+	 * Creates a WiFi link with the configured WiFi bandwidth and latency.
+	 *
+	 * @param src               the source node.
+	 * @param dst               the destination node.
+	 * @param simulationManager the simulation manager.
+	 * @param type              the link category.
+	 */
 	protected NetworkLinkWifi(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
         super(src, dst, simulationManager, type);
         setBandwidth(SimulationParameters.wifiBandwidthBitsPerSecond);

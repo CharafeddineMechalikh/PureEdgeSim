@@ -45,7 +45,7 @@ import com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager;
  * 
  * @see com.mechalikh.pureedgesim.simulationengine.PureEdgeSim#start()
  * @see com.mechalikh.pureedgesim.simulationmanager.SimulationThread#startSimulation()
- * @see OnSimulationStartListener.onSimulationStart()
+ * @see OnSimulationStartListener#onSimulationStart()
  * @see com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager#startSimulation()
  * @see com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager#onSimulationStart()
  *
@@ -53,9 +53,13 @@ import com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager;
  * @since PureEdgeSim 5.0
  */
 public class PureEdgeSim {
+	/** Entities that will be notified when the simulation starts and ends. */
 	List<SimEntity> entitiesList = new ArrayList<>();
+	/** Current simulation time, in seconds. */
 	protected double time;
+	/** False once {@link #terminate()} has been called. */
 	protected boolean isRunning = true;
+	/** Pending events, ordered by time and insertion serial. */
 	protected FutureQueue<Event> events;
 
 	/**
@@ -95,7 +99,7 @@ public class PureEdgeSim {
 	 * @see com.mechalikh.pureedgesim.simulationmanager.Simulation#launchSimulation()
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationThread#startSimulation()
 	 * @see com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager#startSimulation()
-	 * @see OnSimulationStartListener.onSimulationStart()
+	 * @see OnSimulationStartListener#onSimulationStart()
 	 * @see #terminate()
 	 */
 	public void start() {

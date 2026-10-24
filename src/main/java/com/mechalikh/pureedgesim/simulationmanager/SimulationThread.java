@@ -165,6 +165,7 @@ public class SimulationThread {
 	 * defined in the simulation parameters.
 	 * 
 	 * @param simLog The simulation logger.
+	 * @throws InterruptedException if the pause is interrupted.
 	 */
 	protected void pause(SimLog simLog) throws InterruptedException {
 		// Take a few seconds pause to show the results.
@@ -179,14 +180,14 @@ public class SimulationThread {
 	/**
 	 * Loads the custom models and classes that are used in the simulation, if any.
 	 * 
-	 * @see #setCustomComputingNode(Class)
-	 * @see #setCustomEdgeOrchestrator(Class)
-	 * @see #setCustomEnergyModel(Class)
-	 * @see #setCustomMobilityModel(Class)
-	 * @see #setCustomNetworkModel(Class)
-	 * @see #setCustomTaskGenerator(Class)
+	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomComputingNode(Class)
+	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomEdgeOrchestrator(Class)
+	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomMobilityModel(Class)
+	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomNetworkModel(Class)
+	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomTaskGenerator(Class)
 	 * 
 	 * @param simulationManager the simulation manager
+	 * @throws Exception if a custom model cannot be instantiated.
 	 */
 	protected void loadModels(SimulationManager simulationManager) throws Exception {
 

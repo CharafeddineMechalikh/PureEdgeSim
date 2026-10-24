@@ -1,0 +1,42 @@
+name: javadoc
+
+# Builds the API documentation and publishes it as a workflow artifact.
+# The GitHub Pages site (CNAME mechalikh.com) is left untouched.
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'src/main/java/**'
+      - 'pom.xml'
+      - '.github/workflows/javadoc.yml'
+  pull_request:
+    paths:
+      - 'src/main/java/**'
+      - 'pom.xml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-javadoc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '11'
+          cache: maven
+
+      - name: Build Javadoc
+        run: mvn -B javadoc:javadoc
+
+      - name: Upload Javadoc
+        uses: actions/upload-artifact@v4
+        with:
+          name: javadoc
+          path: target/site/apidocs
+          retention-days: 30

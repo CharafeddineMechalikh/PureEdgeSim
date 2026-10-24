@@ -73,8 +73,7 @@ public abstract class ComputingNodesGenerator {
 	 * A list that contains all edge devices including sensors (i.e., devices
 	 * without computing capacities).
 	 * 
-	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#mistOnly(Task
-	 *      task)
+	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#mistOnly()
 	 */
 	protected List<ComputingNode> mistOnlyList;
 
@@ -82,40 +81,35 @@ public abstract class ComputingNodesGenerator {
 	 * A list that contains all edge devices except sensors (i.e., devices without
 	 * computing capacities).
 	 * 
-	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#mistOnly(Task
-	 *      task)
+	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#mistOnly()
 	 */
 	protected List<ComputingNode> mistOnlyListSensorsExcluded;
 
 	/**
 	 * A list that contains only edge data centers and servers.
 	 * 
-	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#edgeOnly(Task
-	 *      task)
+	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#edgeOnly()
 	 */
 	protected List<ComputingNode> edgeOnlyList = new ArrayList<>(SimulationParameters.numberOfEdgeDataCenters);
 
 	/**
 	 * A list that contains only cloud data centers.
 	 * 
-	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#cloudOnly(Task
-	 *      task)
+	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#cloudOnly()
 	 */
 	protected List<ComputingNode> cloudOnlyList = new ArrayList<>(SimulationParameters.numberOfCloudDataCenters);
 
 	/**
 	 * A list that contains cloud data centers and edge devices (except sensors).
 	 * 
-	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#mistAndCloud(Task
-	 *      task)
+	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#mistAndCloud()
 	 */
 	protected List<ComputingNode> mistAndCloudListSensorsExcluded;
 
 	/**
 	 * A list that contains cloud and edge data centers.
 	 * 
-	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#edgeAndCloud(Task
-	 *      task)
+	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#edgeAndCloud()
 	 */
 	protected List<ComputingNode> edgeAndCloudList = new ArrayList<>(
 			SimulationParameters.numberOfCloudDataCenters + SimulationParameters.numberOfEdgeDataCenters);
@@ -123,22 +117,21 @@ public abstract class ComputingNodesGenerator {
 	/**
 	 * A list that contains edge data centers and edge devices (except sensors).
 	 * 
-	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#mistAndEdge(Task
-	 *      task)
+	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#mistAndEdge()
 	 */
 	protected List<ComputingNode> mistAndEdgeListSensorsExcluded;
 
 	/**
 	 * A list that contains all generated nodes including sensors
 	 * 
-	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#all(Task task)
+	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#all()
 	 */
 	protected List<ComputingNode> allNodesList;
 
 	/**
 	 * A list that contains all generated nodes (sensors excluded)
 	 * 
-	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#all(Task task)
+	 * @see com.mechalikh.pureedgesim.taskorchestrator.Orchestrator#all()
 	 */
 	protected List<ComputingNode> allNodesListSensorsExcluded;
 

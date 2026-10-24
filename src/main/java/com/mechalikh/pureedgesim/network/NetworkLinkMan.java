@@ -26,10 +26,18 @@ import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 /**
- * A 4G LTE network link.
+ * A MAN network link.
  */
 public class NetworkLinkMan extends NetworkLink {
 
+	/**
+	 * Creates a MAN link with the configured MAN bandwidth, latency, and energy.
+	 *
+	 * @param src               the source node.
+	 * @param dst               the destination node.
+	 * @param simulationManager the simulation manager.
+	 * @param type              the link category.
+	 */
 	public NetworkLinkMan(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
 		setBandwidth(SimulationParameters.manBandwidthBitsPerSecond);

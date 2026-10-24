@@ -16,17 +16,39 @@ import org.w3c.dom.NodeList;
 import com.mechalikh.pureedgesim.simulationmanager.SimLog;
 import com.mechalikh.pureedgesim.taskgenerator.Application;
 
+/**
+ * Reads the applications XML file and loads the application profiles into
+ * {@link SimulationParameters#applicationList}.
+ */
 public class ApplicationFileParser extends XmlFileParser {
 
+	/**
+	 * Creates a parser for the given applications file.
+	 *
+	 * @param file path to the applications XML file.
+	 */
 	public ApplicationFileParser(String file) {
 		super(file);
 	}
 
+	/**
+	 * Parses the applications file.
+	 *
+	 * @return {@code true} if the file was read and validated successfully,
+	 *         {@code false} otherwise.
+	 */
 	@Override
 	public boolean parse() {
 		return checkAppFile();
 	}
 
+	/**
+	 * Validates every application entry and adds it to the application list. Each
+	 * size is expressed in megabytes in the XML file and converted to bits here.
+	 *
+	 * @return {@code true} on success, {@code false} if the file cannot be read or
+	 *         an entry is invalid.
+	 */
 	protected boolean checkAppFile() {
 		String condition = "> 0. Check the \"";
 		String application = "\" application in \"";

@@ -47,7 +47,7 @@ public class DataCentersManager {
 	 * The computing nodes generator used to generate all resources from the xml
 	 * files.
 	 * 
-	 * @see #generateComputingNodes()
+	 * @see #generateComputingNodes(Class, Class, Class)
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.DefaultComputingNodesGenerator
 	 */
 	protected ComputingNodesGenerator computingNodesGenerator;
@@ -92,9 +92,12 @@ public class DataCentersManager {
 	/**
 	 * Generates all computing nodes.
 	 * 
-	 * @param mobilityModelClass
-	 * @param computingNodeClass
-	 * @param computingNodesGeneratorClass
+	 * @param mobilityModelClass           the mobility model class used for every
+	 *                                     node.
+	 * @param computingNodeClass           the computing node class used for every
+	 *                                     node.
+	 * @param computingNodesGeneratorClass the generator that reads the XML files
+	 *                                     and creates the nodes.
 	 */
 	protected void generateComputingNodes(Class<? extends MobilityModel> mobilityModelClass,
 			Class<? extends ComputingNode> computingNodeClass, 
@@ -116,7 +119,7 @@ public class DataCentersManager {
 	/**
 	 * Creates the network topology.
 	 * 
-	 * @param topologyCreatorClass
+	 * @param topologyCreatorClass the topology creator to instantiate and run.
 	 */
 	public void createTopology(Class<? extends TopologyCreator> topologyCreatorClass) {
 		SimLog.println("%s - Creating the network topology...",this.getClass().getSimpleName());

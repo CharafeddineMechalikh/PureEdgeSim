@@ -30,6 +30,14 @@ import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationengine.FutureQueue;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
+/**
+ * Default task generator. Each device is assigned an application profile
+ * according to the profile usage percentages, then generates tasks at the rate
+ * of that profile for the whole simulation.
+ *
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 3.0
+ */
 public class DefaultTaskGenerator extends TaskGenerator {
 	/**
 	 * Used to generate random values.
@@ -38,9 +46,16 @@ public class DefaultTaskGenerator extends TaskGenerator {
 	 * @see #generateTasksForDevice(ComputingNode, int)
 	 */
 	protected Random random;
+	/** Counter used to assign a unique ID to every generated task. */
 	protected int id = 0;
+	/** Simulation duration used for generation, in minutes. */
 	protected double simulationTime;
 
+	/**
+	 * Creates a task generator with a strong secure random source.
+	 *
+	 * @param simulationManager the simulation manager
+	 */
 	public DefaultTaskGenerator(SimulationManager simulationManager) {
 		super(simulationManager);
 		try {
@@ -80,8 +95,8 @@ public class DefaultTaskGenerator extends TaskGenerator {
 	 * Generates tasks that will be offloaded during simulation for the given device
 	 * and application.
 	 * 
-	 * @param device the device to generate tasks for
-	 * @param app    the application type
+	 * @param dev the device to generate tasks for
+	 * @param app the application type
 	 */
 	protected void generateTasksForDevice(ComputingNode dev, int app) {
 		IntStream.range(0, (int) simulationTime)
@@ -95,9 +110,9 @@ public class DefaultTaskGenerator extends TaskGenerator {
 	/**
 	 * Inserts a task into the task list.
 	 * 
-	 * @param time   the time in seconds at which the task should be executed
-	 * @param app    the application type of the task
-	 * @param device the device that generates the task
+	 * @param time the time in seconds at which the task should be executed
+	 * @param app  the application type of the task
+	 * @param dev  the device that generates the task
 	 */
 	protected void insert(int time, int app, ComputingNode dev) {
 		Application appParams = SimulationParameters.applicationList.get(app);

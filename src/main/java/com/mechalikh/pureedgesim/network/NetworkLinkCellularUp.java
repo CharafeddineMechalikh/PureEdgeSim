@@ -30,6 +30,14 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 public class NetworkLinkCellularUp extends NetworkLinkCellular {
 
+	/**
+	 * Creates a cellular uplink from a device to a base station.
+	 *
+	 * @param src               the device.
+	 * @param dst               the base station.
+	 * @param simulationManager the simulation manager.
+	 * @param type              the link category.
+	 */
 	public NetworkLinkCellularUp(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
 		double energyConsumption = SimulationParameters.cellularDeviceTransmissionWattHourPerBit

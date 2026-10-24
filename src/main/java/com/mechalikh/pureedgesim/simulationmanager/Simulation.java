@@ -170,6 +170,8 @@ public class Simulation extends SimulationAbstract {
 
 	/**
 	 * Checks the input files.
+	 *
+	 * @return {@code true} when every configuration file was parsed successfully
 	 */
 	protected boolean checkFiles() {
 		return (new EdgeDevicesParser(SimulationParameters.edgeDevicesFile).parse()

@@ -10,12 +10,31 @@ import org.w3c.dom.NodeList;
 
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
 
+/**
+ * Parses the edge devices XML file. In addition to validating each device, it
+ * enforces that the device percentages add up to 100.
+ *
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 5.0
+ */
 public class EdgeDevicesParser extends ComputingNodesParser {
 
+	/**
+	 * Creates a parser for the edge devices file.
+	 *
+	 * @param file path to the XML file
+	 */
 	public EdgeDevicesParser(String file) {
 		super(file, TYPES.EDGE_DEVICE);
 	}
 
+	/**
+	 * Validates every device and checks that the percentages sum to 100.
+	 *
+	 * @param xmlDoc the parsed XML document
+	 * @return {@code true} when the file is valid
+	 * @throws IllegalArgumentException if the percentages do not sum to 100
+	 */
 	@Override
 	protected boolean typeSpecificChecking(Document xmlDoc) {
 		NodeList devicesList = xmlDoc.getElementsByTagName("device");
@@ -34,6 +53,13 @@ public class EdgeDevicesParser extends ComputingNodesParser {
 		return true;
 	}
 
+	/**
+	 * Ensures that a device element contains every required child element and
+	 * that numeric values are not negative.
+	 *
+	 * @param deviceElement the device element to validate
+	 * @throws IllegalArgumentException if a required element is missing or invalid
+	 */
 	protected void checkEdgeDevice(Element deviceElement) {
 		for (String element : Arrays.asList(new String[]{"connectivity", "mobility", "battery", "percentage", "speed", "minPauseDuration",
 				"maxPauseDuration", "minMobilityDuration", "maxMobilityDuration", "batteryCapacity", "generateTasks",

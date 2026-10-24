@@ -42,16 +42,16 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 public class SimulationVisualizer {
 
-	 // JFrame that displays the charts
+	/** The window that displays the charts. */
     protected JFrame simulationResultsFrame;
 
-    // SimulationManager instance that manages the simulation
+    /** The simulation manager whose metrics are displayed. */
     protected SimulationManager simulationManager;
 
-    // List of charts to display
+    /** The charts shown in the window. */
     protected List<Chart> charts = new ArrayList<Chart>(4);
 
-    // Flag that indicates if it is the first time charts are updated
+    /** Whether the charts are being updated for the first time. */
     protected boolean firstTime = true;
 
     /**

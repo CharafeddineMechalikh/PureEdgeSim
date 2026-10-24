@@ -30,6 +30,14 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 public class NetworkLinkEthernet extends NetworkLink {
 
+	/**
+	 * Creates an Ethernet link with the configured bandwidth, latency, and energy.
+	 *
+	 * @param src               the source node.
+	 * @param dst               the destination node.
+	 * @param simulationManager the simulation manager.
+	 * @param type              the link category.
+	 */
 	public NetworkLinkEthernet(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
 		setBandwidth(SimulationParameters.ethernetBandwidthBitsPerSecond);

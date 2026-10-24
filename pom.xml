@@ -259,6 +259,10 @@
 					<version>3.2.0</version>
 					<configuration>
 						<failOnError>false</failOnError>
+						<additionalOptions>
+							<additionalOption>-Xmaxwarns</additionalOption>
+							<additionalOption>1000</additionalOption>
+						</additionalOptions>
 						<tags>
 							<tag>
 								<name>TODO</name>

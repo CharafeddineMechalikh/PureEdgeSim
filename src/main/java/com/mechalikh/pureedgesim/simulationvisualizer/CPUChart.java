@@ -38,12 +38,16 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 public class CPUChart extends Chart {
 	// Lists to store CPU usage and time
+	/** Average CPU usage of cloud data centers over time. */
 	protected List<Double> cloudUsage = new ArrayList<>(
 			(int) (SimulationParameters.simulationDuration / SimulationParameters.updateInterval));
+	/** Average CPU usage of edge devices over time. */
 	protected List<Double> mistUsage = new ArrayList<>(
 			(int) (SimulationParameters.simulationDuration / SimulationParameters.updateInterval));
+	/** Average CPU usage of edge data centers over time. */
 	protected List<Double> edgeUsage = new ArrayList<>(
 			(int) (SimulationParameters.simulationDuration / SimulationParameters.updateInterval));
+	/** Simulation time of each sample, in seconds. */
 	protected List<Double> currentTime = new ArrayList<>(
 			(int) (SimulationParameters.simulationDuration / SimulationParameters.updateInterval));
 

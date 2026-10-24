@@ -48,6 +48,12 @@ public class EnergyModelNetworkLink {
 	 */
 	public static final EnergyModelNetworkLink NULL = EnergyModelNetworkLinkNull.getInstance();
 
+	/**
+	 * Creates an energy model for a network link.
+	 *
+	 * @param energyPerBit energy consumed per transmitted bit, in watt-hours
+	 * @param link         the link to monitor
+	 */
 	public EnergyModelNetworkLink(final double energyPerBit, NetworkLink link) {
 		this.energyPerBit = energyPerBit;
 		this.link = link;

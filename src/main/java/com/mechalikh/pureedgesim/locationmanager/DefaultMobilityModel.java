@@ -27,19 +27,35 @@ import java.util.Random;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager; 
 
+/**
+ * Default random-waypoint mobility model. A mobile node moves in a straight line
+ * for a random duration, pauses for a random duration, and reorients when it
+ * reaches the simulation area boundary. Distances are expressed in meters and
+ * the position is updated every {@link SimulationParameters#updateInterval}.
+ */
 public class DefaultMobilityModel extends MobilityModel {
 	/**
 	 * Used to generate random values.
 	 * 
-	 * @see #pause
+	 * @see #pause()
 	 * @see #reoriontate(double, double)
 	 */
 	protected Random random;
+	/** True while the node is paused. */
 	protected boolean pause = false;
+	/** Remaining pause time, in seconds; negative when not pausing. */
 	protected double pauseDuration = -1;
+	/** Remaining movement time, in seconds, before the next pause. */
 	protected double mobilityDuration;
+	/** Current direction, in degrees. */
 	protected int orientationAngle;
 
+	/**
+	 * Creates a mobility model for a node at the given location.
+	 *
+	 * @param simulationManager the simulation manager.
+	 * @param currentLocation   the initial location.
+	 */
 	public DefaultMobilityModel(SimulationManager simulationManager, Location currentLocation) {
 		super(simulationManager, currentLocation);
 		try {
@@ -50,6 +66,13 @@ public class DefaultMobilityModel extends MobilityModel {
 		orientationAngle = random.nextInt(359);
 	}
 
+	/**
+	 * Computes the location at the next update tick, applying pause, boundary
+	 * avoidance, and movement.
+	 *
+	 * @param newLocation the current location.
+	 * @return the location at the next tick.
+	 */
 	@Override
 	protected Location getNextLocation(Location newLocation) {
 		double xPosition = newLocation.getXPos(); // Get the initial X coordinate assigned to this device
@@ -77,6 +100,13 @@ public class DefaultMobilityModel extends MobilityModel {
 
 	}
 
+	/**
+	 * Moves the node by one update interval along its current orientation.
+	 *
+	 * @param xPosition current X coordinate.
+	 * @param yPosition current Y coordinate.
+	 * @return the new location.
+	 */
 	protected Location updateLocation(double xPosition, double yPosition) {
 		double distance = getSpeed() * SimulationParameters.updateInterval;
 		double X_distance = Math.cos(Math.toRadians(orientationAngle)) * distance;
@@ -87,6 +117,7 @@ public class DefaultMobilityModel extends MobilityModel {
 		return new Location(X_pos, Y_pos);
 	}
 
+	/** Ends the pause and resumes movement at the next tick. */
 	protected void resume() {
 		// Resume mobility in the next iteration
 		pause = false;
@@ -95,6 +126,10 @@ public class DefaultMobilityModel extends MobilityModel {
 		mobilityDuration -= SimulationParameters.updateInterval;
 	}
 
+	/**
+	 * Starts a pause with a random duration and picks the next movement duration
+	 * and direction.
+	 */
 	protected void pause() {
 		// Pickup random duration from 50 to 200 seconds
 		pauseDuration = getMinPauseDuration()
@@ -109,6 +144,13 @@ public class DefaultMobilityModel extends MobilityModel {
 				+ getMinMobilityDuration();
 	}
 
+	/**
+	 * Redirects the node toward the inside of the simulation area when it reaches
+	 * a boundary.
+	 *
+	 * @param xPosition current X coordinate.
+	 * @param yPosition current Y coordinate.
+	 */
 	protected void reoriontate(double xPosition, double yPosition) {
 		if (xPosition >= SimulationParameters.simulationMapLength)
 			orientationAngle = -90 - random.nextInt(180);

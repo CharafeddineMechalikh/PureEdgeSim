@@ -38,22 +38,47 @@ import com.mechalikh.pureedgesim.taskgenerator.Task;
  * @since PureEdgeSim 5.0
  */
 public class DefaultComputingNode extends LocationAwareNode {
+	/** Index of the application profile assigned to this node, if any. */
 	protected int applicationType;
+	/** True when the node cannot execute tasks, for example a sensor. */
 	protected boolean isSensor = false;
+	/** Available storage, in megabytes. */
 	protected double availableStorage = 0; // in Megabytes
+	/** Total storage, in megabytes. */
 	protected double storage = 0; // in Megabytes
+	/** True when no task is currently executing. */
 	protected boolean isIdle = true;
+	/** CPU work currently being executed, in million instructions. */
 	protected int tasks = 0;
+	/** Cumulative CPU work executed, in million instructions. */
 	protected int totalTasks = 0;
+	/** Total capacity, in million instructions per second. */
 	protected double totalMipsCapacity;
+	/** Capacity of a single CPU core, in million instructions per second. */
 	protected double mipsPerCore;
+	/** Number of CPU cores. */
 	protected int numberOfCPUCores;
+	/** Number of CPU cores that are not executing a task. */
 	protected int availableCores;
+	/** Tasks waiting for a free core and enough RAM, in arrival order. */
 	protected List<Task> tasksQueue = new ArrayList<>();
+	/** Available RAM, in megabytes. */
 	protected double availableRam; // in Megabytes
+	/** Total RAM, in megabytes. */
 	protected double ram; // in Megabytes
+	/** Event tag used to signal that a task has finished executing. */
 	protected static final int EXECUTION_FINISHED = 2;
 
+	/**
+	 * Creates a computing node.
+	 *
+	 * @param simulationManager the simulation manager.
+	 * @param mipsPerCore       capacity of one CPU core, in million instructions
+	 *                          per second.
+	 * @param numberOfCPUCores  number of CPU cores.
+	 * @param storage           total storage, in megabytes.
+	 * @param ram               total RAM, in megabytes.
+	 */
 	public DefaultComputingNode(SimulationManager simulationManager, double mipsPerCore, int numberOfCPUCores,
 			double storage, double ram) {
 		super(simulationManager);
@@ -235,6 +260,13 @@ public class DefaultComputingNode extends LocationAwareNode {
 			getTasksQueue().add(task);
 	}
 
+	/**
+	 * Starts executing a task immediately, reserving one core, RAM, and storage.
+	 * The execution time is {@code task.getLength() / mipsPerCore}, so a task is
+	 * executed by a single core.
+	 *
+	 * @param task the task to execute.
+	 */
 	protected void startExecution(Task task) {
 
 		// Update the CPU utilization.
@@ -272,6 +304,12 @@ public class DefaultComputingNode extends LocationAwareNode {
 		return mipsPerCore;
 	}
 
+	/**
+	 * Releases the resources of the finished task, records its finish time,
+	 * schedules the result transfer, and starts the next queued task if any.
+	 *
+	 * @param e the execution finished event; its data is the finished task.
+	 */
 	protected void executionFinished(Event e) {
 
 		// The execution of one task has been finished, free one more CPU core.

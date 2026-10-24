@@ -43,8 +43,22 @@ import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
+/**
+ * Default generator of cloud data centers, edge data centers, and edge devices.
+ * It reads the three XML files referenced by {@link SimulationParameters} and
+ * creates the computing nodes and their mobility models.
+ */
 public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 
+	/**
+	 * Creates a generator for the given simulation.
+	 *
+	 * @param simulationManager        the simulation manager.
+	 * @param mobilityModelClass       the mobility model class used for every
+	 *                                 node.
+	 * @param computingNodeClass       the computing node class used for every
+	 *                                 node.
+	 */
 	public DefaultComputingNodesGenerator(SimulationManager simulationManager,
 			Class<? extends MobilityModel> mobilityModelClass, Class<? extends ComputingNode> computingNodeClass) {
 		super(simulationManager, mobilityModelClass, computingNodeClass);
@@ -109,6 +123,8 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 
 	/**
 	 * Puts the newly generated edge device in corresponding lists.
+	 *
+	 * @param newDevice the device to register.
 	 */
 	protected void insertEdgeDevice(ComputingNode newDevice) {
 		mistOnlyList.add(newDevice);
@@ -200,16 +216,20 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 	 * @see #generateDataCenters(String, TYPES)
 	 * @see #generateDevicesInstances(Element)
 	 * 
-	 * @param datacenterElement The configuration file.
+	 * @param datacenterElement The XML element describing the node type.
 	 * @param type              The type, whether an MIST (edge) device, an EDGE
 	 *                          data center, or a CLOUD one.
-	 * @throws NoSuchAlgorithmException
-	 * @throws SecurityException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
+	 * @throws NoSuchAlgorithmException  if the random number generator algorithm is
+	 *                                   unavailable.
+	 * @throws NoSuchMethodException     if the model class lacks the expected
+	 *                                   constructor.
+	 * @throws SecurityException         if the model constructor cannot be accessed.
+	 * @throws InvocationTargetException if the model constructor throws.
+	 * @throws IllegalArgumentException  if the constructor arguments are invalid.
+	 * @throws IllegalAccessException    if the model class or constructor is not
+	 *                                   accessible.
+	 * @throws InstantiationException    if the model class cannot be instantiated.
+	 * @return the generated computing node.
 	 */
 	protected ComputingNode createComputingNode(Element datacenterElement, SimulationParameters.TYPES type)
 			throws NoSuchAlgorithmException, NoSuchMethodException, SecurityException, InstantiationException,

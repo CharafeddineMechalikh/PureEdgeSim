@@ -44,50 +44,100 @@ import com.mechalikh.pureedgesim.network.TransferProgress;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters; 
 import com.mechalikh.pureedgesim.taskgenerator.Task;
 
+/**
+ * Collects the metrics of one simulation, prints the text report, and writes the
+ * CSV and log files. A {@code SimLog} is created per simulation run; in parallel
+ * mode each worker gets its own instance and therefore its own CSV file.
+ */
 public class SimLog {
+	/** Print flag that omits the simulation time prefix. */
 	public static final int NO_TIME = 0;
+	/** Print flag that appends to the previous log line. */
 	public static final int SAME_LINE = 1;
+	/** Print flag that prefixes the line with the simulation time. */
 	public static final int DEFAULT = 2;
+	/** Accumulated CSV row fragments for the current scenario. */
 	protected ArrayList<String> resultsList = new ArrayList<String>();
+	/** Formatter that uses a dot as decimal separator. */
 	protected DecimalFormat decimalFormat;
+	/** Text lines of the current simulation log. */
 	protected List<String> log = new ArrayList<String>();
+	/** Orchestration architecture of the current scenario. */
 	protected String currentOrchArchitecture;
+	/** Orchestration algorithm of the current scenario. */
 	protected String currentOrchAlgorithm;
+	/** Number of edge devices in the current scenario. */
 	protected int currentEdgeDevicesCount;
+	/** Timestamp shared by all files of one simulation campaign. */
 	protected String simStartTime;
+	/** Simulation manager that provides the current simulation time. */
 	protected SimulationManager simulationManager;
+	/** True while the output folder has not been cleaned yet. */
 	protected boolean isFirstIteration;
 
 	// Tasks execution results
+	/** Tasks generated for the scenario. */
 	protected int generatedTasksCount = 0;
+	/** Tasks sent from their device to the orchestrator. */
 	protected int tasksSent = 0;
+	/** Tasks that failed, for any reason. */
 	protected int tasksFailed = 0;
+	/** Tasks that failed because their total delay exceeded the latency limit. */
 	protected int tasksFailedLatency = 0;
+	/** Tasks that failed because the device or destination moved away. */
 	protected int tasksFailedMobility = 0;
+	/** Tasks that failed because storage or RAM was insufficient. */
 	protected int tasksFailedRessourcesUnavailable = 0;
+	/** Tasks that failed because the device or destination died. */
 	protected int tasksFailedBeacauseDeviceDead = 0;
+	/** Tasks that were never generated because their device died. */
 	protected int notGeneratedBecDeviceDead = 0;
+	/** Sum of actual CPU execution times of finished tasks, in seconds. */
 	protected Double totalExecutionTime = 0.0;
+	/** Sum of queue waiting times of finished tasks, in seconds. */
 	protected Double totalWaitingTime = 0.0;
+	/** Tasks whose execution time and waiting time were recorded. */
 	protected int executedTasksCount = 0;
+	/** Tasks sent to cloud data centers. */
 	protected int tasksExecutedOnCloud = 0;
+	/** Tasks sent to edge data centers. */
 	protected int tasksExecutedOnEdge = 0;
+	/** Tasks sent to edge devices. */
 	protected int tasksExecutedOnMist = 0;
+	/** Cloud tasks that failed. */
 	protected int tasksFailedCloud = 0;
+	/** Edge data center tasks that failed. */
 	protected int tasksFailedEdge = 0;
+	/** Edge device tasks that failed. */
 	protected int tasksFailedMist = 0;
 
 	// Network utilization
+	/** Total LAN usage, in seconds. */
 	protected Double totalLanUsage = 0.0;
+	/** Total MAN usage, in seconds. */
 	protected Double totalManUsage = 0.0;
+	/** Total WAN usage, in seconds. */
 	protected Double totalWanUsage = 0.0;
+	/** Sum of the average bandwidth of each transfer, in Mbps. */
 	protected Double totalBandwidth = 0.0;
+	/** Number of recorded transfers. */
 	protected int transfersCount = 0;
+	/** LAN usage caused by container downloads, in seconds. */
 	protected Double containersLanUsage = 0.0;
+	/** WAN usage caused by container downloads, in seconds. */
 	protected Double containersWanUsage = 0.0;
+	/** MAN usage caused by container downloads, in seconds. */
 	protected Double containersManUsage = 0.0;
+	/** Total transferred data, in megabytes. */
 	protected Double totalTraffic = 0.0;
 
+	/**
+	 * Creates a logger for one simulation.
+	 *
+	 * @param startTime       timestamp shared by the files of the campaign.
+	 * @param isFirstIteration true for the first simulation of the campaign; the
+	 *                         CSV header is written in that case.
+	 */
 	public SimLog(String startTime, boolean isFirstIteration) {
 		this.setSimStartTime(startTime);
 		this.isFirstIteration = isFirstIteration;
@@ -119,6 +169,12 @@ public class SimLog {
 		}
 	}
 
+	/**
+	 * Prints all result sections, flushes the text log to disk, and keeps the CSV
+	 * row ready for the next scenario.
+	 *
+	 * @param finishedTasks tasks whose results were returned during the scenario.
+	 */
 	public void showIterationResults(List<Task> finishedTasks) {
 		printTasksRelatedResults();
 		printNetworkRelatedResults();
@@ -133,6 +189,11 @@ public class SimLog {
 		saveLog();
 	}
 
+	/**
+	 * Prints the CPU utilization section and appends the four CPU columns to the
+	 * current CSV row. The average per level is the mean across nodes of that
+	 * level; sensors are excluded from the mist population.
+	 */
 	protected void printCPUUtilizationResults() {
 		double averageCpuUtilization = 0;
 		double averageCloudCpuUtilization = getCpuUtilizationForNodeType(SimulationParameters.TYPES.CLOUD);
@@ -174,6 +235,12 @@ public class SimLog {
 		return getCpuUtilization(nodes);
 	}
 
+	/**
+	 * Returns all computing nodes of a given type.
+	 *
+	 * @param nodeType the type to select.
+	 * @return the matching nodes.
+	 */
 	public List<ComputingNode> getNodesByType(SimulationParameters.TYPES nodeType) {
 	    return simulationManager.getDataCentersManager().getComputingNodesGenerator()
 	            .getAllNodesList()
@@ -182,6 +249,12 @@ public class SimLog {
 	            .collect(Collectors.toList());
 	}
 
+	/**
+	 * Sums the average CPU utilization of the given nodes.
+	 *
+	 * @param list the nodes to measure.
+	 * @return the sum of their lifetime average utilization, in percent.
+	 */
 	protected double getCpuUtilization(List<ComputingNode> list) {
 		double averageCpuUtilization = 0;
 		for (ComputingNode node : list) {
@@ -190,6 +263,11 @@ public class SimLog {
 		return averageCpuUtilization;
 	}
 
+	/**
+	 * Prints the task outcome section and appends the task columns to the current
+	 * CSV row. All percentages here are relative to the tasks that were sent from
+	 * the devices.
+	 */
 	public void printTasksRelatedResults() {
 		print(getClass().getSimpleName() + " - Printing iteration output...");
 		print("------------------------------------------------------- OUTPUT -------------------------------------------------------");
@@ -251,6 +329,10 @@ public class SimLog {
 				+ (tasksExecutedOnMist - tasksFailedMist) + ",");
 	}
 
+	/**
+	 * Prints the network section and appends the network columns to the current CSV
+	 * row.
+	 */
 	public void printNetworkRelatedResults() {
 		print("Network usage                                                           :"
 				+ padLeftSpaces(decimalFormat.format(totalLanUsage + totalManUsage + totalWanUsage), 20)
@@ -281,6 +363,13 @@ public class SimLog {
 						+ (totalBandwidth / transfersCount) + ",");
 	}
 
+	/**
+	 * Prints the energy and battery section and appends the energy, dead-device,
+	 * and remaining-power columns to the current CSV row.
+	 *
+	 * @param finishedTasks tasks that completed during the scenario; used for the
+	 *                      energy-per-task value.
+	 */
 	public void printPowerConsumptionResults(List<Task> finishedTasks) {
 		int deadEdgeDevicesCount = 0;
 		double energyConsumption = 0;
@@ -424,10 +513,23 @@ public class SimLog {
 				+ remainingPower.toString().replace(",", "-") + "," + devicesDeathTime.toString().replace(",", "-"));
 	}
 
+	/**
+	 * Pads a string on the left with spaces.
+	 *
+	 * @param str the string to pad.
+	 * @param n   the desired width.
+	 * @return the padded string.
+	 */
 	public String padLeftSpaces(String str, int n) {
 		return String.format("%1$" + n + "s", str);
 	}
 
+	/**
+	 * Deletes the configured output folder, but only during the first iteration of
+	 * the campaign.
+	 *
+	 * @throws IOException if the folder cannot be traversed or deleted.
+	 */
 	public void cleanOutputFolder() throws IOException {
 		// Clean the folder where the results files will be saved
 		if (isFirstIteration) {
@@ -438,6 +540,13 @@ public class SimLog {
 		}
 	}
 
+	/**
+	 * Recursively deletes a file or directory. Failures are logged and do not
+	 * interrupt the deletion of the remaining entries.
+	 *
+	 * @param path the path to delete.
+	 * @throws IOException if the directory cannot be listed.
+	 */
 	protected void deleteDirectory(Path path) throws IOException {
 		if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
 			try (DirectoryStream<Path> entries = Files.newDirectoryStream(path)) {
@@ -453,6 +562,11 @@ public class SimLog {
 		}
 	}
 
+	/**
+	 * Writes the accumulated CSV row and, when enabled, the text log. The CSV is
+	 * always written; the text file depends on
+	 * {@link SimulationParameters#saveLog}.
+	 */
 	public void saveLog() {
 		// writing results in csv file
 		writeFile(getFileName(".csv"), getResultsList());
@@ -466,10 +580,21 @@ public class SimLog {
 
 	}
 
+	/**
+	 * Returns the accumulated CSV rows.
+	 *
+	 * @return the CSV lines, including the header on the first iteration.
+	 */
 	protected List<String> getResultsList() {
 		return this.resultsList;
 	}
 
+	/**
+	 * Appends lines to a file and clears the provided list.
+	 *
+	 * @param fileName the destination file.
+	 * @param Lines    the lines to append; the list is emptied afterwards.
+	 */
 	public void writeFile(String fileName, List<String> Lines) {
 		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName, true))) {
 			for (String str : Lines) {
@@ -482,6 +607,14 @@ public class SimLog {
 		}
 	}
 
+	/**
+	 * Builds the output file path for the current simulation. Parallel runs use
+	 * {@code Parallel_simulation_<id>}; sequential runs use
+	 * {@code Sequential_simulation}. The parent folder is created if needed.
+	 *
+	 * @param extension the file extension, including the dot.
+	 * @return the full file path.
+	 */
 	public String getFileName(String extension) {
 		String outputFilesName = SimulationParameters.outputFolder + "/" + simStartTime;
 		new File(outputFilesName).mkdirs();
@@ -493,6 +626,13 @@ public class SimLog {
 		return outputFilesName + extension;
 	}
 
+	/**
+	 * Prints a line with the requested formatting flag.
+	 *
+	 * @param flag    {@link #DEFAULT}, {@link #NO_TIME}, or {@link #SAME_LINE}.
+	 * @param newLine the line format, possibly containing {@code %s} placeholders.
+	 * @param args    the format arguments.
+	 */
 	public void print(int flag, String newLine, Object... args) {
 		if (args != null)
 			newLine = String.format(newLine, args);
@@ -520,14 +660,32 @@ public class SimLog {
 		}
 	}
 
+	/**
+	 * Prints a line prefixed with the simulation time.
+	 *
+	 * @param line the line format, possibly containing {@code %s} placeholders.
+	 * @param args the format arguments.
+	 */
 	public void print(String line, Object... args) {
 		print(DEFAULT, line, args);
 	}
 
+	/**
+	 * Prints a line to the console without adding it to the simulation log.
+	 *
+	 * @param line the line format, possibly containing {@code %s} placeholders.
+	 * @param args the format arguments.
+	 */
 	public static void println(String line, Object... args) {
 		System.out.format(line + "\n", args);
 	}
 
+	/**
+	 * Writes a debug line to the log and the console when deep logging is enabled.
+	 *
+	 * @param line the line format, possibly containing {@code %s} placeholders.
+	 * @param args the format arguments.
+	 */
 	public void deepLog(String line, Object... args) {
 		if (SimulationParameters.deepLoggingEnabled) {
 			print(DEFAULT, line, args);
@@ -535,16 +693,36 @@ public class SimLog {
 		}
 	}
 
+	/**
+	 * Writes a debug line with a formatting flag when deep logging is enabled.
+	 *
+	 * @param flag the print flag.
+	 * @param line the line format.
+	 * @param args the format arguments.
+	 */
 	public void deepLog(int flag, String line, Object... args) {
 		if (SimulationParameters.deepLoggingEnabled) {
 			print(flag, line, args);
 		}
 	}
 
+	/**
+	 * Prints a line to the log without the simulation time prefix.
+	 *
+	 * @param line the line format.
+	 * @param args the format arguments.
+	 */
 	public void printWithoutTime(String line, Object... args) {
 		print(NO_TIME, line, args);
 	}
 
+	/**
+	 * Prints text on the current console line, in red on the error stream when
+	 * requested.
+	 *
+	 * @param line  the text.
+	 * @param color {@code "red"} for the error stream, anything else for stdout.
+	 */
 	public void printSameLine(String line, String color) {
 		if ("red".equalsIgnoreCase(color))
 			System.err.print(line);
@@ -552,22 +730,52 @@ public class SimLog {
 			System.out.print(line);
 	}
 
+	/**
+	 * Prints text on the current console line.
+	 *
+	 * @param line the text.
+	 */
 	public void printSameLine(String line) {
 		System.out.print(line);
 	}
 
+	/**
+	 * Returns the number of generated tasks.
+	 *
+	 * @return the generated task count.
+	 */
 	public int getGeneratedTasks() {
 		return generatedTasksCount;
 	}
 
+	/**
+	 * Sets the number of generated tasks.
+	 *
+	 * @param generatedTasks the generated task count.
+	 */
 	public void setGeneratedTasks(int generatedTasks) {
 		this.generatedTasksCount = generatedTasks;
 	}
 
+	/**
+	 * Sets the orchestration architecture name used in the CSV row.
+	 *
+	 * @param currentOrchPolicy the architecture name.
+	 */
 	public void setCurrentOrchPolicy(String currentOrchPolicy) {
 		this.currentOrchArchitecture = currentOrchPolicy;
 	}
 
+	/**
+	 * Binds the logger to the simulation that is about to start.
+	 *
+	 * @param simulationManager the simulation manager.
+	 * @param dev               number of edge devices in the scenario.
+	 * @param alg               index of the orchestration algorithm in
+	 *                          {@link SimulationParameters#orchestrationAlgorithms}.
+	 * @param arch              index of the architecture in
+	 *                          {@link SimulationParameters#orchestrationArchitectures}.
+	 */
 	public void initialize(SimulationManager simulationManager, int dev, int alg, int arch) {
 		this.currentEdgeDevicesCount = dev;
 		this.currentOrchAlgorithm = SimulationParameters.orchestrationAlgorithms[alg];
@@ -575,18 +783,35 @@ public class SimLog {
 		this.simulationManager = simulationManager;
 	}
 
+	/**
+	 * Returns the timestamp shared by the files of the campaign.
+	 *
+	 * @return the start time.
+	 */
 	public String getSimStartTime() {
 		return simStartTime;
 	}
 
+	/**
+	 * Sets the timestamp shared by the files of the campaign.
+	 *
+	 * @param simStartTime the start time.
+	 */
 	public void setSimStartTime(String simStartTime) {
 		this.simStartTime = simStartTime;
 	}
 
+	/** Increments the number of tasks sent from their device to the orchestrator. */
 	public void incrementTasksSent() {
 		this.tasksSent++;
 	}
 
+	/**
+	 * Counts a failed task and attributes it to the level of its offloading
+	 * destination, when one was selected.
+	 *
+	 * @param task the failed task.
+	 */
 	public void incrementTasksFailed(Task task) {
 		this.tasksFailed++;
 		if (task.getOffloadingDestination() == null)
@@ -602,36 +827,72 @@ public class SimLog {
 		}
 	}
 
+	/**
+	 * Counts a task that failed because its device or destination died.
+	 *
+	 * @param task the failed task.
+	 */
 	public void incrementFailedBeacauseDeviceDead(Task task) {
 		this.tasksFailedBeacauseDeviceDead++;
 		incrementTasksFailed(task);
 	}
 
+	/**
+	 * Counts a task that was not generated because its device had already died.
+	 */
 	public void incrementNotGeneratedBeacuseDeviceDead() {
 		this.notGeneratedBecDeviceDead++;
 	}
 
+	/**
+	 * Counts a task that failed because its total delay exceeded the latency
+	 * limit.
+	 *
+	 * @param task the failed task.
+	 */
 	public void incrementTasksFailedLatency(Task task) {
 		this.tasksFailedLatency++;
 		incrementTasksFailed(task);
 	}
 
+	/**
+	 * Counts a task that failed because the device or destination moved out of
+	 * range.
+	 *
+	 * @param task the failed task.
+	 */
 	public void incrementTasksFailedMobility(Task task) {
 		this.tasksFailedMobility++;
 		incrementTasksFailed(task);
 	}
 
+	/**
+	 * Counts a task that failed because the destination lacked storage or RAM.
+	 *
+	 * @param task the failed task.
+	 */
 	public void incrementTasksFailedLackOfRessources(Task task) {
 		this.tasksFailedRessourcesUnavailable++;
 		incrementTasksFailed(task);
 	}
 
+	/**
+	 * Records the execution and waiting times of a finished task. Only actual CPU
+	 * time and queue waiting time are accumulated; network delays are not included.
+	 *
+	 * @param task the finished task.
+	 */
 	public void getTasksExecutionInfos(Task task) {
 		this.totalExecutionTime += task.getActualCpuTime();
 		this.totalWaitingTime += task.getWatingTime();
 		this.executedTasksCount++;
 	}
 
+	/**
+	 * Counts a task sent from the orchestrator to its destination, by level.
+	 *
+	 * @param task the sent task.
+	 */
 	public void taskSentFromOrchToDest(Task task) {
 		SimulationParameters.TYPES type = task.getOffloadingDestination().getType();
 		if (type == SimulationParameters.TYPES.CLOUD) {
@@ -643,6 +904,12 @@ public class SimLog {
 		}
 	}
 
+	/**
+	 * Accumulates the network usage of a finished transfer. Container transfers are
+	 * also counted separately so their share of each network type can be reported.
+	 *
+	 * @param transfer the finished transfer.
+	 */
 	public void updateNetworkUsage(TransferProgress transfer) {
 		this.totalLanUsage += transfer.getLanNetworkUsage();
 		this.totalManUsage += transfer.getManNetworkUsage();

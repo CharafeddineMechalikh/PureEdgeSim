@@ -29,9 +29,26 @@ import com.mechalikh.pureedgesim.simulationengine.Event;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 import com.mechalikh.pureedgesim.taskgenerator.Task;
 
+/**
+ * Default task placement policy, selected when the scenario uses this class as
+ * its orchestrator. It supports two algorithm names: {@code ROUND_ROBIN}, which
+ * balances assignments across the allowed nodes, and {@code TRADE_OFF}, which
+ * scores candidates by pending assignments, node type, task length, and CPU
+ * capacity.
+ *
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 1.0
+ */
 public class DefaultOrchestrator extends Orchestrator {
+	/** Number of tasks assigned so far, keyed by the index of the node in nodeList. */
 	protected Map<Integer, Integer> historyMap = new LinkedHashMap<>();
 
+	/**
+	 * Creates the default orchestrator and initializes the assignment counters of
+	 * every candidate node.
+	 *
+	 * @param simulationManager the simulation manager
+	 */
 	public DefaultOrchestrator(SimulationManager simulationManager) {
 		super(simulationManager);
 		// Initialize the history map
@@ -39,6 +56,15 @@ public class DefaultOrchestrator extends Orchestrator {
 			historyMap.put(i, 0);
 	}
 
+	/**
+	 * Dispatches to the algorithm named in the scenario file.
+	 *
+	 * @param architecture the layers allowed by the architecture
+	 * @param task         the task to place
+	 * @return the index of the selected node in nodeList, or -1 when no placement is
+	 *         possible
+	 * @throws IllegalArgumentException if the algorithm name is unknown
+	 */
 	protected int findComputingNode(String[] architecture, Task task) {
 		if ("ROUND_ROBIN".equals(algorithmName)) {
 			return roundRobin(architecture, task);
@@ -50,6 +76,18 @@ public class DefaultOrchestrator extends Orchestrator {
 		}
 	}
 
+	/**
+	 * Scores every allowed candidate and selects the lowest score. The score
+	 * multiplies the number of tasks already assigned plus one by a node type
+	 * weight (1.8 for cloud, 1.3 for edge devices, 1.2 otherwise), by the task
+	 * length, and divides by the node's MIPS per core, so less loaded and faster
+	 * nodes are preferred.
+	 *
+	 * @param architecture the layers allowed by the architecture
+	 * @param task         the task to place
+	 * @return the index of the selected node in nodeList, or -1 when no placement is
+	 *         possible
+	 */
 	protected int tradeOff(String[] architecture, Task task) {
 		int selected = -1;
 		double min = -1;
@@ -87,6 +125,15 @@ public class DefaultOrchestrator extends Orchestrator {
 		return selected;
 	}
 
+	/**
+	 * Selects the allowed candidate with the fewest tasks assigned so far and
+	 * increments its counter.
+	 *
+	 * @param architecture the layers allowed by the architecture
+	 * @param task         the task to place
+	 * @return the index of the selected node in nodeList, or -1 when no placement is
+	 *         possible
+	 */
 	public int roundRobin(String[] architecture, Task task) {
 		int selected = -1;
 		int minTasksCount = -1; // Computing node with minimum assigned tasks.
@@ -105,12 +152,23 @@ public class DefaultOrchestrator extends Orchestrator {
 		return selected;
 	}
 
+	/**
+	 * No-op in the default policy. Subclasses can override it to collect metrics
+	 * when a task completes.
+	 *
+	 * @param task the completed task
+	 */
 	@Override
 	public void resultsReturned(Task task) {
 		// Do something with the task that has been finished
 
 	}
  
+	/**
+	 * No-op: this orchestrator does not schedule events.
+	 *
+	 * @param e the event to process
+	 */
 	@Override
 	public void processEvent(Event e) {
 		// Process the scheduled events, if any.

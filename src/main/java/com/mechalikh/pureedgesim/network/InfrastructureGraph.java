@@ -42,17 +42,41 @@ import com.mechalikh.pureedgesim.network.NetworkLink.NetworkLinkTypes;
  */
 public class InfrastructureGraph {
 
+	/**
+	 * A shared placeholder graph used when no topology is available. It contains no
+	 * vertices and no edges.
+	 */
 	public static final InfrastructureGraph NULL = new InfrastructureGraph() {
 	};
 
+	/**
+	 * The directed multigraph whose vertices are computing nodes and whose edges
+	 * are {@link NetworkLink} instances.
+	 */
 	protected DirectedWeightedMultigraph<ComputingNode, NetworkLink> graph;
 
+	/**
+	 * Cache of precomputed shortest paths, keyed by the Cantor pairing of the
+	 * source and destination node IDs. Used by
+	 * {@link #savePathsToMap(List)} and {@link #getUniqueId(int, int)}.
+	 */
 	protected Map<Long, GraphPath<ComputingNode, NetworkLink>> pathsMap = new LinkedHashMap<>();
 
+	/**
+	 * Creates an empty infrastructure graph with no nodes and no links.
+	 */
 	public InfrastructureGraph() {
 		graph = new DirectedWeightedMultigraph<>(NetworkLink.class);
 	}
 
+	/**
+	 * Adds a network link to the graph. Both endpoints are added as vertices if
+	 * they are not present yet, and the link latency becomes the edge weight
+	 * (expressed in seconds).
+	 *
+	 * @param networkLink the link to add, together with its source and destination
+	 *                    nodes
+	 */
 	public void addLink(NetworkLink networkLink) {
 		graph.addVertex(networkLink.getSrc());
 		graph.addVertex(networkLink.getDst());
@@ -61,6 +85,15 @@ public class InfrastructureGraph {
 																	// must go through the graph interface
 	}
 
+	/**
+	 * Returns the total latency of the shortest path between two nodes, calculated
+	 * with the Floyd-Warshall algorithm.
+	 *
+	 * @param computingNode  the source node
+	 * @param computingNode2 the destination node
+	 * @return the path latency in seconds, or {@link Double#POSITIVE_INFINITY} when
+	 *         no path exists between the two nodes
+	 */
 	public double getDelay(final ComputingNode computingNode, final ComputingNode computingNode2) {
 		// The Network interfaces in CloudSimPlus are not very good, the try catch
 		// should not be necessary
@@ -73,14 +106,34 @@ public class InfrastructureGraph {
 		}
 	}
 
+	/**
+	 * Removes the first link found between two nodes, if any.
+	 *
+	 * @param src  the source node
+	 * @param dest the destination node
+	 */
 	public void removeLink(ComputingNode src, ComputingNode dest) {
 		graph.removeEdge(src, dest);
 	}
 
+	/**
+	 * Removes the given link from the graph, if present.
+	 *
+	 * @param link the link to remove
+	 */
 	public void removeLink(NetworkLink link) {
 		graph.removeEdge(link);
 	}
 
+	/**
+	 * Returns the shortest path between two nodes, calculated with Dijkstra's
+	 * algorithm.
+	 *
+	 * @param computingNode the source node
+	 * @param node          the destination node
+	 * @return the shortest path, including the links to traverse
+	 * @throws IllegalArgumentException if no path exists between the two nodes
+	 */
 	public GraphPath<ComputingNode, NetworkLink> getPath(final ComputingNode computingNode, final ComputingNode node) {
 		DijkstraShortestPath<ComputingNode, NetworkLink> algorithm = new DijkstraShortestPath<>(graph);
 		try {
@@ -93,60 +146,138 @@ public class InfrastructureGraph {
 		}
 	}
 
+	/**
+	 * Ensures that the path returned by a shortest-path algorithm is not null.
+	 *
+	 * @param path the path to check
+	 * @return the same path
+	 * @throws IllegalArgumentException if the path is null
+	 */
 	protected GraphPath<ComputingNode, NetworkLink> assertNotNull(GraphPath<ComputingNode, NetworkLink> path) {
 		if (null == path)
 			throw new IllegalArgumentException();
 		return path;
 	}
 
+	/**
+	 * Returns the underlying JGraphT graph, which can be used with JGraphT
+	 * algorithms and for read-only inspection.
+	 *
+	 * @return the directed weighted multigraph that stores the topology
+	 */
 	public DirectedWeightedMultigraph<ComputingNode, NetworkLink> getGraph() {
 		return graph;
 	}
 
+	/**
+	 * Returns all Wi-Fi links in the topology.
+	 *
+	 * @return the Wi-Fi links
+	 */
 	public List<NetworkLinkWifi> getWifiLinks() {
 		return getEdgeByType(NetworkLinkWifi.class);
 	}
 
+	/**
+	 * Returns all Ethernet links in the topology.
+	 *
+	 * @return the Ethernet links
+	 */
 	public List<NetworkLinkEthernet> getEthernetLinks() {
 		return getEdgeByType(NetworkLinkEthernet.class);
 	}
 
+	/**
+	 * Returns all cellular links in the topology.
+	 *
+	 * @return the cellular links
+	 */
 	public List<NetworkLinkCellular> get4gLinks() {
 		return getEdgeByType(NetworkLinkCellular.class);
 	}
 
+	/**
+	 * Returns all wide area network uplinks in the topology.
+	 *
+	 * @return the WAN uplinks
+	 */
 	public List<NetworkLinkWanUp> getWanUpLinks() {
 		return getEdgeByType(NetworkLinkWanUp.class);
 	}
 
+	/**
+	 * Returns all wide area network downlinks in the topology.
+	 *
+	 * @return the WAN downlinks
+	 */
 	public List<NetworkLinkWanDown> getWanDownLinks() {
 		return getEdgeByType(NetworkLinkWanDown.class);
 	}
 
+	/**
+	 * Returns all wide area network links, both uplinks and downlinks.
+	 *
+	 * @return the WAN links
+	 */
 	public List<NetworkLink> getWanLinks() {
 		return getEdgeByType(NetworkLinkTypes.WAN);
 	}
 
+	/**
+	 * Returns all metropolitan area network links.
+	 *
+	 * @return the MAN links
+	 */
 	public List<NetworkLink> getManLinks() {
 		return getEdgeByType(NetworkLinkTypes.MAN);
 	}
 
+	/**
+	 * Returns all local area network links.
+	 *
+	 * @return the LAN links
+	 */
 	public List<NetworkLink> getLanLinks() {
 		return getEdgeByType(NetworkLinkTypes.LAN);
 	}
 
+	/**
+	 * Returns all links that are instances of the given class.
+	 *
+	 * @param <T> the link type
+	 * @param x   the class used to filter the links
+	 * @return the matching links
+	 */
 	protected <T extends NetworkLink> List<T> getEdgeByType(Class<T> x) {
 		return getGraph().edgeSet().stream().filter(x::isInstance).map(x::cast).collect(Collectors.toList());
 	}
 
+	/**
+	 * Returns all links whose type equals the given type.
+	 *
+	 * @param type the link type used to filter the links
+	 * @return the matching links
+	 */
 	protected List<NetworkLink> getEdgeByType(NetworkLinkTypes type) {
 		return getGraph().edgeSet().stream().filter(n -> n.getType().equals(type)).collect(Collectors.toList());
 	}
 
+	/**
+	 * Returns the cache of precomputed shortest paths.
+	 *
+	 * @return a map from {@link #getUniqueId(int, int) pair IDs} to paths
+	 */
 	public Map<Long, GraphPath<ComputingNode, NetworkLink>> getPathsMap() {
 		return pathsMap;
 	}
 
+	/**
+	 * Precomputes and caches the shortest path between every ordered pair of nodes
+	 * in the given list. Call this method once the topology is complete to avoid
+	 * running the shortest-path algorithm on every lookup.
+	 *
+	 * @param list the nodes to pair with each other
+	 */
 	public void savePathsToMap(List<ComputingNode> list) {
 		// Save shortest paths in map to use them later
 		for (int i = 0; i < list.size(); i++) {
@@ -158,7 +289,14 @@ public class InfrastructureGraph {
 		}
 	}
 
-	// Get a unique id using Cantor pairing function
+	/**
+	 * Returns a unique identifier for an ordered pair of node IDs, calculated with
+	 * the Cantor pairing function.
+	 *
+	 * @param a the first node ID
+	 * @param b the second node ID
+	 * @return the pair identifier
+	 */
 	public long getUniqueId(int a, int b) {
 		return (long) ((1 / 2.0) * (a + b) * (a + b + 1)) + b;
 	}

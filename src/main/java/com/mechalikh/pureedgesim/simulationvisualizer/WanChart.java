@@ -34,8 +34,9 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 public class WanChart extends Chart {
     
-    // We can use an ArrayList instead of a LinkedList for better random access performance.
+    /** Uplink utilization values, one per chart update. */
     protected ArrayList<Double> wanUpUsage = new ArrayList<>();
+    /** Downlink utilization values, one per chart update. */
     protected ArrayList<Double> wanDownUsage = new ArrayList<>();
 
     /**

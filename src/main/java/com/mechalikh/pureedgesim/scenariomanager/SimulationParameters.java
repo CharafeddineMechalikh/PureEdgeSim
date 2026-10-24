@@ -28,6 +28,16 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract.Files;
 import com.mechalikh.pureedgesim.taskgenerator.Application;
 import com.mechalikh.pureedgesim.taskgenerator.Task;
 
+/**
+ * Global simulation parameters loaded from the simulation parameters file.
+ *
+ * The values are static because every model and node reads them directly. They
+ * are populated by {@link ParametersParser} before the models are created, so
+ * changing them during a running simulation is not supported.
+ *
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 1.0
+ */
 public class SimulationParameters {
 	
 	/**
@@ -191,13 +201,20 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.ComputingNode#setType(TYPES)
 	 */
 	public enum TYPES {
-		CLOUD, EDGE_DATACENTER, EDGE_DEVICE, NULL
+		/** A cloud data center virtual machine. */
+		CLOUD,
+		/** An edge data center server. */
+		EDGE_DATACENTER,
+		/** An edge device, including sensors, phones, and gateways. */
+		EDGE_DEVICE,
+		/** The null object used in place of a missing computing node. */
+		NULL
 	}
 
 	/**
 	 * Whether deep logging is enabled or not.
 	 * 
-	 * @see com.mechalikh.pureedgesim.simulationmanager.SimLog#deepLog(String)
+	 * @see com.mechalikh.pureedgesim.simulationmanager.SimLog#deepLog(String, Object...)
 	 */
 	public static boolean deepLoggingEnabled;
 
@@ -459,7 +476,7 @@ public class SimulationParameters {
 	/**
 	 * The network model update interval.
 	 * 
-	 * @see com.mechalikh.pureedgesim.network.NetworkLink#onSimulationStart()
+	 * @see com.mechalikh.pureedgesim.simulationengine.OnSimulationStartListener#onSimulationStart()
 	 */
 	public static double networkUpdateInterval;
 

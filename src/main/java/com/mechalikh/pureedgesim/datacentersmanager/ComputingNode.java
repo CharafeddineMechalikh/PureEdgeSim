@@ -49,7 +49,12 @@ public interface ComputingNode {
 	 * Represents a link between two devices.
 	 */
 	public enum LinkOrientation {
-		UP_LINK, DOWN_LINK, DEVICE_TO_DEVICE;
+		/** A link from the device towards the network. */
+		UP_LINK,
+		/** A link from the network towards the device. */
+		DOWN_LINK,
+		/** A direct link between two devices. */
+		DEVICE_TO_DEVICE;
 	}
 
 	/**
@@ -64,7 +69,6 @@ public interface ComputingNode {
 	 * be added to the execution queue.
 	 * 
 	 * @param task the task to execute.
-	 * @return
 	 */
 	void submitTask(Task task);
 
@@ -195,7 +199,8 @@ public interface ComputingNode {
 	 * edge data centers.Used only when the type of this node is
 	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
-	 * @param currentUpLink the network link.
+	 * @param link     the network link.
+	 * @param linkType whether the link is used for the uplink or the downlink.
 	 * @see #getCurrentLink(LinkOrientation)
 	 */
 	void setCurrentLink(NetworkLink link, LinkOrientation linkType);
@@ -523,7 +528,7 @@ public interface ComputingNode {
 	 * 
 	 * @return the amount MIPS capacity per CPU core.
 	 * 
-	 * @see #setNumberOfCPUCores(double)
+	 * @see #setNumberOfCPUCores(int)
 	 * @see #getNumberOfCPUCores()
 	 * @see #getTotalMipsCapacity()
 	 * @see #setTotalMipsCapacity(double)

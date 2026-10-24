@@ -49,26 +49,46 @@ public abstract class SimulationManager extends SimEntity {
 	 * @see com.mechalikh.pureedgesim.simulationengine.SimEntity#schedule(SimEntity
 	 *      simEntity, Double time, int tag)
 	 **/
+	/** Tag of the event that prints the simulation log. */
 	protected static final int PRINT_LOG = 1;
+	/** Tag of the event that updates the simulation progress display. */
 	protected static final int SHOW_PROGRESS = 2;
+	/** Tag of the event that starts executing a task on its destination node. */
 	public static final int EXECUTE_TASK = 3;
+	/** Tag of the event that transfers task results back to the orchestrator. */
 	public static final int TRANSFER_RESULTS_TO_ORCH = 4;
+	/** Tag of the event signaling that results reached the source edge device. */
 	public static final int RESULT_RETURN_FINISHED = 5;
+	/** Tag of the event that sends a task to the orchestrator. */
 	public static final int SEND_TO_ORCH = 6;
+	/** Tag of the event that refreshes the real-time charts. */
 	public static final int UPDATE_REAL_TIME_CHARTS = 7;
+	/** Tag of the event that sends a task from the orchestrator to its destination. */
 	public static final int SEND_TASK_FROM_ORCH_TO_DESTINATION = 8;
+	/** Tag of the event that releases the next batch of generated tasks. */
 	protected static final int NEXT_BATCH = 9; 
 
+	/** The orchestrator that decides where tasks run. */
 	protected Orchestrator edgeOrchestrator;
+	/** Manager of the cloud, edge, and mist computing nodes. */
 	protected DataCentersManager dataCentersManager;
+	/** The real-time chart window, when visualization is enabled. */
 	protected SimulationVisualizer simulationVisualizer;
+	/** The underlying event engine. */
 	protected PureEdgeSim simulation;
+	/** Identifier of this simulation, used in log output. */
 	protected int simulationId;
+	/** Index of this simulation run within the scenario sweep. */
 	protected int iteration;
+	/** Logger that accumulates CPU, energy, network, and task metrics. */
 	protected SimLog simLog;
+	/** The network model used to transfer tasks, containers, and results. */
 	protected NetworkModel networkModel;
+	/** Tasks whose results have returned to their source devices. */
 	protected List<Task> finishedTasks = new ArrayList<>();
+	/** The algorithm, architecture, and device-count combination being simulated. */
 	protected Scenario scenario;
+	/** Queue of generated tasks, ordered by arrival time. */
 	protected FutureQueue<Task> taskList;
 
 	/**

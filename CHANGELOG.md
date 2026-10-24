@@ -8,6 +8,10 @@
 *   Added a GitHub Actions coverage workflow that runs the tests and updates the JaCoCo coverage badges and report.
 *   Removed the non-functional Codacy coverage reporter and its coverage badge. The code quality badge remains.
 *   Fixed a null check in `Event.compareTo`.
+*   Added a `docs/` manual for new researchers, covering installation, architecture, configuration, the task lifecycle, models, orchestrator development, output metrics, a research guide, an FAQ, an API reference, and contribution guidelines.
+*   Linked the manual and the API documentation from the README.
+*   Expanded Javadoc across the public API and configured the Javadoc plugin to report every warning during the build.
+*   Added a Javadoc workflow that builds the API documentation and uploads it as a workflow artifact, leaving the GitHub Pages site and its CNAME unchanged.
 
 ## Version 5.3 Changelog (April 4th 2024)
 

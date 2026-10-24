@@ -44,8 +44,20 @@ import com.mechalikh.pureedgesim.taskorchestrator.Orchestrator;
  */
 public abstract class SimulationAbstract {
 
+	/**
+	 * The configuration files whose paths can be customized individually.
+	 */
 	public enum Files {
-		SIMULATION_PARAMETERS, APPLICATIONS_FILE, EDGE_DATACENTERS_FILE, EDGE_DEVICES_FILE, CLOUD_FILE
+		/** The simulation parameters properties file. */
+		SIMULATION_PARAMETERS,
+		/** The applications (task profiles) XML file. */
+		APPLICATIONS_FILE,
+		/** The edge data centers XML file. */
+		EDGE_DATACENTERS_FILE,
+		/** The edge devices XML file. */
+		EDGE_DEVICES_FILE,
+		/** The cloud data centers XML file. */
+		CLOUD_FILE
 	}
 
 	/**

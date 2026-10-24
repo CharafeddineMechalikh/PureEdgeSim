@@ -30,6 +30,14 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 public class NetworkLinkWanUp extends NetworkLink {
 
+	/**
+	 * Creates a WAN uplink with the configured WAN bandwidth, latency, and energy.
+	 *
+	 * @param src               the source node.
+	 * @param dst               the destination node.
+	 * @param simulationManager the simulation manager.
+	 * @param type              the link category.
+	 */
 	public NetworkLinkWanUp(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
 		setBandwidth(SimulationParameters.wanBandwidthBitsPerSecond);

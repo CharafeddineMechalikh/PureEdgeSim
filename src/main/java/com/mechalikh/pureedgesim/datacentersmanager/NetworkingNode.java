@@ -28,13 +28,25 @@ import com.mechalikh.pureedgesim.network.NetworkLink;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
+/**
+ * Base class for compute nodes that hold network links. Edge devices use the
+ * current links to follow the closest edge data center as they move.
+ */
 public abstract class NetworkingNode extends AbstractNode  {
+	/** Link used to reach the current edge data center. */
 	protected NetworkLink currentUpLink = NetworkLink.NULL;
+	/** Reserved downlink field; the default topology uses the uplink for both directions. */
 	protected NetworkLink currentDownLink = NetworkLink.NULL;
+	/** Direct device-to-device WiFi link. */
 	protected NetworkLink currentDeviceToDeviceWifiLink = NetworkLink.NULL;
 	List<ComputingNode> vertexList = new ArrayList<>();
 	List<NetworkLink> edgeList = new ArrayList<>();
 
+	/**
+	 * Creates a networking node.
+	 *
+	 * @param simulationManager the simulation manager.
+	 */
 	protected NetworkingNode(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
@@ -43,7 +55,9 @@ public abstract class NetworkingNode extends AbstractNode  {
 	 * Returns the current network link of the specified type. For example, if the
 	 * type is {@link LinkOrientation#UP_LINK}, it returns the link that is used currently
 	 * to send data to the cloud or edge data centers. Used only when the type of
-	 * this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}. The default
+	 * topology represents the uplink and downlink with the same WiFi link, so both
+	 * orientations return that link.
 	 * 
 	 * @param linkType the type of the link to retrieve
 	 * @return the current network link of the specified type
@@ -65,9 +79,11 @@ public abstract class NetworkingNode extends AbstractNode  {
 	/**
 	 * Sets the network link that is used currently to send data to the cloud or
 	 * edge data centers.Used only when the type of this node is
-	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
+	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}. The uplink and downlink
+	 * orientations both update the same current link.
 	 * 
-	 * @param currentUpLink the network link.
+	 * @param link     the network link.
+	 * @param linkType whether the link is used for the uplink or the downlink.
 	 * @see #getCurrentLink(LinkOrientation)
 	 */
 	public void setCurrentLink(NetworkLink link, LinkOrientation linkType) {

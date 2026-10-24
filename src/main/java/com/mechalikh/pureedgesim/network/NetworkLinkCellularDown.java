@@ -30,6 +30,14 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 public class NetworkLinkCellularDown extends NetworkLinkCellular {
 
+	/**
+	 * Creates a cellular downlink from a base station to a device.
+	 *
+	 * @param src               the base station.
+	 * @param dst               the device.
+	 * @param simulationManager the simulation manager.
+	 * @param type              the link category.
+	 */
 	public NetworkLinkCellularDown(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
 

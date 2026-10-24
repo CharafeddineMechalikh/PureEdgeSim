@@ -29,6 +29,14 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  */
 public abstract class NetworkLinkCellular extends NetworkLink {
 
+	/**
+	 * Creates a cellular link with the configured cellular bandwidth and latency.
+	 *
+	 * @param src               the source node.
+	 * @param dst               the destination node.
+	 * @param simulationManager the simulation manager.
+	 * @param type              the link category.
+	 */
 	protected NetworkLinkCellular(ComputingNode src, ComputingNode dst, SimulationManager simulationManager, NetworkLinkTypes type) {
 		super(src, dst, simulationManager, type);
 		setBandwidth(SimulationParameters.cellularBandwidthBitsPerSecond);

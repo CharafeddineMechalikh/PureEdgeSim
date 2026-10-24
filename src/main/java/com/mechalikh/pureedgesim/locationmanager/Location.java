@@ -20,19 +20,46 @@
  **/
 package com.mechalikh.pureedgesim.locationmanager;
 
+/**
+ * A two-dimensional position in the simulation area, expressed in meters.
+ *
+ * Locations are value objects: two locations are equal when their coordinates
+ * are exactly equal.
+ *
+ * @author Charafeddine Mechalikh
+ * @since PureEdgeSim 1.0
+ */
 public class Location {
+	/** Horizontal coordinate, in meters. */
 	protected double xPos;
+	/** Vertical coordinate, in meters. */
 	protected double yPos;
 
+	/**
+	 * Creates a location.
+	 *
+	 * @param xPos horizontal coordinate, in meters
+	 * @param yPos vertical coordinate, in meters
+	 */
 	public Location(double xPos, double yPos) {
 		this.xPos = xPos;
 		this.yPos = yPos;
 	}
 
+	/**
+	 * Returns the horizontal coordinate.
+	 *
+	 * @return the horizontal coordinate, in meters
+	 */
 	public double getXPos() {
 		return xPos;
 	}
 
+	/**
+	 * Returns the vertical coordinate.
+	 *
+	 * @return the vertical coordinate, in meters
+	 */
 	public double getYPos() {
 		return yPos;
 	}
@@ -57,10 +84,23 @@ public class Location {
 		return hash(hash, toBits(this.yPos));
 	}
 
+	/**
+	 * Combines a running hash with a value. Used by {@link #hashCode()}.
+	 *
+	 * @param hash  the running hash
+	 * @param value the value to mix in
+	 * @return the updated hash
+	 */
 	protected int hash(final int hash, final int value) {
 		return 89 * hash + value;
 	}
 
+	/**
+	 * Converts a double to a 32-bit hash representation.
+	 *
+	 * @param value the value to convert
+	 * @return the hash representation of the value
+	 */
 	protected int toBits(final double value) {
 		return (int) (Double.doubleToLongBits(value) ^ (Double.doubleToLongBits(value) >>> 32));
 	}

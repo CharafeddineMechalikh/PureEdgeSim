@@ -31,29 +31,60 @@ import com.mechalikh.pureedgesim.simulationengine.SimEntity;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 /**
- * Link between two compute nodes in the infrastructure graph
+ * Link between two compute nodes in the infrastructure graph. A link carries
+ * concurrent transfers by splitting its bandwidth evenly among them, adds its
+ * latency once per hop, and forwards each transfer to the next link on its path.
  */
 public class NetworkLink extends SimEntity {
+	/** Event tag used to refresh the progress of the active transfers. */
 	public static final int UPDATE_PROGRESS = 1;
+	/** Link latency, in seconds per hop. */
 	protected double latency = 0;
+	/** Link capacity, in bits per second. */
 	protected double bandwidth = 0;
+	/** Transfers currently using this link. */
 	protected List<TransferProgress> transferProgressList = new ArrayList<>();
+	/** Link source. */
 	protected ComputingNode src = ComputingNode.NULL;
+	/** Link destination. */
 	protected ComputingNode dst = ComputingNode.NULL;
+	/** Simulation manager that provides the clock and logger. */
 	protected SimulationManager simulationManager;
+	/** Usage estimate computed during the latest update. */
 	protected double usedBandwidth = 0;
+	/** Total data that traversed this link, in bits. */
 	protected double totalTrasferredData = 0;
+	/** Energy model attached to this link. */
 	protected EnergyModelNetworkLink energyModel = EnergyModelNetworkLink.NULL;
+	/** True while an update event is already scheduled. */
 	protected boolean scheduled = false;
 
+	/** Category of a link, used for metrics and energy accounting. */
 	public enum NetworkLinkTypes {
-		WAN, MAN, LAN, IGNORE
+		/** Wide area network link. */
+		WAN,
+		/** Metropolitan area network link. */
+		MAN,
+		/** Local area network link. */
+		LAN,
+		/** Link that is not used for routing or metrics. */
+		IGNORE
 	}
 
+	/** Category of this link. */
 	protected NetworkLinkTypes type;
 
+	/** Null-object instance. */
 	public static final NetworkLink NULL = new NetworkLinkNull();
 
+	/**
+	 * Creates a link and registers it in the simulation engine.
+	 *
+	 * @param src               the source node.
+	 * @param dst               the destination node.
+	 * @param simulationManager the simulation manager.
+	 * @param type              the link category.
+	 */
 	public NetworkLink(ComputingNode src, ComputingNode dst, SimulationManager simulationManager,
 			NetworkLinkTypes type) {
 		super(simulationManager.getSimulation());
@@ -63,39 +94,82 @@ public class NetworkLink extends SimEntity {
 		this.setType(type);
 	}
 
+	/** Creates a detached link; used by the null-object instance. */
 	public NetworkLink() {
 	}
 
+	/**
+	 * Returns the link latency.
+	 *
+	 * @return the latency, in seconds per hop.
+	 */
 	public double getLatency() {
 		return latency;
 	}
 
+	/**
+	 * Sets the link latency.
+	 *
+	 * @param latency the latency, in seconds per hop.
+	 * @return this link, for chaining.
+	 */
 	public NetworkLink setLatency(double latency) {
 		this.latency = latency;
 		return this;
 	}
 
+	/**
+	 * Sets the link capacity.
+	 *
+	 * @param bandwidth the capacity, in bits per second.
+	 * @return this link, for chaining.
+	 */
 	public NetworkLink setBandwidth(double bandwidth) {
 		this.bandwidth = bandwidth;
 		return this;
 	}
 
+	/**
+	 * Returns the source node.
+	 *
+	 * @return the source.
+	 */
 	public ComputingNode getSrc() {
 		return src;
 	}
 
+	/**
+	 * Sets the source node.
+	 *
+	 * @param src the source.
+	 */
 	public void setSrc(ComputingNode src) {
 		this.src = src;
 	}
 
+	/**
+	 * Returns the destination node.
+	 *
+	 * @return the destination.
+	 */
 	public ComputingNode getDst() {
 		return dst;
 	}
 
+	/**
+	 * Sets the destination node.
+	 *
+	 * @param node the destination.
+	 */
 	public void setDst(ComputingNode node) {
 		this.dst = node;
 	}
 
+	/**
+	 * Processes the periodic progress update while transfers are active.
+	 *
+	 * @param evt the event.
+	 */
 	@Override
 	public void processEvent(Event evt) {
 		if (evt.getTag() == UPDATE_PROGRESS) {
@@ -109,6 +183,10 @@ public class NetworkLink extends SimEntity {
 
 	}
 
+	/**
+	 * Advances every active transfer by one network update interval, sharing the
+	 * link capacity evenly among them.
+	 */
 	protected void updateTransfersProgress() {
 		usedBandwidth = 0;
 		double allocatedBandwidth = getBandwidth(transferProgressList.size());
@@ -121,10 +199,25 @@ public class NetworkLink extends SimEntity {
 		}
 	}
 
+	/**
+	 * Returns the bandwidth allocated to each active transfer.
+	 *
+	 * @param remainingTasksCount number of active transfers.
+	 * @return the per-transfer bandwidth, in bits per second.
+	 */
 	protected double getBandwidth(double remainingTasksCount) {
 		return (bandwidth / (remainingTasksCount > 0 ? remainingTasksCount : 1));
 	}
 
+	/**
+	 * Advances one transfer. In realistic mode the remaining size decreases by
+	 * {@code networkUpdateInterval * currentBandwidth}; in non-realistic mode it is
+	 * set to zero in a single step while the delay is still computed from the
+	 * allocated bandwidth. The resulting delay is added to the task and to the
+	 * usage counter of the link type.
+	 *
+	 * @param transfer the transfer to advance.
+	 */
 	protected void updateTransfer(TransferProgress transfer) {
 
 		double oldRemainingSize = transfer.getRemainingFileSize();
@@ -160,6 +253,13 @@ public class NetworkLink extends SimEntity {
 		}
 	}
 
+	/**
+	 * Handles the end of one hop: adds the link latency, removes the hop from the
+	 * path, and either schedules the next hop (with the full file size again) or
+	 * notifies the network model that the transfer reached its destination.
+	 *
+	 * @param transfer the transfer that finished the current hop.
+	 */
 	protected void transferFinished(TransferProgress transfer) {
 
 		this.transferProgressList.remove(transfer);
@@ -184,19 +284,40 @@ public class NetworkLink extends SimEntity {
 		}
 	}
 
+	/**
+	 * Returns the bandwidth currently used on this link.
+	 *
+	 * @return the used bandwidth, in bits per second, capped at the link capacity.
+	 */
 	public double getUsedBandwidth() {
 		// Return bandwidth usage in bits per second
 		return Math.min(bandwidth, usedBandwidth);
 	}
 
+	/**
+	 * Returns the link category.
+	 *
+	 * @return the link type.
+	 */
 	public NetworkLinkTypes getType() {
 		return type;
 	}
 
+	/**
+	 * Sets the link category.
+	 *
+	 * @param type the link type.
+	 */
 	public void setType(NetworkLinkTypes type) {
 		this.type = type;
 	}
 
+	/**
+	 * Adds a transfer to this link and schedules the progress update if none is
+	 * pending.
+	 *
+	 * @param transfer the transfer to send over this link.
+	 */
 	public void addTransfer(TransferProgress transfer) {
 		// Used by the energy model to get the total energy consumed by this network
 		// link
@@ -209,14 +330,29 @@ public class NetworkLink extends SimEntity {
 		}
 	}
 
+	/**
+	 * Returns the energy model of this link.
+	 *
+	 * @return the energy model.
+	 */
 	public EnergyModelNetworkLink getEnergyModel() {
 		return energyModel;
 	}
 
+	/**
+	 * Sets the energy model of this link.
+	 *
+	 * @param energyModel the energy model.
+	 */
 	protected void setEnergyModel(EnergyModelNetworkLink energyModel) {
 		this.energyModel = energyModel;
 	}
 
+	/**
+	 * Returns the total data that traversed this link.
+	 *
+	 * @return the transferred data, in bits.
+	 */
 	public double getTotalTransferredData() {
 		return totalTrasferredData;
 	}
