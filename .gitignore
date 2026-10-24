@@ -22,3 +22,9 @@ nbproject/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+
+#Local test artifacts
+*.log
+cp.txt
+hs_err_pid*
+test-output/

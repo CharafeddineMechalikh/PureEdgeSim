@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 5.5 Changelog (October 24th 2026)
+
+*   Added a comprehensive JUnit 5 test suite (500+ tests) covering the simulation engine, network, energy, mobility, data centers, task generation, orchestration, and visualization packages.
+*   Reached 98% instruction and 94% branch coverage with JaCoCo.
+*   Added a Maven `unit-tests` profile that excludes integration-tagged tests, allowing unit-only coverage measurement.
+*   Added a GitHub Actions coverage workflow that runs the tests and updates the JaCoCo coverage badges and report.
+*   Fixed a null check in `Event.compareTo`.
+
 ## Version 5.3 Changelog (April 4th 2024)
 
 *   Improved code quality (Listener Design Pattern)

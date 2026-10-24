@@ -44,7 +44,7 @@ public class Event implements Comparable<Event>, QueueElement {
 
 	@Override
 	public int compareTo(final Event that) {
-		if (that.equals(null)) {
+		if (that == null) {
 			return 1;
 		}
 

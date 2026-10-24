@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<edge_devices>
+	<!-- here you can define the types of edge devices, and how many devices 
+		of this type there will be in this case , there are 4 types of devices(defined 
+		here), 30 percent of all devices will be of the first type, this percentage 
+		is defined here <percentage> -->
+
+	<device arch="x86" os="linux" vmm="xen">
+		<!-- this is a smartphone, for example -->
+		<connectivity>cellular</connectivity> <!-- the type of network connection -->
+		<mobility>true</mobility> <!-- the device is mobile or fixed -->
+		<speed>1.4</speed> <!-- the speed of the device in meters per second : 1.4m/s 
+			equals 5km/h, 0 = non mobile -->
+		<minPauseDuration>100</minPauseDuration> <!-- the minimum delay before moving 
+			to a new location -->
+		<maxPauseDuration>400</maxPauseDuration> <!-- the maximum delay before moving 
+			to a new location -->
+		<minMobilityDuration>10</minMobilityDuration> <!-- the minimum delay before 
+			stopping -->
+		<maxMobilityDuration>60</maxMobilityDuration> <!-- the maximum delay before 
+			stopping -->
+		<battery>true</battery> <!-- relies on battery? -->
+		<percentage>30</percentage> <!-- percentage of this device type -->
+		<batteryCapacity>18.75</batteryCapacity> <!-- battery capacity in Watt-Hour -->
+		<initialBatteryLevel>100</initialBatteryLevel> <!-- initial battery percentage. e.g. set it to 50 in order to generate devices with 50% remaining energy-->
+
+		<idleConsumption>0.078</idleConsumption> <!-- idle energy consumption/ second, 
+			default=0 .000010975 -->
+		<maxConsumption>3.3</maxConsumption> <!-- max energy consumption/second, 
+			when device cpu is use at 100% , default=0 .0011 -->
+		<isOrchestrator>false</isOrchestrator> <!-- it has a task orchestrator or not -->
+		<generateTasks>true</generateTasks> <!-- it generates data/tasks or not -->
+
+		<cores>8</cores>
+		<mips>25000</mips>
+		<ram>4000</ram>
+		<storage>32</storage> <!--32MB of caching memory used in example 7 -->
+
+	</device>
+	<device arch="x86" os="linux" vmm="xen">
+		<!-- this is a raspberry pi model B+ -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>10</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel> 
+		<idleConsumption>1.6</idleConsumption>
+		<maxConsumption>5.1</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>false</generateTasks>
+		<cores>4</cores>
+		<mips>16000</mips>
+		<ram>4000</ram>
+		<storage>32</storage> <!--32MB of caching memory used in example 7 -->
+
+	</device>
+	<device arch="x86" os="linux" vmm="xen">
+		<!-- this is a laptop for example -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>20</percentage>
+		<batteryCapacity>56.2</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel> 
+		<idleConsumption>1.7</idleConsumption>
+		<maxConsumption>23.6</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>false</generateTasks>
+		<cores>8</cores>
+		<mips>110000</mips>
+		<ram>8000</ram>
+		<storage>64</storage> <!--64MB of caching memory used in example 6 -->
+
+	</device>
+	<device arch="x86" os="linux" vmm="xen">
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>40</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel> 
+		<idleConsumption>0.0011</idleConsumption>
+		<maxConsumption>0.036</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>2</cores>
+		<mips>70000</mips>
+		<ram>4000</ram>
+		<storage>64</storage> <!--64MB of caching memory used in example 7 -->
+	</device>
+</edge_devices>
