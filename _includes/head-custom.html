@@ -1,0 +1,19 @@
+<!-- Renders ```mermaid fenced blocks on the GitHub Pages site.
+     Pages without a diagram never download the library. If the CDN is
+     unreachable the fenced source stays visible instead of breaking the page. -->
+<script type="module">
+  const blocks = document.querySelectorAll("div.language-mermaid, pre > code.language-mermaid");
+  if (blocks.length > 0) {
+    for (const block of blocks) {
+      const diagram = document.createElement("pre");
+      diagram.className = "mermaid";
+      diagram.textContent = block.textContent;
+      block.replaceWith(diagram);
+    }
+    const { default: mermaid } = await import(
+      "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs"
+    );
+    mermaid.initialize({ startOnLoad: false, securityLevel: "strict" });
+    await mermaid.run({ querySelector: "pre.mermaid" });
+  }
+</script>

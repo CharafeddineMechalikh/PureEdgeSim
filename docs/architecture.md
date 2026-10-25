@@ -35,20 +35,21 @@ The `examples` package is deliberately outside the core packages. It demonstrate
 
 At runtime, one simulation iteration is a graph of objects:
 
-```
-Simulation                      owns configuration paths and custom class choices
-└── SimulationThread            one per scenario, controls one full iteration
-    ├── PureEdgeSim             event engine and clock
-    ├── SimLog                  per-iteration metrics and output files
-    ├── SimulationManager       receives engine events, drives the task lifecycle
-    │   ├── DataCentersManager
-    │   │   ├── ComputingNodesGenerator   creates cloud, edge, and device nodes
-    │   │   └── TopologyCreator           wires links and shortest paths
-    │   ├── Orchestrator        chooses execution destinations
-    │   ├── TaskGenerator       creates the task list
-    │   ├── NetworkModel        transfers requests and results
-    │   └── SimulationVisualizer (optional, live charts only)
-    └── SimEntity instances     all scheduler-driven participants
+```mermaid
+flowchart TD
+    Simulation["Simulation<br/>owns configuration paths and custom class choices"]
+    Simulation --> Thread["SimulationThread<br/>one per scenario, controls one full iteration"]
+    Thread --> Engine["PureEdgeSim<br/>event engine and clock"]
+    Thread --> Log["SimLog<br/>per-iteration metrics and output files"]
+    Thread --> Manager["SimulationManager<br/>receives engine events, drives the task lifecycle"]
+    Thread --> Entities["SimEntity instances<br/>all scheduler-driven participants"]
+    Manager --> Centers["DataCentersManager"]
+    Manager --> Orchestrator["Orchestrator<br/>chooses execution destinations"]
+    Manager --> Generator["TaskGenerator<br/>creates the task list"]
+    Manager --> Network["NetworkModel<br/>transfers requests and results"]
+    Manager --> Visualizer["SimulationVisualizer<br/>optional, live charts only"]
+    Centers --> Nodes["ComputingNodesGenerator<br/>creates cloud, edge, and device nodes"]
+    Centers --> Topology["TopologyCreator<br/>wires links and shortest paths"]
 ```
 
 The important ownership rule is that **`SimulationManager` is the hub**. It knows the data centers manager, the orchestrator, the task generator output, the network model, the logger, and the engine. Custom models receive the manager in their constructor and access everything through it.

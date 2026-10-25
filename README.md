@@ -15,6 +15,7 @@
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src=".github/badges/jacoco.svg" alt="JaCoCo instruction coverage"></a>
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src=".github/badges/branches.svg" alt="JaCoCo branch coverage"></a>
   <a href="https://www.codacy.com/gh/CharafeddineMechalikh/PureEdgeSim/dashboard"><img src="https://app.codacy.com/project/badge/Grade/7bcee5c75c3741b5923e0158c6e79b37" alt="Codacy code quality"></a>
+  <a href="https://javadoc.io/doc/com.mechalikh/pureedgesim"><img src="https://javadoc.io/badge2/com.mechalikh/pureedgesim/javadoc.svg" alt="Javadoc"></a>
 </p>
 
 ## Citation

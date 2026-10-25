@@ -17,6 +17,24 @@ A task passes through six stages:
 
 The event tags that implement these stages are defined in `SimulationManager` and processed in `DefaultSimulationManager.processEvent`.
 
+```mermaid
+flowchart LR
+    Generate["1. Generation<br/>DefaultTaskGenerator"] --> Submit["2. Submission<br/>SEND_TO_ORCH"]
+    Submit --> Check0{"taskFailed(task, 0)<br/>source device dead?"}
+    Check0 -->|no| Decide["3. Decision<br/>orchestrate, then<br/>SEND_TASK_FROM_ORCH_TO_DESTINATION"]
+    Check0 -->|yes| Failed["Task failed"]
+    Decide --> Check1{"taskFailed(task, 1)<br/>orchestrator dead or out of range?"}
+    Check1 -->|no| Transfer["4. Transfer<br/>network model routes the request"]
+    Check1 -->|yes| Failed
+    Transfer --> Check2{"taskFailed(task, 2)<br/>dead, unreachable, or insufficient resources?"}
+    Check2 -->|no| Execute["5. Execution<br/>submitTask, FIFO queue, EXECUTION_FINISHED"]
+    Check2 -->|yes| Failed
+    Execute --> Return["6. Result return<br/>TRANSFER_RESULTS_TO_ORCH"]
+    Return --> Check3{"taskFailed(task, 3)<br/>total delay within the latency bound?"}
+    Check3 -->|yes| Done["Task completed<br/>resultsReturned"]
+    Check3 -->|no| Failed
+```
+
 ## Stage 1: generation
 
 `DefaultTaskGenerator.generate()` produces the entire workload before the event loop starts. This design makes the task list deterministic and lets the logger know the total number of tasks in advance.
