@@ -35,7 +35,7 @@ Mechalikh, C., Silem, A. E. H., Safavifar, Z., & Golpayegani, F. (2025). Quality
 
 **BibTeX:**
 
-```gradle
+```bibtex
 @article{mechalikh2021pureedgesim,
   title   = {PureEdgeSim: A simulation framework for performance evaluation of cloud, edge and mist computing environments},
   author  = {Mechalikh, Charafeddine and Taktak, Hajer and Moussa, Faouzi},

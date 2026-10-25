@@ -197,6 +197,7 @@ When writing docs:
 - Explain the behavior the code implements today. Verify it against the source; do not describe what the model is supposed to do in theory.
 - Prefer complete, runnable snippets over fragments with `...`.
 - Keep links relative within `docs/`, for example `[Configuration](configuration.md)`.
+- Label every fenced block with its language: `java`, `xml`, `properties`, `bash`, `bibtex`, `mermaid`. Use `text` for console output and directory trees, which should stay uncolored. An unlabeled block loses its highlighting on the website.
 - Start each guide with a `description:` front matter line of about 155 characters that says what the page covers, in the words a reader would search for. It becomes the search snippet; duplicate descriptions across pages hurt the site.
 - Do not use em dashes. Use commas, parentheses, or a new sentence.
 - Use sentence case for headings and American spelling, matching the source comments.
