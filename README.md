@@ -74,6 +74,7 @@ Mechalikh, C., Silem, A. E. H., Safavifar, Z., & Golpayegani, F. (2025). Quality
 - [Design goals and validation](#design-goals-and-validation)
 - [Selected publications using PureEdgeSim](#selected-publications-using-pureedgesim)
 - [Version history](#version-history)
+- [Roadmap](#roadmap)
 - [Contributing and support](#contributing-and-support)
 - [License](#license)
 - [Keywords](#keywords)
@@ -402,6 +403,31 @@ The full release notes are maintained in [CHANGELOG.md](CHANGELOG.md).
 - **5.6**: self-documenting simulation parameter files for the default, example, and test configurations, with corrected guidance for ranges, orchestrators, and registry modes.
 - **5.5**: comprehensive JUnit 5 test suite, JaCoCo coverage reporting, and a GitHub Actions coverage workflow.
 - **5.1**: faster simulations, batched task scheduling, improved extensibility, and the initial energy model improvements.
+
+## Roadmap
+
+Usability work, in the order it is planned. The XML formats and the setter-based extension API stay unchanged, so existing scenarios and published results keep working.
+
+### Phase 1: trust and hygiene
+
+- [ ] Make the build fail when a test fails, instead of ignoring test failures.
+- [ ] Replace the remaining `printStackTrace()` calls in node generation with parser-style errors (file, element, value, cause) that stop the run.
+- [ ] Move `settings/` and `output/` to the repository root, update the defaults, and remove the legacy `PureEdgeSim/com` and `PureEdgeSim/examples` copies.
+- [ ] Write a `run.properties` file into each output folder with the resolved settings, the seed, the version, and the git commit.
+
+### Phase 2: one command to run and inspect
+
+- [ ] Add a single `java -jar` entry point that runs a settings folder with overrides and prints a compact result table.
+- [ ] Add `validate`, which aggregates all configuration errors, and `explain`, which prints the resolved scenario.
+- [ ] Make charts headless-safe and optional, and write a self-contained `report.html` per run.
+- [ ] Replace the verbose console stream with a progress line and an ETA, moving the event log behind `--verbose`.
+
+### Phase 3: sweeps and reproducibility
+
+- [ ] Add a `sweep` command that runs a parameter grid, merges the rows into one CSV, and plots the comparison.
+- [ ] Ship `create` scenario scaffolding and a Maven archetype for custom models.
+- [ ] Publish a shaded CLI jar as a release artifact.
+- [ ] Add a troubleshooting page that maps common exceptions to their causes and fixes.
 
 ## Contributing and support
 
