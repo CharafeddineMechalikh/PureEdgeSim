@@ -21,6 +21,7 @@
 package com.mechalikh.pureedgesim.datacentersmanager;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -34,12 +35,14 @@ import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.mechalikh.pureedgesim.distribution.Randomness;
 import com.mechalikh.pureedgesim.energy.EnergyModelComputingNode;
@@ -124,8 +127,10 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 			int[] instances = allocateInstances(percentages);
 			for (int i = 0; i < deviceTypes.size(); i++)
 				generateDevicesInstances(deviceTypes.get(i), instances[i]);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException | ParserConfigurationException | SAXException e) {
+			throw new IllegalStateException(getClass().getSimpleName()
+					+ " - Error, cannot read the edge devices file \"" + SimulationParameters.edgeDevicesFile + "\": "
+					+ e.getMessage(), e);
 		}
 
 	}
@@ -165,13 +170,45 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 	 */
 	protected void generateDevicesInstances(Element type, int instances) {
 		for (int j = 0; j < instances; j++) {
-			try {
-				insertEdgeDevice(createComputingNode(type, SimulationParameters.TYPES.EDGE_DEVICE));
-			} catch (NoSuchAlgorithmException | NoSuchMethodException | SecurityException | InstantiationException
-					| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				e.printStackTrace();
-			}
+			insertEdgeDevice(createComputingNode(type, SimulationParameters.TYPES.EDGE_DEVICE,
+					SimulationParameters.edgeDevicesFile));
 		}
+	}
+
+	/**
+	 * Creates a computing node and reports which XML element could not be used.
+	 *
+	 * @param element the XML element describing the node type
+	 * @param type    the type of the node
+	 * @param source  the file the element comes from, used in the error message
+	 * @return the created node
+	 * @throws IllegalStateException if no node can be created from the element
+	 */
+	private ComputingNode createComputingNode(Element element, TYPES type, String source) {
+		try {
+			return createComputingNode(element, type);
+		} catch (NoSuchAlgorithmException | NoSuchMethodException | SecurityException | InstantiationException
+				| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new IllegalStateException(getClass().getSimpleName() + " - Error, cannot create the " + type
+					+ " described by " + describeElement(element) + " in \"" + source + "\": " + e.getMessage(), e);
+		}
+	}
+
+	/**
+	 * Describes an XML element with its attributes, for error messages.
+	 *
+	 * @param element the element to describe
+	 * @return a short representation such as {@code <device arch="x86">}
+	 */
+	private static String describeElement(Element element) {
+		StringBuilder attributes = new StringBuilder();
+		NamedNodeMap map = element.getAttributes();
+		for (int i = 0; i < map.getLength(); i++) {
+			Node attribute = map.item(i);
+			attributes.append(' ').append(attribute.getNodeName()).append("=\"").append(attribute.getNodeValue())
+					.append('"');
+		}
+		return "<" + element.getNodeName() + attributes + ">";
 	}
 
 	/**
@@ -249,7 +286,7 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 			NodeList datacenterList = doc.getElementsByTagName("datacenter");
 			for (int i = 0; i < datacenterList.getLength(); i++) {
 				Element datacenterElement = (Element) datacenterList.item(i);
-				ComputingNode computingNode = createComputingNode(datacenterElement, type);
+				ComputingNode computingNode = createComputingNode(datacenterElement, type, file);
 				if (computingNode.getType() == TYPES.CLOUD) {
 					cloudOnlyList.add(computingNode);
 					mistAndCloudListSensorsExcluded.add(computingNode);
@@ -269,8 +306,9 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 				allNodesListSensorsExcluded.add(computingNode);
 				edgeAndCloudList.add(computingNode);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException | ParserConfigurationException | SAXException e) {
+			throw new IllegalStateException(getClass().getSimpleName() + " - Error, cannot read the data center file \""
+					+ file + "\": " + e.getMessage(), e);
 		}
 
 	}

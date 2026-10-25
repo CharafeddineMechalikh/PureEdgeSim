@@ -8,6 +8,7 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
+import com.mechalikh.pureedgesim.simulationmanager.RunMetadata;
 import com.mechalikh.pureedgesim.simulationmanager.Simulation;
 
 class MainApplicationTest extends AbstractTest {
@@ -35,5 +36,7 @@ class MainApplicationTest extends AbstractTest {
 		assertTrue(Files.exists(Path.of(output)), "the simulation should have written its output");
 		assertTrue(Files.walk(Path.of(output)).anyMatch(path -> path.toString().endsWith(".csv")),
 				"a results csv should have been written");
+		assertTrue(Files.walk(Path.of(output)).anyMatch(path -> path.endsWith(RunMetadata.FILE_NAME)),
+				"the run metadata should have been written next to the results");
 	}
 }

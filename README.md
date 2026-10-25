@@ -89,7 +89,7 @@ The **Datacenters Manager** module creates data centers, servers, and heterogene
 
 PureEdgeSim combines analytical and numerical modeling techniques. The network, for example, is modeled with adjustable mathematical equations rather than at a low level. This abstraction makes it possible to simulate thousands of edge devices while keeping the simulation state observable at any moment. Because it is a discrete-event simulator, characteristics such as network traffic and resource utilization evolve over time, which enables the evaluation of online decision-making algorithms.
 
-Each module provides a default implementation and a set of adjustable settings. Researchers can therefore prototype and evaluate their approaches without specifying low-level details, and they can extend the framework with custom models without modifying its codebase. See the [documentation manual](docs/README.md) for the full documentation.
+Each module provides a default implementation and a set of adjustable settings. Researchers can therefore prototype and evaluate their approaches without specifying low-level details, and they can extend the framework with custom models without modifying its codebase. See the [documentation manual](docs/) for the full documentation.
 
 <p align="center">
   <img width="520" src="https://user-images.githubusercontent.com/46229052/196690369-54350b0f-5382-427a-8f12-c582f3f7f2b7.png" alt="Representation of the edge, fog, mist, and cloud computing scenarios supported by PureEdgeSim">
@@ -221,7 +221,8 @@ dependencies {
 
 ## Documentation and examples
 
-- [Documentation manual](docs/README.md): step-by-step tutorials, architecture, models, output metrics, and a research guide for new users.
+- [Documentation manual](docs/): step-by-step tutorials, architecture, models, output metrics, and a research guide for new users.
+- [Published documentation](https://charafeddinemechalikh.github.io/PureEdgeSim/docs/): the same manual, rendered as a website.
 - [Wiki](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki): installation, configuration files, modules, and tutorials.
 - [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/src/main/java/com/mechalikh/pureedgesim/examples): runnable scenarios covering cloud, edge, and mist computing.
 - [Javadoc](https://javadoc.io/doc/com.mechalikh/pureedgesim): API documentation.
@@ -397,7 +398,7 @@ If your paper uses PureEdgeSim, feel free to open a pull request and add it to t
 
 The full release notes are maintained in [CHANGELOG.md](CHANGELOG.md).
 
-- **5.9**: nodes keep separate uplink and downlink (issue #47), the wireless energy model charges each direction correctly, the CSV network usage column includes MAN and WAN, tasks of dead devices are counted as not generated, and device types are allocated without truncation.
+- **5.9**: nodes keep separate uplink and downlink (issue #47), the wireless energy model charges each direction correctly, the CSV network usage column includes MAN and WAN, tasks of dead devices are counted as not generated, device types are allocated without truncation, `settings/` and `output/` moved to the repository root, every run writes `run.properties` with a snapshot of its settings, node-generation errors stop the run with the file and element, and failing tests fail the build.
 - **5.8**: the quick start example `Example1` is compiled by the default build, and XChart is updated to 3.8.8, clearing four medium advisories.
 - **5.7**: probability distributions for every scenario parameter, sixteen distribution types, nine mobility models selectable per device type, placement hotspots, and a `random_seed` parameter for reproducible runs.
 - **5.6**: self-documenting simulation parameter files for the default, example, and test configurations, with corrected guidance for ranges, orchestrators, and registry modes.
@@ -410,10 +411,10 @@ Usability work, in the order it is planned. The XML formats and the setter-based
 
 ### Phase 1: trust and hygiene
 
-- [ ] Make the build fail when a test fails, instead of ignoring test failures.
-- [ ] Replace the remaining `printStackTrace()` calls in node generation with parser-style errors (file, element, value, cause) that stop the run.
-- [ ] Move `settings/` and `output/` to the repository root, update the defaults, and remove the legacy `PureEdgeSim/com` and `PureEdgeSim/examples` copies.
-- [ ] Write a `run.properties` file into each output folder with the resolved settings, the seed, the version, and the git commit.
+- [x] Make the build fail when a test fails, instead of ignoring test failures.
+- [x] Replace the remaining `printStackTrace()` calls in node generation with parser-style errors (file, element, value, cause) that stop the run.
+- [x] Move `settings/` and `output/` to the repository root, update the defaults, and remove the legacy `PureEdgeSim/com` and `PureEdgeSim/examples` copies.
+- [x] Write a `run.properties` file into each output folder with the resolved settings, the seed, the version, and the git commit.
 
 ### Phase 2: one command to run and inspect
 

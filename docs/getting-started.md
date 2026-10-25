@@ -27,12 +27,9 @@ git clone https://github.com/CharafeddineMechalikh/PureEdgeSim.git
 cd PureEdgeSim
 ```
 
-The repository contains two copies of the examples:
+The runnable examples live in `src/main/java/com/mechalikh/pureedgesim/examples/` and belong to the `examples` Java package. The scenario files they use are in `examples/ExampleX_settings/` at the repository root, next to the default `settings/` folder.
 
-- `src/main/java/com/mechalikh/pureedgesim/examples/`: the buildable examples used by Maven. Their Java package is `examples`.
-- `PureEdgeSim/examples/`: the historical layout, including the settings folders referenced by some examples.
-
-The default configuration files are in `PureEdgeSim/settings/`, and the default output folder is `PureEdgeSim/output/`. These paths are relative to the working directory, so **run commands from the repository root** unless you configure absolute paths.
+The default configuration files are in `settings/`, and the default output folder is `output/`. These paths are relative to the working directory, so **run commands from the repository root** unless you configure absolute paths.
 
 ## Build
 
@@ -60,7 +57,7 @@ To run an example from an IDE, import the repository as a Maven project and run 
 
 ### Run without charts
 
-Live charts require a graphical environment and keep the process alive after the simulation ends. On a server, in a container, or in a CI job, edit `PureEdgeSim/settings/simulation_parameters.properties`:
+Live charts require a graphical environment and keep the process alive after the simulation ends. On a server, in a container, or in a CI job, edit `settings/simulation_parameters.properties`:
 
 ```properties
 display_real_time_charts=false
@@ -101,11 +98,18 @@ The next guides explain each step in detail. See [Architecture](architecture.md)
 
 ## Where the results are
 
-The default output folder is `PureEdgeSim/output/`. Every run creates a timestamped subfolder. In sequential mode the layout is:
+The default output folder is `output/`. Every run creates a timestamped subfolder. In sequential mode the layout is:
 
 ```
-PureEdgeSim/output/
+output/
 └── 2026-10-24_23-29-48/
+    ├── run.properties
+    ├── settings/
+    │   ├── simulation_parameters.properties
+    │   ├── applications.xml
+    │   ├── edge_datacenters.xml
+    │   ├── edge_devices.xml
+    │   └── cloud.xml
     ├── Sequential_simulation.csv
     ├── Sequential_simulation.txt              (if save_log_file=true)
     ├── Final results/                         (if save_charts=true)
@@ -139,7 +143,7 @@ In parallel mode, `simulationId` is no longer always 0, so the CSV files are nam
 A quick sanity check:
 
 ```bash
-head -2 PureEdgeSim/output/<timestamp>/Sequential_simulation.csv
+head -2 output/<timestamp>/Sequential_simulation.csv
 ```
 
 The first line is the header, and the following lines are one scenario each. If the file is empty, the run probably failed during configuration parsing; scroll up in the console for the validation message.

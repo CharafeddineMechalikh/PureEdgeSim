@@ -10,7 +10,6 @@ init:
   - git config --global core.autocrlf true
   
 build_script:
-  - RD /S /Q "C:\projects\pureedgesim\pureedgesim\examples\"
   - mvn clean package --batch-mode -DskipTest
   
 test_script:

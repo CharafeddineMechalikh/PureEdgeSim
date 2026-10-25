@@ -25,7 +25,27 @@
     raise a formatting exception that aborted the device generation.
 *   An arrival pattern whose first gap is below one second no longer schedules the
     first task at time zero, which broke the assumption that a device starts idle.
-*   The unit test suite grew from 911 to 915 tests, all passing.
+*   Runtime files moved to the repository root. The default configuration is now read
+    from `settings/` and results are written to `output/`; the historical
+    `PureEdgeSim/settings` and `PureEdgeSim/output` paths are gone. Example scenario files
+    moved to `examples/ExampleX_settings/`, next to the default `settings/` folder.
+    Custom paths passed to `setCustomSettingsFolder`, `setCustomFilePath`, and
+    `setCustomOutputFolder` are unaffected, but scripts that relied on the old defaults
+    must pass the new paths.
+*   Removed the legacy `PureEdgeSim/com` and `PureEdgeSim/examples` source copies. They
+    duplicated `src/main/java` and were never compiled by the build.
+*   Every run now writes `run.properties` into its timestamped output folder, with the
+    framework version, the git commit, the random seed, the parallelism flag, and the
+    absolute path of each input file. The five resolved settings files are copied into a
+    `settings/` subfolder next to the results, so a run can be reproduced after the
+    original scenario files change.
+*   Errors while reading or instantiating the nodes of an XML file now name the file, the
+    element, and the cause, and stop the run. They used to print a stack trace and
+    continue with an empty node list.
+*   The build fails when a test fails. The Surefire configuration no longer sets
+    `testFailureIgnore`.
+*   The documentation manual is published on GitHub Pages alongside the repository readme.
+*   The unit test suite grew from 911 to 922 tests, all passing.
 *   Bumped the project version to 5.9.
 
 ## Version 5.8 Changelog (October 25th 2026)

@@ -45,7 +45,7 @@ public class SimulationParameters {
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomFilePath(String path, Files file) 
 	 */
-	public static String simulationParametersFile = "PureEdgeSim/settings/simulation_parameters.properties";
+	public static String simulationParametersFile = "settings/simulation_parameters.properties";
 
 	/**
 	 * The path to the applications characteristics file.
@@ -53,7 +53,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomFilePath(String,
 	 *      Files)
 	 */
-	public static String applicationFile = "PureEdgeSim/settings/applications.xml";
+	public static String applicationFile = "settings/applications.xml";
 
 	/**
 	 * The path to the edge data centers characteristics file.
@@ -61,7 +61,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomFilePath(String,
 	 *      Files)
 	 */
-	public static String edgeDataCentersFile = "PureEdgeSim/settings/edge_datacenters.xml";
+	public static String edgeDataCentersFile = "settings/edge_datacenters.xml";
 
 	/**
 	 * The path to the edge devices characteristics file.
@@ -69,7 +69,7 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomFilePath(String,
 	 *      Files)
 	 */
-	public static String edgeDevicesFile = "PureEdgeSim/settings/edge_devices.xml";
+	public static String edgeDevicesFile = "settings/edge_devices.xml";
 
 	/**
 	 * The path to the cloud characteristics file.
@@ -77,14 +77,14 @@ public class SimulationParameters {
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomFilePath(String,
 	 *      Files)
 	 */
-	public static String cloudDataCentersFile = "PureEdgeSim/settings/cloud.xml";
+	public static String cloudDataCentersFile = "settings/cloud.xml";
 
 	/**
 	 * The output folder path.
 	 * 
 	 * @see com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract#setCustomOutputFolder(String)
 	 */
-	public static String outputFolder = "PureEdgeSim/output/";
+	public static String outputFolder = "output/";
 
 	/**
 	 * If true simulations will be launched in parallel

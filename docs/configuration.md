@@ -2,7 +2,7 @@
 
 PureEdgeSim is configured through five files. This guide documents every parameter, its unit, its default value, and its effect on the simulation. It also explains the validation rules, the scenario sweep, and the topology format.
 
-All default files are under `PureEdgeSim/settings/`. You can place them anywhere and call `sim.setCustomSettingsFolder("path/with/trailing/slash/")`, or configure files individually with `sim.setCustomFilePath(path, Simulation.Files.X)`.
+All default files are under `settings/`. You can place them anywhere and call `sim.setCustomSettingsFolder("path/with/trailing/slash/")`, or configure files individually with `sim.setCustomFilePath(path, Simulation.Files.X)`.
 
 The five files are:
 

@@ -62,10 +62,10 @@ public class Example7 {
 	 */
 
 	// Below is the path for the settings folder of this example
-	private static String settingsPath = "PureEdgeSim/examples/Example7_settings/";
+	private static String settingsPath = "examples/Example7_settings/";
 
 	// The custom output folder is
-	private static String outputPath = "PureEdgeSim/examples/Example7_output/";
+	private static String outputPath = "output/Example7_output/";
 
 	public Example7() {
 		// Create a PureEdgeSim simulation

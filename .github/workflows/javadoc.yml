@@ -1,7 +1,7 @@
 name: javadoc
 
 # Builds the API documentation and publishes it as a workflow artifact.
-# The GitHub Pages site (CNAME mechalikh.com) is left untouched.
+# The GitHub Pages site is left untouched.
 on:
   push:
     branches: [ master ]

@@ -88,7 +88,7 @@ import com.mechalikh.pureedgesim.scenariomanager.EdgeDevicesParser;
  * For more details on how to integrate custom models, see the provided
  * {@code examples}. You should have received a set of examples along with
  * PureEdgeSim. If not, <a href=
- * "https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples">see
+ * "https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/src/main/java/com/mechalikh/pureedgesim/examples">see
  * our examples on github</a>.
  * 
  * 

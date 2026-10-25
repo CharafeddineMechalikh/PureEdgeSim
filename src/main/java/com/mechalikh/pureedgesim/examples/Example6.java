@@ -31,17 +31,17 @@ public class Example6 {
 	 * PureEdgeSim will use the default ones located in settings/ folder.
 	 * 
 	 * in the simulation parameters file that is used in this example
-	 * ("PureEdgeSim/examples/Example6_settings/"), the simulation time is set to 60
+	 * ("examples/Example6_settings/"), the simulation time is set to 60
 	 * minutes and the update intervals to 0.1 seconds.
 	 * 
 	 * @author Charafeddine Mechalikh
 	 * @since PureEdgeSim 2.4
 	 */
 	// Below is the path for the settings folder of this example
-	private static String settingsPath = "PureEdgeSim/examples/Example6_settings/";
+	private static String settingsPath = "examples/Example6_settings/";
 
 	// The custom output folder is
-	private static String outputPath = "PureEdgeSim/examples/Example6_output/";
+	private static String outputPath = "output/Example6_output/";
 
 	// If we want only to use files one by one
 	private static String simConfigfile = settingsPath + "simulation_parameters.properties";

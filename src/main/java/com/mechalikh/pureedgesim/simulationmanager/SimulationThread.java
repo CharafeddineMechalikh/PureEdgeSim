@@ -120,6 +120,9 @@ public class SimulationThread {
 				if (SimulationParameters.cleanOutputFolder && isFirstIteration && fromIteration == 0) {
 					simLog.cleanOutputFolder();
 				}
+				// Save the settings and the provenance next to the results.
+				if (isFirstIteration)
+					RunMetadata.write(SimulationParameters.outputFolder, startTime);
 				isFirstIteration = false;
 
 				// New instance of the PureEdgeSim simulation engine.

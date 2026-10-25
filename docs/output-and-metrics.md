@@ -4,9 +4,18 @@ A PureEdgeSim run produces a CSV row per scenario, an optional text report, and 
 
 ## Where the output goes
 
-The output folder is `SimulationParameters.outputFolder`, which comes from `simulation_parameters.properties`. The default is `PureEdgeSim/output/`. Each launch creates a timestamped folder named `yyyy-MM-dd_HH-mm-ss`.
+The output folder is `SimulationParameters.outputFolder`. The default is `output/` at the repository root; change it with `sim.setCustomOutputFolder("path/with/trailing/slash/")`. Each launch creates a timestamped folder named `yyyy-MM-dd_HH-mm-ss`.
 
 `clear_output_folder=true` deletes that folder at the start of the first iteration. If you point the output folder at a directory that contains other work, that work is removed. The default is `false`, so old runs remain until you delete them.
+
+### Reproducing a run
+
+Each timestamped folder receives two provenance artifacts:
+
+- `run.properties`, with the framework `version`, the `git.commit` of the checkout, the `random.seed` (`unset` when the run was not seeded), the `parallelism` flag, the absolute `output.folder`, and the absolute path of each input file under `settings.*`.
+- `settings/`, a snapshot of the five configuration files the run actually parsed, named after their role (`simulation_parameters.properties`, `applications.xml`, `edge_datacenters.xml`, `edge_devices.xml`, `cloud.xml`). A custom file such as `fast.properties` is stored under the role name, so the folder still describes the run.
+
+To reproduce a result, pass that `settings/` folder to `setCustomSettingsFolder` and the recorded seed to `Randomness.setSeed`.
 
 ### File names
 
@@ -196,7 +205,7 @@ A short Python sketch:
 ```python
 import pandas as pd
 
-df = pd.read_csv("PureEdgeSim/output/2026-10-24_23-29-48/Sequential_simulation.csv")
+df = pd.read_csv("output/2026-10-24_23-29-48/Sequential_simulation.csv")
 df.columns = [c.strip() for c in df.columns]
 
 df["failed"] = df[["Task not executed (No resources available or long waiting time)",

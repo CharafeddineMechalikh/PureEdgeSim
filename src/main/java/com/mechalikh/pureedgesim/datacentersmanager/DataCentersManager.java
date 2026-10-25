@@ -111,7 +111,9 @@ public class DataCentersManager {
 			computingNodesGenerator = (ComputingNodesGenerator) computingNodesGeneratorConstructor.newInstance(simulationManager,
 					mobilityModelClass, computingNodeClass);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new IllegalStateException(getClass().getSimpleName()
+					+ " - Error, cannot create the computing nodes generator "
+					+ computingNodesGeneratorClass.getName() + ": " + e.getMessage(), e);
 		}
 		computingNodesGenerator.generateDatacentersAndDevices();
 	}
@@ -131,7 +133,9 @@ public class DataCentersManager {
 			topologyCreator = (TopologyCreator) topologyCreatorConstructor.newInstance(simulationManager,
 					computingNodesGenerator);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new IllegalStateException(getClass().getSimpleName()
+					+ " - Error, cannot create the topology creator " + topologyCreatorClass.getName() + ": "
+					+ e.getMessage(), e);
 		}
 		topologyCreator.generateTopologyGraph();
 	}

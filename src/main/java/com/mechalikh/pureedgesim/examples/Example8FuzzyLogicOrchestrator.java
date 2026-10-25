@@ -63,7 +63,7 @@ public class Example8FuzzyLogicOrchestrator extends DefaultOrchestrator {
 	}
 
 	private int fuzzyLogic(Task task) {
-		String fileName = "PureEdgeSim/examples/Example8_settings/stage1.fcl";
+		String fileName = "examples/Example8_settings/stage1.fcl";
 		FIS fis = FIS.load(fileName, true);
 		// Error while loading?
 		if (fis == null) {
@@ -105,7 +105,7 @@ public class Example8FuzzyLogicOrchestrator extends DefaultOrchestrator {
 	private int stage2(String[] architecture2, Task task) {
 		double min = -1;
 		int selected = -1;
-		String fileName = "PureEdgeSim/examples/Example8_settings/stage2.fcl";
+		String fileName = "examples/Example8_settings/stage2.fcl";
 		FIS fis = FIS.load(fileName, true);
 		// Error while loading?
 		if (fis == null) {

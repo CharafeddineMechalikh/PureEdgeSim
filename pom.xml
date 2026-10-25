@@ -235,6 +235,13 @@
 	</profiles>
 
 	<build>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		
 		<pluginManagement>
 			<!-- Plugins to be reused for different <profile>'s -->
@@ -249,7 +256,6 @@
 					<configuration>
 						<forkCount>1</forkCount>
 						<reuseForks>false</reuseForks>
-						<testFailureIgnore>true</testFailureIgnore>
 					</configuration>
 				</plugin>
 

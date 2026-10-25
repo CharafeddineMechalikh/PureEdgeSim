@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.w3c.dom.Element;
 
-import com.mechalikh.pureedgesim.SimLogCapture;
 import com.mechalikh.pureedgesim.energy.EnergyModelComputingNode;
 import com.mechalikh.pureedgesim.scenariomanager.Scenario;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
@@ -327,51 +326,50 @@ class DefaultComputingNodesGeneratorTest extends DatacentersTestSupport {
 	}
 
 	@Test
-	void unreadableDeviceFileIsHandledGracefully() {
+	void anUnreadableDeviceFileStopsTheRun() {
 		createSimulationManager(20);
 		DefaultComputingNodesGenerator generator = newGenerator();
 		SimulationParameters.edgeDevicesFile = tempDir.resolve("missing_devices.xml").toString();
 
-		SimLogCapture.mute();
-		try {
-			generator.generateEdgeDevices();
-		} finally {
-			SimLogCapture.unmute();
-		}
+		IllegalStateException thrown = assertThrows(IllegalStateException.class, generator::generateEdgeDevices);
 
+		assertTrue(thrown.getMessage().contains("missing_devices.xml"),
+				"the error must name the file that could not be read, got: " + thrown.getMessage());
+		assertNotNull(thrown.getCause(), "the underlying parsing error must be kept as the cause");
 		assertTrue(generator.getMistOnlyList().isEmpty());
 	}
 
 	@Test
-	void unreadableDataCenterFileIsHandledGracefully() {
+	void anUnreadableDataCenterFileStopsTheRun() {
 		createSimulationManager(20);
 		DefaultComputingNodesGenerator generator = newGenerator();
+		String file = tempDir.resolve("missing_cloud.xml").toString();
 
-		SimLogCapture.mute();
-		try {
-			generator.generateDataCenters(tempDir.resolve("missing_cloud.xml").toString(), TYPES.CLOUD);
-		} finally {
-			SimLogCapture.unmute();
-		}
+		IllegalStateException thrown = assertThrows(IllegalStateException.class,
+				() -> generator.generateDataCenters(file, TYPES.CLOUD));
 
+		assertTrue(thrown.getMessage().contains("missing_cloud.xml"),
+				"the error must name the file that could not be read, got: " + thrown.getMessage());
+		assertNotNull(thrown.getCause(), "the underlying parsing error must be kept as the cause");
 		assertTrue(generator.getCloudOnlyList().isEmpty());
 		assertTrue(generator.getAllNodesList().isEmpty());
 	}
 
 	@Test
-	void constructionFailuresOfDeviceInstancesAreSwallowed() {
+	void aConstructionFailureOfADeviceInstanceStopsTheRun() {
 		createSimulationManager(20);
 		DefaultComputingNodesGenerator generator = new DefaultComputingNodesGenerator(simulationManager,
 				com.mechalikh.pureedgesim.locationmanager.DefaultMobilityModel.class, BrokenComputingNode.class);
 		Element device = parseElement(readResource("edge_devices.xml"), "device");
 
-		SimLogCapture.mute();
-		try {
-			generator.generateDevicesInstances(device);
-		} finally {
-			SimLogCapture.unmute();
-		}
+		IllegalStateException thrown = assertThrows(IllegalStateException.class,
+				() -> generator.generateDevicesInstances(device));
 
+		assertTrue(thrown.getMessage().contains("<device arch=\"x86\""),
+				"the error must describe the failing element, got: " + thrown.getMessage());
+		assertTrue(thrown.getMessage().contains("edge_devices.xml"),
+				"the error must name the file the element comes from, got: " + thrown.getMessage());
+		assertNotNull(thrown.getCause(), "the construction error must be kept as the cause");
 		assertTrue(generator.getMistOnlyList().isEmpty());
 		assertNotNull(device);
 	}

@@ -10,9 +10,11 @@ You do not need to be a software engineer to contribute. You do need to verify w
 | --- | --- |
 | `src/main/java/com/mechalikh/pureedgesim/` | Framework source, one package per module. |
 | `src/main/java/com/mechalikh/pureedgesim/examples/` | Runnable scenarios and sample custom models. Not part of the published Javadoc. |
+| `examples/ExampleX_settings/` | Scenario files used by the examples. |
 | `src/test/java/com/mechalikh/pureedgesim/` | JUnit 5 tests, mirroring the source packages. |
 | `docs/` | This manual. Start at [docs/README.md](README.md). |
-| `PureEdgeSim/settings/` | Default configuration files and the default output folder. |
+| `settings/` | Default configuration files. |
+| `output/` | Default output folder, created at run time and ignored by git. |
 | `.github/workflows/` | Continuous integration: tests, coverage, and Javadoc. |
 | `CHANGELOG.md` | Every user-visible change, newest first. |
 | `pom.xml` | Build, profiles, dependencies, publishing. |
@@ -85,23 +87,11 @@ Run integration tests only:
 mvn test -Dtest=SimulationIntegrationTest
 ```
 
-### Test failures do not fail the build
+### Test failures fail the build
 
-The Surefire configuration sets `testFailureIgnore` to `true`, so `mvn test` exits successfully even when tests fail. This is a historical convenience for IDE users, not a statement that failures are acceptable.
+Surefire runs the suite with the default failure handling: a failing test makes `mvn test` exit with a non-zero status, and CI goes red. Fix the failure before merging; do not add `-Dmaven.test.failure.ignore=true` to a commit or workflow.
 
-Always read the summary and the reports instead of trusting the exit code:
-
-- Console summary: `Tests run: ..., Failures: ..., Errors: ..., Skipped: ...`
-- Per-class reports: `target/surefire-reports/*.txt`
-- Machine-readable reports: `target/surefire-reports/TEST-*.xml`
-
-To make failures fail the build for a local run:
-
-```bash
-mvn clean test -Dmaven.test.failure.ignore=false
-```
-
-CI inherits the same setting, which means a red test can pass the workflow. Review the workflow log, not only the check mark.
+The console summary (`Tests run: ..., Failures: ..., Errors: ..., Skipped: ...`) and the per-class reports in `target/surefire-reports/` remain the fastest way to find what broke.
 
 ### Coverage
 
@@ -181,7 +171,11 @@ Build the Javadoc locally:
 mvn javadoc:javadoc
 ```
 
-Output goes to `target/site/apidocs/index.html`. The build is configured with `failOnError=false`, which means a green build does not prove the Javadoc is clean. Read the warnings. The codebase currently builds with no documentation warnings, so treat a new one as a regression. The `javadoc` workflow runs the same goal on every push and pull request and uploads the generated site as a downloadable artifact; the GitHub Pages site and its CNAME are not modified.
+Output goes to `target/site/apidocs/index.html`. The build is configured with `failOnError=false`, which means a green build does not prove the Javadoc is clean. Read the warnings. The codebase currently builds with no documentation warnings, so treat a new one as a regression. The `javadoc` workflow runs the same goal on every push and pull request and uploads the generated site as a downloadable artifact; it does not publish to GitHub Pages.
+
+### Publishing the documentation website
+
+GitHub Pages builds the website from the root of the `master` branch with Jekyll. `_config.yml` selects the Cayman theme and enables relative links, so `README.md` becomes the home page, `docs/README.md` becomes `/docs/`, and links between markdown files are rewritten to their `.html` pages. Add a guide as a plain markdown file in `docs/`, link it from `docs/README.md`, push, and it is published. Do not add YAML front matter: GitHub renders it as a table in the repository view.
 
 Generate the Javadoc and source JARs that are attached during deployment:
 
@@ -278,10 +272,10 @@ These are the planned usability improvements, in priority order. Tick an item in
 
 ### Phase 1: trust and hygiene
 
-- [ ] Make the build fail when a test fails, instead of ignoring test failures.
-- [ ] Replace the remaining `printStackTrace()` calls in node generation with parser-style errors (file, element, value, cause) that stop the run.
-- [ ] Move `settings/` and `output/` to the repository root, update the defaults, and remove the legacy `PureEdgeSim/com` and `PureEdgeSim/examples` copies.
-- [ ] Write a `run.properties` file into each output folder with the resolved settings, the seed, the version, and the git commit.
+- [x] Make the build fail when a test fails, instead of ignoring test failures.
+- [x] Replace the remaining `printStackTrace()` calls in node generation with parser-style errors (file, element, value, cause) that stop the run.
+- [x] Move `settings/` and `output/` to the repository root, update the defaults, and remove the legacy `PureEdgeSim/com` and `PureEdgeSim/examples` copies.
+- [x] Write a `run.properties` file into each output folder with the resolved settings, the seed, the version, and the git commit.
 
 Acceptance: a broken XML fails with one readable message, and every output folder can be replayed as is.
 

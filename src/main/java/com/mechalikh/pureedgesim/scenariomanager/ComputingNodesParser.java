@@ -59,9 +59,12 @@ public abstract class ComputingNodesParser extends XmlFileParser {
 			Document xmlDoc = dBuilder.parse(computingNodesFile);
 			xmlDoc.getDocumentElement().normalize();
 			typeSpecificChecking(xmlDoc);
+		} catch (IllegalArgumentException e) {
+			SimLog.println("%s", e.getMessage());
+			return false;
 		} catch (Exception e) {
-			SimLog.println("%s - Failed to load %s file!",getClass().getSimpleName(), file);
-			e.printStackTrace();
+			SimLog.println("%s - Failed to load the file \"%s\": %s", getClass().getSimpleName(), file,
+					e.getMessage());
 			return false;
 		}
 		SimLog.println("%s - %s file successfully Loaded!",getClass().getSimpleName(),file);

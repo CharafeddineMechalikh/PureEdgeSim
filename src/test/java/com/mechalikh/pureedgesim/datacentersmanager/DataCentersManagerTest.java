@@ -81,15 +81,19 @@ class DataCentersManagerTest extends DatacentersTestSupport {
 		createSimulationManager(1);
 		SimulationParameters.useOneSharedWanLink = true;
 		attachDefaultNetworkModel();
-		assertThrows(NullPointerException.class, () -> new DataCentersManager(simulationManager,
-				DefaultMobilityModel.class, DefaultComputingNode.class, ComputingNodesGenerator.class,
-				DefaultTopologyCreator.class));
+		IllegalStateException generatorFailure = assertThrows(IllegalStateException.class,
+				() -> new DataCentersManager(simulationManager, DefaultMobilityModel.class,
+						DefaultComputingNode.class, ComputingNodesGenerator.class, DefaultTopologyCreator.class));
+		assertTrue(generatorFailure.getMessage().contains("ComputingNodesGenerator"),
+				"the error must name the class, got: " + generatorFailure.getMessage());
 
 		createSimulationManager(1);
 		SimulationParameters.useOneSharedWanLink = true;
 		attachDefaultNetworkModel();
-		assertThrows(NullPointerException.class, () -> new DataCentersManager(simulationManager,
-				DefaultMobilityModel.class, DefaultComputingNode.class, DefaultComputingNodesGenerator.class,
-				TopologyCreator.class));
+		IllegalStateException topologyFailure = assertThrows(IllegalStateException.class,
+				() -> new DataCentersManager(simulationManager, DefaultMobilityModel.class,
+						DefaultComputingNode.class, DefaultComputingNodesGenerator.class, TopologyCreator.class));
+		assertTrue(topologyFailure.getMessage().contains("TopologyCreator"),
+				"the error must name the class, got: " + topologyFailure.getMessage());
 	}
 }
