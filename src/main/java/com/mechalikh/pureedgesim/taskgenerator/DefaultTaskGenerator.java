@@ -20,12 +20,12 @@
  **/
 package com.mechalikh.pureedgesim.taskgenerator;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Random;
 import java.util.stream.IntStream;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
+import com.mechalikh.pureedgesim.distribution.Distribution;
+import com.mechalikh.pureedgesim.distribution.Randomness;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationengine.FutureQueue;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
@@ -34,13 +34,20 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  * Default task generator. Each device is assigned an application profile
  * according to the profile usage percentages, then generates tasks at the rate
  * of that profile for the whole simulation.
+ * <p>
+ * Every task is drawn independently from the distributions of its application,
+ * so request and result sizes, container size, task length and latency
+ * requirement vary from one task to the next. When an application declares an
+ * arrival pattern, its tasks are spread over the simulation using the sampled
+ * gaps instead of the fixed per-minute burst.
  *
  * @author Charafeddine Mechalikh
  * @since PureEdgeSim 3.0
  */
 public class DefaultTaskGenerator extends TaskGenerator {
 	/**
-	 * Used to generate random values.
+	 * Used to generate random values. Shared with the rest of the simulation, so it
+	 * honors the {@code random_seed} parameter.
 	 * 
 	 * @see #generate()
 	 * @see #generateTasksForDevice(ComputingNode, int)
@@ -52,17 +59,13 @@ public class DefaultTaskGenerator extends TaskGenerator {
 	protected double simulationTime;
 
 	/**
-	 * Creates a task generator with a strong secure random source.
+	 * Creates a task generator using the randomness source of the current thread.
 	 *
 	 * @param simulationManager the simulation manager
 	 */
 	public DefaultTaskGenerator(SimulationManager simulationManager) {
 		super(simulationManager);
-		try {
-			random = SecureRandom.getInstanceStrong();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
+		random = Randomness.getRandom();
 	}
 
 	/**
@@ -80,12 +83,15 @@ public class DefaultTaskGenerator extends TaskGenerator {
 		int devicesCount = devicesList.size();
 
 		// Browse all applications
-		IntStream.range(0, SimulationParameters.applicationList.size() - 1).forEach(app -> {
+		for (int app = 0; app < SimulationParameters.applicationList.size() - 1; app++) {
 			int numberOfDevices = (int) (SimulationParameters.applicationList.get(app).getUsagePercentage()
 					* devicesCount / 100);
-			IntStream.range(0, numberOfDevices).mapToObj(i -> devicesList.remove(random.nextInt(devicesList.size())))
-					.peek(dev -> dev.setApplicationType(app)).forEach(dev -> generateTasksForDevice(dev, app));
-		});
+			for (int i = 0; i < numberOfDevices && !devicesList.isEmpty(); i++) {
+				ComputingNode dev = devicesList.remove(random.nextInt(devicesList.size()));
+				dev.setApplicationType(app);
+				generateTasksForDevice(dev, app);
+			}
+		}
 
 		devicesList.forEach(dev -> generateTasksForDevice(dev, SimulationParameters.applicationList.size() - 1));
 		return this.getTaskList();
@@ -94,11 +100,20 @@ public class DefaultTaskGenerator extends TaskGenerator {
 	/**
 	 * Generates tasks that will be offloaded during simulation for the given device
 	 * and application.
+	 * <p>
+	 * Applications without an arrival pattern get one burst of tasks per minute,
+	 * evenly spaced inside it. Applications with an arrival pattern get one task per
+	 * sampled gap, whatever minute it falls in.
 	 * 
 	 * @param dev the device to generate tasks for
 	 * @param app the application type
 	 */
 	protected void generateTasksForDevice(ComputingNode dev, int app) {
+		Application appParams = SimulationParameters.applicationList.get(app);
+		if (appParams.hasRandomArrival()) {
+			generateRandomlyArrivingTasks(dev, app, appParams);
+			return;
+		}
 		IntStream.range(0, (int) simulationTime)
 				// First get time in seconds
 				.forEach(st -> insert((st * 60)
@@ -108,35 +123,70 @@ public class DefaultTaskGenerator extends TaskGenerator {
 	}
 
 	/**
-	 * Inserts a task into the task list.
+	 * Generates one task each time the arrival distribution says that a new request
+	 * is sent by the device, from the beginning of the simulation until its end.
 	 * 
-	 * @param time the time in seconds at which the task should be executed
+	 * @param dev       the device to generate tasks for
+	 * @param app       the application type
+	 * @param appParams the application whose distributions are used
+	 */
+	protected void generateRandomlyArrivingTasks(ComputingNode dev, int app, Application appParams) {
+		Distribution arrival = appParams.getArrivalDistribution();
+		double simulationSeconds = simulationTime * 60;
+		// The device is not assumed to be busy at the very beginning of the simulation.
+		double time = random.nextDouble() * Math.max(1, arrival.sample());
+		while (time < simulationSeconds) {
+			insert(app, dev, appParams, (int) time);
+			// A gap of less than one second would keep the loop busy without moving.
+			time += Math.max(1, arrival.sample());
+		}
+	}
+
+	/**
+	 * Inserts a burst of tasks into the task list, evenly spaced after the given
+	 * time. The number of tasks is drawn from the rate distribution of the
+	 * application.
+	 * 
+	 * @param time the time in seconds at which the first task should be executed
 	 * @param app  the application type of the task
 	 * @param dev  the device that generates the task
 	 */
 	protected void insert(int time, int app, ComputingNode dev) {
 		Application appParams = SimulationParameters.applicationList.get(app);
-		long requestSize = appParams.getRequestSize();
-		long outputSize = appParams.getResultsSize();
-		long containerSize = appParams.getContainerSizeInBits();
-		double maxLatency = appParams.getLatency();
-		long length = (long) appParams.getTaskLength();
-		int rate = appParams.getRate();
-		int taskDuration = 60 / rate;
-
-		for (int i = 0; i < rate; i++) {
-			Task task = createTask(++id).setType(appParams.getType()).setFileSizeInBits(requestSize)
-					.setOutputSizeInBits(outputSize).setContainerSizeInBits(containerSize).setApplicationID(app)
-					.setMaxLatency(maxLatency).setLength(length).setEdgeDevice(dev).setRegistry(getSimulationManager()
-							.getDataCentersManager().getComputingNodesGenerator().getCloudOnlyList().get(0));
-
-			time += taskDuration;
-			task.setTime(time);
-
-			taskList.add(task);
-			getSimulationManager().getSimulationLogger()
-					.deepLog("BasicTasksGenerator, Task " + id + " with execution time " + time + " (s) generated.");
+		int tasksPerMinute = appParams.sampleTasksPerMinute();
+		if (tasksPerMinute == 0) {
+			return;
 		}
+		int taskDuration = 60 / tasksPerMinute;
+
+		for (int i = 0; i < tasksPerMinute; i++) {
+			time += taskDuration;
+			insert(app, dev, appParams, time);
+		}
+	}
+
+	/**
+	 * Creates a single task from the distributions of the given application and
+	 * adds it to the task list at the given time.
+	 * 
+	 * @param app       the application type of the task
+	 * @param dev       the device that generates the task
+	 * @param appParams the application whose distributions are sampled
+	 * @param time      the time in seconds at which the task is offloaded
+	 */
+	protected void insert(int app, ComputingNode dev, Application appParams, int time) {
+		Task task = createTask(++id).setType(appParams.getType()).setFileSizeInBits(appParams.sampleRequestSize())
+				.setOutputSizeInBits(appParams.sampleResultsSize())
+				.setContainerSizeInBits(appParams.sampleContainerSize()).setApplicationID(app)
+				.setMaxLatency(appParams.sampleLatency()).setLength(appParams.sampleTaskLength()).setEdgeDevice(dev)
+				.setRegistry(getSimulationManager().getDataCentersManager().getComputingNodesGenerator()
+						.getCloudOnlyList().get(0));
+
+		task.setTime(time);
+
+		taskList.add(task);
+		getSimulationManager().getSimulationLogger()
+				.deepLog("BasicTasksGenerator, Task " + id + " with execution time " + time + " (s) generated.");
 	}
 
 	/**

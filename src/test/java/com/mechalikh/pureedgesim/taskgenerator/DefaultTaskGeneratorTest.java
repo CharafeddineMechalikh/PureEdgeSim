@@ -11,9 +11,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +26,9 @@ import org.junit.jupiter.api.Test;
 import com.mechalikh.pureedgesim.AbstractTest;
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNodesGenerator;
+import com.mechalikh.pureedgesim.distribution.ConstantDistribution;
+import com.mechalikh.pureedgesim.distribution.ExponentialDistribution;
+import com.mechalikh.pureedgesim.distribution.UniformDistribution;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager;
 
@@ -175,5 +182,111 @@ class DefaultTaskGeneratorTest extends AbstractTest {
 		Task task = taskGenerator.createTask(12);
 		assertInstanceOf(DefaultTask.class, task);
 		assertEquals(12, task.getId());
+	}
+
+	// ------------------------------------------------------------------
+	// Distribution-valued tasks
+	// ------------------------------------------------------------------
+
+	@Test
+	void eachTaskDrawsItsOwnSizeAndLengthFromTheApplication() {
+		Random random = new Random(7);
+		SimulationParameters.applicationList = List.of(new Application("Varied", 2, 100, 1.0, 8_000_000, 12_000, 8_000,
+				150, new UniformDistribution(random, 8_000, 16_000), null, null,
+				new UniformDistribution(random, 100, 200), null, null, null));
+		SimulationParameters.simulationDuration = 60;
+
+		List<Task> tasks = new DefaultTaskGenerator(manager).generate().stream().collect(Collectors.toList());
+
+		assertFalse(tasks.isEmpty());
+		Set<Long> requestSizes = new HashSet<>();
+		Set<Double> lengths = new HashSet<>();
+		for (Task task : tasks) {
+			long request = (long) task.getFileSizeInBits();
+			double length = task.getLength();
+			assertTrue(request >= 8_000 && request <= 16_000, "request size out of the support: " + request);
+			assertTrue(length >= 100 && length <= 200, "task length out of the support: " + length);
+			// Parameters without a distribution keep their fixed value.
+			assertEquals(8_000, (long) task.getOutputSizeInBits());
+			requestSizes.add(request);
+			lengths.add(length);
+		}
+		assertTrue(requestSizes.size() > 1, "every task got the same request size: " + requestSizes);
+		assertTrue(lengths.size() > 1, "every task got the same length: " + lengths);
+	}
+
+	@Test
+	void theRateDistributionSetsHowManyTasksARateMinuteProduces() {
+		SimulationParameters.applicationList = List.of(new Application("Bursty", 2, 100, 1.0, 8_000_000, 8_000_000,
+				8_000_000, 10, null, null, null, null, null, new ConstantDistribution(4), null));
+		SimulationParameters.simulationDuration = 60;
+
+		List<Task> tasks = new DefaultTaskGenerator(manager).generate().stream().collect(Collectors.toList());
+
+		assertEquals(40, tasks.size());
+		Map<ComputingNode, List<Double>> timesByDevice = new HashMap<>();
+		for (Task task : tasks)
+			timesByDevice.computeIfAbsent(task.getEdgeDevice(), device -> new ArrayList<>()).add(task.getTime());
+		assertEquals(10, timesByDevice.size());
+		for (List<Double> times : timesByDevice.values()) {
+			assertEquals(4, times.size());
+			Collections.sort(times);
+			for (int i = 1; i < times.size(); i++)
+				assertEquals(15, times.get(i) - times.get(i - 1), "tasks must be evenly spaced inside the minute");
+		}
+	}
+
+	@Test
+	void aRateDistributionThatDrawsZeroSkipsTheMinute() {
+		SimulationParameters.applicationList = List.of(new Application("Silent", 5, 100, 1.0, 8_000_000, 8_000_000,
+				8_000_000, 10, null, null, null, null, null, new ConstantDistribution(0), null));
+		SimulationParameters.simulationDuration = 60;
+
+		assertTrue(new DefaultTaskGenerator(manager).generate().isEmpty(),
+				"a device with no task this minute must not generate anything");
+	}
+
+	@Test
+	void anArrivalDistributionReplacesTheEvenlySpacedPattern() {
+		SimulationParameters.applicationList = List.of(new Application("Poisson", 2, 100, 1.0, 8_000_000, 8_000_000,
+				8_000_000, 10, null, null, null, null, null, null,
+				new ExponentialDistribution(new Random(3), 10)));
+		SimulationParameters.simulationDuration = 60;
+
+		DefaultTaskGenerator taskGenerator = new DefaultTaskGenerator(manager);
+		List<Task> tasks = taskGenerator.generate().stream().collect(Collectors.toList());
+
+		assertFalse(tasks.isEmpty());
+		Map<ComputingNode, List<Double>> timesByDevice = new HashMap<>();
+		for (Task task : tasks) {
+			assertTrue(task.getTime() >= 0 && task.getTime() < 60,
+					"the arrival pattern went past the end of the simulation: " + task.getTime());
+			timesByDevice.computeIfAbsent(task.getEdgeDevice(), device -> new ArrayList<>()).add(task.getTime());
+		}
+		assertFalse(timesByDevice.isEmpty(), "no device generated a task");
+		// Two tasks per minute per device would give 20 tasks; the 10 second average
+		// gap of the Poisson process gives around 60.
+		assertTrue(tasks.size() > 30, "the arrival pattern did not drive the number of tasks: " + tasks.size());
+		for (List<Double> times : timesByDevice.values()) {
+			Collections.sort(times);
+			assertFalse(times.isEmpty());
+			for (int i = 1; i < times.size(); i++)
+				assertTrue(times.get(i) - times.get(i - 1) >= 1, "two tasks cannot arrive in the same second");
+		}
+	}
+
+	@Test
+	void theArrivalPatternNeverRunsPastTheEndOfTheSimulation() {
+		SimulationParameters.applicationList = List.of(new Application("Fast", 60, 100, 1.0, 8_000_000, 8_000_000,
+				8_000_000, 10, null, null, null, null, null, null,
+				new ConstantDistribution(1)));
+		SimulationParameters.simulationDuration = 300;
+
+		DefaultTaskGenerator taskGenerator = new DefaultTaskGenerator(manager);
+		List<Task> tasks = taskGenerator.generate().stream().collect(Collectors.toList());
+
+		assertEquals(10 * 300, tasks.size(), "one task per second on each of the ten generating devices");
+		for (Task task : tasks)
+			assertTrue(task.getTime() < 300, "task generated at " + task.getTime() + " s, after the end");
 	}
 }

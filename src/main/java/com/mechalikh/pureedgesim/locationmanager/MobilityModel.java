@@ -20,11 +20,15 @@
  **/
 package com.mechalikh.pureedgesim.locationmanager;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
+import com.mechalikh.pureedgesim.distribution.Randomness;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
@@ -33,6 +37,12 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  * path for different edge devices. It implements the Null Object Design Pattern
  * in order to start avoiding {@link NullPointerException} when using the NULL
  * object instead of attributing null to EnergyModelNetworkLink variables.
+ * <p>
+ * Subclasses only have to implement {@link #getNextLocation(Location)}: the
+ * path is precomputed once, at simulation start, by calling that method at
+ * every update interval. Model-specific options are read from
+ * {@link #getParameters()}, which is filled from the attributes of the
+ * {@code <mobility>} element of the device.
  *
  * @author Charafeddine Mechalikh
  * @since PureEdgeSim 1.0
@@ -54,6 +64,10 @@ public abstract class MobilityModel {
 	protected double minMobilityDuration;
 	/** Movement speed in meters per second. */
 	protected double speed;
+	/** Generator used for the random choices of the model. */
+	protected Random random;
+	/** Model-specific options, as read from the scenario file. */
+	protected Map<String, String> parameters = new HashMap<>();
 	/** The simulation manager used to query time, nodes, and the topology. */
 	protected SimulationManager simulationManager;
 	/** The closest peripheral edge data center at simulation start. */
@@ -80,7 +94,230 @@ public abstract class MobilityModel {
 	 */
 	protected MobilityModel(SimulationManager simulationManager, Location location) {
 		currentLocation = location;
+		random = Randomness.getRandom();
 		setSimulationManager(simulationManager);
+	}
+
+	/**
+	 * Returns the name used to select this model in the scenario file.
+	 *
+	 * @return the simple class name of the model
+	 */
+	public String getName() {
+		return getClass().getSimpleName();
+	}
+
+	/**
+	 * Replaces the model-specific options, normally read from the attributes of the
+	 * {@code <mobility>} element. Attribute names are matched
+	 * case-insensitively.
+	 *
+	 * @param parameters the new options, {@code null} is ignored
+	 * @return this model, for method chaining
+	 */
+	public MobilityModel setParameters(Map<String, String> parameters) {
+		this.parameters = new HashMap<>();
+		if (parameters != null)
+			for (Map.Entry<String, String> entry : parameters.entrySet())
+				this.parameters.put(entry.getKey().toLowerCase(Locale.ROOT), entry.getValue());
+		return this;
+	}
+
+	/**
+	 * Returns the model-specific options.
+	 *
+	 * @return a map of option name to value, never {@code null}
+	 */
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
+
+	/**
+	 * Returns a model-specific option.
+	 *
+	 * @param name         the option name, case insensitive
+	 * @param defaultValue the value returned when the option is not set
+	 * @return the option value
+	 * @throws IllegalArgumentException when the option is set but not a number
+	 */
+	public double getParameter(String name, double defaultValue) {
+		String value = parameters.get(name.toLowerCase(Locale.ROOT));
+		if (value == null || value.trim().isEmpty())
+			return defaultValue;
+		try {
+			return Double.parseDouble(value.trim());
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(getName() + " - the \"" + name + "\" option must be a number, found \""
+					+ value.trim() + "\"");
+		}
+	}
+
+	/**
+	 * Returns a model-specific option read as a text value.
+	 *
+	 * @param name         the option name, case insensitive
+	 * @param defaultValue the value returned when the option is not set
+	 * @return the option value
+	 */
+	public String getParameter(String name, String defaultValue) {
+		String value = parameters.get(name.toLowerCase(Locale.ROOT));
+		if (value == null || value.trim().isEmpty())
+			return defaultValue;
+		return value.trim();
+	}
+
+	/**
+	 * Returns a model-specific option read as an integer.
+	 *
+	 * @param name         the option name, case insensitive
+	 * @param defaultValue the value returned when the option is not set
+	 * @return the option value
+	 * @throws IllegalArgumentException when the option is set but not a whole number
+	 */
+	public int getParameterInt(String name, int defaultValue) {
+		double value = getParameter(name, defaultValue);
+		if (value != Math.floor(value))
+			throw new IllegalArgumentException(
+					getName() + " - the \"" + name + "\" option must be an integer, found \"" + value + "\"");
+		return (int) value;
+	}
+
+	/**
+	 * Returns a model-specific option read as a boolean.
+	 *
+	 * @param name         the option name, case insensitive
+	 * @param defaultValue the value returned when the option is not set
+	 * @return the option value
+	 */
+	public boolean getParameterBoolean(String name, boolean defaultValue) {
+		String value = parameters.get(name.toLowerCase(Locale.ROOT));
+		if (value == null || value.trim().isEmpty())
+			return defaultValue;
+		return Boolean.parseBoolean(value.trim());
+	}
+
+	/**
+	 * Returns a required model-specific option.
+	 *
+	 * @param name the option name, case insensitive
+	 * @return the trimmed option value
+	 * @throws IllegalArgumentException when the option is not set
+	 */
+	public String getRequiredParameter(String name) {
+		String value = parameters.get(name.toLowerCase(Locale.ROOT));
+		if (value == null || value.trim().isEmpty())
+			throw new IllegalArgumentException(
+					getName() + " - the \"" + name + "\" option is required, check the \"mobility\" element");
+		return value.trim();
+	}
+
+	/**
+	 * Returns the horizontal size of the simulation area.
+	 *
+	 * @return the map width in meters
+	 */
+	protected double getMapWidth() {
+		return SimulationParameters.simulationMapWidth;
+	}
+
+	/**
+	 * Returns the vertical size of the simulation area.
+	 *
+	 * @return the map length in meters
+	 */
+	protected double getMapLength() {
+		return SimulationParameters.simulationMapLength;
+	}
+
+	/**
+	 * Returns the distance covered between two location updates.
+	 *
+	 * @return the speed multiplied by the update interval, in meters
+	 */
+	protected double getStepDistance() {
+		return speed * SimulationParameters.updateInterval;
+	}
+
+	/**
+	 * Returns the number of location updates between the start and the end of the
+	 * simulation, including the initial one.
+	 *
+	 * @return the number of update ticks
+	 */
+	protected int getTicksCount() {
+		return (int) (SimulationParameters.simulationDuration / SimulationParameters.updateInterval) + 1;
+	}
+
+	/**
+	 * Draws a value between two bounds. Returns the lower bound when the interval is
+	 * empty, so that a scenario with equal minimum and maximum durations is valid
+	 * instead of failing.
+	 *
+	 * @param min the inclusive lower bound
+	 * @param max the exclusive upper bound
+	 * @return a random value inside the interval
+	 */
+	protected double randomInRange(double min, double max) {
+		if (max <= min)
+			return min;
+		return min + random.nextDouble() * (max - min);
+	}
+
+	/**
+	 * Moves a location closer to a target, stopping at the target when the distance
+	 * to cover is larger than the remaining gap.
+	 *
+	 * @param from     the current location
+	 * @param target   the location to move to
+	 * @param distance the distance to cover, in meters
+	 * @return the next location
+	 */
+	protected Location moveTowards(Location from, Location target, double distance) {
+		double dx = target.getXPos() - from.getXPos();
+		double dy = target.getYPos() - from.getYPos();
+		double gap = Math.sqrt(dx * dx + dy * dy);
+		if (gap == 0 || gap <= distance)
+			return new Location(target.getXPos(), target.getYPos());
+		double ratio = distance / gap;
+		return new Location(from.getXPos() + dx * ratio, from.getYPos() + dy * ratio);
+	}
+
+	/**
+	 * Checks whether a location has reached its target.
+	 *
+	 * @param from      the current location
+	 * @param target    the location that should have been reached
+	 * @param tolerance the accepted error, in meters
+	 * @return {@code true} when both locations are closer than the tolerance
+	 */
+	protected boolean reached(Location from, Location target, double tolerance) {
+		double dx = target.getXPos() - from.getXPos();
+		double dy = target.getYPos() - from.getYPos();
+		return Math.sqrt(dx * dx + dy * dy) <= tolerance;
+	}
+
+	/**
+	 * Bounces a location off the borders of the simulation area, so that a node that
+	 * left the map comes back in at the same distance from the border it crossed.
+	 *
+	 * @param location the location to bring back into the map
+	 * @return the reflected location, always inside the simulation area
+	 */
+	protected Location reflectLocation(Location location) {
+		double width = getMapWidth();
+		double length = getMapLength();
+		double x = location.getXPos();
+		double y = location.getYPos();
+		if (x < 0)
+			x = -x;
+		if (y < 0)
+			y = -y;
+		if (width > 0 && x > width)
+			x = width - (x - width);
+		if (length > 0 && y > length)
+			y = length - (y - length);
+		return new Location(Math.min(Math.max(x, 0), Math.max(width, 0)),
+				Math.min(Math.max(y, 0), Math.max(length, 0)));
 	}
 
 	/**

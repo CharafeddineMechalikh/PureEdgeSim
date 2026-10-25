@@ -63,7 +63,9 @@ Not safely in parallel. The parsed settings live in static fields (`SimulationPa
 
 ### Why are my results different on every run?
 
-Task arrival times and mobility are generated with `SecureRandom`, and there is no seed parameter. The simulator is stochastic by design. Use repetitions and report distributions. If you need bit-identical runs for debugging, implement deterministic random sources in a custom task generator and mobility model, as described in [Research guide](research-guide.md).
+Task arrival times, task sizes, node capacities and mobility are drawn at random, and by default the seed comes from a secure random generator, so no two runs are identical. The simulator is stochastic by design: use repetitions and report distributions.
+
+To make a run reproducible, set `random_seed` in `simulation_parameters.properties`. Everything that is drawn afterwards comes from that seed, so the same configuration replays the same task list, capacities and paths. Keep a seed while debugging, and change or clear it when you measure: repeating one seed twenty times gives twenty copies of one experiment, not twenty samples. See [Research guide](research-guide.md).
 
 ### Why do all tasks fail in some architectures?
 

@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.mechalikh.pureedgesim.datacentersmanager.DataCentersManager;
+import com.mechalikh.pureedgesim.distribution.Randomness;
 import com.mechalikh.pureedgesim.scenariomanager.Scenario;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationengine.FutureQueue;
@@ -108,6 +109,9 @@ public class SimulationThread {
 		try {
 			// Repeat the operation for different numbers of devices.
 			for (int it = fromIteration; it < simulation.getScenarios().size(); it += step) {
+				// Each scenario re-derives its random stream from the seed, so that a seeded
+				// run is reproducible while parallel scenarios do not replay the same draws.
+				Randomness.beginScenario(it + 1);
 
 				// New SimLog for each simulation (when parallelism is enabled).
 				simLog = new SimLog(startTime, isFirstIteration);

@@ -19,11 +19,12 @@ The source tree is under `src/main/java/com/mechalikh/pureedgesim/`.
 | --- | --- | --- |
 | `simulationengine` | Discrete-event engine, event queue, simulation entities, lifecycle listeners | `PureEdgeSim`, `SimEntity`, `Event`, `FutureQueue`, `Queue`, `OnSimulationStartListener`, `OnSimulationEndListener` |
 | `simulationmanager` | Simulation orchestration, scenario expansion, logging, event handling, charts from CSV | `Simulation`, `SimulationAbstract`, `SimulationThread`, `SimulationManager`, `DefaultSimulationManager`, `SimLog`, `ChartsGenerator` |
-| `scenariomanager` | Configuration parsing and global parameters | `SimulationParameters`, `ParametersParser`, `ApplicationFileParser`, `DatacentersParser`, `EdgeDevicesParser`, `ComputingNodesParser`, `Scenario` |
+| `scenariomanager` | Configuration parsing and global parameters | `SimulationParameters`, `ParametersParser`, `ApplicationFileParser`, `DatacentersParser`, `EdgeDevicesParser`, `ComputingNodesParser`, `DistributionReader`, `Scenario` |
+| `distribution` | Probability distributions and the shared random source | `Distribution`, `DistributionFactory`, `Randomness`, `BoundedDistribution`, `ScaledDistribution`, and one class per distribution |
 | `datacentersmanager` | Computing nodes, resource generation, topology creation | `ComputingNode`, `DefaultComputingNode`, `ComputingNodesGenerator`, `DefaultComputingNodesGenerator`, `DataCentersManager`, `TopologyCreator`, `DefaultTopologyCreator` |
 | `network` | Links, bandwidth allocation, routing, transfer progress | `NetworkModel`, `DefaultNetworkModel`, `NetworkLink`, `InfrastructureGraph`, `TransferProgress` |
 | `energy` | Energy consumption models for nodes and links | `EnergyModelComputingNode`, `EnergyModelNetworkLink` |
-| `locationmanager` | Position and mobility | `Location`, `MobilityModel`, `DefaultMobilityModel` |
+| `locationmanager` | Position and mobility | `Location`, `MobilityModel`, `MobilityModelFactory`, `DefaultMobilityModel`, and the eight additional movement models |
 | `taskgenerator` | Task model and workload generation | `Task`, `TaskAbstract`, `DefaultTask`, `TaskGenerator`, `DefaultTaskGenerator`, `Application` |
 | `taskorchestrator` | Offloading decisions | `Orchestrator`, `DefaultOrchestrator` |
 | `simulationvisualizer` | Live charts during a run | `SimulationVisualizer`, `Chart`, `MapChart`, `CPUChart`, `TasksChart`, `WanChart` |

@@ -20,27 +20,19 @@
  **/
 package com.mechalikh.pureedgesim.locationmanager;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Random;
-
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
-import com.mechalikh.pureedgesim.simulationmanager.SimulationManager; 
+import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 /**
  * Default random-waypoint mobility model. A mobile node moves in a straight line
  * for a random duration, pauses for a random duration, and reorients when it
  * reaches the simulation area boundary. Distances are expressed in meters and
  * the position is updated every {@link SimulationParameters#updateInterval}.
+ * <p>
+ * It can be selected explicitly in the scenario file with
+ * {@code <mobility model="random-waypoint">true</mobility>}.
  */
 public class DefaultMobilityModel extends MobilityModel {
-	/**
-	 * Used to generate random values.
-	 * 
-	 * @see #pause()
-	 * @see #reoriontate(double, double)
-	 */
-	protected Random random;
 	/** True while the node is paused. */
 	protected boolean pause = false;
 	/** Remaining pause time, in seconds; negative when not pausing. */
@@ -58,11 +50,6 @@ public class DefaultMobilityModel extends MobilityModel {
 	 */
 	public DefaultMobilityModel(SimulationManager simulationManager, Location currentLocation) {
 		super(simulationManager, currentLocation);
-		try {
-			random = SecureRandom.getInstanceStrong();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
 		orientationAngle = random.nextInt(359);
 	}
 
@@ -131,17 +118,15 @@ public class DefaultMobilityModel extends MobilityModel {
 	 * and direction.
 	 */
 	protected void pause() {
-		// Pickup random duration from 50 to 200 seconds
-		pauseDuration = getMinPauseDuration()
-				+ random.nextInt((int) (getMaxPauseDuration() - getMinPauseDuration()));
+		// Pickup random duration from minPauseDuration to maxPauseDuration
+		pauseDuration = randomInRange(getMinPauseDuration(), getMaxPauseDuration());
 		// Pause mobility (the device will stay in its location for the randomly
 		// generated duration
 		pause = true;
 		// Reorientate the device to a new direction
 		orientationAngle = random.nextInt(359);
 		// The mobility will be resumed for the following period of time
-		mobilityDuration = random.nextInt((int) (getMaxMobilityDuration() - getMinMobilityDuration()))
-				+ getMinMobilityDuration();
+		mobilityDuration = randomInRange(getMinMobilityDuration(), getMaxMobilityDuration());
 	}
 
 	/**
@@ -152,11 +137,11 @@ public class DefaultMobilityModel extends MobilityModel {
 	 * @param yPosition current Y coordinate.
 	 */
 	protected void reoriontate(double xPosition, double yPosition) {
-		if (xPosition >= SimulationParameters.simulationMapLength)
+		if (xPosition >= getMapWidth())
 			orientationAngle = -90 - random.nextInt(180);
 		else if (xPosition <= 0)
 			orientationAngle = -90 + random.nextInt(180);
-		if (yPosition >= SimulationParameters.simulationMapWidth)
+		if (yPosition >= getMapLength())
 			orientationAngle = -random.nextInt(180);
 		else if (yPosition <= 0)
 			orientationAngle = random.nextInt(180);

@@ -18,10 +18,10 @@ Each claim maps to a different experimental design. A policy comparison holds in
 | Claim involves | Change |
 | --- | --- |
 | Placement decision | A custom orchestrator, see [Writing orchestrators](writing-orchestrators.md) |
-| Workload shape | A custom task generator, or tuned `applications.xml` |
-| Device capacity or scheduling | A custom computing node, or tuned datacenter and device XML |
+| Workload shape | Distributions in `applications.xml`, a custom arrival pattern, or a custom task generator |
+| Device capacity or scheduling | Per-instance distributions in the device XML, a custom computing node, or tuned datacenter and device XML |
 | Network behavior | A custom network model or link, or tuned bandwidth and latency |
-| Mobility | A custom mobility model, or tuned device mobility fields |
+| Mobility | One of the nine built-in models selected per device type, or a custom mobility model |
 | Energy behavior | A custom energy model |
 
 Change as little as possible. If the claim is about placement, keep the default networking and energy models and replace only the orchestrator. A result that depends on three simultaneous model changes is hard to attribute and hard to reproduce.
@@ -58,23 +58,20 @@ Do not run several simulations in the same JVM with shared static state in custo
 
 ## Randomness and repetitions
 
-Task times and mobility are stochastic. The default task generator and mobility model use `SecureRandom`, and there is no seed parameter in the configuration. Two runs with identical settings are therefore not identical.
+Task arrival times, task sizes, node capacities, device positions and movement are stochastic. Every draw goes through one service, `Randomness`, which uses a strong secure random generator unless the `random_seed` parameter of `simulation_parameters.properties` is set. With a seed, the whole run becomes reproducible: the same configuration replays the same task list, the same capacities and the same paths.
 
 What this means for your experiment:
 
-- **One run per scenario is not evidence.** Report the number of repetitions.
+- **One run per scenario is not evidence.** A single seeded run is one draw from a distribution, not the distribution. Report the number of repetitions.
 - **Use at least 10 to 30 repetitions per scenario** for means, and more when the metric is heavy-tailed, such as first death time or tail delay.
+- **Vary the seed across repetitions.** `random_seed=42` for all ten repetitions gives ten copies of the same experiment, with zero spread. Keep a fixed seed while you debug, then change it (or leave it empty) when you measure.
 - **Report a measure of dispersion.** Mean with confidence interval, or median with interquartile range when the distribution is skewed. Delay and energy are often skewed.
-- **Do not pair repetitions by run order.** Without a seed there is no meaningful pairing across configurations. Compare distributions.
-- **State the stochastic model.** "Uniform task arrival within each minute, random-waypoint mobility, no seed" is a reproducible description even when the individual values are not.
+- **You can now pair repetitions across configurations.** Give each repetition its own seed and run every condition with that same seed. The pairing removes the seed-to-seed variance from the comparison, which is the difference between a noisy and a usable result when the effect is small.
+- **Parallel runs are handled for you.** Each scenario restarts the random stream from the seed mixed with its position in the scenario list, so parallel scenarios do not replay each other's draws, while the same scenario index keeps the same stream across configurations. That is what makes a device-count sweep usable: the fifth scenario of configuration A sees the same task lengths as the fifth scenario of configuration B.
+- **The stream depends on the scenario list, not only on the seed.** Changing `edge_device_counter_size`, the number of devices, or the batch order shifts which index a configuration lands on, and with it its draws. Record the scenario list together with the seed.
+- **State the stochastic model.** "Lognormal task lengths with mean 5000 MI, Poisson arrivals, Gauss-Markov mobility, seed 20260425, 20 repetitions" is a fully reproducible description.
 
-If your study requires exact reproducibility, for example to debug a rare failure, implement deterministic randomness:
-
-1. Write a custom task generator that draws from `new Random(fixedSeed)` instead of `SecureRandom`.
-2. Write a custom mobility model that does the same.
-3. Keep a single-threaded simulation so event ordering is deterministic.
-
-Then the same configuration and seed produce the same run. This is a model change, not a configuration option, and it should be described in the methodology.
+Keep the seed in the settings file you archive with your results, together with the simulator version, the configuration files, and the CSV outputs. Published numbers whose seed was not recorded cannot be re-run by anyone else, including you.
 
 ## Validation before measurement
 
@@ -124,6 +121,8 @@ Before you submit or publish, make sure you can answer these questions:
 - Which Java and Maven versions were used?
 - Which custom classes were loaded, and where are their sources?
 - How many repetitions per scenario?
+- Which `random_seed` was used, and was it varied across repetitions or left empty?
+- Which probability distributions replaced the default fixed values, and with which means?
 - How were runs parallelized?
 - How were `NaN`, `-1` death times, and in-flight tasks handled?
 - What is the simulation horizon, and why is it long enough?

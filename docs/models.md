@@ -42,15 +42,13 @@ Every model runs inside the same discrete-event engine. It must not use its own 
 
 ### When tasks are created
 
-For each simulation minute `st`, every generating device creates its tasks at a random second within that minute:
+Without an arrival pattern, the generator works per minute. For each simulation minute `st`, every generating device creates its burst at a random second within that minute:
 
 ```
 time = st * 60 + random(0, 15)
 ```
 
-The random offset is drawn from the strong secure random generator, so two runs with the same configuration do not produce identical task times. This is deliberate: PureEdgeSim is a stochastic simulator, and repeating an experiment means averaging several runs, not expecting bit-identical output.
-
-Each application has a `rate`, interpreted as tasks per minute. For a task at time `t`, the generator inserts `rate` tasks spaced by `60 / rate` seconds:
+Each application has a `rate`, interpreted as tasks per minute. For a burst starting at time `t`, the generator inserts `rate` tasks spaced by `60 / rate` seconds:
 
 ```
 task 0: t
@@ -60,6 +58,17 @@ task 2: t + 2*60/rate
 ```
 
 With `rate=6`, a device produces one task every 10 seconds while the application is active. The number of minutes comes from `simulation_time` converted to seconds and then divided by 60, so a 10-minute scenario generates 10 tasks per device per rate unit, not 10 tasks in total.
+
+An application may replace that fixed spacing with an arrival pattern, which is the time between two consecutive tasks of one device, in seconds:
+
+```xml
+<arrival>poisson</arrival>
+<arrival distribution="weibull" shape="2" scale="3"/>
+```
+
+`poisson` (or `exponential`) draws exponential gaps with a mean of `60 / rate`, which is the classical Poisson traffic model. `uniform` draws gaps between zero and twice that mean, so the average rate is preserved. A distribution element gives you the exact inter-arrival law. With an arrival pattern, tasks are no longer grouped by minute: the device emits one task each time the drawn gap expires, from the start of the simulation until its end, and a gap is never shorter than one second.
+
+Both the burst size and the arrival time can vary per task, and every random value now comes from `Randomness`, the shared source of randomness. Set `random_seed` in the properties file and a run becomes fully reproducible: the same scenario, the same task times, the same sizes. Without a seed each run draws its own values, as in previous versions, and comparing algorithms means averaging several runs.
 
 ### Which device runs which application
 
@@ -81,6 +90,8 @@ Every generated task receives:
 - the generating edge device,
 - the registry, which defaults to the first node in the cloud list.
 
+Each of those numeric parameters is drawn from the application's distribution, so two tasks of the same application are not identical unless the value was written as a plain number. The scalar getters of `Application` still return the mean of the distribution, which is what the reports and the charts print.
+
 The task identifiers are global and increasing within one simulation. They are useful for tracing a task through the debug log.
 
 ### What to override
@@ -88,8 +99,10 @@ The task identifiers are global and increasing within one simulation. They are u
 | Goal | Method |
 | --- | --- |
 | Change when tasks appear | `generateTasksForDevice(ComputingNode, int)` |
+| Change the arrival pattern only | `generateRandomlyArrivingTasks(ComputingNode, int, Application)` |
 | Change application-to-device assignment | `generate()` |
-| Change task fields or add a custom task class | `insert(...)` and `createTask(int)` |
+| Change the fields of one task | `insert(int, ComputingNode, Application, int)` and `createTask(int)` |
+| Change a whole burst | `insert(int, int, ComputingNode)` |
 | Use a completely different traffic model | Extend `TaskGenerator` and override `generate()` |
 
 `DefaultTaskGenerator` is intentionally simple. Real workloads often need bursts, diurnal patterns, or correlated tasks; those belong in a custom generator.
@@ -275,7 +288,7 @@ Extend `DefaultNetworkModel` to add link failures, dynamic routing, TCP-like con
 
 ## Mobility model
 
-`MobilityModel` and `DefaultMobilityModel` implement a random-waypoint model with pause and move phases.
+`MobilityModel` is the base class of every mobility model. `DefaultMobilityModel` implements the classic random-waypoint model with pause and move phases.
 
 ### Path precomputation
 
@@ -285,11 +298,13 @@ Extend `DefaultNetworkModel` to add link failures, dynamic routing, TCP-like con
 2. If the device is not mobile, it stops.
 3. Otherwise it steps through the whole simulation at `update_interval` granularity, storing a location and a closest data center for every tick.
 
-The path is a map keyed by milliseconds. `updateLocation(time)` reads the entry for the current time, and `getClosestEdgeDataCenter()` reads the matching data center. Precomputing makes mobility cheap at runtime and reproducible for a given random seed sequence, but it also means a custom mobility model cannot change course in response to events unless it overrides this mechanism.
+The path is a map keyed by milliseconds. `updateLocation(time)` reads the entry for the current time, and `getClosestEdgeDataCenter()` reads the matching data center. Precomputing makes mobility cheap at runtime, but it also means a custom mobility model cannot change course in response to events unless it overrides this mechanism.
 
-### Movement
+A model only implements `getNextLocation(Location)`. The base class gives it everything else it needs: the map size, the step distance (`speed * update_interval`), the number of ticks, `randomInRange`, `moveTowards`, `reached`, and `reflectLocation` for bouncing off the borders. Options are read with `getParameter`, `getParameterInt`, and `getParameterBoolean` from the attributes of the `<mobility>` element.
 
-At each step, the model:
+### Movement of the default model
+
+At each step, the default model:
 
 - keeps the current position while a pause is active,
 - reflects the direction when the device reaches the map boundary,
@@ -300,13 +315,117 @@ The distance travelled in one tick is `speed * update_interval`, split into X an
 
 The model does not avoid obstacles, does not follow roads, and does not coordinate devices. It is a baseline random-waypoint model, suitable for relative comparisons rather than for reproducing a specific city.
 
+### Choosing a model per device type
+
+Since PureEdgeSim 5.7 the `<mobility>` element selects the model by name, and every other attribute of that element becomes the options of the model. Different device types can then move in different ways inside one scenario:
+
+```xml
+<device arch="x86" os="linux" vmm="xen">
+    <mobility model="gauss-markov" alpha="0.8" std="15">true</mobility>
+    <speed>1.4</speed>
+    ...
+</device>
+<device arch="x86" os="linux" vmm="xen">
+    <mobility model="waypoint" waypoints="100,100;400,100;400,400">true</mobility>
+    <speed>10</speed>
+    ...
+</device>
+```
+
+Without the `model` attribute the class configured with `setCustomMobilityModel` is used, which is `DefaultMobilityModel` unless you replaced it, so existing scenarios behave exactly as before. An unknown name fails with the list of the known names, and a fully qualified class name is accepted too, as long as the class has the `(SimulationManager, Location)` constructor.
+
+| Name | Class | What it does | Options (default) |
+| --- | --- | --- | --- |
+| `random-waypoint`, `default` | `DefaultMobilityModel` | Straight runs separated by pauses, random direction. The historical behavior. | none, uses the pause and mobility durations of the device |
+| `random-walk` | `RandomWalkMobilityModel` | New direction every tick, never stops, reflects off the borders. | none |
+| `gauss-markov` | `GaussMarkovMobilityModel` | Direction and speed mean-revert to their previous value, giving smooth curved trajectories. | `alpha` (0.7), `std` in degrees (30), `speed_std` in m/s (20% of the speed) |
+| `manhattan` | `ManhattanMobilityModel` | Axis-aligned movement along a street grid, turning at intersections. | `grid_size` in meters (100) |
+| `waypoint` | `WaypointMobilityModel` | Follows a fixed route at the device speed, optionally looping. | `waypoints` as `x,y;x,y;...` (required), `loop` (true); the dwell time is the device `minPauseDuration` |
+| `circular` | `CircularMobilityModel` | Orbits a circle, starting from the angle of the initial location. | `radius` in meters (required), `center_x`, `center_y` (the map center), `clockwise` (true) |
+| `levy-walk` | `LevyWalkMobilityModel` | Straight flights with Pareto-distributed lengths: mostly short hops, occasional long jumps. | `shape` (1.5), `min_step` (one tick of travel), `max_step` (the map diagonal) |
+| `brownian` | `BrownianMobilityModel` | Independent Gaussian increments per coordinate, for a slowly drifting device. | `std` in meters per tick (one tick of travel) |
+| `group`, `rpgm` | `ReferencePointGroupMobilityModel` | Devices sharing a group name follow one moving reference point while keeping their initial relative position. | `group` ("1"), `anchor_speed` (the device speed), `anchor_pause` in seconds (0) |
+
+The group model derives the path of its reference point from the group name alone, so all members of a group agree on it without sharing mutable state, and the whole group is reproducible from `random_seed`.
+
+`DefaultMobilityModel` is also the one that uses the pause and mobility durations of the device; the deterministic models (`waypoint`, `circular`, `manhattan`) ignore them except where their options say otherwise, and `random-walk` and `brownian` never pause.
+
 ### Reconnection
 
 `LocationAwareNode.updateStatus()` calls `updateLocation()` and `connectWith(getClosestEdgeDataCenter())` every tick. Connecting rewrites the device's current up and down links to the new edge data center. If the device's device-to-device destination is farther than `edge_data_centers_range`, the application placement is invalidated, so the next task is re-orchestrated instead of being sent to a destination that is no longer reachable.
 
+### Initial placement
+
+Devices are placed uniformly at random on the map. A device type may cluster its instances around an area instead, by adding a `location` element whose coordinates are distributions:
+
+```xml
+<device arch="x86" os="linux" vmm="xen">
+    <location>
+        <x_pos distribution="normal" mean="150" std="30" min="0" max="300"/>
+        <y_pos distribution="normal" mean="150" std="30" min="0" max="300"/>
+    </location>
+    ...
+</device>
+```
+
+Each instance draws its own position, and the value is clamped to the map. This is how you model a stadium, a intersection, or a factory aisle rather than a featureless field of devices.
+
 ### What to override
 
-Extend `MobilityModel` for a different path generator, for example a Gauss-Markov model, a trace replay, or a fixed trajectory. You must implement `getNextLocation(Location)` and call the protected setters for speed and durations. If your model needs external data, load it in the constructor or in `generatePath()`.
+| Goal | How |
+| --- | --- |
+| Use a built-in model | Add a `model` attribute to the `<mobility>` element |
+| Write a new model | Extend `MobilityModel`, implement `getNextLocation(Location)`, add its name to `MobilityModelFactory` or select it by fully qualified class name |
+| Keep a model private to your project | Call `setCustomMobilityModel(MyModel.class)`; it stays the default when the XML names no model |
+| React to events during the run | Override `generatePath()` as well, since locations are precomputed |
+
+You must keep the `(SimulationManager, Location)` constructor, and the base class takes care of the speed and duration setters. If your model needs external data, load it in the constructor or in `generatePath()`.
+
+## Probability distributions
+
+The `com.mechalikh.pureedgesim.distribution` package lets any numeric parameter of a scenario vary from one object to the next instead of being fixed. A distribution is written as attributes on the element that normally holds a number:
+
+```xml
+<request_size distribution="lognormal" mean="25" std="10"/>
+<mips distribution="normal" mean="25000" std="3000" min="5000"/>
+```
+
+A plain number still works and behaves exactly as before: it is read as a constant distribution. Two attributes are shared by every distribution: `min` and `max` bound the generated values. For `uniform` and `triangular` they define the support; for anything else the value is drawn again until it falls inside the range, and clamped after one hundred attempts.
+
+Where distributions may be used:
+
+| File | Elements | What varies |
+| --- | --- | --- |
+| `applications.xml` | `rate`, `latency`, `container_size`, `request_size`, `results_size`, `task_length`, `arrival` | Each task |
+| `edge_devices.xml` | `mips`, `cores`, `ram`, `storage`, `speed`, `batteryCapacity`, `initialBatteryLevel`, `idleConsumption`, `maxConsumption`, the four pause and mobility durations, `x_pos` and `y_pos` of a `location` element | Each device instance |
+| `cloud.xml`, `edge_datacenters.xml` | `mips`, `cores`, `ram`, `storage`, consumption values | Each data center entry |
+
+The size parameters of `applications.xml` stay in kilobytes: the distribution is sampled and then converted to bits, exactly like a plain value. The mean of the distribution is what the scenario reports and the charts use, so a run with a lognormal request size remains comparable with the run that used a constant one.
+
+Available distributions:
+
+| Name | Attributes | Support | Typical use |
+| --- | --- | --- | --- |
+| `constant` | `value` | the value | a fixed parameter, written as a bare number |
+| `uniform` | `min`, `max` | `[min, max]` | sizes and delays with no preferred value |
+| `triangular` | `min`, `mode`, `max` | `[min, max]` | a most likely value between two extremes |
+| `normal` | `mean`, `std` | all reals | measurement noise, hardware capacity |
+| `lognormal` | `mean`, `std` | positive reals | request and file sizes, which are skewed to the right |
+| `exponential` | `mean` | positive reals | inter-arrival times, service times |
+| `erlang` | `shape`, `scale` | positive reals | a sum of exponential phases |
+| `gamma` | `shape`, `scale` | positive reals | waiting times with a long tail |
+| `weibull` | `shape`, `scale` | positive reals | failure times, bursty traffic |
+| `pareto` | `scale`, `shape` | values at or above `scale` | heavy-tailed flows, the flight lengths of a Levy walk |
+| `beta` | `alpha`, `beta` | `[0, 1]` | a fraction, such as a battery level |
+| `bernoulli` | `probability` | 0 or 1 | a device that fails, a task that is a duplicate |
+| `binomial` | `trials`, `probability` | 0 to `trials` | the number of successes in a batch |
+| `geometric` | `probability` | 1 and above | attempts before the first success |
+| `poisson` | `mean` | integers, 0 and above | the number of tasks generated each minute |
+| `categorical` | `values`, optional `weights` | the listed values | a choice between a few profiles |
+
+Each distribution exposes `sample()`, `sampleInt()`, `mean()`, `getMin()`, `getMax()` and `isDiscrete()`, so a custom model can draw from the same objects the scenario parser built. `BoundedDistribution` and `ScaledDistribution` wrap any of them to clip or rescale a value, and `DistributionFactory.create("normal", options, random)` builds one from a name.
+
+Values come from `Randomness`, which holds the shared generator. Without a seed it is a strong secure generator and every run differs. With `random_seed` set in the properties file, each thread gets its own stream derived from the seed, so runs are reproducible and parallel sweeps stay fast. Call `Randomness.beginScenario(salt)` when you want several repetitions that are each reproducible but different from one another.
 
 ## Orchestration model
 
@@ -397,7 +516,8 @@ These are properties of the current default models that matter when interpreting
 - The realistic network model advances transfers in discrete steps of `network_update_interval`; the final step can overshoot the remaining size, and the overshoot is clamped.
 - Bandwidth is shared equally among active transfers on a link, with no priority and no per-flow fairness beyond that.
 - Mobility paths are precomputed, so a mobile device cannot react to network conditions during the run.
-- Task generation uses a strong secure random source; runs are stochastic and should be replicated before comparing algorithms.
+- Task generation and every distribution draw from `Randomness`: with `random_seed` empty the runs are stochastic and must be replicated before comparing algorithms, and with a seed they are reproducible, which also means that a single seed is a single sample of the process.
+- Distributions with unbounded support, like the normal one, are clipped to the range you give in `min` and `max`, so a poorly chosen standard deviation silently produces a truncated distribution.
 - The static energy tick and the death check happen at `update_interval` granularity, so very short battery lifetimes can be overestimated.
 
 None of these invalidates comparative experiments, but each should be stated in a paper's methodology if it could affect the conclusion.

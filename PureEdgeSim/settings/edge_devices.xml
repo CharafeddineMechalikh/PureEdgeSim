@@ -5,6 +5,37 @@
 		here), 30 percent of all devices will be of the first type, this percentage 
 		is defined here <percentage> -->
 
+	<!-- Every numeric value of a device may be a probability distribution
+		instead of a fixed number. Each instance of the type then draws its own
+		value, which is how a heterogeneous fleet is described:
+
+		<mips distribution="normal" mean="25000" std="3000" min="5000"/>
+		<ram distribution="uniform" min="2048" max="8192"/>
+		<speed distribution="triangular" min="0.5" mode="1.4" max="3"/>
+
+		Add min and max attributes to bound the generated values whatever the
+		distribution. See docs/models.md for the list of distributions.
+
+		The mobility element may also select a mobility model by name and pass it
+		options as attributes. Without the model attribute the random waypoint
+		model is used, as before:
+
+		<mobility model="gauss-markov" alpha="0.8" std="30">true</mobility>
+		<mobility model="waypoint" waypoints="50,50;250,150;150,250">true</mobility>
+		<mobility model="manhattan" grid_size="50">true</mobility>
+
+		Known models: random-waypoint (default), random-walk, gauss-markov,
+		manhattan, waypoint, circular, levy-walk, brownian and group. Each device
+		type may use a different one. See docs/models.md for the options.
+
+		Devices of a type are placed uniformly on the map. To cluster them around
+		an area instead, add a location element with distribution coordinates:
+
+		<location>
+			<x_pos distribution="normal" mean="150" std="30" min="0" max="300"/>
+			<y_pos distribution="normal" mean="150" std="30" min="0" max="300"/>
+		</location> -->
+
 	<device arch="x86" os="linux" vmm="xen">
 		<!-- this is a smartphone, for example -->
 		<connectivity>wifi</connectivity> <!-- the type of network connection -->

@@ -81,8 +81,10 @@ class FileParserAbstractTest {
 	@Test
 	void assertDoubleFailsWhenTheElementIsMissing() throws Exception {
 		Element element = element();
-		assertThrows(NullPointerException.class,
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
 				() -> new DummyXmlParser("f").assertDouble(element, "missing", value -> true, "anything"));
+		assertTrue(exception.getMessage().contains("\"missing\""));
+		assertTrue(exception.getMessage().contains("is missing"));
 	}
 
 	@Test

@@ -25,7 +25,8 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom; 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -33,12 +34,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.mechalikh.pureedgesim.distribution.Randomness;
 import com.mechalikh.pureedgesim.energy.EnergyModelComputingNode;
 import com.mechalikh.pureedgesim.locationmanager.Location;
 import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
+import com.mechalikh.pureedgesim.locationmanager.MobilityModelFactory;
+import com.mechalikh.pureedgesim.scenariomanager.DistributionReader;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
@@ -47,6 +52,12 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  * Default generator of cloud data centers, edge data centers, and edge devices.
  * It reads the three XML files referenced by {@link SimulationParameters} and
  * creates the computing nodes and their mobility models.
+ * <p>
+ * Every numeric attribute of a node may be a probability distribution, as
+ * described by {@link DistributionReader}. Each instance then draws its own
+ * value, which is how a heterogeneous fleet of devices or edge servers is
+ * modelled. The {@code mobility} element may also select a mobility model by
+ * name through the {@code model} attribute, see {@link MobilityModelFactory}.
  */
 public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 
@@ -144,7 +155,7 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 	 */
 	protected void generateDevicesInstances(Element type) {
 
-		int instancesPercentage = Integer.parseInt(type.getElementsByTagName("percentage").item(0).getTextContent());
+		int instancesPercentage = (int) sample(type, "percentage", 0, Double.MAX_VALUE);
 
 		// Find the number of instances of this type of devices
 		int devicesInstances = getSimulationManager().getScenario().getDevicesCount() * instancesPercentage / 100;
@@ -219,13 +230,15 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 	 * @param datacenterElement The XML element describing the node type.
 	 * @param type              The type, whether an MIST (edge) device, an EDGE
 	 *                          data center, or a CLOUD one.
-	 * @throws NoSuchAlgorithmException  if the random number generator algorithm is
-	 *                                   unavailable.
+	 * @throws NoSuchAlgorithmException  never raised by this implementation, declared
+	 *                                   so that subclasses may use their own secure
+	 *                                   random source.
 	 * @throws NoSuchMethodException     if the model class lacks the expected
 	 *                                   constructor.
 	 * @throws SecurityException         if the model constructor cannot be accessed.
 	 * @throws InvocationTargetException if the model constructor throws.
-	 * @throws IllegalArgumentException  if the constructor arguments are invalid.
+	 * @throws IllegalArgumentException  if the constructor arguments are invalid or a
+	 *                                   required value is missing.
 	 * @throws IllegalAccessException    if the model class or constructor is not
 	 *                                   accessible.
 	 * @throws InstantiationException    if the model class cannot be instantiated.
@@ -234,25 +247,23 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 	protected ComputingNode createComputingNode(Element datacenterElement, SimulationParameters.TYPES type)
 			throws NoSuchAlgorithmException, NoSuchMethodException, SecurityException, InstantiationException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		// SecureRandom is preferred to generate random values.
-		Random random = SecureRandom.getInstanceStrong();
+		// The random source is shared with the rest of the simulation, so the
+		// "random_seed" parameter also pins the capacity and the placement of the nodes.
+		Random random = Randomness.getRandom();
 		Boolean mobile = false;
+		Element mobilityElement = null;
 		double speed = 0;
 		double minPauseDuration = 0;
 		double maxPauseDuration = 0;
 		double minMobilityDuration = 0;
 		double maxMobilityDuration = 0;
-		int xPosition = -1;
-		int yPosition = -1;
-		double idleConsumption = Double
-				.parseDouble(datacenterElement.getElementsByTagName("idleConsumption").item(0).getTextContent());
-		double maxConsumption = Double
-				.parseDouble(datacenterElement.getElementsByTagName("maxConsumption").item(0).getTextContent());
-		Location datacenterLocation = new Location(xPosition, yPosition);
-		int numOfCores = Integer.parseInt(datacenterElement.getElementsByTagName("cores").item(0).getTextContent());
-		double mips = Double.parseDouble(datacenterElement.getElementsByTagName("mips").item(0).getTextContent());
-		double storage = Double.parseDouble(datacenterElement.getElementsByTagName("storage").item(0).getTextContent());
-		double ram = Double.parseDouble(datacenterElement.getElementsByTagName("ram").item(0).getTextContent());
+		double idleConsumption = sample(datacenterElement, "idleConsumption", 0, Double.MAX_VALUE);
+		double maxConsumption = sample(datacenterElement, "maxConsumption", 0, Double.MAX_VALUE);
+		Location datacenterLocation = new Location(-1, -1);
+		int numOfCores = (int) sample(datacenterElement, "cores", 1, Double.MAX_VALUE);
+		double mips = sample(datacenterElement, "mips", 1, Double.MAX_VALUE);
+		double storage = sample(datacenterElement, "storage", 0, Double.MAX_VALUE);
+		double ram = sample(datacenterElement, "ram", 0, Double.MAX_VALUE);
 
 		Constructor<?> datacenterConstructor = computingNodeClass.getConstructor(SimulationManager.class, double.class,
 				int.class, double.class, double.class);
@@ -271,9 +282,8 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 			String name = datacenterElement.getAttribute("name");
 			computingNode.setName(name);
 			Element location = (Element) datacenterElement.getElementsByTagName("location").item(0);
-			xPosition = Integer.parseInt(location.getElementsByTagName("x_pos").item(0).getTextContent());
-			yPosition = Integer.parseInt(location.getElementsByTagName("y_pos").item(0).getTextContent());
-			datacenterLocation = new Location(xPosition, yPosition);
+			datacenterLocation = new Location(sample(location, "x_pos", 0, SimulationParameters.simulationMapWidth),
+					sample(location, "y_pos", 0, SimulationParameters.simulationMapLength));
 
 			for (int i = 0; i < edgeOnlyList.size(); i++)
 				if (datacenterLocation.equals(edgeOnlyList.get(i).getMobilityModel().getCurrentLocation()))
@@ -284,43 +294,161 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 					Boolean.parseBoolean(datacenterElement.getElementsByTagName("periphery").item(0).getTextContent()));
 
 		} else if (type == SimulationParameters.TYPES.EDGE_DEVICE) {
-			mobile = Boolean.parseBoolean(datacenterElement.getElementsByTagName("mobility").item(0).getTextContent());
-			speed = Double.parseDouble(datacenterElement.getElementsByTagName("speed").item(0).getTextContent());
-			minPauseDuration = Double
-					.parseDouble(datacenterElement.getElementsByTagName("minPauseDuration").item(0).getTextContent());
-			maxPauseDuration = Double
-					.parseDouble(datacenterElement.getElementsByTagName("maxPauseDuration").item(0).getTextContent());
-			minMobilityDuration = Double.parseDouble(
-					datacenterElement.getElementsByTagName("minMobilityDuration").item(0).getTextContent());
-			maxMobilityDuration = Double.parseDouble(
-					datacenterElement.getElementsByTagName("maxMobilityDuration").item(0).getTextContent());
+			mobilityElement = (Element) datacenterElement.getElementsByTagName("mobility").item(0);
+			mobile = Boolean.parseBoolean(mobilityElement.getTextContent());
+			speed = sample(datacenterElement, "speed", 0, Double.MAX_VALUE);
+			minPauseDuration = sample(datacenterElement, "minPauseDuration", 0, Double.MAX_VALUE);
+			maxPauseDuration = sample(datacenterElement, "maxPauseDuration", minPauseDuration, Double.MAX_VALUE);
+			minMobilityDuration = sample(datacenterElement, "minMobilityDuration", 0, Double.MAX_VALUE);
+			maxMobilityDuration = sample(datacenterElement, "maxMobilityDuration", minMobilityDuration,
+					Double.MAX_VALUE);
 			computingNode.getEnergyModel().setBattery(
 					Boolean.parseBoolean(datacenterElement.getElementsByTagName("battery").item(0).getTextContent()));
-			computingNode.getEnergyModel().setBatteryCapacity(Double
-					.parseDouble(datacenterElement.getElementsByTagName("batteryCapacity").item(0).getTextContent()));
-			computingNode.getEnergyModel().setIntialBatteryPercentage(Double.parseDouble(
-					datacenterElement.getElementsByTagName("initialBatteryLevel").item(0).getTextContent()));
+			computingNode.getEnergyModel().setBatteryCapacity(sample(datacenterElement, "batteryCapacity", 0,
+					Double.MAX_VALUE));
+			computingNode.getEnergyModel().setIntialBatteryPercentage(
+					sample(datacenterElement, "initialBatteryLevel", 0, 100));
 			computingNode.getEnergyModel().setConnectivityType(
 					datacenterElement.getElementsByTagName("connectivity").item(0).getTextContent());
 			computingNode.enableTaskGeneration(Boolean
 					.parseBoolean(datacenterElement.getElementsByTagName("generateTasks").item(0).getTextContent()));
 			// Generate random location for edge devices
-			datacenterLocation = new Location(random.nextInt(SimulationParameters.simulationMapWidth),
-					random.nextInt(SimulationParameters.simulationMapLength));
+			datacenterLocation = getDeviceLocation(datacenterElement, random);
 			getSimulationManager().getSimulationLogger()
 					.deepLog("DefaultComputingNodesGenerator- Edge device:" + mistOnlyList.size() + "    location: ( "
 							+ datacenterLocation.getXPos() + "," + datacenterLocation.getYPos() + " )");
 		}
 		computingNode.setType(type);
-		Constructor<?> mobilityConstructor = mobilityModelClass.getConstructor(SimulationManager.class, Location.class);
-		MobilityModel mobilityModel = ((MobilityModel) mobilityConstructor.newInstance(simulationManager,
-				datacenterLocation)).setMobile(mobile).setSpeed(speed).setMinPauseDuration(minPauseDuration)
-				.setMaxPauseDuration(maxPauseDuration).setMinMobilityDuration(minMobilityDuration)
-				.setMaxMobilityDuration(maxMobilityDuration);
-
-		computingNode.setMobilityModel(mobilityModel);
+		computingNode.setMobilityModel(createMobilityModel(mobilityElement, datacenterLocation, mobile, speed,
+				minPauseDuration, maxPauseDuration, minMobilityDuration, maxMobilityDuration));
 
 		return computingNode;
+	}
+
+	/**
+	 * Creates the mobility model of a node. When the {@code mobility} element
+	 * declares a {@code model} attribute, the model is looked up by name, so that
+	 * each type of device can move differently. Otherwise the class configured with
+	 * {@code setCustomMobilityModel} is used, as in previous versions. The remaining
+	 * attributes of the element are passed to the model as its options.
+	 *
+	 * @param mobilityElement     the {@code mobility} element, {@code null} for data
+	 *                            centers
+	 * @param location            the initial location of the node
+	 * @param mobile              whether the node moves
+	 * @param speed               the movement speed, in meters per second
+	 * @param minPauseDuration    the minimum pause between two movements
+	 * @param maxPauseDuration    the maximum pause between two movements
+	 * @param minMobilityDuration the minimum duration of a movement
+	 * @param maxMobilityDuration the maximum duration of a movement
+	 * @return the mobility model of the node
+	 */
+	protected MobilityModel createMobilityModel(Element mobilityElement, Location location, boolean mobile,
+			double speed, double minPauseDuration, double maxPauseDuration, double minMobilityDuration,
+			double maxMobilityDuration) {
+		String modelName = mobilityElement == null ? "" : mobilityElement.getAttribute("model");
+		MobilityModel mobilityModel = modelName.isEmpty() ? instantiateMobilityModel(mobilityModelClass, location)
+				: MobilityModelFactory.create(modelName, simulationManager, location);
+		if (mobilityElement != null)
+			mobilityModel.setParameters(readMobilityOptions(mobilityElement));
+		return mobilityModel.setMobile(mobile).setSpeed(speed).setMinPauseDuration(minPauseDuration)
+				.setMaxPauseDuration(maxPauseDuration).setMinMobilityDuration(minMobilityDuration)
+				.setMaxMobilityDuration(maxMobilityDuration);
+	}
+
+	/**
+	 * Instantiates the configured mobility model class with its default constructor.
+	 *
+	 * @param modelClass the class to instantiate
+	 * @param location   the initial location of the node
+	 * @return a new instance of the model
+	 */
+	protected MobilityModel instantiateMobilityModel(Class<? extends MobilityModel> modelClass, Location location) {
+		try {
+			return modelClass.getConstructor(SimulationManager.class, Location.class).newInstance(simulationManager,
+					location);
+		} catch (ReflectiveOperationException | SecurityException e) {
+			throw new IllegalArgumentException("The mobility model \"" + modelClass.getName() + "\" must provide a "
+					+ "public constructor taking a SimulationManager and a Location", e);
+		}
+	}
+
+	/**
+	 * Collects the options of a {@code mobility} element. The {@code model} attribute
+	 * is excluded, since it only selects the class to use.
+	 *
+	 * @param mobilityElement the element describing the mobility of the device
+	 * @return a map of option name to value
+	 */
+	protected Map<String, String> readMobilityOptions(Element mobilityElement) {
+		Map<String, String> options = new HashMap<>();
+		NamedNodeMap attributes = mobilityElement.getAttributes();
+		for (int i = 0; i < attributes.getLength(); i++) {
+			Node attribute = attributes.item(i);
+			if (!"model".equals(attribute.getNodeName()))
+				options.put(attribute.getNodeName(), attribute.getNodeValue());
+		}
+		return options;
+	}
+
+	/**
+	 * Draws the value of a numeric child element for the node being created. The
+	 * element may hold a plain number, which every instance then reuses, or a
+	 * probability distribution, which gives each instance its own value:
+	 * 
+	 * <pre>
+	 * &lt;mips distribution="normal" mean="2000" std="300" min="500"/&gt;
+	 * &lt;ram distribution="uniform" min="2048" max="8192"/&gt;
+	 * &lt;storage&gt;1000000&lt;/storage&gt;
+	 * &lt;/pre&gt;
+	 * 
+	 * Use this to model a heterogeneous fleet instead of identical machines. The
+	 * sampled value is always clamped to the given range, so a distribution with
+	 * unbounded support cannot produce a negative capacity.
+	 *
+	 * @param parent the element that contains the value
+	 * @param tag    the tag name of the value
+	 * @param min    the smallest value a node may get
+	 * @param max    the largest value a node may get
+	 * @return the value of this node
+	 * @throws IllegalArgumentException when the element is missing or declares an
+	 *                                  invalid distribution
+	 */
+	protected double sample(Element parent, String tag, double min, double max) {
+		Element valueElement = (Element) parent.getElementsByTagName(tag).item(0);
+		if (valueElement == null)
+			throw new IllegalArgumentException("The \"" + tag + "\" element is missing from the \""
+					+ parent.getNodeName() + "\" definition, check the scenario files");
+		return Math.min(max, Math.max(min, DistributionReader.read(valueElement,
+				"\"" + tag + "\" of the \"" + parent.getNodeName() + "\"").sample()));
+	}
+
+	/**
+	 * Returns the initial location of an edge device.
+	 * <p>
+	 * By default the devices of a type are spread uniformly over the whole map, as
+	 * in previous versions. A device type may also pin its instances to an area by
+	 * adding a {@code location} element, whose coordinates may be distributions.
+	 * Sampling them places the devices around a hotspot instead of scattering them:
+	 * 
+	 * <pre>
+	 * &lt;location&gt;
+	 *     &lt;x_pos distribution="normal" mean="150" std="30" min="0" max="300"/&gt;
+	 *     &lt;y_pos distribution="normal" mean="150" std="30" min="0" max="300"/&gt;
+	 * &lt;/location&gt;
+	 * &lt;/pre&gt;
+	 *
+	 * @param deviceElement the element describing the device type
+	 * @param random        the random source used for the uniform placement
+	 * @return a location inside the simulation map
+	 */
+	protected Location getDeviceLocation(Element deviceElement, Random random) {
+		Element location = (Element) deviceElement.getElementsByTagName("location").item(0);
+		if (location == null)
+			return new Location(random.nextInt(SimulationParameters.simulationMapWidth),
+					random.nextInt(SimulationParameters.simulationMapLength));
+		return new Location(sample(location, "x_pos", 0, SimulationParameters.simulationMapWidth),
+				sample(location, "y_pos", 0, SimulationParameters.simulationMapLength));
 	}
 
 }

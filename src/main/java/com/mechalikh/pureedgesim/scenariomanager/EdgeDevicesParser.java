@@ -43,7 +43,7 @@ public class EdgeDevicesParser extends ComputingNodesParser {
 			Node device = devicesList.item(i);
 			Element deviceElement = (Element) device;
 			checkEdgeDevice(deviceElement);
-			percentage += Double.parseDouble(deviceElement.getElementsByTagName("percentage").item(0).getTextContent());
+			percentage += getMean(deviceElement, "percentage");
 
 		}
 		if (percentage != 100 && type == TYPES.EDGE_DEVICE) {
@@ -55,7 +55,8 @@ public class EdgeDevicesParser extends ComputingNodesParser {
 
 	/**
 	 * Ensures that a device element contains every required child element and
-	 * that numeric values are not negative.
+	 * that numeric values are not negative. Each numeric value may be a plain
+	 * number or a distribution, in which case the mean is validated.
 	 *
 	 * @param deviceElement the device element to validate
 	 * @throws IllegalArgumentException if a required element is missing or invalid
@@ -79,18 +80,15 @@ public class EdgeDevicesParser extends ComputingNodesParser {
 			assertDouble(deviceElement, "initialBatteryLevel", value -> (value > 0 && value <= 100),
 					"> 0 and <= 100 for battery-powered devices. Check the file " + file); 
 
-		double idleConsumption = Double
-				.parseDouble(deviceElement.getElementsByTagName("idleConsumption").item(0).getTextContent());
+		double idleConsumption = getMean(deviceElement, "idleConsumption");
 		assertDouble(deviceElement, "maxConsumption", value -> (value > idleConsumption),
 				"> \"idleConsumption\". Check the file " + file);
 
-		double minPauseDuration = Double
-				.parseDouble(deviceElement.getElementsByTagName("minPauseDuration").item(0).getTextContent());
+		double minPauseDuration = getMean(deviceElement, "minPauseDuration");
 		assertDouble(deviceElement, "maxPauseDuration", value -> (value >= minPauseDuration),
 				">= \"minPauseDuration\". Check the file " + file);
 
-		double minMobilityDuration = Double
-				.parseDouble(deviceElement.getElementsByTagName("minMobilityDuration").item(0).getTextContent());
+		double minMobilityDuration = getMean(deviceElement, "minMobilityDuration");
 		assertDouble(deviceElement, "maxMobilityDuration", value -> (value >= minMobilityDuration),
 				">= \"minMobilityDuration\". Check the file " + file);
 	}

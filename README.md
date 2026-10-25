@@ -95,8 +95,10 @@ Each module provides a default implementation and a set of adjustable settings. 
   - Heterogeneous connectivity: Wi-Fi, 4G, 5G, Ethernet.
   - Realistic computing infrastructure, tasks, and topology modeling.
   - Realistic network model: latency, bandwidth allocation, peer-to-peer communication, routing.
-  - Realistic mobility model.
+  - Nine mobility models: random waypoint, random walk, Gauss-Markov, Manhattan, fixed waypoints, circular, Lévy walk, Brownian, and reference point group movement, selected per device type from the scenario file.
   - Realistic energy model.
+- **Everything is a random variable**: task sizes, task lengths, arrival gaps, device capacities, battery levels, and initial positions accept any of sixteen probability distributions (uniform, normal, lognormal, exponential, Poisson, gamma, Erlang, Weibull, beta, Pareto, triangular, Bernoulli, binomial, geometric, categorical, constant), or stay a fixed number as before.
+- **Reproducible runs**: set `random_seed` once and the whole scenario, including node generation and movement, replays identically. Parallel runs of the same sweep reuse the seed per scenario, so conditions stay comparable.
 - **Support for online decision making**: task orchestration, scheduling, and offloading.
 - **QoS-aware architectures and topologies**.
 - **Efficiency and scalability**
@@ -157,7 +159,7 @@ You can also import the project as a Maven project in Eclipse, IntelliJ IDEA, or
 mvn test
 ```
 
-The test suite contains more than 500 automated tests. To run only the unit tests, excluding the integration tests:
+The test suite contains more than 900 automated tests. To run only the unit tests, excluding the integration tests:
 
 ```bash
 mvn test -Punit-tests
@@ -267,9 +269,10 @@ Edge computing and its related paradigms can be classified by their placement in
 ```xml
 <?xml version="1.0"?>
 <edge_devices>
-  <device> <!-- this is a smartphone, for example -->
-    <mobility>true</mobility>
-    <connectivity>4g</connectivity>
+  <device arch="x86" os="linux" vmm="kvm"> <!-- this is a smartphone, for example -->
+    <!-- Move like a pedestrian: random waypoints, selected by name. -->
+    <mobility model="random-waypoint">true</mobility>
+    <connectivity>wifi</connectivity>
     <speed>1.4</speed>
     <minPauseDuration>100</minPauseDuration>
     <maxPauseDuration>400</maxPauseDuration>
@@ -277,25 +280,27 @@ Edge computing and its related paradigms can be classified by their placement in
     <maxMobilityDuration>100</maxMobilityDuration>
     <battery>true</battery>
     <percentage>30</percentage>
-    <batteryCapacity>18.75</batteryCapacity>
+    <!-- Each instance of this type draws its own capacity, here from a range. -->
+    <cores distribution="uniform" min="4" max="8" />
+    <mips distribution="normal" mean="25000" std="4000" min="1000" />
+    <ram>4096</ram>
+    <storage>128000</storage>
+    <!-- Start around the town square instead of anywhere on the map. -->
+    <location>
+      <x_pos distribution="normal" mean="150" std="20" min="0" max="300" />
+      <y_pos distribution="normal" mean="150" std="20" min="0" max="300" />
+    </location>
     <idleConsumption>0.078</idleConsumption>
     <maxConsumption>3.3</maxConsumption>
+    <batteryCapacity>18.75</batteryCapacity>
+    <initialBatteryLevel>100</initialBatteryLevel>
     <isOrchestrator>false</isOrchestrator>
-    <canGenerateTasks>true</canGenerateTasks>
-    <canProcessTasks>true</canProcessTasks>
-    <hosts>
-      <host>
-        <core>8</core>
-        <mips>25000</mips>
-        <ram>4096</ram>
-        <storage>128000</storage>
-      </host>
-    </hosts>
+    <generateTasks>true</generateTasks>
   </device>
 </edge_devices>
 ```
 
-<p align="center">How a smartphone can be modeled in PureEdgeSim</p>
+<p align="center">How a fleet of smartphones can be modeled in PureEdgeSim</p>
 
 </details>
 
@@ -383,6 +388,7 @@ If your paper uses PureEdgeSim, feel free to open a pull request and add it to t
 
 The full release notes are maintained in [CHANGELOG.md](CHANGELOG.md).
 
+- **5.7**: probability distributions for every scenario parameter, sixteen distribution types, nine mobility models selectable per device type, placement hotspots, and a `random_seed` parameter for reproducible runs.
 - **5.6**: self-documenting simulation parameter files for the default, example, and test configurations, with corrected guidance for ranges, orchestrators, and registry modes.
 - **5.5**: comprehensive JUnit 5 test suite, JaCoCo coverage reporting, and a GitHub Actions coverage workflow.
 - **5.1**: faster simulations, batched task scheduling, improved extensibility, and the initial energy model improvements.

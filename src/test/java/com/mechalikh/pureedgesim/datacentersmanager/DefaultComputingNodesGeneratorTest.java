@@ -2,6 +2,7 @@ package com.mechalikh.pureedgesim.datacentersmanager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -11,6 +12,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -332,5 +336,262 @@ class DefaultComputingNodesGeneratorTest extends DatacentersTestSupport {
 
 		assertTrue(generator.getMistOnlyList().isEmpty());
 		assertNotNull(device);
+	}
+
+	// ------------------------------------------------------------------
+	// Distribution-valued node parameters
+	// ------------------------------------------------------------------
+
+	/** Returns a complete device definition with one of its values replaced. */
+	private static String deviceWith(String tag, String replacement) {
+		return deviceXml(100).replaceFirst("(?s)<" + tag + "\\b[^>]*>.*?</" + tag + ">",
+				Matcher.quoteReplacement(replacement));
+	}
+
+	private Element deviceElement(String innerXml) {
+		return parseElement("<edge_devices>" + innerXml + "</edge_devices>", "device");
+	}
+
+	@Test
+	void aDistributionGivesEveryInstanceItsOwnCapacity() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		SimulationParameters.edgeDevicesFile = writeTempFile(tempDir, "edge_devices_heterogeneous.xml",
+				"<edge_devices>" + deviceWith("mips",
+						"<mips distribution=\"uniform\" min=\"1000\" max=\"2000\"/>")
+						+ "</edge_devices>")
+				.toString();
+
+		generator.generateEdgeDevices();
+
+		assertEquals(20, generator.getMistOnlyList().size());
+		Set<Double> capacities = new HashSet<>();
+		for (ComputingNode device : generator.getMistOnlyList()) {
+			assertTrue(device.getMipsPerCore() >= 1000 && device.getMipsPerCore() <= 2000,
+					"sampled MIPS " + device.getMipsPerCore() + " left the configured range");
+			capacities.add(device.getMipsPerCore());
+		}
+		assertTrue(capacities.size() > 10,
+				"a uniform distribution must not give the same machine to every device, got " + capacities.size());
+	}
+
+	@Test
+	void aPlainValueStillGivesIdenticalInstances() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		SimulationParameters.edgeDevicesFile = writeTempFile(tempDir, "edge_devices_homogeneous.xml",
+				"<edge_devices>" + deviceXml(100) + "</edge_devices>").toString();
+
+		generator.generateEdgeDevices();
+
+		assertEquals(20, generator.getMistOnlyList().size());
+		for (ComputingNode device : generator.getMistOnlyList())
+			assertEquals(1000.0, device.getMipsPerCore(), 0.0001);
+	}
+
+	@Test
+	void sampledCapacitiesAreClampedToTheAcceptedRange() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		SimulationParameters.edgeDevicesFile = writeTempFile(tempDir, "edge_devices_clamped.xml",
+				"<edge_devices>"
+						+ deviceWith("ram", "<ram distribution=\"normal\" mean=\"0\" std=\"100\"/>") + "</edge_devices>")
+				.toString();
+
+		generator.generateEdgeDevices();
+
+		assertEquals(20, generator.getMistOnlyList().size());
+		for (ComputingNode device : generator.getMistOnlyList())
+			assertTrue(device.getRamCapacity() >= 0, "a negative RAM capacity cannot be reserved");
+	}
+
+	@Test
+	void theNumberOfInstancesMayAlsoBeADistribution() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		SimulationParameters.edgeDevicesFile = writeTempFile(tempDir, "edge_devices_percentage.xml",
+				"<edge_devices>" + deviceXml(100).replace("<percentage>100</percentage>",
+						"<percentage distribution=\"constant\" value=\"50\"/>")
+				+ "</edge_devices>").toString();
+
+		generator.generateEdgeDevices();
+
+		// Half of the 20 devices of the scenario.
+		assertEquals(10, generator.getMistOnlyList().size());
+	}
+
+	@Test
+	void aMissingNumericElementIsReportedWithItsName() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		Element device = deviceElement(deviceXml(1).replace("<storage>100</storage>", ""));
+
+		IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+				() -> generator.createComputingNode(device, TYPES.EDGE_DEVICE));
+		assertTrue(error.getMessage().contains("\"storage\""), error.getMessage());
+		assertTrue(error.getMessage().contains("missing"), error.getMessage());
+	}
+
+	@Test
+	void aBrokenDistributionInsideADeviceIsRejected() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+				() -> generator.createComputingNode(
+						deviceElement(deviceWith("mips", "<mips distribution=\"levy\" mean=\"100\"/>")),
+						TYPES.EDGE_DEVICE));
+		assertTrue(error.getMessage().contains("\"mips\""), error.getMessage());
+	}
+
+	// ------------------------------------------------------------------
+	// Mobility model selection and initial placement
+	// ------------------------------------------------------------------
+
+	@Test
+	void withoutTheModelAttributeTheConfiguredClassIsUsed() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+
+		ComputingNode device = generator.createComputingNode(deviceElement(deviceXml(1)), TYPES.EDGE_DEVICE);
+
+		assertInstanceOf(com.mechalikh.pureedgesim.locationmanager.DefaultMobilityModel.class,
+				device.getMobilityModel());
+		assertFalse(device.getMobilityModel().isMobile());
+	}
+
+	@Test
+	void theMobilityModelAttributeSelectsTheModelByName() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		String xml = deviceXml(1).replace("<mobility>false</mobility>",
+				"<mobility model=\"gauss-markov\" alpha=\"0.5\" std=\"20\">true</mobility>")
+						.replace("<speed>0</speed>", "<speed>1.8</speed>");
+
+		ComputingNode device = generator.createComputingNode(deviceElement(xml), TYPES.EDGE_DEVICE);
+
+		assertInstanceOf(com.mechalikh.pureedgesim.locationmanager.GaussMarkovMobilityModel.class,
+				device.getMobilityModel());
+		assertTrue(device.getMobilityModel().isMobile());
+		assertEquals(0.5, device.getMobilityModel().getParameter("alpha", 0), 0.0001);
+		assertEquals(1.8, device.getMobilityModel().getSpeed(), 0.0001);
+		assertFalse(device.getMobilityModel().getParameters().containsKey("model"),
+				"the attribute that selects the class is not an option");
+	}
+
+	@Test
+	void mobilityOptionsArePassedToTheModelWhateverTheirCase() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		String xml = deviceXml(1).replace("<mobility>false</mobility>",
+				"<mobility model=\"waypoint\" waypoints=\"10,10;90,90\" Loop=\"false\">true</mobility>");
+
+		com.mechalikh.pureedgesim.locationmanager.MobilityModel model = generator
+				.createComputingNode(deviceElement(xml), TYPES.EDGE_DEVICE).getMobilityModel();
+
+		assertInstanceOf(com.mechalikh.pureedgesim.locationmanager.WaypointMobilityModel.class, model);
+		assertEquals("10,10;90,90", model.getParameter("waypoints", ""));
+		assertFalse(model.getParameterBoolean("loop", true));
+	}
+
+	@Test
+	void aFullyQualifiedModelNameIsAlsoAccepted() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		String xml = deviceXml(1).replace("<mobility>false</mobility>",
+				"<mobility model=\"com.mechalikh.pureedgesim.locationmanager.RandomWalkMobilityModel\">true</mobility>");
+
+		ComputingNode device = generator.createComputingNode(deviceElement(xml), TYPES.EDGE_DEVICE);
+
+		assertInstanceOf(com.mechalikh.pureedgesim.locationmanager.RandomWalkMobilityModel.class,
+				device.getMobilityModel());
+	}
+
+	@Test
+	void anUnknownMobilityModelNameIsRejectedWithTheListOfKnownOnes() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		String xml = deviceXml(1).replace("<mobility>false</mobility>", "<mobility model=\"teleport\">true</mobility>");
+
+		IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+				() -> generator.createComputingNode(deviceElement(xml), TYPES.EDGE_DEVICE));
+		assertTrue(error.getMessage().contains("teleport"), error.getMessage());
+		assertTrue(error.getMessage().contains("gauss-markov"),
+				"the error should list the accepted names, found: " + error.getMessage());
+	}
+
+	@Test
+	void devicesOfADistributedTypeAreSpreadOverTheMap() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+
+		generator.generateEdgeDevices();
+
+		Set<String> positions = new HashSet<>();
+		for (ComputingNode device : generator.getMistOnlyList()) {
+			double x = device.getMobilityModel().getCurrentLocation().getXPos();
+			double y = device.getMobilityModel().getCurrentLocation().getYPos();
+			assertTrue(x >= 0 && x < SimulationParameters.simulationMapWidth, "x out of the map: " + x);
+			assertTrue(y >= 0 && y < SimulationParameters.simulationMapLength, "y out of the map: " + y);
+			positions.add(x + "," + y);
+		}
+		assertTrue(positions.size() > 10, "the devices must not all start on the same spot");
+	}
+
+	@Test
+	void aLocationElementPinsEveryInstanceToTheSameSpot() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		String xml = deviceXml(1).replace("<percentage>1</percentage>",
+				"<percentage>1</percentage><location><x_pos>20</x_pos><y_pos>30</y_pos></location>");
+
+		ComputingNode device = generator.createComputingNode(deviceElement(xml), TYPES.EDGE_DEVICE);
+
+		assertEquals(20, device.getMobilityModel().getCurrentLocation().getXPos(), 0.0001);
+		assertEquals(30, device.getMobilityModel().getCurrentLocation().getYPos(), 0.0001);
+	}
+
+	@Test
+	void aDistributionalLocationCreatesAHotspotAroundAPoint() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		String xml = deviceXml(100).replace("<percentage>100</percentage>", "<percentage>100</percentage>"
+				+ "<location><x_pos distribution=\"normal\" mean=\"100\" std=\"8\"/>"
+				+ "<y_pos distribution=\"normal\" mean=\"100\" std=\"8\"/></location>");
+		SimulationParameters.edgeDevicesFile = writeTempFile(tempDir, "edge_devices_hotspot.xml",
+				"<edge_devices>" + xml + "</edge_devices>").toString();
+
+		generator.generateEdgeDevices();
+
+		assertEquals(20, generator.getMistOnlyList().size());
+		for (ComputingNode device : generator.getMistOnlyList()) {
+			double x = device.getMobilityModel().getCurrentLocation().getXPos();
+			double y = device.getMobilityModel().getCurrentLocation().getYPos();
+			assertTrue(x >= 0 && x <= SimulationParameters.simulationMapWidth, "x clamped to the map: " + x);
+			assertTrue(y >= 0 && y <= SimulationParameters.simulationMapLength, "y clamped to the map: " + y);
+			assertTrue(Math.abs(x - 100) < 60 && Math.abs(y - 100) < 60,
+					"a normal with std 8 must stay close to its mean, found (" + x + "," + y + ")");
+		}
+	}
+
+	@Test
+	void dataCenterLocationsMayAlsoBeDistributions() throws Exception {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		String xml = "<datacenter name=\"dcDist\">"
+				+ "<periphery>true</periphery>"
+				+ "<idleConsumption>1</idleConsumption><maxConsumption>2</maxConsumption>"
+				+ "<isOrchestrator>false</isOrchestrator><cores>2</cores><mips>100</mips>"
+				+ "<ram>10</ram><storage>10</storage>"
+				+ "<location>"
+				+ "<x_pos distribution=\"uniform\" min=\"50\" max=\"60\"/>"
+				+ "<y_pos distribution=\"constant\" value=\"70\"/>"
+				+ "</location>"
+				+ "</datacenter>";
+
+		ComputingNode node = generator.createComputingNode(parseElement(xml, "datacenter"), TYPES.EDGE_DATACENTER);
+
+		double x = node.getMobilityModel().getCurrentLocation().getXPos();
+		assertTrue(x >= 50 && x <= 60, "x sampled from the uniform range: " + x);
+		assertEquals(70, node.getMobilityModel().getCurrentLocation().getYPos(), 0.0001);
 	}
 }

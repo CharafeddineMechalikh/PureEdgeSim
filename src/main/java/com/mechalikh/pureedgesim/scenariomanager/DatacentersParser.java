@@ -40,8 +40,7 @@ public class DatacentersParser extends ComputingNodesParser {
 
 			assertDouble(datacenterElement, "idleConsumption", value -> (value >= 0),
 					">= 0. Check the file " + file);
-			double idleConsumption = Double
-					.parseDouble(datacenterElement.getElementsByTagName("idleConsumption").item(0).getTextContent());
+			double idleConsumption = getMean(datacenterElement, "idleConsumption");
 			assertDouble(datacenterElement, "maxConsumption", value -> (value > idleConsumption),
 					"> \"idleConsumption\". Check the file " + file);
 

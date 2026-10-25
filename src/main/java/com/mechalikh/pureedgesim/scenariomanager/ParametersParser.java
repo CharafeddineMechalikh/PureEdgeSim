@@ -6,12 +6,16 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.function.Predicate;
 
+import com.mechalikh.pureedgesim.distribution.Randomness;
 import com.mechalikh.pureedgesim.simulationmanager.SimLog;
 
 /**
  * Parses the simulation parameters properties file and loads its values into
  * {@link SimulationParameters}. Missing or invalid values fail immediately with
  * an explanatory exception.
+ * <p>
+ * The optional {@code random_seed} property is applied to {@link Randomness},
+ * which every module of the simulation draws its values from.
  *
  * @author Charafeddine Mechalikh
  * @since PureEdgeSim 5.0
@@ -52,6 +56,9 @@ public class ParametersParser extends FileParserAbstract {
 			// Loading properties file.
 			Properties prop = new Properties();
 			prop.load(input);
+
+			// Read first, so that every value generated later comes from the right stream.
+			readRandomSeed(prop);
 
 			// In seconds
 			SimulationParameters.simulationDuration = (double) 60
@@ -180,6 +187,36 @@ public class ParametersParser extends FileParserAbstract {
 		}
 		return result;
 
+	}
+
+	/**
+	 * Reads the optional {@code random_seed} property and configures
+	 * {@link Randomness} accordingly.
+	 * <p>
+	 * When the property is missing or empty, each run draws its own values, as in
+	 * previous versions. When it holds a whole number, every generator of the
+	 * simulation is derived from it, so that the same scenario produces the same
+	 * results again. This is what makes a paper experiment reproducible: task sizes,
+	 * arrival times, node capacities and positions all come from the seed.
+	 *
+	 * @param prop the loaded properties
+	 * @throws IllegalArgumentException if the value is not a whole number
+	 */
+	protected void readRandomSeed(Properties prop) {
+		String value = prop.getProperty("random_seed");
+		if (value == null || value.trim().isEmpty()) {
+			Randomness.reset();
+			return;
+		}
+		long seed;
+		try {
+			seed = Long.parseLong(value.trim());
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException(getClass().getSimpleName()
+					+ " - Error, the value of \"random_seed\" must be a whole number, found \"" + value.trim() + "\".");
+		}
+		Randomness.setSeed(seed);
+		SimLog.println("%s - Random values are reproducible, seed = %d", getClass().getSimpleName(), seed);
 	}
 
 	/**

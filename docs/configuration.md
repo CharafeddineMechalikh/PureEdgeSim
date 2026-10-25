@@ -29,6 +29,7 @@ The values below are the defaults shipped with the repository. Constraints are e
 | `update_interval` | `1` | seconds | `>= 0.01` | Period of the mobility update and the static energy accounting. Lower values improve accuracy and increase simulation time. |
 | `pause_length` | `3` | seconds (wall clock) | `>= 0` | Sleep between sequential iterations, only to make console output readable. It does not affect simulated time. |
 | `batch_size` | `100` | tasks | `> 0` | Number of generated tasks scheduled into the event queue at once. Larger batches reduce queue overhead but increase memory. |
+| `random_seed` | empty | whole number | | Makes every random value reproducible. When empty, each run draws its own values. See [Randomness and reproducibility](#randomness-and-reproducibility). |
 
 ### Scenario sweep
 
@@ -135,6 +136,45 @@ Bandwidths are in **megabits per second** and are multiplied by `1,000,000` duri
 | `cellular_base_station_nanojoules_per_bit_up_link` | `6200` | nJ/bit | Base station uplink energy. |
 | `cellular_base_station_nanojoules_per_bit_down_link` | `20500` | nJ/bit | Base station downlink energy. |
 
+## Probability distributions in the XML files
+
+Any numeric element of `applications.xml`, `edge_devices.xml`, `cloud.xml`, and `edge_datacenters.xml` may hold a probability distribution instead of a fixed value. The element keeps its name and its unit; the distribution is declared with attributes:
+
+```xml
+<request_size distribution="lognormal" mean="25" std="10"/>
+<mips distribution="normal" mean="25000" std="3000" min="5000"/>
+<ram distribution="uniform" min="2048" max="8192"/>
+```
+
+A plain number means the same thing as `distribution="constant"`, so every scenario written before PureEdgeSim 5.7 keeps working unchanged.
+
+Two attributes are understood for every distribution: `min` and `max` bound the generated values. For `uniform` and `triangular` they define the support; for any other distribution the sample is drawn again until it falls inside the range, and clamped after one hundred attempts, so a too narrow range quietly becomes a ceiling. The other attributes depend on the distribution and are listed in [Simulation models](models.md#probability-distributions).
+
+What varies depends on where the distribution is written:
+
+- in `applications.xml`, each **task** draws its own size, length, latency requirement, and arrival gap;
+- in `edge_devices.xml`, each device **instance** of the type draws its own capacity, battery, speed, and position, which is how a heterogeneous fleet is modelled;
+- in `cloud.xml` and `edge_datacenters.xml`, each `<datacenter>` entry draws its own values.
+
+The mean of the distribution is the value used by the validation, the CSV columns, and the charts. That is what keeps a scenario with variable parameters comparable to the scenario with fixed ones, and it is also why a skewed distribution (lognormal, Pareto) reports a mean that is larger than its most likely value.
+
+## Randomness and reproducibility
+
+`random_seed` is the switch between a stochastic run and a reproducible one.
+
+```
+random_seed=42
+```
+
+With a seed, every random value in the simulation, task times and sizes, node capacities, device positions, and mobility choices, comes from a stream derived from that number. Relaunching the same scenario gives the same CSV row, which is what you want when you debug a configuration or when a reviewer asks for your exact setup. Without a seed, the seed key left empty or absent, the simulator uses a secure random source and every run differs, as in earlier versions.
+
+Two practical rules:
+
+- A seed freezes one sample of the process. To report an average over repetitions, use a different seed per repetition (vary it yourself, in the sweep or in the file) rather than the same one, and state the number of repetitions and the seeds in your methodology.
+- Parallel sweeps reuse the same properties file, so all scenarios of one run share the seed. That makes the workload identical across orchestration algorithms, which is usually what a comparison needs.
+
+The same source is available programmatically through `com.mechalikh.pureedgesim.distribution.Randomness`: `setSeed(long)` before launching the simulation, and `beginScenario(long)` when you build your own multi-threaded sweep and need one reproducible stream per scenario.
+
 ## Applications
 
 Each `<application>` describes one workload class. The `name` attribute is an identifier, and `type` is free text that the orchestrator can use to distinguish workloads.
@@ -161,6 +201,23 @@ Each `<application>` describes one workload class. The `name` attribute is an id
 | `request_size` | kilobytes | `> 0` | Offloading request size, converted to bits. |
 | `results_size` | kilobytes | `> 0` | Result size, converted to bits. |
 | `task_length` | million instructions (MI) | `> 0` | Computational demand used to compute execution time. |
+| `arrival` | seconds, or a keyword | `> 0` | Optional. The time between two consecutive tasks of one device. `poisson` (or `exponential`) draws gaps with a mean of `60/rate`, `uniform` draws them between 0 and twice that mean, and a distribution element gives the exact inter-arrival law. Omit it, or write `constant`, to keep the evenly spaced bursts of earlier versions. When it is set, `rate` only supplies the mean gap: tasks are no longer counted per minute. |
+
+Every element above may be a distribution, in which case each task draws its own value:
+
+```xml
+<application name="Video analytics">
+    <type>Soft Real-time</type>
+    <rate distribution="poisson" mean="30"/>
+    <arrival>poisson</arrival>
+    <usage_percentage>30</usage_percentage>
+    <latency distribution="normal" mean="0.5" std="0.1" min="0.05"/>
+    <container_size distribution="uniform" min="1000" max="2000"/>
+    <request_size distribution="lognormal" mean="1500" std="400"/>
+    <results_size>50</results_size>
+    <task_length distribution="gamma" shape="4" scale="1250"/>
+</application>
+```
 
 ### How applications are assigned to devices
 
@@ -168,10 +225,11 @@ Each `<application>` describes one workload class. The `name` attribute is an id
 
 Consequences:
 
-- The percentages of all applications except the last must sum to at most 100. If they exceed 100, the device pool can be exhausted and generation fails.
+- The percentages of all applications except the last must sum to at most 100. If they exceed 100 the device pool runs out first and the remaining applications simply get no device.
 - The last application's realized share is `100 - sum(previous percentages)`.
 - To model exact shares, arrange the file so that the last application is the one whose remainder you intend, or write a custom task generator.
 - Device selection is random, so the realized counts can differ slightly from the requested counts due to truncation.
+- With a distribution for `rate`, the number of tasks generated in a minute varies from one minute to the next while the mean stays the configured value.
 
 ## Cloud data centers
 
@@ -277,7 +335,7 @@ If a device is not within range of any edge data center, its edge uplink remains
 | --- | --- | --- |
 | `arch`, `os`, `vmm` | strings | Informational metadata. The default models do not use them. |
 | `connectivity` | `wifi`, `cellular`, `ethernet` | Selects the link type used to connect the device to its edge data center. |
-| `mobility` | boolean | Whether the device moves. |
+| `mobility` | boolean, with optional attributes | Whether the device moves. The `model` attribute selects a mobility model by name and the other attributes become its options, see [Choosing a model per device type](models.md#choosing-a-model-per-device-type). |
 | `speed` | meters per second | Movement speed. `1.4` m/s is about 5 km/h. |
 | `minPauseDuration`, `maxPauseDuration` | seconds | Range of the pause before each movement. |
 | `minMobilityDuration`, `maxMobilityDuration` | seconds | Range of the movement duration before the next pause. |
@@ -295,6 +353,29 @@ If a device is not within range of any edge data center, its edge uplink remains
 | `storage` | megabytes | Storage available for application containers and for caching in the examples. |
 
 Device types are instantiated in file order. If the requested device count does not divide evenly by the percentages, PureEdgeSim fills the missing devices with the last type. This keeps the total exactly equal to the scenario count.
+
+### Mobility models and placement
+
+Each type may move differently. The `model` attribute of the `mobility` element selects one of the built-in models, and the remaining attributes are its options:
+
+```xml
+<mobility model="gauss-markov" alpha="0.8" std="15">true</mobility>
+<mobility model="waypoint" waypoints="100,100;400,100;400,400">true</mobility>
+<mobility model="group" group="buses" anchor_speed="15">true</mobility>
+```
+
+Names: `random-waypoint` (the default, also spelled `default`), `random-walk`, `gauss-markov`, `manhattan`, `waypoint`, `circular`, `levy-walk`, `brownian`, and `group`. A fully qualified class name works too. Without the attribute, the class given to `setCustomMobilityModel` is used. An unknown name stops the run and lists the known ones. The options of each model, with their defaults, are in [Simulation models](models.md#choosing-a-model-per-device-type).
+
+Devices of a type start at uniformly random positions on the map. To gather them in one area, add a `location` element to the device type; because its coordinates are distributions, each instance lands on a different point of the same hotspot:
+
+```xml
+<location>
+    <x_pos distribution="normal" mean="150" std="30" min="0" max="300"/>
+    <y_pos distribution="normal" mean="150" std="30" min="0" max="300"/>
+</location>
+```
+
+Any fixed or sampled position is clamped to the map. Edge data centers keep the required single `location` with plain coordinates: two edge data centers at the same position are rejected.
 
 ## Worked configuration examples
 

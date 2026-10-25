@@ -127,12 +127,39 @@ Package `scenariomanager`.
 | `DatacentersParser` | Reads `cloud.xml`. |
 | `ComputingNodesParser` | Shared datacenter parsing logic. |
 | `FileParserAbstract`, `XmlFileParser` | Parser base classes. |
+| `DistributionReader` | Reads a value that is either a number or a distribution from any scenario XML file. |
 
 `SimulationParameters` is static. Every value is parsed once per launch and shared by all scenarios. This is why two concurrent launches with different settings folders are unsafe, and why custom models should read the static fields as read-only inputs.
 
 `Scenario` exposes `getOrchArchitecture()`, `getOrchAlgorithm()`, `getDevicesCount()`, and their string forms. The string forms are what the orchestrator sees as `architectureName` and `algorithmName`.
 
-`ParametersParser` throws `IllegalArgumentException` when a value violates its documented range, and the message names the offending property. The unit conversions are described in [Configuration](configuration.md).
+`ParametersParser` throws `IllegalArgumentException` when a value violates its documented range, and the message names the offending property. The unit conversions are described in [Configuration](configuration.md). It is also the place where the optional `random_seed` property is applied to `Randomness`.
+
+## Probability distributions
+
+Package `distribution`.
+
+| Class | Purpose |
+| --- | --- |
+| `Distribution` | Interface: `sample()`, `sampleInt()`, `mean()`, `getMin()`, `getMax()`, `isDiscrete()`, `getName()`. |
+| `AbstractDistribution`, `AbstractDiscreteDistribution` | Shared sampling helpers. |
+| `ConstantDistribution` | A single value, what a plain number in a file becomes. |
+| `UniformDistribution`, `TriangularDistribution` | Bounded continuous laws. |
+| `NormalDistribution`, `LogNormalDistribution` | Symmetric and right-skewed laws. |
+| `ExponentialDistribution`, `ErlangDistribution`, `GammaDistribution`, `WeibullDistribution` | Waiting-time and reliability laws. |
+| `ParetoDistribution` | Heavy tail, at or above its scale. |
+| `BetaDistribution` | A value between 0 and 1. |
+| `BernoulliDistribution`, `BinomialDistribution`, `GeometricDistribution`, `PoissonDistribution` | Discrete counting laws. |
+| `CategoricalDistribution` | A weighted choice among listed values. |
+| `BoundedDistribution` | Rejects or clamps the samples of another distribution to a range. |
+| `ScaledDistribution` | Multiplies another distribution by a positive factor, used for the kilobyte to bit conversion. |
+| `SpecialFunctions` | Gamma and beta helpers the laws are built on. |
+| `DistributionFactory` | Builds a distribution from its name and the attributes of an XML element; `knownNames()` lists them. |
+| `Randomness` | The shared random source. Honors `random_seed`, gives each thread its own stream. |
+
+`DistributionFactory` accepts the names listed in [Simulation models](models.md#probability-distributions) and fails with the attributes it expected when one is missing. `min` and `max` are handled by the factory, not by the individual classes.
+
+`Randomness` is the one static mutable service in the framework, and the exception to invariant 6 below: it holds the configured seed, never a scenario result, and it hands each thread its own generator so that parallel sweeps stay reproducible. Read it with `Randomness.getRandom()` instead of creating a `SecureRandom` in a model, and never call `setSeed` while a simulation is running.
 
 ## Computing nodes and topology
 
@@ -265,11 +292,13 @@ Package `taskgenerator`.
 | `Task` | Task interface. |
 | `TaskAbstract` | Base implementation of the timing and identity fields. |
 | `DefaultTask` | Default task. |
-| `Application` | Parsed application definition. |
+| `Application` | Parsed application definition, with one distribution per parameter. |
 | `TaskGenerator` | Abstract generator and task list. |
 | `DefaultTaskGenerator` | Default traffic model. |
 
 `Task` exposes the request, result, and container sizes in bits, the length in million instructions, the maximum latency, the generating device, the orchestrator, the registry, the offloading destination, the application identifier, the type, the failure reason, the status, and the timing fields.
+
+`Application` keeps a scalar value and a distribution for each parameter. The getters (`getRequestSize()`, `getLatency()`, `getRate()`, ...) return the mean, which is what the reports and the charts use, while the `sample...()` methods (`sampleRequestSize()`, `sampleResultsSize()`, `sampleContainerSize()`, `sampleTaskLength()`, `sampleLatency()`, `sampleTasksPerMinute()`) draw the value of one task and never return zero or a negative size. `getArrivalDistribution()` is `null` when the tasks are evenly spaced, and `hasRandomArrival()` says the same thing. Setting a parameter with its plain setter, for example `setRequestSize(2000)`, replaces its distribution by a constant one.
 
 Timing accessors:
 
@@ -327,11 +356,22 @@ Package `locationmanager`.
 | Class | Purpose |
 | --- | --- |
 | `Location` | Immutable x and y coordinates with distance helpers. |
-| `MobilityModel` | Abstract path model and closest data center lookup. |
-| `DefaultMobilityModel` | Random-waypoint model. |
+| `MobilityModel` | Abstract path model, option parsing, and closest data center lookup. |
+| `DefaultMobilityModel` | Random-waypoint model with pause and move phases. |
+| `RandomWalkMobilityModel` | New direction every tick, no pause. |
+| `GaussMarkovMobilityModel` | Correlated direction and speed, curved trajectories. |
+| `ManhattanMobilityModel` | Axis-aligned movement on a street grid. |
+| `WaypointMobilityModel` | A fixed route, optionally looped. |
+| `CircularMobilityModel` | Orbits a circle at the device speed. |
+| `LevyWalkMobilityModel` | Pareto-distributed flight lengths. |
+| `BrownianMobilityModel` | Independent Gaussian increments per coordinate. |
+| `ReferencePointGroupMobilityModel` | A group of devices following one moving reference point. |
+| `MobilityModelFactory` | Maps the `model` attribute of the XML file to a class, and accepts a fully qualified class name. |
 | `MobilityModelNull` | Null Object. |
 
-`Location` is the type passed to mobility model constructors. `MobilityModel` exposes `generatePath()`, `updateLocation(double)`, `getCurrentLocation()`, `getClosestEdgeDataCenter()`, `isMobile()`, and the speed and duration setters. The abstract method is `getNextLocation(Location)`.
+`Location` is the type passed to mobility model constructors. `MobilityModel` exposes `generatePath()`, `updateLocation(double)`, `getCurrentLocation()`, `getClosestEdgeDataCenter()`, `isMobile()`, the speed and duration setters, and `setParameters(Map)` for the options read from the scenario file. The abstract method is `getNextLocation(Location)`.
+
+A model reads its options with `getParameter(name, default)`, `getParameterInt`, `getParameterBoolean`, and `getRequiredParameter`, and uses the protected geometry helpers `getMapWidth()`, `getMapLength()`, `getStepDistance()`, `getTicksCount()`, `randomInRange(min, max)`, `moveTowards(from, target, distance)`, `reached(from, target, tolerance)`, and `reflectLocation(location)` instead of repeating the arithmetic. All option names are matched case-insensitively, and an option that is not a number fails with the model name and the option name in the message.
 
 ## Contracts and invariants
 
@@ -342,7 +382,7 @@ These are the invariants that hold across the public API. Custom implementations
 3. **Bits and watt-hours inside the simulator.** Sizes are bits and energy is watt-hours. Configuration units are converted during parsing.
 4. **Failures are values, not exceptions.** A task with no destination uses a `FailureReason`, not an exception. Exceptions abort a scenario; use them only for programming errors.
 5. **Null Objects instead of null.** `ComputingNode.NULL`, `NetworkLink.NULL`, `MobilityModel.NULL`, and the energy Null Objects are safe to call. Do not assign `null` to these fields.
-6. **Per-scenario state is instance state.** Models are created fresh for each scenario. Static mutable state crosses scenario boundaries and breaks parallel runs.
+6. **Per-scenario state is instance state.** Models are created fresh for each scenario. Static mutable state crosses scenario boundaries and breaks parallel runs. `Randomness` is the one deliberate exception: it holds the seed and the draw counter as statics, and `beginScenario()` / `reset()` are called by the engine between scenarios so that a seeded run stays reproducible.
 7. **The event tags of a subclass start above the base range.** Use a distinct base such as `12000` for custom tags.
 8. **Lists from the generator are read-only by convention after initialization.** Changing them during the run invalidates caches and candidate lists.
 9. **A task that is submitted must eventually finish or fail.** The pipeline assumes no silent drops.
@@ -354,7 +394,7 @@ The Javadoc contains the full list of methods, parameters, returns, and `@see` r
 
 ## Version notes
 
-This documentation describes PureEdgeSim 5.6. The latest published Maven Central artifact may lag the repository. Check the version in `pom.xml` and the README before copying dependency snippets.
+This documentation describes PureEdgeSim 5.7. The latest published Maven Central artifact may lag the repository. Check the version in `pom.xml` and the README before copying dependency snippets.
 
 ## Where to go next
 

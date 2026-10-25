@@ -11,7 +11,7 @@ The behavioral details of the defaults are in [Models](models.md). Read that fir
 | Task arrival pattern or task fields | `setCustomTaskGenerator` | `TaskGenerator` or `DefaultTaskGenerator` |
 | Task object itself | `setCustomTaskClass` on your generator | `TaskAbstract` or `DefaultTask` |
 | Per-node resources, queueing, execution | `setCustomComputingNode` | `DefaultComputingNode` |
-| Device movement | `setCustomMobilityModel` | `MobilityModel` |
+| Device movement | `setCustomMobilityModel`, or the `model` attribute per device type | `MobilityModel` |
 | Routing, transfers, caching | `setCustomNetworkModel` | `DefaultNetworkModel` or `NetworkModel` |
 | Topology layout | `setCustomTopologyCreator` | `DefaultTopologyCreator` |
 | Node and device creation | `setCustomComputingNodesGenerator` | `DefaultComputingNodesGenerator` |
@@ -76,6 +76,8 @@ public class UrgentTaskGenerator extends DefaultTaskGenerator {
 ```
 
 The default generator creates tasks through reflection with a single `int` constructor argument, then fills the standard fields. Your custom task can add fields, but the generator will not populate them unless you override `insert` or `generate`.
+
+Every field of a generated task is drawn from the distribution attached to the application parameter, through `Application.sampleRequestSize()`, `sampleResultsSize()`, `sampleContainerSize()`, `sampleTaskLength()`, `sampleLatency()` and `sampleTasksPerMinute()`. When the scenario file gives a plain number, that distribution is a constant one, so overriding the single-task `insert(app, dev, appParams, time)` is enough to change the shape of a task, while overriding `generateTasksForDevice` or `generateRandomlyArrivingTasks` changes when tasks appear.
 
 To change the traffic pattern itself, override `generate()` or `generateTasksForDevice`. A periodic generator that ignores the application rates can look like this:
 
@@ -171,6 +173,8 @@ Subclass `ComputingNode` directly only if you need a fundamentally different nod
 
 ## Custom mobility model
 
+PureEdgeSim already ships random-waypoint, random-walk, Gauss-Markov, Manhattan, waypoint, circular, Lévy-walk, Brownian and reference-point-group models, selected per device type with the `model` attribute of the `<mobility>` element (see [Models](models.md#mobility-model)). Write your own only when none of them fits.
+
 A mobility model only has to answer one question: given the current location, where is the device at the next update tick? The base class handles path precomputation, closest data center lookup, and time-indexed lookup.
 
 ```java
@@ -181,15 +185,16 @@ import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
-public class CircularMobilityModel extends MobilityModel {
+public class PatrolMobilityModel extends MobilityModel {
 
     protected double angle = 0;
     protected final double radius;
 
-    public CircularMobilityModel(SimulationManager simulationManager, Location startLocation) {
+    public PatrolMobilityModel(SimulationManager simulationManager, Location startLocation) {
         super(simulationManager, startLocation);
-        radius = Math.min(SimulationParameters.simulationMapLength,
-                SimulationParameters.simulationMapWidth) / 4.0;
+        // Options come from the attributes of the <mobility> element.
+        radius = getParameter("radius", Math.min(SimulationParameters.simulationMapLength,
+                SimulationParameters.simulationMapWidth) / 4.0);
     }
 
     @Override
@@ -197,14 +202,23 @@ public class CircularMobilityModel extends MobilityModel {
         angle += Math.toRadians(1);
         double centerX = SimulationParameters.simulationMapLength / 2.0;
         double centerY = SimulationParameters.simulationMapWidth / 2.0;
-        return new Location(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle));
+        return reflectLocation(new Location(centerX + radius * Math.cos(angle),
+                centerY + radius * Math.sin(angle)));
     }
 }
 ```
 
+Read your options through `getParameters()`, `getParameter(name, default)`, `getParameterInt`, `getParameterBoolean` or `getRequiredParameter`; names are matched case-insensitively and every attribute except `model` becomes an option. The base class also provides the geometry helpers used above: `getStepDistance()` (`speed * update_interval`), `getTicksCount()`, `randomInRange(min, max)`, `moveTowards(from, target, distance)`, `reached(from, target, tolerance)` and `reflectLocation(location)`, which brings a device that crossed a border back into the map. Use them instead of re-implementing the arithmetic, and read `SimulationParameters.updateInterval` rather than assuming one second.
+
 The generator sets `isMobile`, speed, pause durations, and mobility durations from the device's XML entry before `generatePath()` is called. If `isMobile` is false, `generatePath()` returns early and the device stays at its initial location. Your `getNextLocation` is then never called.
 
+Register the class with `setCustomMobilityModel(PatrolMobilityModel.class)` to make it the default for every device, or keep the default class and name yours in the scenario file: `<mobility model="examples.PatrolMobilityModel">true</mobility>`. The factory calls the `(SimulationManager, Location)` constructor reflectively, so keep that signature.
+
 If your model needs to react to events rather than follow a precomputed path, override `generatePath()` and `updateLocation(...)`, and make sure `getClosestEdgeDataCenter()` still returns a valid attachment. The lazy `LocationAwareNode.connectWith(...)` logic depends on it.
+
+## Custom probability distribution
+
+Any numeric value of the scenario files may be drawn from a distribution instead of being fixed. To add one, implement `Distribution` (`sample()`, `mean()`, `getName()`, `isDiscrete()`, and the optional `getMin()`/`getMax()` bounds), then register its name in `DistributionFactory`. Continuous implementations extend `AbstractDistribution`, discrete ones extend `AbstractDiscreteDistribution`, which already truncates `sampleInt()` to the drawn outcome. Keep the theoretical mean exact: the reports print the mean of the distribution, so an inconsistent `mean()` makes the CSV and the charts lie about the scenario.
 
 ## Custom network model
 
@@ -312,7 +326,7 @@ Changing the event tags or the schedule order can break the simulation silently.
 2. **Turn on deep logging.** `deep_log_enabled=true` shows the model's decisions and the task identifiers. Turn it off for long runs.
 3. **Compare against the default.** Run the same configuration with and without your custom class. If the task count, failure reasons, or CSV row count differ in ways you cannot explain, the model is changing more than intended.
 4. **Check units in the CSV.** A delay that is exactly 1000 times too large usually means a milliseconds/seconds mix. A bandwidth that has no effect usually means `realistic_network_model=false`.
-5. **Run twice.** Task times and mobility are random. Two runs with the same configuration should be statistically compatible, not identical. If you need identical runs for debugging, reduce randomization in a temporary subclass rather than changing the default.
+5. **Run twice.** Task times, sizes and mobility are random. Two runs with the same configuration should be statistically compatible, not identical. To get one identical run for debugging, set `random_seed` in `simulation_parameters.properties`: every module then draws from that seed, including your custom model, as long as it uses `Randomness.getRandom()` instead of creating its own generator.
 
 ## A checklist before you trust a custom model
 

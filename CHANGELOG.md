@@ -1,5 +1,51 @@
 # Changelog
 
+## Version 5.7 Changelog (October 25th 2026)
+
+*   Added the `distribution` package: sixteen named probability distributions
+    (constant, uniform, triangular, normal, log-normal, exponential, gamma,
+    Erlang, Weibull, Pareto, beta, Poisson, Bernoulli, geometric, binomial and
+    categorical), the `BoundedDistribution` and `ScaledDistribution` wrappers, and
+    the `SpecialFunctions` helpers behind the gamma and beta laws.
+*   Every numeric parameter of the scenario files may now be a distribution
+    instead of a fixed number. Task sizes, task length, latency, generation rate,
+    device resources, speed, pause durations, battery level and node coordinates
+    all draw their values, so a scenario can model heterogeneous hardware and
+    bursty traffic rather than an average device replayed a thousand times.
+*   Added the optional `<arrival>` element to `applications.xml`, which replaces
+    the evenly spaced task pattern of each minute by a stochastic arrival process.
+*   The reports print the mean of each distribution, so a randomized scenario
+    stays comparable with the fixed-value scenario it was derived from.
+*   Added eight movement models: random walk, Gauss-Markov, Manhattan, waypoint
+    list, circular, Levy walk, Brownian motion and reference point group. They are
+    selected per device type with `<mobility model="...">`, and
+    `MobilityModelFactory` resolves the built-in names, their aliases, or the name
+    of a custom class.
+*   Extended `MobilityModel` with what the new models need: case insensitive typed
+    option accessors, step distance, tick count, and the geometry helpers
+    `moveTowards`, `reached`, `randomInRange` and `reflectLocation`.
+*   Devices can be placed around a point rather than uniformly over the map, by
+    giving distribution-valued coordinates to a `<location>` element, which is how
+    a hotspot of users is modeled.
+*   Added the `random_seed` parameter and the `Randomness` service behind it. A
+    seeded run is reproducible; each parallel scenario keeps its own stream, so
+    scenarios that run at the same time do not replay the same draws.
+*   Fixed a `nextInt(0)` failure when the pool of generating devices ran out, and
+    the same failure when a device was configured with equal minimum and maximum
+    pause or mobility durations.
+*   The default mobility model no longer waits for `SecureRandom.getInstanceStrong()`
+    at startup; every model now draws from the single `Randomness` stream, so a run
+    is reproducible from the seed and the location tables are generated faster.
+*   The scalar setters of `Application` also reset the matching distribution, so
+    assigning a fixed value to a parameter removes its randomness.
+*   Configuration errors now name the file, the element and the offending value
+    instead of failing with a bare exception message.
+*   Extended the automated test suite from 523 to 911 unit tests, covering every
+    distribution, every movement model, and the parsing of distribution-valued
+    scenario parameters. Unit-only coverage is 99% of instructions and 97% of
+    branches.
+*   Bumped the project version to 5.7.
+
 ## Version 5.6 Changelog (October 25th 2026)
 
 *   Rewrote the shipped simulation parameter file with sectioned documentation covering units, defaults, valid ranges, and runtime effects for every parameter.

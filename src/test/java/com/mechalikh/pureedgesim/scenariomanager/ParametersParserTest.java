@@ -8,8 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import com.mechalikh.pureedgesim.AbstractTest;
+import com.mechalikh.pureedgesim.distribution.Randomness;
 
 class ParametersParserTest extends AbstractTest {
 
@@ -28,6 +31,7 @@ class ParametersParserTest extends AbstractTest {
 	@AfterEach
 	void cleanUp() throws Exception {
 		TempSettingsFiles.resetDirectory();
+		Randomness.reset();
 	}
 
 	@Test
@@ -201,5 +205,74 @@ class ParametersParserTest extends AbstractTest {
 	void rejectsEmptyNumericProperties() throws Exception {
 		Path file = TempSettingsFiles.propertiesWith("width", "");
 		assertThrows(NumberFormatException.class, () -> new ParametersParser(file.toString()).parse());
+	}
+
+	// ------------------------------------------------------------------
+	// The random seed
+	// ------------------------------------------------------------------
+
+	private double[] drawFiveValues() {
+		Random random = Randomness.getRandom();
+		double[] values = new double[5];
+		for (int i = 0; i < values.length; i++)
+			values[i] = random.nextDouble();
+		return values;
+	}
+
+	@Test
+	void aConfiguredSeedMakesTheDrawsReproducible() throws Exception {
+		Path file = TempSettingsFiles.propertiesWith("random_seed", "12345");
+		assertTrue(new ParametersParser(file.toString()).parse());
+		assertTrue(Randomness.isSeeded());
+		assertEquals(12345, Randomness.getSeed());
+		double[] first = drawFiveValues();
+
+		// Reparsing the same scenario restarts the stream from the same place.
+		assertTrue(new ParametersParser(file.toString()).parse());
+		assertArrayEquals(first, drawFiveValues(), 0.0);
+	}
+
+	@Test
+	void twoDifferentSeedsGiveTwoDifferentStreams() throws Exception {
+		assertTrue(new ParametersParser(TempSettingsFiles.propertiesWith("random_seed", "1").toString()).parse());
+		double[] withSeedOne = drawFiveValues();
+
+		assertTrue(new ParametersParser(TempSettingsFiles.propertiesWith("random_seed", "2").toString()).parse());
+		double[] withSeedTwo = drawFiveValues();
+
+		assertFalse(Arrays.equals(withSeedOne, withSeedTwo));
+	}
+
+	@Test
+	void anEmptySeedKeepsTheNonDeterministicGenerator() throws Exception {
+		Randomness.setSeed(99);
+		Path file = TempSettingsFiles.propertiesWith("random_seed", "");
+		assertTrue(new ParametersParser(file.toString()).parse());
+		assertFalse(Randomness.isSeeded(), "an empty random_seed must not freeze the generator");
+	}
+
+	@Test
+	void aMissingSeedClearsTheOneLeftByThePreviousScenario() throws Exception {
+		Randomness.setSeed(7);
+		Path file = TempSettingsFiles.propertiesWithout("random_seed");
+		assertTrue(new ParametersParser(file.toString()).parse());
+		assertFalse(Randomness.isSeeded());
+		assertEquals(0, Randomness.getSeed());
+	}
+
+	@Test
+	void aNegativeSeedIsAccepted() throws Exception {
+		assertTrue(new ParametersParser(TempSettingsFiles.propertiesWith("random_seed", "-1").toString()).parse());
+		assertTrue(Randomness.isSeeded());
+		assertEquals(-1, Randomness.getSeed());
+	}
+
+	@Test
+	void rejectsANonNumericSeed() throws Exception {
+		Path file = TempSettingsFiles.propertiesWith("random_seed", "42.5");
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+				() -> new ParametersParser(file.toString()).parse());
+		assertTrue(exception.getMessage().contains("random_seed"), exception.getMessage());
+		assertTrue(exception.getMessage().contains("whole number"), exception.getMessage());
 	}
 }
