@@ -47,10 +47,9 @@ class NetworkingNodeTest extends DatacentersTestSupport {
 		node.setCurrentLink(deviceToDevice, LinkOrientation.DEVICE_TO_DEVICE);
 		assertSame(deviceToDevice, node.getCurrentLink(LinkOrientation.DEVICE_TO_DEVICE));
 
-		// Both the up and down accessors currently resolve to the up link.
 		node.setCurrentLink(down, LinkOrientation.DOWN_LINK);
 		assertSame(down, node.getCurrentLink(LinkOrientation.DOWN_LINK));
-		assertSame(down, node.getCurrentLink(LinkOrientation.UP_LINK));
+		assertSame(up, node.getCurrentLink(LinkOrientation.UP_LINK));
 	}
 
 	@Test

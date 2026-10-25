@@ -33,9 +33,9 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
  * current links to follow the closest edge data center as they move.
  */
 public abstract class NetworkingNode extends AbstractNode  {
-	/** Link used to reach the current edge data center. */
+	/** Link used to send data to the current edge data center. */
 	protected NetworkLink currentUpLink = NetworkLink.NULL;
-	/** Reserved downlink field; the default topology uses the uplink for both directions. */
+	/** Link used to receive data from the current edge data center. */
 	protected NetworkLink currentDownLink = NetworkLink.NULL;
 	/** Direct device-to-device WiFi link. */
 	protected NetworkLink currentDeviceToDeviceWifiLink = NetworkLink.NULL;
@@ -54,10 +54,10 @@ public abstract class NetworkingNode extends AbstractNode  {
 	/**
 	 * Returns the current network link of the specified type. For example, if the
 	 * type is {@link LinkOrientation#UP_LINK}, it returns the link that is used currently
-	 * to send data to the cloud or edge data centers. Used only when the type of
-	 * this node is {@link SimulationParameters.TYPES#EDGE_DEVICE}. The default
-	 * topology represents the uplink and downlink with the same WiFi link, so both
-	 * orientations return that link.
+	 * to send data to the cloud or edge data centers, and if it is
+	 * {@link LinkOrientation#DOWN_LINK}, the link used to receive their data. Used
+	 * only when the type of this node is
+	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}.
 	 * 
 	 * @param linkType the type of the link to retrieve
 	 * @return the current network link of the specified type
@@ -68,7 +68,7 @@ public abstract class NetworkingNode extends AbstractNode  {
 		case UP_LINK:
 			return this.currentUpLink;
 		case DOWN_LINK:
-			return this.currentUpLink;
+			return this.currentDownLink;
 		case DEVICE_TO_DEVICE:
 			return this.currentDeviceToDeviceWifiLink;
 		default:
@@ -77,10 +77,10 @@ public abstract class NetworkingNode extends AbstractNode  {
 	}
 
 	/**
-	 * Sets the network link that is used currently to send data to the cloud or
-	 * edge data centers.Used only when the type of this node is
-	 * {@link SimulationParameters.TYPES#EDGE_DEVICE}. The uplink and downlink
-	 * orientations both update the same current link.
+	 * Sets the network link that is used currently to send data to, or receive it
+	 * from, the cloud or edge data centers. Used only when the type of this node
+	 * is {@link SimulationParameters.TYPES#EDGE_DEVICE}. The uplink and downlink
+	 * are two different links, one per direction.
 	 * 
 	 * @param link     the network link.
 	 * @param linkType whether the link is used for the uplink or the downlink.
@@ -92,7 +92,7 @@ public abstract class NetworkingNode extends AbstractNode  {
 			this.currentUpLink = link;
 			break;
 		case DOWN_LINK:
-			this.currentUpLink = link;
+			this.currentDownLink = link;
 			break;
 		case DEVICE_TO_DEVICE:
 			this.currentDeviceToDeviceWifiLink = link;

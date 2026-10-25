@@ -71,19 +71,56 @@ class DefaultComputingNodesGeneratorTest extends DatacentersTestSupport {
 
 		generator.generateDatacentersAndDevices();
 
-		assertEquals(20, generator.getAllNodesList().size());
-		assertEquals(9, generator.getAllNodesListSensorsExcluded().size());
-		assertEquals(18, generator.getMistOnlyList().size());
-		assertEquals(7, generator.getMistOnlyListSensorsExcluded().size());
-		assertEquals(8, generator.getMistAndCloudListSensorsExcluded().size());
-		assertEquals(8, generator.getMistAndEdgeListSensorsExcluded().size());
+		assertEquals(22, generator.getAllNodesList().size());
+		assertEquals(10, generator.getAllNodesListSensorsExcluded().size());
+		assertEquals(20, generator.getMistOnlyList().size());
+		assertEquals(8, generator.getMistOnlyListSensorsExcluded().size());
+		assertEquals(9, generator.getMistAndCloudListSensorsExcluded().size());
+		assertEquals(9, generator.getMistAndEdgeListSensorsExcluded().size());
 		assertEquals(1, generator.getCloudOnlyList().size());
 		assertEquals(1, generator.getEdgeOnlyList().size());
 		assertEquals(2, generator.getEdgeAndCloudList().size());
 		assertTrue(generator.getOrchestratorsList().isEmpty());
 
 		long sensors = generator.getMistOnlyList().stream().filter(ComputingNode::isSensor).count();
-		assertEquals(11, sensors);
+		assertEquals(12, sensors);
+	}
+
+	@Test
+	void deviceSharesAreApportionedWithoutTruncation() {
+		createSimulationManager(20);
+		DefaultComputingNodesGenerator generator = newGenerator();
+
+		generator.generateDatacentersAndDevices();
+
+		// 18, 11, 11, 28 and 32 percent of 20 devices: floors give 18 devices,
+		// the two largest remainders give one more to the first and fourth types.
+		assertEquals(4, generator.getMistOnlyList().stream().filter(d -> d.getMipsPerCore() == 25_000).count());
+		assertEquals(2, generator.getMistOnlyList().stream().filter(d -> d.getMipsPerCore() == 16_000).count());
+		assertEquals(2, generator.getMistOnlyList().stream().filter(d -> d.getMipsPerCore() == 110_000).count());
+		assertEquals(12, generator.getMistOnlyList().stream().filter(ComputingNode::isSensor).count());
+	}
+
+	@Test
+	void theRemainingDevicesGoToTheLargestRemainders() {
+		createSimulationManager(10);
+		DefaultComputingNodesGenerator generator = newGenerator();
+		String type = deviceXml(33);
+		SimulationParameters.edgeDevicesFile = writeTempFile(tempDir, "edge_devices_thirds.xml",
+				"<edge_devices>" + type + type.replace("<mips>1000</mips>", "<mips>2000</mips>")
+						+ type.replace("<percentage>33</percentage>", "<percentage>34</percentage>")
+								.replace("<mips>1000</mips>", "<mips>3000</mips>")
+						+ "</edge_devices>")
+				.toString();
+
+		generator.generateEdgeDevices();
+
+		// 3.3, 3.3 and 3.4 devices: all are floored, then the 34 percent type,
+		// which has the largest remainder, gets the tenth device.
+		assertEquals(10, generator.getMistOnlyList().size());
+		assertEquals(3, generator.getMistOnlyList().stream().filter(d -> d.getMipsPerCore() == 1000).count());
+		assertEquals(3, generator.getMistOnlyList().stream().filter(d -> d.getMipsPerCore() == 2000).count());
+		assertEquals(4, generator.getMistOnlyList().stream().filter(d -> d.getMipsPerCore() == 3000).count());
 	}
 
 	@Test
@@ -234,7 +271,7 @@ class DefaultComputingNodesGeneratorTest extends DatacentersTestSupport {
 	}
 
 	@Test
-	void missingDeviceInstancesAreFilledWithTheLastDeviceType() {
+	void aPercentageBelowHundredGeneratesOnlyItsShareOfDevices() {
 		createSimulationManager(20);
 		DefaultComputingNodesGenerator generator = newGeneratorWithMockedLogger();
 		SimulationParameters.edgeDevicesFile = writeTempFile(tempDir, "edge_devices_50.xml",
@@ -242,16 +279,17 @@ class DefaultComputingNodesGeneratorTest extends DatacentersTestSupport {
 
 		generator.generateEdgeDevices();
 
-		assertEquals(20, generator.getMistOnlyList().size());
-		assertEquals(20, generator.getMistOnlyListSensorsExcluded().size());
-		assertEquals(20, generator.getAllNodesList().size());
+		// A 50 percent share of 20 devices is half of them, not all of them padded
+		// with extra instances of the last type.
+		assertEquals(10, generator.getMistOnlyList().size());
+		assertEquals(10, generator.getMistOnlyListSensorsExcluded().size());
+		assertEquals(10, generator.getAllNodesList().size());
 	}
 
 	/**
-	 * The generator warns through the simulation logger before padding the device
-	 * list. The real logger cannot format the "100%" literal of that warning
-	 * (String.format interprets it as a conversion), which aborts generation, so a
-	 * mock logger is used to exercise the padding logic itself.
+	 * The generator warns through the simulation logger when the percentages do
+	 * not sum to 100. A mock logger is used here so that the warning goes nowhere
+	 * and the allocation itself is exercised.
 	 */
 	private DefaultComputingNodesGenerator newGeneratorWithMockedLogger() {
 		SimulationManager mockedManager = mock(SimulationManager.class);
@@ -263,7 +301,7 @@ class DefaultComputingNodesGeneratorTest extends DatacentersTestSupport {
 	}
 
 	@Test
-	void percentagesAboveHundredStopTheGeneration() {
+	void percentagesAboveHundredAreCappedAtTheScenarioCount() {
 		createSimulationManager(20);
 		DefaultComputingNodesGenerator generator = newGeneratorWithMockedLogger();
 		SimulationParameters.edgeDevicesFile = writeTempFile(tempDir, "edge_devices_200.xml",
@@ -271,8 +309,8 @@ class DefaultComputingNodesGeneratorTest extends DatacentersTestSupport {
 
 		generator.generateEdgeDevices();
 
-		// Generation stops as soon as more devices than expected are created.
-		assertEquals(21, generator.getMistOnlyList().size());
+		// A single type cannot generate twice the devices of the scenario.
+		assertEquals(20, generator.getMistOnlyList().size());
 	}
 
 	@Test

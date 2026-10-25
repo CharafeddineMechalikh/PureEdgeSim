@@ -135,6 +135,8 @@ public class DefaultTaskGenerator extends TaskGenerator {
 		double simulationSeconds = simulationTime * 60;
 		// The device is not assumed to be busy at the very beginning of the simulation.
 		double time = random.nextDouble() * Math.max(1, arrival.sample());
+		// A first gap below one second would otherwise truncate to a task at t=0.
+		time = Math.max(1, (int) time);
 		while (time < simulationSeconds) {
 			insert(app, dev, appParams, (int) time);
 			// A gap of less than one second would keep the loop busy without moving.

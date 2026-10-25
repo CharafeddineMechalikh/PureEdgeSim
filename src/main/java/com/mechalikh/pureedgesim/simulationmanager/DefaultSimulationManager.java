@@ -359,10 +359,17 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 	 * @return task execution status.
 	 */
 	public boolean taskFailed(Task task, int phase) {
-		// task not generated because device died
 		if (task.getEdgeDevice().isDead()) {
-			simLog.incrementFailedBeacauseDeviceDead(task);
 			task.setFailureReason(Task.FailureReason.FAILED_BECAUSE_DEVICE_DEAD);
+			// Died before the task was sent: it is never offloaded, so it counts as
+			// not generated rather than failed.
+			if (phase == 0) {
+				task.getEdgeDevice().setApplicationPlaced(false);
+				simLog.incrementNotGeneratedBeacuseDeviceDead();
+				tasksCount++;
+				return true;
+			}
+			simLog.incrementFailedBeacauseDeviceDead(task);
 			return setFailed(task, phase);
 		}
 		// or if the orchestrator died

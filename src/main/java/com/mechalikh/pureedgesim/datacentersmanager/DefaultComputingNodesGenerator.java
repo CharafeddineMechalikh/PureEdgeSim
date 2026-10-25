@@ -25,7 +25,10 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -106,26 +109,21 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(devicesFile);
 			NodeList nodeList = doc.getElementsByTagName("device");
-			Element edgeElement = null;
 
 			// Load all devices types in edge_devices.xml file.
+			List<Element> deviceTypes = new ArrayList<>();
+			List<Double> percentages = new ArrayList<>();
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node edgeNode = nodeList.item(i);
-				edgeElement = (Element) edgeNode;
-				generateDevicesInstances(edgeElement);
+				Element edgeElement = (Element) edgeNode;
+				deviceTypes.add(edgeElement);
+				percentages.add(sample(edgeElement, "percentage", 0, Double.MAX_VALUE));
 			}
 
-			// if percentage of generated devices is < 100%.
-			if (mistOnlyList.size() < getSimulationManager().getScenario().getDevicesCount())
-				getSimulationManager().getSimulationLogger().print("%s - Wrong percentages values (the sum is inferior than 100%), check edge_devices.xml file !", getClass().getSimpleName());
-			// Add more devices.
-			if (edgeElement != null) {
-				int missingInstances = getSimulationManager().getScenario().getDevicesCount() - mistOnlyList.size();
-				for (int k = 0; k < missingInstances; k++) {
-					ComputingNode newDevice = createComputingNode(edgeElement, SimulationParameters.TYPES.EDGE_DEVICE);
-					insertEdgeDevice(newDevice);
-				}
-			}
+			// Expand every type with the number of instances its share earns.
+			int[] instances = allocateInstances(percentages);
+			for (int i = 0; i < deviceTypes.size(); i++)
+				generateDevicesInstances(deviceTypes.get(i), instances[i]);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -149,31 +147,87 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 	}
 	
 	/**
-	 * Generates the required number of instances for each type of edge devices.
+	 * Generates the required number of instances of one type of edge devices.
 	 * 
 	 * @param type The type of edge devices.
 	 */
 	protected void generateDevicesInstances(Element type) {
+		double percentage = sample(type, "percentage", 0, Double.MAX_VALUE);
+		generateDevicesInstances(type,
+				allocateInstances(Collections.singletonList(percentage))[0]);
+	}
 
-		int instancesPercentage = (int) sample(type, "percentage", 0, Double.MAX_VALUE);
-
-		// Find the number of instances of this type of devices
-		int devicesInstances = getSimulationManager().getScenario().getDevicesCount() * instancesPercentage / 100;
-
-		for (int j = 0; j < devicesInstances; j++) {
-			if (mistOnlyList.size() > getSimulationManager().getScenario().getDevicesCount()) {
-				getSimulationManager().getSimulationLogger().print("%s - Wrong percentages values (the sum is superior than 100%), check edge_devices.xml file !",getClass().getSimpleName());
-				break;
-			}
-
+	/**
+	 * Generates the given number of instances of one type of edge devices.
+	 * 
+	 * @param type      The type of edge devices.
+	 * @param instances The number of devices to create.
+	 */
+	protected void generateDevicesInstances(Element type, int instances) {
+		for (int j = 0; j < instances; j++) {
 			try {
 				insertEdgeDevice(createComputingNode(type, SimulationParameters.TYPES.EDGE_DEVICE));
 			} catch (NoSuchAlgorithmException | NoSuchMethodException | SecurityException | InstantiationException
 					| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
-
 		}
+	}
+
+	/**
+	 * Distributes the devices of the scenario over the declared device types.
+	 * <p>
+	 * Each percentage is a share of the fleet, so the exact number of devices of a
+	 * type is <code>devicesCount * percentage / 100</code>, which is rarely an
+	 * integer. Every share is rounded down first, then the types with the largest
+	 * fractional part each receive one of the remaining devices (the largest
+	 * remainder method). This respects the declared shares as closely as possible
+	 * and makes the total exactly equal to the scenario's device count, instead of
+	 * truncating every type and padding the list with extra devices of the last
+	 * type.
+	 * <p>
+	 * When the percentages do not sum to 100, a warning is printed and the
+	 * declared total is used, capped at the scenario's device count.
+	 *
+	 * @param percentages the percentage of each device type, in file order
+	 * @return the number of instances to create for each type, in file order
+	 */
+	protected int[] allocateInstances(List<Double> percentages) {
+		int devicesCount = getSimulationManager().getScenario().getDevicesCount();
+		int[] allocation = new int[percentages.size()];
+		double total = 0;
+		for (double percentage : percentages)
+			total += Math.max(0, percentage);
+		if (total <= 0 || devicesCount <= 0)
+			return allocation;
+
+		if (Math.abs(total - 100) > 1e-9)
+			getSimulationManager().getSimulationLogger().print(
+					"%s - The device percentages should sum to 100, found " + total
+							+ ", check edge_devices.xml file !",
+					getClass().getSimpleName());
+
+		int target = (int) Math.round(devicesCount * total / 100);
+		target = Math.min(devicesCount, Math.max(0, target));
+
+		double[] remainders = new double[percentages.size()];
+		int allocated = 0;
+		for (int i = 0; i < percentages.size(); i++) {
+			double share = target * Math.max(0, percentages.get(i)) / total;
+			allocation[i] = (int) Math.floor(share);
+			remainders[i] = share - allocation[i];
+			allocated += allocation[i];
+		}
+		while (allocated < target) {
+			int largest = 0;
+			for (int i = 1; i < remainders.length; i++)
+				if (remainders[i] > remainders[largest])
+					largest = i;
+			allocation[largest]++;
+			remainders[largest] = -1;
+			allocated++;
+		}
+		return allocation;
 	}
 	
 	/**

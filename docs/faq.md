@@ -105,11 +105,7 @@ An average divided by a zero count. Common causes are a scenario with no complet
 
 ### Where is the MAN network usage in the CSV?
 
-It is not exported. MAN usage is computed and printed in the text report and console, but the CSV contains LAN and WAN usage columns. Use `save_log_file=true` if you need MAN numbers, or extend `SimLog`.
-
-### Why are the first network column and the LAN column identical?
-
-That is a known labeling issue in the current writer. The column labeled "Network usage (s)" receives LAN usage, and the next LAN column receives the same value. Do not add them together. See [Output and metrics](output-and-metrics.md).
+The "Network usage (s)" column is the total of the three networks (LAN, MAN and WAN), and the two following columns give the WAN and LAN parts. MAN has no column of its own, but it is part of the total: subtract the WAN and LAN columns from it, or read the `Man=` line of the text report (`save_log_file=true`), or extend `SimLog`.
 
 ## Charts and visualization
 

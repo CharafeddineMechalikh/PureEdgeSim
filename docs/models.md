@@ -214,7 +214,7 @@ Two separate mechanisms exist:
 - `EnergyModelNetworkLink` charges `energyPerBit * transmittedBits` for wired links. WAN and MAN links receive this model; the per-bit values come from the properties file.
 - `EnergyModelComputingNode.updatewirelessEnergyConsumption(bits, flag)` charges edge devices for sending and receiving over wireless links, using the per-bit values for the device's configured connectivity (`wifi`, `cellular`, or `ethernet`).
 
-The wireless flag mapping in the current code deserves an explicit warning. The method adds `transmissionEnergyPerBits` when the flag is `RECEPTION`, and `receptionEnergyPerBits` when the flag is `TRANSMISSION`. In other words, the labels are inverted relative to the field names. `DefaultNetworkModel` passes the flags according to the role of each node, so the simulation does charge every transfer, but if you rely on the distinction between transmit and receive energy, verify the branch before drawing conclusions. This is a known inconsistency, not a configuration error.
+`DefaultNetworkModel` passes the flag according to the role of each node, so a device that sends a transfer is charged the transmission rate of its connectivity and a device that receives one is charged the reception rate. The reception and transmission rates of `wifi`, `cellular`, and `ethernet` are configured separately in the properties file.
 
 ### What to override
 
@@ -509,7 +509,6 @@ Each arrow in that list is a place where a model can be replaced without touchin
 
 These are properties of the current default models that matter when interpreting results:
 
-- Wireless transmit and receive energy labels are inverted in `updatewirelessEnergyConsumption`, as described above.
 - TRADE_OFF ignores network state and never decays its load counter.
 - The average CPU utilization is a lifetime ratio, not an instantaneous average, and it is capped at 100 percent.
 - With the realistic network model off, a transfer completes in one step and its delay is computed from the bandwidth share available at that instant; this removes temporal congestion but not the bandwidth dependence.

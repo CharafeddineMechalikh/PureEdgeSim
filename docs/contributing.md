@@ -284,7 +284,7 @@ Include:
 
 If the bug is about a metric, attach the CSV row and explain which column is wrong and what value you expected. If it is about a chart, say whether `save_charts` and the real-time charts were enabled and whether the run was sequential or parallel.
 
-Experimental results that look surprising are not automatically bugs. Check [Output and metrics](output-and-metrics.md) first; several columns have documented quirks, and tasks in flight at the horizon are neither successes nor failures.
+Experimental results that look surprising are not automatically bugs. Check [Output and metrics](output-and-metrics.md) first; several columns have non-obvious definitions, and tasks in flight at the horizon are neither successes nor failures.
 
 ## Code of conduct
 

@@ -92,6 +92,8 @@ public abstract class EnergyAwareNode extends NetworkingNode {
 	 * @param time the simulation time of death, in seconds
 	 */
 	protected void setDeath(Boolean dead, double time) {
+		if (dead && !isDead)
+			simulationManager.getSimulationLogger().incrementDeadDevices();
 		isDead = dead;
 		deathTime = time;
 	}

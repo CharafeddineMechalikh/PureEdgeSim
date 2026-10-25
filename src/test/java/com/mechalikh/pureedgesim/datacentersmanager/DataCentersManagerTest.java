@@ -28,15 +28,15 @@ class DataCentersManagerTest extends DatacentersTestSupport {
 		assertNotNull(manager.getTopology());
 		assertEquals(1, manager.getComputingNodesGenerator().getCloudOnlyList().size());
 		assertEquals(1, manager.getComputingNodesGenerator().getEdgeOnlyList().size());
-		// The XML percentages generate 18 devices for a 20-device scenario.
-		assertEquals(18, manager.getComputingNodesGenerator().getMistOnlyList().size());
+		// The XML percentages generate the 20 devices of the scenario.
+		assertEquals(20, manager.getComputingNodesGenerator().getMistOnlyList().size());
 
 		InfrastructureGraph topology = manager.getTopology();
 		assertTrue(topology.getWanLinks().size() > 0);
 		assertTrue(topology.getLanLinks().size() > 0);
 		assertTrue(topology.getManLinks().isEmpty());
-		// Cloud, edge data center, shared-WAN router and the 18 edge devices.
-		assertEquals(21, topology.getGraph().vertexSet().size());
+		// Cloud, edge data center, shared-WAN router and the 20 edge devices.
+		assertEquals(23, topology.getGraph().vertexSet().size());
 		assertEquals(4, topology.getPathsMap().size());
 	}
 
@@ -52,7 +52,7 @@ class DataCentersManagerTest extends DatacentersTestSupport {
 	void withoutSharedWanTheCloudIsUsedDirectly() {
 		DataCentersManager manager = newDataCentersManager(20, false);
 
-		assertEquals(20, manager.getTopology().getGraph().vertexSet().size());
+		assertEquals(22, manager.getTopology().getGraph().vertexSet().size());
 		assertThrows(IllegalArgumentException.class,
 				() -> simulationManager.getNetworkModel().getWanUpUtilization());
 	}

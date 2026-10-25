@@ -85,12 +85,10 @@ class ComputingNodeTest extends DatacentersTestSupport {
 		node.setCurrentLink(deviceToDeviceLink, LinkOrientation.DEVICE_TO_DEVICE);
 		assertSame(deviceToDeviceLink, node.getCurrentLink(LinkOrientation.DEVICE_TO_DEVICE));
 
-		// The down-link orientation currently resolves to the up link (existing
-		// behaviour of NetworkingNode#getCurrentLink).
 		NetworkLink downLink = new NetworkLink(node, node, simulationManager, NetworkLinkTypes.LAN);
 		node.setCurrentLink(downLink, LinkOrientation.DOWN_LINK);
 		assertSame(downLink, node.getCurrentLink(LinkOrientation.DOWN_LINK));
-		assertSame(downLink, node.getCurrentLink(LinkOrientation.UP_LINK));
+		assertSame(upLink, node.getCurrentLink(LinkOrientation.UP_LINK));
 	}
 
 	@Test

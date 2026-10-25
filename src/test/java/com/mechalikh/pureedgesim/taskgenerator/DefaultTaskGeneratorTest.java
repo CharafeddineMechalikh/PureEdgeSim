@@ -276,6 +276,19 @@ class DefaultTaskGeneratorTest extends AbstractTest {
 	}
 
 	@Test
+	void anArrivalGapBelowOneSecondDoesNotPutTheFirstTaskAtZero() {
+		SimulationParameters.applicationList = List.of(new Application("Dense", 5, 100, 1.0, 8_000_000, 8_000_000,
+				8_000_000, 10, null, null, null, null, null, null, new ConstantDistribution(0.2)));
+		SimulationParameters.simulationDuration = 60;
+
+		List<Task> tasks = new DefaultTaskGenerator(manager).generate().stream().collect(Collectors.toList());
+
+		assertFalse(tasks.isEmpty());
+		assertTrue(tasks.stream().allMatch(task -> task.getTime() >= 1),
+				"the first task must not land at t=0");
+	}
+
+	@Test
 	void theArrivalPatternNeverRunsPastTheEndOfTheSimulation() {
 		SimulationParameters.applicationList = List.of(new Application("Fast", 60, 100, 1.0, 8_000_000, 8_000_000,
 				8_000_000, 10, null, null, null, null, null, null,
@@ -285,7 +298,9 @@ class DefaultTaskGeneratorTest extends AbstractTest {
 		DefaultTaskGenerator taskGenerator = new DefaultTaskGenerator(manager);
 		List<Task> tasks = taskGenerator.generate().stream().collect(Collectors.toList());
 
-		assertEquals(10 * 300, tasks.size(), "one task per second on each of the ten generating devices");
+		// The first task lands on the second after the initial gap, so a 300 second
+		// run holds the tasks of seconds 1 to 299 on each device.
+		assertEquals(10 * 299, tasks.size(), "one task per second after the initial gap on each of the ten generating devices");
 		for (Task task : tasks)
 			assertTrue(task.getTime() < 300, "task generated at " + task.getTime() + " s, after the end");
 	}

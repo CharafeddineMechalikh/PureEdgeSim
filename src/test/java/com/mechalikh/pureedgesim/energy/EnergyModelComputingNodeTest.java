@@ -74,7 +74,7 @@ class EnergyModelComputingNodeTest extends AbstractTest {
 		model.updateStaticEnergyConsumption();
 		model.updatewirelessEnergyConsumption(100, EnergyModelComputingNode.TRANSMISSION);
 
-		assertEquals(2.0 + 100 * 20, model.getTotalEnergyConsumption());
+		assertEquals(2.0 + 100 * 10, model.getTotalEnergyConsumption());
 	}
 
 	@Test
@@ -127,7 +127,7 @@ class EnergyModelComputingNodeTest extends AbstractTest {
 
 		model.updatewirelessEnergyConsumption(100, EnergyModelComputingNode.TRANSMISSION);
 
-		assertEquals(100 * 20, model.getTotalEnergyConsumption());
+		assertEquals(100 * 10, model.getTotalEnergyConsumption());
 	}
 
 	@Test
@@ -136,6 +136,16 @@ class EnergyModelComputingNodeTest extends AbstractTest {
 		model.setConnectivityType("wifi");
 
 		model.updatewirelessEnergyConsumption(100, EnergyModelComputingNode.RECEPTION);
+
+		assertEquals(100 * 40, model.getTotalEnergyConsumption());
+	}
+
+	@Test
+	void wifiConnectivityUsesWifiEnergyPerBitForTransmission() {
+		EnergyModelComputingNode model = new EnergyModelComputingNode(100, 20);
+		model.setConnectivityType("wifi");
+
+		model.updatewirelessEnergyConsumption(100, EnergyModelComputingNode.TRANSMISSION);
 
 		assertEquals(100 * 30, model.getTotalEnergyConsumption());
 	}

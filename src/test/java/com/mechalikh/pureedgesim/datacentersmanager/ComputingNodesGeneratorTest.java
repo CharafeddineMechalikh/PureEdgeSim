@@ -57,7 +57,7 @@ class ComputingNodesGeneratorTest extends DatacentersTestSupport {
 	void generatedListsAreBackedByTheGenerator() {
 		generator.generateDatacentersAndDevices();
 
-		assertEquals(20, generator.getAllNodesList().size());
+		assertEquals(22, generator.getAllNodesList().size());
 		assertEquals(2, generator.getEdgeAndCloudList().size());
 		assertEquals(1, generator.getCloudOnlyList().size());
 		assertEquals(1, generator.getEdgeOnlyList().size());

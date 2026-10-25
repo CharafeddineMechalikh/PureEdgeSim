@@ -244,18 +244,18 @@ public class EnergyModelComputingNode {
 
 	/**
 	 * Adds the network energy consumed by a transmission or a reception. The rate
-	 * applied for {@link #RECEPTION} is the transmission rate defined for the
+	 * applied for {@link #TRANSMISSION} is the transmission rate defined for the
 	 * current connectivity, and the reception rate is applied for
-	 * {@link #TRANSMISSION}.
+	 * {@link #RECEPTION}.
 	 *
 	 * @param sizeInBits the amount of data transferred, in bits
 	 * @param flag       {@link #TRANSMISSION} or {@link #RECEPTION}
 	 */
 	public void updatewirelessEnergyConsumption(double sizeInBits, int flag) {
 		if (flag == RECEPTION)
-			networkEnergyConsumption += sizeInBits * transmissionEnergyPerBits;
-		else
 			networkEnergyConsumption += sizeInBits * receptionEnergyPerBits;
+		else
+			networkEnergyConsumption += sizeInBits * transmissionEnergyPerBits;
 	}
 
 	/**

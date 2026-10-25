@@ -132,18 +132,18 @@ class DefaultSimulationManagerTest extends AbstractTest {
 	}
 
 	@Test
-	void aDeadEdgeDeviceFailsTheTaskBeforeItReachesTheNetwork() {
+	void aTaskOfADeadEdgeDeviceIsCountedAsNotGenerated() {
 		ComputingNode edge = node(TYPES.EDGE_DEVICE);
 		when(edge.isDead()).thenReturn(true);
 		Task task = taskFor(edge);
 
 		manager.processEvent(event(SimulationManager.SEND_TO_ORCH, task));
 
-		verify(simLog).incrementFailedBeacauseDeviceDead(task);
+		verify(simLog).incrementNotGeneratedBeacuseDeviceDead();
+		verify(simLog, never()).incrementFailedBeacauseDeviceDead(task);
 		verify(task).setFailureReason(FailureReason.FAILED_BECAUSE_DEVICE_DEAD);
 		verify(edge).setApplicationPlaced(false);
 		assertTrue(engine.getEventsQueue().isEmpty());
-		assertEquals(100.0, manager.getFailureRate(), 1e-9);
 		assertEquals(0.0, manager.getFailureRate(), 1e-9);
 	}
 
@@ -775,10 +775,14 @@ class DefaultSimulationManagerTest extends AbstractTest {
 		assertEquals(0.0, manager.getFailureRate(), 1e-9);
 
 		ComputingNode edge = node(TYPES.EDGE_DEVICE);
-		Task task = taskFor(edge);
-		manager.processEvent(event(SimulationManager.SEND_TO_ORCH, task));
-		when(edge.isDead()).thenReturn(true);
-		manager.processEvent(event(SimulationManager.SEND_TO_ORCH, task));
+		manager.processEvent(event(SimulationManager.SEND_TO_ORCH, taskFor(edge)));
+		manager.processEvent(event(SimulationManager.SEND_TO_ORCH, taskFor(edge)));
+
+		ComputingNode deadOrchestrator = node(TYPES.EDGE_DATACENTER);
+		when(deadOrchestrator.isDead()).thenReturn(true);
+		Task failed = taskFor(edge);
+		when(failed.getOrchestrator()).thenReturn(deadOrchestrator);
+		manager.processEvent(event(SimulationManager.SEND_TASK_FROM_ORCH_TO_DESTINATION, failed));
 
 		assertEquals(50.0, manager.getFailureRate(), 1e-9);
 	}

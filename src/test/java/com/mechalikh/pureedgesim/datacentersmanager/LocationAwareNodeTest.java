@@ -49,8 +49,6 @@ class LocationAwareNodeTest extends DatacentersTestSupport {
 		node.setMobilityModel(mobilityModel);
 		upLink = new NetworkLink(node, ComputingNode.NULL, simulationManager, NetworkLinkTypes.WAN);
 		downLink = new NetworkLink(ComputingNode.NULL, node, simulationManager, NetworkLinkTypes.WAN);
-		// DOWN_LINK is backed by the same field as UP_LINK, so the last assignment
-		// decides which link is used by both orientations.
 		node.setCurrentLink(downLink, LinkOrientation.DOWN_LINK);
 		node.setCurrentLink(upLink, LinkOrientation.UP_LINK);
 		node.setCurrentLink(new NetworkLink(), LinkOrientation.DEVICE_TO_DEVICE);
@@ -82,9 +80,7 @@ class LocationAwareNodeTest extends DatacentersTestSupport {
 
 		verify(mobilityModel).updateLocation(0);
 		assertSame(edgeDataCenter, upLink.getDst());
-		// DOWN_LINK access currently maps to the up link; connectWith therefore
-		// updates the source of the up link too.
-		assertSame(edgeDataCenter, upLink.getSrc());
+		assertSame(edgeDataCenter, downLink.getSrc());
 		assertFalse(node.isApplicationPlaced());
 	}
 

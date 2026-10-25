@@ -90,8 +90,10 @@ public class SimLog {
 	protected int tasksFailedRessourcesUnavailable = 0;
 	/** Tasks that failed because the device or destination died. */
 	protected int tasksFailedBeacauseDeviceDead = 0;
-	/** Tasks that were never generated because their device died. */
+	/** Tasks that were never sent because their device died. */
 	protected int notGeneratedBecDeviceDead = 0;
+	/** Edge devices that died because their battery ran out. */
+	protected int deadDevicesCount = 0;
 	/** Sum of actual CPU execution times of finished tasks, in seconds. */
 	protected Double totalExecutionTime = 0.0;
 	/** Sum of queue waiting times of finished tasks, in seconds. */
@@ -273,8 +275,10 @@ public class SimLog {
 		print("------------------------------------------------------- OUTPUT -------------------------------------------------------");
 		print("");
 		print("Tasks not sent because device died (low energy)                         :"
-				+ padLeftSpaces(decimalFormat.format(notGeneratedBecDeviceDead / generatedTasksCount), 20) + " %% ("
-				+ notGeneratedBecDeviceDead + " tasks)");
+				+ padLeftSpaces(decimalFormat.format(
+						generatedTasksCount == 0 ? 0.0 : (double) notGeneratedBecDeviceDead * 100 / generatedTasksCount),
+						20)
+				+ " %% (" + notGeneratedBecDeviceDead + " tasks)");
 		print("Tasks sent from edge devices                                            :"
 				+ padLeftSpaces("" + decimalFormat.format(((double) tasksSent * 100) / ((double) generatedTasksCount)),
 						20)
@@ -358,9 +362,9 @@ public class SimLog {
 				+ padLeftSpaces(decimalFormat.format(totalBandwidth / transfersCount), 20) + " Mbps  ");
 		// Add these values to the las item of the results list
 		resultsList.set(resultsList.size() - 1,
-				resultsList.get(resultsList.size() - 1) + totalLanUsage + "," + totalWanUsage + "," + totalLanUsage
-						+ "," + totalTraffic + "," + containersWanUsage + "," + containersLanUsage + ","
-						+ (totalBandwidth / transfersCount) + ",");
+				resultsList.get(resultsList.size() - 1) + (totalLanUsage + totalManUsage + totalWanUsage) + ","
+						+ totalWanUsage + "," + totalLanUsage + "," + totalTraffic + "," + containersWanUsage + ","
+						+ containersLanUsage + "," + (totalBandwidth / transfersCount) + ",");
 	}
 
 	/**
@@ -371,7 +375,7 @@ public class SimLog {
 	 *                      energy-per-task value.
 	 */
 	public void printPowerConsumptionResults(List<Task> finishedTasks) {
-		int deadEdgeDevicesCount = 0;
+		int deadEdgeDevicesCount = getDeadDevicesCount();
 		double energyConsumption = 0;
 		double cloudEnConsumption = 0;
 		double mistEnConsumption = 0;
@@ -424,7 +428,6 @@ public class SimLog {
 			if (edgeDevice.isDead()) {
 				devicesDeathTime.add(edgeDevice.getDeathTime());
 				remainingPower.add(0.0);
-				deadEdgeDevicesCount++;
 				if (firstDeviceDeathTime == -1)
 					firstDeviceDeathTime = edgeDevice.getDeathTime();
 				else if (firstDeviceDeathTime > edgeDevice.getDeathTime())
@@ -838,10 +841,24 @@ public class SimLog {
 	}
 
 	/**
-	 * Counts a task that was not generated because its device had already died.
+	 * Counts a task that was not sent because its device had already died.
 	 */
 	public void incrementNotGeneratedBeacuseDeviceDead() {
 		this.notGeneratedBecDeviceDead++;
+	}
+
+	/** Counts a node that died because its battery ran out. */
+	public void incrementDeadDevices() {
+		this.deadDevicesCount++;
+	}
+
+	/**
+	 * Returns the number of devices that died because their battery ran out.
+	 *
+	 * @return the death counter of the current scenario.
+	 */
+	public int getDeadDevicesCount() {
+		return this.deadDevicesCount;
 	}
 
 	/**

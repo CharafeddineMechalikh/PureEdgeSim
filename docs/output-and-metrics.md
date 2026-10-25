@@ -62,16 +62,16 @@ Executed tasks in columns 5 and 7 are tasks that finished CPU execution and ente
 | 11 | Tasks failed (delay) | Total delay reached the application's maximum latency |
 | 12 | Tasks failed (device dead) | Device, orchestrator, or destination died before the task completed |
 | 13 | Tasks failed (mobility) | Destination moved out of range before or during offloading |
-| 14 | Tasks not generated due to the death of devices | Currently always zero; the counter exists but is not incremented |
+| 14 | Tasks not generated due to the death of devices | Tasks whose generating device died before they were offloaded; they are not failed tasks |
 | 15-16 | Total / successful tasks executed (Cloud) | Tasks sent to the cloud and those without failure |
 | 17-18 | Total / successful tasks executed (Edge) | Tasks sent to edge data centers and those without failure |
 | 19-20 | Total / successful tasks executed (Mist) | Tasks sent to edge devices and those without failure |
 
-Column 9 is computed as sent tasks minus all failed tasks. The failed counter also includes tasks that were never sent because their generating device was already dead, so in scenarios with many early deaths column 9 can undercount successes and can even become negative. For a robust success rate, derive it from the failure breakdown:
+Column 9 is computed as sent tasks minus all failed tasks. Tasks whose device died before offloading are not counted as failures: they were never sent, so they reduce the number of sent tasks and appear in column 14 instead. For a robust success rate, derive it from the failure breakdown:
 
 ```
 completed_or_failed = column 10 + column 11 + column 12 + column 13
-successful = column 8 - completed_or_failed - still_in_flight
+successful = column 8 - column 14 - completed_or_failed - still_in_flight
 ```
 
 `still_in_flight` is not reported. Tasks whose execution or transfer is still in progress when the simulation horizon is reached are neither successful nor failed in the CSV. This is right-censoring at the end of the run. Keep the simulation long enough relative to task rates and delays, or state the censoring in the methodology.
@@ -82,7 +82,7 @@ The per-level totals count tasks whose destination is of that type, including ta
 
 | # | Column | Meaning |
 | --- | --- | --- |
-| 21 | Network usage (s) | In the current code this is the LAN usage, not the total |
+| 21 | Network usage (s) | Sum of the time spent transferring over LAN, MAN and WAN links |
 | 22 | Wan usage (s) | Sum of time spent transferring over WAN links |
 | 23 | Lan usage (s) | Sum of time spent transferring over LAN links |
 | 24 | Total network traffic (MBytes) | Sum of transfer sizes, counted once per completed transfer |
@@ -90,7 +90,7 @@ The per-level totals count tasks whose destination is of that type, including ta
 | 26 | Containers lan usage (s) | LAN time attributable to container downloads |
 | 27 | Average bandwidth per task (Mbps) | Mean allocated bandwidth per progress update, not throughput per task |
 
-MAN usage is computed and printed in the text report, but it is not written to the CSV. The first network column duplicates the LAN column; do not add columns 21 and 23 together.
+MAN usage has no column of its own: it is included in the total of column 21, and the text report prints it. Do not add column 21 to columns 22 and 23, since it already contains them.
 
 "Usage" is time spent transferring, not bandwidth and not bytes. A longer usage with the same traffic means a slower or more congested path. `Average bandwidth per task` is the average of the bandwidth allocations observed by every finished transfer, converted from bits per second to megabits per second. It is not `traffic / time` and it is not per task. It is still useful as a relative indicator of how much bandwidth transfers received.
 

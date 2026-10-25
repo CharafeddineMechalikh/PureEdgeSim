@@ -396,6 +396,7 @@ If your paper uses PureEdgeSim, feel free to open a pull request and add it to t
 
 The full release notes are maintained in [CHANGELOG.md](CHANGELOG.md).
 
+- **5.9**: nodes keep separate uplink and downlink (issue #47), the wireless energy model charges each direction correctly, the CSV network usage column includes MAN and WAN, tasks of dead devices are counted as not generated, and device types are allocated without truncation.
 - **5.8**: the quick start example `Example1` is compiled by the default build, and XChart is updated to 3.8.8, clearing four medium advisories.
 - **5.7**: probability distributions for every scenario parameter, sixteen distribution types, nine mobility models selectable per device type, placement hotspots, and a `random_seed` parameter for reproducible runs.
 - **5.6**: self-documenting simulation parameter files for the default, example, and test configurations, with corrected guidance for ranges, orchestrators, and registry modes.

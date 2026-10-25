@@ -1,5 +1,33 @@
 # Changelog
 
+## Version 5.9 Changelog (October 25th 2026)
+
+*   Each node now keeps a distinct uplink and downlink. The `DOWN_LINK` orientation
+    used to read and write the same field as `UP_LINK`, so an access link could report
+    the device as its own source and the per-link counters of the downlink were
+    charged to the uplink. Fixes issue #47. Results change: the delays are unchanged,
+    but the link that carries each direction now accumulates its own energy and usage.
+*   Fixed the wireless energy model charging the wrong direction: transmission now
+    charges `transmissionEnergyPerBits` and reception charges `receptionEnergyPerBits`.
+    The two branches were swapped, so devices were billed at the rate of the opposite
+    direction. Results change for scenarios with asymmetric rates.
+*   The `Network usage (s)` column of the CSV report now sums the LAN, MAN and WAN
+    usage, as the text report already did. It held the LAN usage alone.
+*   Tasks whose generating device died before they were offloaded are now counted in
+    the "Tasks not generated due to the death of devices" line instead of being
+    reported as failed tasks. The counter was never incremented before.
+*   The report counts dead devices with a counter maintained by the energy model
+    instead of scanning every device at the end of the run.
+*   Device types are now allocated with the largest remainder method: a percentage
+    that does not divide the device count evenly no longer truncates the earlier
+    types, and the missing devices are no longer filled with copies of the last type.
+    Percentages that do not sum to 100 print a warning; the warning itself used to
+    raise a formatting exception that aborted the device generation.
+*   An arrival pattern whose first gap is below one second no longer schedules the
+    first task at time zero, which broke the assumption that a device starts idle.
+*   The unit test suite grew from 911 to 915 tests, all passing.
+*   Bumped the project version to 5.9.
+
 ## Version 5.8 Changelog (October 25th 2026)
 
 *   The default build now compiles `Example1`, the example the quick start tells you to run.

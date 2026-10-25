@@ -340,7 +340,7 @@ If a device is not within range of any edge data center, its edge uplink remains
 | `minPauseDuration`, `maxPauseDuration` | seconds | Range of the pause before each movement. |
 | `minMobilityDuration`, `maxMobilityDuration` | seconds | Range of the movement duration before the next pause. |
 | `battery` | boolean | Whether the device runs on battery. Devices without batteries never die from energy depletion. |
-| `percentage` | percent | Share of this device type. The percentages of all types must sum exactly to 100. |
+| `percentage` | percent | Share of this device type. The percentages of all types must sum to 100; the parser checks their means when they are distributions. |
 | `batteryCapacity` | watt-hours | Total battery capacity. |
 | `initialBatteryLevel` | percent | Initial charge, between 0 and 100. |
 | `idleConsumption` | watts | Idle power draw. |
@@ -352,7 +352,7 @@ If a device is not within range of any edge data center, its edge uplink remains
 | `ram` | megabytes | RAM available for task containers. |
 | `storage` | megabytes | Storage available for application containers and for caching in the examples. |
 
-Device types are instantiated in file order. If the requested device count does not divide evenly by the percentages, PureEdgeSim fills the missing devices with the last type. This keeps the total exactly equal to the scenario count.
+Device types are instantiated in file order. Each type receives its exact share of the scenario device count, rounded with the largest remainder method: every share is rounded down, then the types with the largest fractional part receive one device each. The total is therefore the scenario count, without the old padding of missing devices with the last type. The parser requires the configured percentages, or their means when they are distributions, to sum to 100; a sampled total that deviates prints a warning and is used as is, capped at the scenario count.
 
 ### Mobility models and placement
 
@@ -431,7 +431,7 @@ Cloud tasks may fail due to latency. This is often the intended experiment. Veri
 - **Paths are relative to the working directory.** Running from an IDE and from Maven can produce different working directories. Use absolute paths in scripts.
 - **The settings folder must contain all five files.** `setCustomSettingsFolder` does not copy defaults; it points to your folder.
 - **Architecture and algorithm names are case-sensitive.** `cloud_only` is not `CLOUD_ONLY`.
-- **Device percentages must sum to 100.** The parser rejects other sums.
+- **Device percentages must sum to 100.** The parser rejects other sums (it checks the means when the percentages are distributions).
 - **The application usage percentages have a remainder rule.** See the application section above.
 - **The task generator removes non-generating devices.** If every device has `generateTasks=false`, the task list is empty and the simulation produces no meaningful results.
 - **Sensors are excluded from multicast categories.** `mistOnlyList` includes them, while `mistOnlyListSensorsExcluded` does not. The default orchestrator uses the latter.

@@ -20,8 +20,10 @@ import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode.LinkOrientatio
 import com.mechalikh.pureedgesim.locationmanager.MobilityModel;
 import com.mechalikh.pureedgesim.network.NetworkLink;
 import com.mechalikh.pureedgesim.network.NetworkLinkCellularDown;
+import com.mechalikh.pureedgesim.network.NetworkLinkCellularUp;
 import com.mechalikh.pureedgesim.network.NetworkLinkEthernet;
 import com.mechalikh.pureedgesim.network.NetworkLinkWifiDown;
+import com.mechalikh.pureedgesim.network.NetworkLinkWifiUp;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters.TYPES;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
@@ -85,20 +87,22 @@ class DefaultTopologyCreatorTest extends DatacentersTestSupport {
 		assertSame(simulationManager, creator.getSimulationManager());
 		assertNotNull(creator.getInfrastructureTopology());
 		assertSame(creator.getTopology(), creator.getInfrastructureTopology());
-		// 18 devices * 2 WAN links + the 2 WAN links of dc1 (router-cloud links are
+		// 20 devices * 2 WAN links + the 2 WAN links of dc1 (router-cloud links are
 		// IGNORE).
-		assertEquals(38, creator.getInfrastructureTopology().getWanLinks().size());
+		assertEquals(42, creator.getInfrastructureTopology().getWanLinks().size());
 		assertEquals(0, creator.getInfrastructureTopology().getManLinks().size());
 		assertEquals(4, creator.getInfrastructureTopology().getPathsMap().size());
 
 		ComputingNode edgeDataCenter = generator.getEdgeOnlyList().get(0);
 		ComputingNode device = generator.getMistOnlyList().get(0);
 		NetworkLink upLink = device.getCurrentLink(LinkOrientation.UP_LINK);
-		// The DOWN_LINK setter stores into the up-link field, so the current link is
-		// the down direction of the LAN connection.
-		assertTrue(upLink instanceof NetworkLinkWifiDown);
-		assertSame(edgeDataCenter, upLink.getSrc());
-		assertSame(device, upLink.getDst());
+		assertTrue(upLink instanceof NetworkLinkWifiUp);
+		assertSame(device, upLink.getSrc());
+		assertSame(edgeDataCenter, upLink.getDst());
+		NetworkLink downLink = device.getCurrentLink(LinkOrientation.DOWN_LINK);
+		assertTrue(downLink instanceof NetworkLinkWifiDown);
+		assertSame(edgeDataCenter, downLink.getSrc());
+		assertSame(device, downLink.getDst());
 		assertSame(edgeDataCenter, device.getCurrentLink(LinkOrientation.DEVICE_TO_DEVICE).getDst());
 	}
 
@@ -113,7 +117,7 @@ class DefaultTopologyCreatorTest extends DatacentersTestSupport {
 		assertSame(cloud, creator.wanNode);
 		assertFalse(creator.wanNode instanceof Router);
 		assertSame(cloud, firstEdgeDeviceWanLink(creator).getDst());
-		assertEquals(20, creator.getTopology().getGraph().vertexSet().size());
+		assertEquals(22, creator.getTopology().getGraph().vertexSet().size());
 	}
 
 	@Test
@@ -129,17 +133,17 @@ class DefaultTopologyCreatorTest extends DatacentersTestSupport {
 		// One WAN and one LAN connection in each direction for each device.
 		assertEquals(4, creator.getInfrastructureTopology().get4gLinks().size());
 		assertEquals(4, creator.getInfrastructureTopology().getEthernetLinks().size());
-		assertTrue(creator.getInfrastructureTopology().getWifiLinks().size() >= 36);
+		assertTrue(creator.getInfrastructureTopology().getWifiLinks().size() >= 40);
 
 		ComputingNode edgeDataCenter = generator.getEdgeOnlyList().get(0);
 		NetworkLink cellularLink = devices.get(0).getCurrentLink(LinkOrientation.UP_LINK);
-		assertTrue(cellularLink instanceof NetworkLinkCellularDown);
-		assertSame(edgeDataCenter, cellularLink.getSrc());
-		assertSame(devices.get(0), cellularLink.getDst());
+		assertTrue(cellularLink instanceof NetworkLinkCellularUp);
+		assertSame(devices.get(0), cellularLink.getSrc());
+		assertSame(edgeDataCenter, cellularLink.getDst());
 		NetworkLink ethernetLink = devices.get(1).getCurrentLink(LinkOrientation.UP_LINK);
 		assertTrue(ethernetLink instanceof NetworkLinkEthernet);
-		assertSame(edgeDataCenter, ethernetLink.getSrc());
-		assertSame(devices.get(1), ethernetLink.getDst());
+		assertSame(devices.get(1), ethernetLink.getSrc());
+		assertSame(edgeDataCenter, ethernetLink.getDst());
 	}
 
 	@Test
@@ -164,11 +168,12 @@ class DefaultTopologyCreatorTest extends DatacentersTestSupport {
 		creator.generateTopologyGraph();
 
 		ComputingNode device = generator.getMistOnlyList().get(0);
-		NetworkLink currentLink = device.getCurrentLink(LinkOrientation.UP_LINK);
-		// connect() sets UP_LINK then DOWN_LINK; because both getters read the same
-		// field, the current link is the down link whose source is the NULL node.
-		assertSame(ComputingNode.NULL, currentLink.getSrc());
-		assertSame(device, currentLink.getDst());
+		NetworkLink upLink = device.getCurrentLink(LinkOrientation.UP_LINK);
+		assertSame(device, upLink.getSrc());
+		assertSame(ComputingNode.NULL, upLink.getDst());
+		NetworkLink downLink = device.getCurrentLink(LinkOrientation.DOWN_LINK);
+		assertSame(ComputingNode.NULL, downLink.getSrc());
+		assertSame(device, downLink.getDst());
 		assertSame(ComputingNode.NULL,
 				device.getCurrentLink(LinkOrientation.DEVICE_TO_DEVICE).getDst());
 		// The device can still reach the cloud through its WAN link.
@@ -211,7 +216,7 @@ class DefaultTopologyCreatorTest extends DatacentersTestSupport {
 
 		assertEquals(4, creator.getTopology().getManLinks().size());
 		assertEquals(16, creator.getTopology().getPathsMap().size());
-		assertSame(dc1, generator.getMistOnlyList().get(0).getCurrentLink(LinkOrientation.UP_LINK).getSrc());
+		assertSame(dc1, generator.getMistOnlyList().get(0).getCurrentLink(LinkOrientation.UP_LINK).getDst());
 		assertSame(dc1, generator.getMistOnlyList().get(0).getCurrentLink(LinkOrientation.DEVICE_TO_DEVICE).getDst());
 		assertSame(dc2, creator.getDataCenterByName("dc2"));
 		assertSame(dc3, creator.getDataCenterByName("dc3"));
