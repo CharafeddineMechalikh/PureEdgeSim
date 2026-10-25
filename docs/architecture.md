@@ -1,3 +1,6 @@
+---
+description: "How the PureEdgeSim simulator works internally: package map, object graph, initialization sequence, event engine, determinism, and extension points."
+---
 # Architecture
 
 This guide explains how PureEdgeSim is organized internally: the modules, the objects that own the simulation state, the initialization sequence, and the event engine that advances time. Read it before modifying the framework or debugging unexpected behavior. If you only want to run experiments, [Getting started](getting-started.md) and [Configuration](configuration.md) are enough.

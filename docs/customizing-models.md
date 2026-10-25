@@ -1,3 +1,6 @@
+---
+description: "Extend PureEdgeSim with custom task generators, computing nodes, mobility, network, topology, distributions, orchestrators, or simulation managers."
+---
 # Customizing models
 
 PureEdgeSim is designed to be extended. Every default model is a class that you can subclass, and the simulator instantiates your class reflectively instead of the default. This guide explains each extension point, shows the smallest working pattern for each one, and lists the traps that are easy to hit.
@@ -19,6 +22,20 @@ The behavioral details of the defaults are in [Models](models.md). Read that fir
 | Offloading decisions | `setCustomEdgeOrchestrator` | `Orchestrator` or `DefaultOrchestrator` |
 
 All setters are on `SimulationAbstract`, so they are available on `Simulation` before `launchSimulation()`.
+
+Registration follows the same path for every model:
+
+```mermaid
+flowchart TD
+    Call["simulation.setCustomNetworkModel(MyNetworkModel.class)"] --> Store["SimulationAbstract<br/>stores the class reference"]
+    Store --> Launch["launchSimulation()"]
+    Launch --> Reflect{"reflection with the fixed<br/>constructor signature"}
+    Reflect -->|matches| Instance["your instance joins the event loop"]
+    Reflect -->|does not match| Error["NoSuchMethodException<br/>model loading stops"]
+    Instance --> Start["onSimulationStart()<br/>precompute what you can"]
+    Instance --> Event["processEvent(Event)<br/>unhandled events reach super"]
+    Instance --> Schedule["schedule(...) or scheduleNow(...)<br/>no threads, no sleep"]
+```
 
 ## Rules that apply to every custom model
 

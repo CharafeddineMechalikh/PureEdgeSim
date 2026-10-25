@@ -1,3 +1,6 @@
+---
+description: "How to contribute to PureEdgeSim: build and test commands, coverage, code conventions, Javadoc, documentation, changelog, and the pull request process."
+---
 # Contributing to PureEdgeSim
 
 PureEdgeSim is a research simulator, and most contributions come from people who use it to run experiments: a new orchestration algorithm, a mobility model that matches a real campus, a fix for a metric that was counted twice. This guide explains how to make such a contribution without breaking the behavior that other researchers depend on.
@@ -175,7 +178,7 @@ Output goes to `target/site/apidocs/index.html`. The build is configured with `f
 
 ### Publishing the documentation website
 
-GitHub Pages builds the website from the root of the `master` branch with Jekyll. `_config.yml` selects the Cayman theme and enables relative links, so `README.md` becomes the home page, `docs/README.md` becomes `/docs/`, and links between markdown files are rewritten to their `.html` pages. Add a guide as a plain markdown file in `docs/`, link it from `docs/README.md`, push, and it is published. Do not add YAML front matter: GitHub renders it as a table in the repository view.
+GitHub Pages builds the website from the root of the `master` branch with Jekyll. `_config.yml` selects the Cayman theme and enables relative links and the sitemap, so `README.md` becomes the home page, `docs/README.md` becomes `/docs/`, and links between markdown files are rewritten to their `.html` pages. Add a guide as a plain markdown file in `docs/`, give it a `description:` front matter line, link it from `docs/README.md`, push, and it is published. The description is used for the page meta description and social card; GitHub shows it as a one-row table at the top of the file, so keep it to that single key. Avoid Jekyll's filename denylist for pages (`README`, `LICENSE`, `CONTRIBUTING`, `CODE_OF_CONDUCT`, `ISSUE_TEMPLATE`, `PULL_REQUEST_TEMPLATE`): those files are copied but not rendered.
 
 Generate the Javadoc and source JARs that are attached during deployment:
 
@@ -194,6 +197,7 @@ When writing docs:
 - Explain the behavior the code implements today. Verify it against the source; do not describe what the model is supposed to do in theory.
 - Prefer complete, runnable snippets over fragments with `...`.
 - Keep links relative within `docs/`, for example `[Configuration](configuration.md)`.
+- Start each guide with a `description:` front matter line of about 155 characters that says what the page covers, in the words a reader would search for. It becomes the search snippet; duplicate descriptions across pages hurt the site.
 - Do not use em dashes. Use commas, parentheses, or a new sentence.
 - Use sentence case for headings and American spelling, matching the source comments.
 - Give every table and code block a reason to exist. Do not restate the same fact in three sections.

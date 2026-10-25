@@ -1,3 +1,6 @@
+---
+description: "Answers to common PureEdgeSim questions: Java setup, build failures, results, charts, custom models, energy, and reproducible research."
+---
 # Frequently asked questions
 
 Short answers to questions that come up when running, extending, or interpreting PureEdgeSim. Each answer points to the guide that covers the topic in depth.

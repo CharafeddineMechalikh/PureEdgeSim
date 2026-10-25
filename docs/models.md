@@ -1,3 +1,6 @@
+---
+description: "The default PureEdgeSim models: task generation, computing nodes, energy, network, mobility, distributions, orchestration, and their interactions."
+---
 # Simulation models
 
 PureEdgeSim is built from a small set of replaceable models. Each model answers one question: when are tasks generated, where can they run, how long does execution and communication take, how much energy is consumed, where are devices located, and which destination does the orchestrator choose. This guide explains the default answer to each question, including the exact formulas used in the code, so that you can reason about your results and decide which model to replace.
@@ -502,6 +505,29 @@ The following sequence is the shortest accurate summary of a default run:
 6. The network model returns the results to the orchestrator, then to the device.
 7. The simulation manager records delays, checks the latency budget, and asks the orchestrator to react to the result.
 8. The logger aggregates the iteration into one CSV row.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant TG as TaskGenerator
+    participant SM as SimulationManager
+    participant OR as Orchestrator
+    participant NW as NetworkModel
+    participant CN as ComputingNode
+    participant LOG as SimLog
+    TG->>SM: full task list, before the event loop
+    SM->>OR: send the task
+    OR->>OR: choose the destination
+    OR->>NW: send the request to that destination
+    NW->>CN: deliver the request
+    CN->>CN: queue, then execute
+    CN->>NW: results
+    NW->>OR: return the results
+    OR->>SM: deliver the results to the device
+    SM->>SM: record the delay, check the latency budget
+    SM->>OR: react to the result
+    SM->>LOG: aggregate the iteration
+```
 
 Each arrow in that list is a place where a model can be replaced without touching the others, provided the event contract and the constructor signature are respected.
 

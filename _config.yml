@@ -3,3 +3,4 @@ title: PureEdgeSim
 description: An open-source discrete-event simulator for cloud, edge, fog, and mist computing.
 plugins:
   - jekyll-relative-links
+  - jekyll-sitemap

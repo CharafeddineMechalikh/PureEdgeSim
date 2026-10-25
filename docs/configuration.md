@@ -1,3 +1,6 @@
+---
+description: "Reference for the five PureEdgeSim settings files: parameters, scenario sweep, applications, cloud and edge data centers, devices, and distributions."
+---
 # Configuration
 
 PureEdgeSim is configured through five files. This guide documents every parameter, its unit, its default value, and its effect on the simulation. It also explains the validation rules, the scenario sweep, and the topology format.

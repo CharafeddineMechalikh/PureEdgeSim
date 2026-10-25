@@ -1,3 +1,6 @@
+---
+description: "One PureEdgeSim task end to end: generation, orchestration, network transfer, execution, failure phases, and the points you can customize."
+---
 # Task lifecycle
 
 This guide follows one task from generation to result. It explains every decision point, every network transfer, and every failure reason in the default implementation. Use it to interpret results, debug unexpected failures, and find the right extension point for a new algorithm.

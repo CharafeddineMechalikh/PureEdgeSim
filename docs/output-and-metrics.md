@@ -1,3 +1,6 @@
+---
+description: "Every PureEdgeSim output explained: folders, run.properties, CSV columns, console report, charts, derived metrics, and analysis workflow."
+---
 # Output and metrics
 
 A PureEdgeSim run produces a CSV row per scenario, an optional text report, and optional chart images. This guide describes where each artifact is written, what every column means, how the values are computed, and which metrics need a caveat before they appear in a paper.

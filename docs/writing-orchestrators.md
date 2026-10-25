@@ -1,3 +1,6 @@
+---
+description: "Write a PureEdgeSim workload orchestrator: the decision contract, candidate list, complete examples, registration, state, testing, and design advice."
+---
 # Writing orchestrators
 
 The orchestrator is the policy of the simulator. It decides where each task runs. Everything else (task generation, networking, execution, energy) is mechanism, and the orchestrator is the part most researchers replace.

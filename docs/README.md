@@ -1,3 +1,6 @@
+---
+description: "The PureEdgeSim manual: tutorials, architecture, models, configuration, output metrics, and research guidance for the edge computing simulator."
+---
 # PureEdgeSim documentation
 
 This folder is the long-form manual for PureEdgeSim, written for new researchers, PhD students, and engineers who need to understand, configure, extend, and trust the simulator. The guides explain both **how to use** the framework and **why it behaves the way it does**.

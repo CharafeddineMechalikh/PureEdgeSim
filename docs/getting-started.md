@@ -1,3 +1,6 @@
+---
+description: "Install, build, and run your first PureEdgeSim simulation, read the output, create a custom scenario, and use the simulator as a library."
+---
 # Getting started
 
 This guide takes you from a clean machine to a completed PureEdgeSim run, then explains what the run produced. It assumes no prior knowledge of the simulator, but it does assume basic familiarity with Java and the command line.

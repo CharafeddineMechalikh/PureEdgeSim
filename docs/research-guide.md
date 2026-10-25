@@ -1,3 +1,6 @@
+---
+description: "Use PureEdgeSim for publishable edge computing research: experiment design, scenario sweeps, randomness, validation, statistics, and reproducibility."
+---
 # Research guide
 
 This guide is about using PureEdgeSim to produce results that survive review. It covers experiment design, randomness, scenario sweeps, validation, statistics, and the artifact you should keep. It assumes that you understand the simulator's architecture and metrics; if not, read [Architecture](architecture.md) and [Output and metrics](output-and-metrics.md) first.
