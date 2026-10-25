@@ -1,5 +1,6 @@
 ---
 description: "The PureEdgeSim manual: tutorials, architecture, models, configuration, output metrics, and research guidance for the edge computing simulator."
+permalink: /docs/
 ---
 # PureEdgeSim documentation
 
