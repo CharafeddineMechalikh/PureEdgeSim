@@ -44,13 +44,13 @@ Every model runs inside the same discrete-event engine. It must not use its own 
 
 Without an arrival pattern, the generator works per minute. For each simulation minute `st`, every generating device creates its burst at a random second within that minute:
 
-```
+```text
 time = st * 60 + random(0, 15)
 ```
 
 Each application has a `rate`, interpreted as tasks per minute. For a burst starting at time `t`, the generator inserts `rate` tasks spaced by `60 / rate` seconds:
 
-```
+```text
 task 0: t
 task 1: t + 60/rate
 task 2: t + 2*60/rate
@@ -131,7 +131,7 @@ RAM is only reserved when execution starts, not when the task is queued. A queue
 
 Execution uses exactly one core:
 
-```
+```text
 executionTime = task.length / mipsPerCore
 ```
 
@@ -179,7 +179,7 @@ Extend `DefaultComputingNode` to change scheduling (for example, shortest-job-fi
 
 While a node is alive, every update tick adds:
 
-```
+```text
 idleConsumption / 3600 * update_interval
 ```
 
@@ -189,7 +189,7 @@ This is the energy the node consumes merely by existing. It is charged even when
 
 When a task starts, the node charges the extra power used during execution in one lump sum:
 
-```
+```text
 (maxActiveConsumption - idleConsumption) / 3600 * task.length / totalMipsCapacity
 ```
 
@@ -199,7 +199,7 @@ Idle energy for the same execution period continues to be added by the periodic 
 
 ### Total and battery
 
-```
+```text
 totalEnergy = cpuEnergyConsumption + networkEnergyConsumption
 ```
 
@@ -445,7 +445,7 @@ The orchestrator's candidate list is built once from the architecture name. For 
 
 For each eligible node, the score is:
 
-```
+```text
 score = (assignedTasks + 1) * weight * task.length / node.mipsPerCore
 ```
 

@@ -78,7 +78,7 @@ Executed tasks in columns 5 and 7 are tasks that finished CPU execution and ente
 
 Column 9 is computed as sent tasks minus all failed tasks. Tasks whose device died before offloading are not counted as failures: they were never sent, so they reduce the number of sent tasks and appear in column 14 instead. For a robust success rate, derive it from the failure breakdown:
 
-```
+```text
 completed_or_failed = column 10 + column 11 + column 12 + column 13
 successful = column 8 - column 14 - completed_or_failed - still_in_flight
 ```

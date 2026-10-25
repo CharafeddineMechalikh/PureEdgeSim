@@ -235,7 +235,7 @@ A good contribution is small enough to review and complete enough to trust:
 
 Commit messages follow the recent history, an imperative sentence that states the change:
 
-```
+```text
 Add battery-aware orchestrator example
 Fix WAN latency counted once per hop
 ```

@@ -162,7 +162,7 @@ The mean of the distribution is the value used by the validation, the CSV column
 
 `random_seed` is the switch between a stochastic run and a reproducible one.
 
-```
+```properties
 random_seed=42
 ```
 

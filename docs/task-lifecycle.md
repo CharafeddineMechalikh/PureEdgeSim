@@ -147,7 +147,7 @@ The result path mirrors the request path:
 
 Total delay is defined as:
 
-```
+```text
 totalDelay = actualNetworkTime + waitingTime + actualCpuTime
 ```
 

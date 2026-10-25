@@ -100,7 +100,7 @@ The next guides explain each step in detail. See [Architecture](architecture.md)
 
 The default output folder is `output/`. Every run creates a timestamped subfolder. In sequential mode the layout is:
 
-```
+```text
 output/
 └── 2026-10-24_23-29-48/
     ├── run.properties

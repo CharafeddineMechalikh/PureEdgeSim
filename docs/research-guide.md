@@ -30,7 +30,7 @@ Change as little as possible. If the claim is about placement, keep the default 
 
 The scenario sweep is the Cartesian product of the architecture list, the algorithm list, and the device counts:
 
-```
+```text
 scenarios = architectures x algorithms x deviceCounts
 ```
 
@@ -132,7 +132,7 @@ Before you submit or publish, make sure you can answer these questions:
 
 Keep one directory per experiment:
 
-```
+```text
 experiments/2026-10-24-policy-comparison/
 ├── settings/                  # the five input files
 ├── src/                       # custom classes, if any
