@@ -27,7 +27,7 @@
 
 ## Citation
 
-If you use PureEdgeSim in your research, please cite the following papers. Kindly cite the papers rather than the GitHub repository.
+**If you use PureEdgeSim in your research, please cite the following papers. Kindly cite the papers rather than the GitHub repository.**
 
 Mechalikh, C., Taktak, H., & Moussa, F. (2021). PureEdgeSim: A simulation framework for performance evaluation of cloud, edge and mist computing environments. *Computer Science and Information Systems*, 18(1), 43-66. https://doi.org/10.2298/CSIS200301042M
 
@@ -35,7 +35,7 @@ Mechalikh, C., Silem, A. E. H., Safavifar, Z., & Golpayegani, F. (2025). Quality
 
 BibTeX:
 
-```bibtex
+```gradle
 @article{mechalikh2021pureedgesim,
   title   = {PureEdgeSim: A simulation framework for performance evaluation of cloud, edge and mist computing environments},
   author  = {Mechalikh, Charafeddine and Taktak, Hajer and Moussa, Faouzi},
@@ -396,6 +396,7 @@ If your paper uses PureEdgeSim, feel free to open a pull request and add it to t
 
 The full release notes are maintained in [CHANGELOG.md](CHANGELOG.md).
 
+- **5.8**: the quick start example `Example1` is compiled by the default build, and XChart is updated to 3.8.8, clearing four medium advisories.
 - **5.7**: probability distributions for every scenario parameter, sixteen distribution types, nine mobility models selectable per device type, placement hotspots, and a `random_seed` parameter for reproducible runs.
 - **5.6**: self-documenting simulation parameter files for the default, example, and test configurations, with corrected guidance for ranges, orchestrators, and registry modes.
 - **5.5**: comprehensive JUnit 5 test suite, JaCoCo coverage reporting, and a GitHub Actions coverage workflow.

@@ -1,5 +1,21 @@
 # Changelog
 
+## Version 5.8 Changelog (October 25th 2026)
+
+*   The default build now compiles `Example1`, the example the quick start tells you to run.
+    It was excluded in the compiler configuration although it needs nothing beyond the
+    framework itself, so `mvn exec:java -Dexec.mainClass="examples.Example1"` failed with a
+    `ClassNotFoundException` after a clean install. `Example5`, `Example8` and
+    `Example8FuzzyLogicOrchestrator` stay excluded: the first uses the second, and both need
+    the bundled jFuzzyLogic jar. Fixes issue #43.
+*   XChart updated from 3.8.0 to 3.8.8, which clears the four medium-severity advisories
+    reported against 3.8.0 (GHSA-2h3j-m7gr-25xj, GHSA-6vqp-h455-42mr, GHSA-7grw-6pjh-jpc9,
+    GHSA-fg3j-q579-v8x4) and keeps the same 3.8 chart API. Fixes issue #45.
+*   The unit test suite is unchanged at 911 tests, all passing, with unit-only coverage of
+    99% of instructions and 97% of branches.
+*   Bumped the project version to 5.8.
+
+
 ## Version 5.7 Changelog (October 25th 2026)
 
 *   Added the `distribution` package: sixteen named probability distributions
