@@ -25,7 +25,7 @@ If you are looking for the shortest path to a running simulation, read [Getting 
 1. [Architecture](architecture.md): modules, dependencies, and event processing.
 2. [Simulation models](models.md): computing, energy, mobility, and network models.
 3. [Customizing models](customizing-models.md): replace each default model without modifying the codebase.
-4. [Contributing](contributing.md): tests, conventions, and the Javadoc build.
+4. [Contributing](contributing-guide.md): tests, conventions, and the Javadoc build.
 
 ## Documentation map
 
@@ -41,7 +41,7 @@ If you are looking for the shortest path to a running simulation, read [Getting 
 | [Output and metrics](output-and-metrics.md) | How do I read the CSV, the console report, and the charts? |
 | [Research guide](research-guide.md) | How do I design, run, and report a credible simulation study? |
 | [FAQ](faq.md) | Why did my task fail? Why is the simulation slow? Why is the chart empty? |
-| [Contributing](contributing.md) | How do I run the tests, check coverage, and build the Javadoc? |
+| [Contributing](contributing-guide.md) | How do I run the tests, check coverage, and build the Javadoc? |
 | [API reference](api-reference.md) | Which package and class should I use for a given job? |
 
 ## The one-paragraph mental model
@@ -51,7 +51,7 @@ PureEdgeSim is a **discrete-event simulator**. You describe a scenario in five c
 ## Other sources of information
 
 - [Project README](../): installation, features, publications, citation.
-- [Examples](../src/main/java/com/mechalikh/pureedgesim/examples): runnable scenarios with increasing complexity.
+- [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/src/main/java/com/mechalikh/pureedgesim/examples): runnable scenarios with increasing complexity.
 - [Javadoc](https://javadoc.io/doc/com.mechalikh/pureedgesim): method-level API documentation.
 - [CHANGELOG](../CHANGELOG.md): release notes and behavioral changes.
 - [Issue tracker](https://github.com/CharafeddineMechalikh/PureEdgeSim/issues): questions and bug reports.
