@@ -80,7 +80,7 @@ public class ApplicationFileParser extends XmlFileParser {
 				Node appNode = appList.item(i);
 
 				Element appElement = (Element) appNode;
-				isAttribtuePresent(appElement, "name");
+				isAttributePresent(appElement, "name");
 
 				for (String element : List.of("type", "latency", "usage_percentage", "container_size", "request_size",
 						"results_size", "task_length", "rate"))
@@ -125,9 +125,12 @@ public class ApplicationFileParser extends XmlFileParser {
 						taskLength, latency, rate, arrival));
 			}
 
+		} catch (IllegalArgumentException e) {
+			SimLog.println("%s", e.getMessage());
+			return false;
 		} catch (Exception e) {
-			SimLog.println("%s - Applications XML file cannot be parsed!",this.getClass().getSimpleName());
-			e.printStackTrace();
+			SimLog.println("%s - Failed to load the file \"%s\": %s", getClass().getSimpleName(), file,
+					e.getMessage());
 			return false;
 		}
 

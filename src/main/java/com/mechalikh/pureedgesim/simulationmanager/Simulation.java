@@ -140,9 +140,12 @@ public class Simulation extends SimulationAbstract {
 		SimLog.println("%s - Loading simulation files...", getClass().getSimpleName());
 
 		// Check files.
-		if (!checkFiles())
-			// If any of the input files is not correct stop everything.
+		if (!checkFiles()) {
+			// Every parser already reported the problem it found in its file.
+			SimLog.println("%s - Simulation stopped because the configuration files contain errors.",
+					getClass().getSimpleName());
 			return;
+		}
 
 		// Save the simulation starting time.
 		Date startTime = Calendar.getInstance().getTime();

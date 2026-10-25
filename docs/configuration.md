@@ -17,7 +17,7 @@ The five files are:
 | `edge_datacenters.xml` | Edge data center capacities, locations, and MAN links between them |
 | `edge_devices.xml` | Device types: hardware, battery, mobility, connectivity, task generation |
 
-Parsing happens before any simulation starts. Invalid values raise `IllegalArgumentException` with the parameter name and file. The console prints one line per successfully parsed file.
+Parsing happens before any simulation starts. A file that cannot be read, a missing or misspelled property, or a value of the wrong type stops the run with a single console line naming the file, the property or element, and the found value, instead of a stack trace. A property the parser never reads prints a warning that suggests the closest known name, and the run continues. Boolean properties accept only `true` and `false`. The console prints one line per successfully parsed file.
 
 ## Simulation parameters
 

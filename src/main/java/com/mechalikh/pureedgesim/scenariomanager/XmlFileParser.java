@@ -1,8 +1,12 @@
 package com.mechalikh.pureedgesim.scenariomanager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.mechalikh.pureedgesim.distribution.BoundedDistribution;
 import com.mechalikh.pureedgesim.distribution.Distribution;
@@ -131,6 +135,10 @@ public abstract class XmlFileParser extends FileParserAbstract {
 	 */
 	protected void isElementPresent(Element element, String key) {
 		Element valueElement = (Element) element.getElementsByTagName(key).item(0);
+		if (valueElement == null) {
+			checkArgument("Element", key, element, null);
+			return;
+		}
 		String value = valueElement.getTextContent();
 		if (DistributionReader.isDistribution(valueElement))
 			return;
@@ -144,14 +152,15 @@ public abstract class XmlFileParser extends FileParserAbstract {
 	 * @param key     the attribute name
 	 * @throws IllegalArgumentException if the attribute is missing or empty
 	 */
-	protected void isAttribtuePresent(Element element, String key) {
+	protected void isAttributePresent(Element element, String key) {
 		String value = element.getAttribute(key);
-		checkArgument("Attribure", key, element, value);
-
+		checkArgument("Attribute", key, element, value);
 	}
 
 	/**
-	 * Throws when a required value is null or empty.
+	 * Throws when a required value is null or empty. When the file holds a name of
+	 * the same kind that differs from the expected one by a small edit, the error
+	 * message points to it as a likely misspelling.
 	 *
 	 * @param name    the kind of value, such as {@code Element} or {@code Attribute}
 	 * @param key     the value name
@@ -161,8 +170,34 @@ public abstract class XmlFileParser extends FileParserAbstract {
 	 */
 	protected void checkArgument(String name, String key, Element element, String value) {
 		if (value == null || value.isEmpty()) {
-			throw new IllegalArgumentException(name + " " + key + "' is not found in '" + element.getNodeName() + "'");
+			throw new IllegalArgumentException(getClass().getSimpleName() + " - Error, the " + name.toLowerCase() + " \""
+					+ key + "\" is not found in \"" + element.getNodeName() + "\" in the \"" + file + "\" file"
+					+ misspellingHint(name, key, element) + ".");
 		}
+	}
+
+	/**
+	 * Builds the misspelling hint appended to the error of a missing element or
+	 * attribute.
+	 *
+	 * @param name    the kind of value, such as {@code Element} or {@code Attribute}
+	 * @param key     the value name that was not found
+	 * @param element the element being parsed
+	 * @return an empty string, or a hint naming the closest known name
+	 */
+	private String misspellingHint(String name, String key, Element element) {
+		List<String> known = new ArrayList<>();
+		if ("Element".equals(name)) {
+			NodeList children = element.getChildNodes();
+			for (int i = 0; i < children.getLength(); i++)
+				if (children.item(i).getNodeType() == Node.ELEMENT_NODE)
+					known.add(children.item(i).getNodeName());
+		} else {
+			for (int i = 0; i < element.getAttributes().getLength(); i++)
+				known.add(element.getAttributes().item(i).getNodeName());
+		}
+		String suggestion = suggest(key, known);
+		return suggestion == null ? "" : " (did you mean \"" + suggestion + "\"?)";
 	}
 
 }

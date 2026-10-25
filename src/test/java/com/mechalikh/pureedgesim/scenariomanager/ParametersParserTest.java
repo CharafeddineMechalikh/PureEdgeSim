@@ -3,10 +3,12 @@ package com.mechalikh.pureedgesim.scenariomanager;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -172,9 +174,9 @@ class ParametersParserTest extends AbstractTest {
 			final String value = invalid[i][1];
 			checks[i] = () -> {
 				Path file = TempSettingsFiles.propertiesWith(key, value);
-				IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-						() -> new ParametersParser(file.toString()).parse());
-				assertTrue(exception.getMessage().contains(key), "message should mention " + key);
+				ParseResult result = parseCapturing(file.toString());
+				assertFalse(result.parsed, key + "=" + value + " must be rejected");
+				assertTrue(result.output.contains(key), "message should mention " + key + ": " + result.output);
 			};
 		}
 		assertAll("all simulation properties must be validated", checks);
@@ -184,27 +186,75 @@ class ParametersParserTest extends AbstractTest {
 	void rejectsMinimumNumberOfDevicesSuperiorToMaximum() throws Exception {
 		Path file = TempSettingsFiles.propertiesWithTwo("min_number_of_edge_devices", "30",
 				"max_number_of_edge_devices", "20");
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-				() -> new ParametersParser(file.toString()).parse());
-		assertTrue(exception.getMessage().contains("superior to the max number"));
+		ParseResult result = parseCapturing(file.toString());
+		assertFalse(result.parsed);
+		assertTrue(result.output.contains("superior to the max number"), result.output);
 	}
 
 	@Test
 	void rejectsMissingMandatoryProperties() throws Exception {
 		Path file = TempSettingsFiles.propertiesWithout("wan_bandwidth");
-		assertThrows(NullPointerException.class, () -> new ParametersParser(file.toString()).parse());
+		ParseResult result = parseCapturing(file.toString());
+		assertFalse(result.parsed);
+		assertTrue(result.output.contains("wan_bandwidth"), result.output);
+		assertTrue(result.output.contains("is missing"), result.output);
 	}
 
 	@Test
 	void rejectsNonNumericProperties() throws Exception {
 		Path file = TempSettingsFiles.propertiesWith("length", "not-a-number");
-		assertThrows(NumberFormatException.class, () -> new ParametersParser(file.toString()).parse());
+		ParseResult result = parseCapturing(file.toString());
+		assertFalse(result.parsed);
+		assertTrue(result.output.contains("\"length\""), result.output);
+		assertTrue(result.output.contains("must be a number"), result.output);
+		assertTrue(result.output.contains("not-a-number"), result.output);
 	}
 
 	@Test
 	void rejectsEmptyNumericProperties() throws Exception {
 		Path file = TempSettingsFiles.propertiesWith("width", "");
-		assertThrows(NumberFormatException.class, () -> new ParametersParser(file.toString()).parse());
+		ParseResult result = parseCapturing(file.toString());
+		assertFalse(result.parsed);
+		assertTrue(result.output.contains("\"width\""), result.output);
+		assertTrue(result.output.contains("is missing"), result.output);
+	}
+
+	@Test
+	void rejectsMisspelledBooleanValues() throws Exception {
+		Path file = TempSettingsFiles.propertiesWith("parallel_simulation", "ture");
+		ParseResult result = parseCapturing(file.toString());
+		assertFalse(result.parsed);
+		assertTrue(result.output.contains("\"parallel_simulation\""), result.output);
+		assertTrue(result.output.contains("must be \"true\" or \"false\""), result.output);
+		assertTrue(result.output.contains("did you mean \"true\""), result.output);
+	}
+
+	@Test
+	void warnsAboutUnknownPropertiesAndSuggestsTheClosestOne() throws Exception {
+		Path file = TempSettingsFiles.propertiesWith("wan_bandwidht", "20");
+		ParseResult result = parseCapturing(file.toString());
+		assertTrue(result.parsed, "an unknown property must not stop the simulation");
+		assertTrue(result.output.contains("unknown property \"wan_bandwidht\""), result.output);
+		assertTrue(result.output.contains("did you mean \"wan_bandwidth\""), result.output);
+	}
+
+	@Test
+	void ignoresUnknownPropertiesWithoutACloseMatch() throws Exception {
+		Path file = TempSettingsFiles.propertiesWith("my_own_note", "hello");
+		ParseResult result = parseCapturing(file.toString());
+		assertTrue(result.parsed);
+		assertTrue(result.output.contains("unknown property \"my_own_note\""), result.output);
+		assertFalse(result.output.contains("did you mean"), result.output);
+	}
+
+	@Test
+	void shippedSettingsFilesHoldNoUnknownProperty() throws Exception {
+		for (String name : Arrays.asList(FAST_SETTINGS, FULL_SETTINGS)) {
+			ParseResult result = parseCapturing(SETTINGS_FOLDER + name);
+			assertTrue(result.parsed, name);
+			assertFalse(result.output.contains("Warning, unknown property"),
+					"the known properties list must cover every key of " + name + ": " + result.output);
+		}
 	}
 
 	// ------------------------------------------------------------------
@@ -270,9 +320,34 @@ class ParametersParserTest extends AbstractTest {
 	@Test
 	void rejectsANonNumericSeed() throws Exception {
 		Path file = TempSettingsFiles.propertiesWith("random_seed", "42.5");
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-				() -> new ParametersParser(file.toString()).parse());
-		assertTrue(exception.getMessage().contains("random_seed"), exception.getMessage());
-		assertTrue(exception.getMessage().contains("whole number"), exception.getMessage());
+		ParseResult result = parseCapturing(file.toString());
+		assertFalse(result.parsed);
+		assertTrue(result.output.contains("random_seed"), result.output);
+		assertTrue(result.output.contains("whole number"), result.output);
+	}
+
+	/**
+	 * The outcome of a parse together with everything the parser printed, so the
+	 * tests can check the error messages shown to the user.
+	 */
+	private static final class ParseResult {
+		final boolean parsed;
+		final String output;
+
+		ParseResult(boolean parsed, String output) {
+			this.parsed = parsed;
+			this.output = output;
+		}
+	}
+
+	private static ParseResult parseCapturing(String path) {
+		PrintStream original = System.out;
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		System.setOut(new PrintStream(buffer, true, StandardCharsets.UTF_8));
+		try {
+			return new ParseResult(new ParametersParser(path).parse(), buffer.toString(StandardCharsets.UTF_8));
+		} finally {
+			System.setOut(original);
+		}
 	}
 }

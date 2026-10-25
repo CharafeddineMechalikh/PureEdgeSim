@@ -42,10 +42,21 @@
 *   Errors while reading or instantiating the nodes of an XML file now name the file, the
     element, and the cause, and stop the run. They used to print a stack trace and
     continue with an empty node list.
+*   Configuration errors no longer print a stack trace. A settings file that cannot be
+    read, a missing or misspelled property, or a value of the wrong type stops the run
+    with one console line naming the file, the property or element, and the found
+    value. These cases used to fail with a raw `NullPointerException` or
+    `NumberFormatException`, or printed a stack trace and continued.
+*   A boolean property that is neither `true` nor `false` is now rejected. A value such
+    as `ture` used to be read silently as `false`.
+*   Unknown property names in `simulation_parameters.properties` print a warning that
+    suggests the closest known name when there is one (for example `wan_bandwidht`
+    suggests `wan_bandwidth`). The simulation still runs. A missing XML element or
+    attribute whose name is close to a known one gets the same hint in its error.
 *   The build fails when a test fails. The Surefire configuration no longer sets
     `testFailureIgnore`.
 *   The documentation manual is published on GitHub Pages alongside the repository readme.
-*   The unit test suite grew from 911 to 922 tests, all passing.
+*   The unit test suite grew from 911 to 927 tests, all passing.
 *   Bumped the project version to 5.9.
 
 ## Version 5.8 Changelog (October 25th 2026)

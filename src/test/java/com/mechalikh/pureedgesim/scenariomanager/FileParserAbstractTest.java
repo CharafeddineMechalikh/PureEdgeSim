@@ -97,16 +97,28 @@ class FileParserAbstractTest {
 	void elementPresenceRejectsMissingAndEmptyElements() throws Exception {
 		Element element = element();
 		DummyXmlParser parser = new DummyXmlParser("f");
-		assertThrows(NullPointerException.class, () -> parser.isElementPresent(element, "missing"));
+		IllegalArgumentException missing = assertThrows(IllegalArgumentException.class,
+				() -> parser.isElementPresent(element, "missing"));
+		assertTrue(missing.getMessage().contains("\"missing\""), missing.getMessage());
+		assertTrue(missing.getMessage().contains("not found"), missing.getMessage());
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
 				() -> parser.isElementPresent(element, "empty"));
-		assertTrue(exception.getMessage().contains("Element empty"));
+		assertTrue(exception.getMessage().contains("\"empty\""), exception.getMessage());
+	}
+
+	@Test
+	void missingElementsCloseToAKnownNameGetASuggestion() throws Exception {
+		Element element = element();
+		DummyXmlParser parser = new DummyXmlParser("f");
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+				() -> parser.isElementPresent(element, "presentt"));
+		assertTrue(exception.getMessage().contains("did you mean \"present\""), exception.getMessage());
 	}
 
 	@Test
 	void attributePresenceAcceptsExistingAttributes() throws Exception {
 		Element element = element();
-		assertDoesNotThrow(() -> new DummyXmlParser("f").isAttribtuePresent(element, "attr"));
+		assertDoesNotThrow(() -> new DummyXmlParser("f").isAttributePresent(element, "attr"));
 	}
 
 	@Test
@@ -114,8 +126,8 @@ class FileParserAbstractTest {
 		Element element = element();
 		DummyXmlParser parser = new DummyXmlParser("f");
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-				() -> parser.isAttribtuePresent(element, "unknown"));
-		assertTrue(exception.getMessage().contains("Attribure unknown"));
+				() -> parser.isAttributePresent(element, "unknown"));
+		assertTrue(exception.getMessage().contains("attribute \"unknown\""), exception.getMessage());
 	}
 
 	@Test
