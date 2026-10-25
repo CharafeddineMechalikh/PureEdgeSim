@@ -33,7 +33,7 @@ Mechalikh, C., Taktak, H., & Moussa, F. (2021). PureEdgeSim: A simulation framew
 
 Mechalikh, C., Silem, A. E. H., Safavifar, Z., & Golpayegani, F. (2025). Quality matters: A comprehensive comparative study of edge computing simulators. *Simulation Modelling Practice and Theory*, 138, 103042. https://doi.org/10.1016/j.simpat.2024.103042
 
-BibTeX:
+**BibTeX:**
 
 ```gradle
 @article{mechalikh2021pureedgesim,
