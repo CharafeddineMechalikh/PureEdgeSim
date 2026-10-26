@@ -32,6 +32,9 @@
     sensors generate tasks, 100 gateways form the mist layer, one edge data
     center covers the neighbourhood, and the cloud is the fallback. The
     `FOG_LAYERS` orchestrator fills the innermost feasible layer first.
+*   New `Example14` restricts the Q-learning agent of `Example11` to the mist
+    layer. All 200 devices both generate and execute tasks, and the `MIST_ONLY`
+    architecture leaves device-to-device placement as the only option.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and
