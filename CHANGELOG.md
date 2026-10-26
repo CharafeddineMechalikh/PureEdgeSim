@@ -56,6 +56,10 @@
     real-time tasks keep the largest margin before their latency bound, the soft
     real-time ones minimize the normalized delay, and the background ones
     minimize the estimated energy.
+*   New `Example20` learns the delay and the energy of each layer in two
+    separate value tables and combines them with adjustable weights at decision
+    time, so the trade-off between the objectives can be changed without
+    retraining.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and
