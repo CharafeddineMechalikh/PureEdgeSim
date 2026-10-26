@@ -48,6 +48,10 @@
     include the battery level, the access technology, and the device mobility.
     The agent trains online with a target network, so layers can be valued for
     contexts that never appeared during the run.
+*   New `Example18` decides the tier with an ant colony: every tier carries a
+    pheromone trail that grows with the latency margin of the tasks it completed
+    and evaporates on failure, and a placement is sampled from the trail and the
+    inverse of the estimated delay.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and
