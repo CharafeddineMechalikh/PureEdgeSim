@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- Every request of the video analytics application generates one instance
+		of each subtask. The request has a single end-to-end deadline (the
+		application latency), while each subtask also keeps its own bound. A
+		request fails when its last result returns after the deadline, which is
+		what makes an outdated placement visible in the results.
+
+		The capture and notification stages are cheap and fit on a mist device;
+		detection and classification are heavy enough to benefit from an edge
+		data center or the cloud. Dynamic replanning moves the stages between
+		the tiers as the devices move and the queues grow. -->
+
+	<application name="Video analytics">
+		<type>Soft Real-time</type>
+		<rate>4</rate> <!-- four requests per minute, each one a whole subtask graph -->
+		<usage_percentage>60</usage_percentage>
+		<latency>12</latency> <!-- end-to-end deadline of a request, in seconds -->
+		<container_size>20</container_size>
+		<request_size>5</request_size>
+		<results_size>100</results_size>
+		<task_length>10000</task_length> <!-- default length, overridden by every subtask -->
+
+		<subtask name="capture" task_length="2000" results_size="5" latency="5"/>
+		<subtask name="preprocess" depends_on="capture" task_length="6000" results_size="20" latency="8"/>
+		<subtask name="detect" depends_on="preprocess" task_length="80000" results_size="10" latency="12"/>
+		<subtask name="classify" depends_on="detect" task_length="50000" results_size="50" latency="12"/>
+		<subtask name="track" depends_on="detect" task_length="15000" results_size="100" latency="12"/>
+		<subtask name="aggregate" depends_on="classify,track" task_length="3000" results_size="20" latency="12"/>
+		<subtask name="notify" depends_on="aggregate" task_length="500" results_size="1" latency="12"/>
+	</application>
+</applications>

@@ -8,6 +8,28 @@
     depends on have returned their results, and a failure propagates to the whole
     subtree. An application without `<subtask>` elements keeps producing exactly one
     independent task per request, with the same fields, timing, and counts as before.
+*   Service graphs now model the data and the deadline of a real pipeline. The
+    results of each parent are added to the request size of its children, so the
+    payload of a dependency travels over the network. The application `latency` is
+    drawn once per request and shared by every subtask as an end-to-end deadline:
+    a result that returns at or after it fails with `FAILED_DUE_TO_LATENCY`, even
+    when the subtask met its own bound.
+*   A subtask can be declared `optional="true"`. When one of its dependencies
+    fails it is skipped with status `SKIPPED` instead of failing the request, its
+    dependents are released without the missing input, and it is reported in its
+    own text line and CSV column. An optional subtask must have at least one
+    dependency, because an optional root could never be skipped.
+*   The report now measures requests, not only tasks: the number generated, the
+    percentage that completed successfully, the number that failed, and the
+    average end-to-end makespan of the successful ones. The text report has a
+    `Requests` block, the CSV has three new columns, and the "Tasks skipped"
+    counter is the first of the four columns appended at the end of the row, so
+    the positions of the existing columns do not change.
+*   New `Example24` recomputes the tier of every subtask of a service graph every
+    30 seconds and replans immediately when a planned tier loses all of its
+    nodes. Against the same scenario with a frozen plan, it moves 114 subtasks
+    between tiers and lifts the request success rate from 41.7 to 80.1 percent
+    while lowering the average request makespan from 6.60 to 5.85 seconds.
 *   The report has a new "Tasks not executed because a dependency failed" line in the
     text log and a matching column in the CSV, inserted after the dead-device column.
     Positions of the following CSV columns shift by one.

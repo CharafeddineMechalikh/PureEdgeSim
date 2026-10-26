@@ -107,7 +107,7 @@ Each module provides a default implementation and a set of adjustable settings. 
   - Nine mobility models: random waypoint, random walk, Gauss-Markov, Manhattan, fixed waypoints, circular, Lévy walk, Brownian, and reference point group movement, selected per device type from the scenario file.
   - Realistic energy model.
 - **Everything is a random variable**: task sizes, task lengths, arrival gaps, device capacities, battery levels, and initial positions accept any of sixteen probability distributions (uniform, normal, lognormal, exponential, Poisson, gamma, Erlang, Weibull, beta, Pareto, triangular, Bernoulli, binomial, geometric, categorical, constant), or stay a fixed number as before.
-- **Monolithic tasks or service graphs**: an application can generate one independent task per request, or a sequential, parallel, or arbitrarily complex acyclic graph of subtasks linked by dependencies, where each stage runs only after the stages it needs have returned their results and a failure cancels the whole subtree. The two styles coexist in one scenario file, and existing scenarios are unchanged.
+- **Monolithic tasks or service graphs**: an application can generate one independent task per request, or a sequential, parallel, or arbitrarily complex acyclic graph of subtasks linked by dependencies, where each stage runs only after the stages it needs have returned their results, the results of a parent are carried as the payload of its children, every request has an end-to-end deadline, optional stages can be skipped, and a required failure cancels the whole subtree. The two styles coexist in one scenario file, and existing scenarios are unchanged.
 - **Reproducible runs**: set `random_seed` once and the whole scenario, including node generation and movement, replays identically. Parallel runs of the same sweep reuse the seed per scenario, so conditions stay comparable.
 - **Support for online decision making**: task orchestration, scheduling, and offloading.
 - **QoS-aware architectures and topologies**.
@@ -165,9 +165,9 @@ flowchart LR
     end
 ```
 
-A monolithic application produces one task per request. A service graph produces one task per `<subtask>`, releases each stage only after the stages listed in its `depends_on` have returned their results, gives every subtask its own latency bound and sizes, and fails the whole subtree when a parent fails. Graphs are declared in `applications.xml` with `<subtask name="detect" depends_on="capture" task_length="5000"/>`, and both styles can coexist in one scenario.
+A monolithic application produces one task per request. A service graph produces one task per `<subtask>`, releases each stage only after the stages listed in its `depends_on` have returned their results, adds the results of a parent to the request of its children, gives every subtask its own latency bound and sizes, shares the application `latency` as the end-to-end deadline of the request, skips the stages declared `optional="true"` when their input fails, and fails the whole required subtree when a required parent fails. Graphs are declared in `applications.xml` with `<subtask name="detect" depends_on="capture" task_length="5000"/>`, and both styles can coexist in one scenario.
 
-The model does not represent conditional branches, loops, per-edge data sizes, or a graph-wide end-to-end deadline. See [Simulation models](docs/models.md#task-graph-shapes) for the diagrams and their runtime consequences, and [Configuration](docs/configuration.md#service-graphs) for the XML attributes.
+The model still does not represent conditional branches, loops, or "any parent" joins. See [Simulation models](docs/models.md#task-graph-shapes) for the diagrams and their runtime consequences, and [Configuration](docs/configuration.md#service-graphs) for the XML attributes.
 
 ## Quick start
 
@@ -261,7 +261,7 @@ dependencies {
 - [Documentation manual](docs/): step-by-step tutorials, architecture, models, output metrics, and a research guide for new users.
 - [Published documentation](https://charafeddinemechalikh.github.io/PureEdgeSim/docs/): the same manual, rendered as a website.
 - [Wiki](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki): installation, configuration files, modules, and tutorials.
-- [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/src/main/java/com/mechalikh/pureedgesim/examples): runnable scenarios covering cloud, edge, and mist computing, including service-graph partitioning with graph theory (`Example9`) and with a genetic algorithm (`Example10`).
+- [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/src/main/java/com/mechalikh/pureedgesim/examples): runnable scenarios covering cloud, edge, and mist computing, including service-graph partitioning with graph theory (`Example9`), with a genetic algorithm (`Example10`), and with a plan that is repartitioned every 30 seconds while the simulation runs (`Example24`).
 - [Javadoc](https://javadoc.io/doc/com.mechalikh/pureedgesim): API documentation.
 - [CHANGELOG.md](CHANGELOG.md): release notes.
 

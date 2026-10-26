@@ -158,24 +158,47 @@ flowchart LR
     M --> U[upload]
 ```
 
-What the model does not represent: dependency edges are unconditional, so
-conditional branches and loops cannot be expressed; an edge carries no data
-size, because only the request and results of each subtask are charged; and the
-latency bound is per subtask, counted from its release time, not an end-to-end
-deadline shared by the graph. A graph-level SLO therefore has to be decomposed
-into per-subtask bounds by the scenario author.
+What the model still does not represent: dependency edges are unconditional, so
+conditional branches and loops cannot be expressed, and a graph cannot wait for
+"any" parent instead of "all" of them. Everything else that matters for
+realistic results is modeled:
+
+- **The data of an edge is charged.** When a parent returns its results to the
+  device, its output size is added to the request size of every child before the
+  child is offloaded. A child therefore uploads what its parent produced plus its
+  own request, so a long chain pays the network cost of every hop, not only of
+  the first one.
+- **The deadline is end to end.** The application `latency` is drawn once per
+  request, and every subtask carries the same absolute deadline. A subtask whose
+  result reaches the device at or after that deadline fails with
+  `FAILED_DUE_TO_LATENCY`, and so does the request, even when every individual
+  subtask met its own bound. Per-subtask bounds are still checked from the
+  release time of the subtask, as before.
+- **Some subtasks are optional.** A subtask declared `optional="true"` is skipped
+  with status `SKIPPED` when one of its dependencies fails, instead of failing
+  the request. Its dependents are released with the inputs they actually
+  received, so a degraded result can still be produced. An optional root is
+  rejected, because a root has no dependency that could fail.
 
 The model has three properties worth knowing before you interpret results:
 
 - **Requests, not tasks, follow the rate.** A device assigned the application issues `rate` requests per minute; each request expands into the whole graph. The task rate observed by the network and the computing nodes is therefore `rate * subtasks`, weighted by the task lengths.
 - **A subtask is released on results.** When a parent returns its results to the device, the manager decrements the remaining-dependency counter of every child. The child enters the event queue only when that counter reaches zero, which is how a join waits for all its parents. Subtask times are set at release time, not at request time, so the waiting time of a child starts when it is submitted.
-- **Failures cascade.** A parent that fails for any reason, including a dead device, insufficient resources, or a missed latency bound, fails every descendant with `FAILED_BECAUSE_DEPENDENCY_FAILED`. Descendants are never sent, so they do not enter the failure rate; they are reported in their own CSV column and in the text report. The simulation still counts them as generated tasks, so termination and progress reach 100 percent.
+- **Failures cascade.** A required parent that fails for any reason, including a dead device, insufficient resources, a missed subtask bound, or a missed request deadline, fails every required descendant with `FAILED_BECAUSE_DEPENDENCY_FAILED`. Optional descendants are skipped instead. Subtasks that are never sent do not enter the task failure rate; they are reported in their own CSV columns and in the text report. The simulation still counts them as generated tasks, so termination and progress reach 100 percent.
+
+Because every task of a request shares a request identifier, the logger also
+reports the number of requests generated, the percentage that completed
+successfully, and the average end-to-end makespan of the successful ones. A
+request succeeds when none of its required subtasks failed, and its makespan is
+the time between the request arrival and the return of the last result. This is
+the metric to quote when the claim is about a service, not about individual
+tasks.
 
 Each subtask samples its own attributes from the application distributions unless the XML overrides them, and each has its own container size, so the storage and RAM checks at the destination apply per subtask.
 
 The placement cache is an application-level shortcut, not a graph-level one: without intervention, the first subtask decides where the whole application runs. A partitioning policy therefore clears the placement after each decision and selects a node per subtask, from the subtask name and the application identifier. `Example9PartitioningOrchestrator` derives the partitions from the graph structure, and `Example10GeneticOrchestrator` searches them with a genetic algorithm; both run the same video analytics graph, so their plans can be compared.
 
-A partition plan can be **static** or **dynamic**. A static plan is computed once, before the simulation starts, from the declared subtasks and their distributions; both examples above build theirs in the orchestrator constructor. A dynamic plan is recomputed per request inside `findComputingNode` or `orchestrate`, from the current node loads, placement, and reachability, so it reacts to device death, mobility, and load drift at the cost of a decision per task. The clearing rule of the previous paragraph applies to both. See [Writing orchestrators](writing-orchestrators.md#static-and-dynamic-partition-plans).
+A partition plan can be **static** or **dynamic**. A static plan is computed once, before the simulation starts, from the declared subtasks and their distributions; Examples 9 and 10 build theirs in the orchestrator constructor. A dynamic plan is recomputed from the current node loads, placement, and reachability, so it reacts to device death, mobility, and load drift at the cost of a decision per task. `Example24DynamicRepartitionOrchestrator` refreshes the tier of every subtask every 30 seconds and replans immediately when a planned tier loses all of its nodes; its README compares the result with the same scenario under a frozen plan. The clearing rule of the previous paragraph applies to both. See [Writing orchestrators](writing-orchestrators.md#static-and-dynamic-partition-plans).
 
 The dependency bookkeeping lives in `TaskAbstract`: `addDependency`, `addDependent`, `dependencyFinished`, `getDependencies`, and `getDependents`. A task class that implements `Task` directly keeps working for monolithic applications, because the interface provides neutral default methods.
 

@@ -33,7 +33,7 @@ flowchart LR
     Check2 -->|no| Execute["5. Execution<br/>submitTask, FIFO queue, EXECUTION_FINISHED"]
     Check2 -->|yes| Failed
     Execute --> Return["6. Result return<br/>TRANSFER_RESULTS_TO_ORCH"]
-    Return --> Check3{"taskFailed(task, 3)<br/>total delay within the latency bound?"}
+    Return --> Check3{"taskFailed(task, 3)<br/>delay within bound<br/>and request before deadline?"}
     Check3 -->|yes| Done["Task completed<br/>resultsReturned"]
     Check3 -->|no| Failed
 ```
@@ -149,7 +149,7 @@ The result path mirrors the request path:
 4. Otherwise, the network model transfers the results from the destination to the orchestrator, then from the orchestrator to the source device if the orchestrator is not the device.
 5. When the results reach the source device, the manager performs `taskFailed(task, 3)`, the final failure check.
 6. If the task survived, the manager calls `edgeOrchestrator.resultsReturned(task)` and increments the completed-task counter.
-7. If the task belongs to a [service graph](configuration.md#service-graphs), the manager releases the subtasks that depend on it: every dependent whose last parent has now returned enters the queue through `SEND_TO_ORCH` at the current time.
+7. If the task belongs to a [service graph](configuration.md#service-graphs), the manager releases the subtasks that depend on it: every dependent whose last parent has now returned enters the queue through `SEND_TO_ORCH` at the current time. The output size of the returning parent is added to the request size of each dependent before it is offloaded, so the payload of the dependency travels with the child.
 
 Total delay is defined as:
 
@@ -161,7 +161,7 @@ totalDelay = actualNetworkTime + waitingTime + actualCpuTime
 - `waitingTime` is `executionStartTime - arrivalTime`, where arrival is when the destination received the task.
 - `actualCpuTime` is `executionFinishTime - executionStartTime`.
 
-A task fails due to latency when `totalDelay >= maxLatency` at the final check. The comparison is inclusive, so a task whose delay exactly equals its bound fails.
+A task fails due to latency when `totalDelay >= maxLatency` at the final check. The comparison is inclusive, so a task whose delay exactly equals its bound fails. For a subtask of a service graph, a second check compares the current time with the absolute deadline the generator attached to the request: the application latency is drawn once per request and shared by every subtask, so a subtask that returns after that deadline fails with the same `FAILED_DUE_TO_LATENCY` reason even when it met its own bound. For a monolithic application the two checks are equivalent.
 
 ## Failure phases and reasons
 
@@ -172,11 +172,13 @@ Failures are checked at four points. The `phase` argument identifies the check.
 | 0 | Before sending to the orchestrator | Source device is dead | `FAILED_BECAUSE_DEVICE_DEAD` |
 | 1 | After the decision, before sending to the destination | Orchestrator is dead; or the orchestrator is not cloud and the source device and orchestrator are no longer in range | `FAILED_BECAUSE_DEVICE_DEAD` or `FAILED_DUE_TO_DEVICE_MOBILITY` |
 | 2 | When the destination receives the request | Destination is dead; RAM or storage is insufficient; or the destination or orchestrator is no longer reachable from the source device | `FAILED_BECAUSE_DEVICE_DEAD`, `INSUFFICIENT_RESOURCES`, or `FAILED_DUE_TO_DEVICE_MOBILITY` |
-| 3 | When the results reach the source device | Total delay is greater than or equal to the application latency bound | `FAILED_DUE_TO_LATENCY` |
+| 3 | When the results reach the source device | Total delay is greater than or equal to the task latency bound; or the request deadline is reached | `FAILED_DUE_TO_LATENCY` |
 | Decision | After orchestration | No candidate satisfies the architecture and reachability rules | `NO_OFFLOADING_DESTINATIONS` |
-| Cascade | When a task fails at any point | The task has subtasks that depend on it | `FAILED_BECAUSE_DEPENDENCY_FAILED` on every descendant |
+| Cascade | When a task fails at any point | The task has subtasks that depend on it | `FAILED_BECAUSE_DEPENDENCY_FAILED` on every required descendant, `SKIPPED` on every optional one |
 
-A failing task propagates the failure to its whole subtree: the descendants are never sent, so they do not count as sent-task failures. They increment the dependency counter that feeds the "Tasks not executed because a dependency failed" column and the corresponding text report line.
+A failing task propagates the failure to its whole subtree: the required descendants are never sent, so they do not count as sent-task failures. They increment the dependency counter that feeds the "Tasks not executed because a dependency failed" column and the corresponding text report line. An optional descendant is skipped instead: its status becomes `SKIPPED`, it increments the "Tasks skipped because their optional input failed" line and its own CSV column, and its own dependents are released without the missing input. It is not a failure, so the request can still succeed.
+
+Each task also carries the identifier, the size, the start time, and the deadline of its request, which the generator fills when it creates the graph. The manager registers the request when its first task is offloaded and finalizes it when its last task returns or is skipped: if no required task failed, the request is successful and its makespan is the time between the request arrival and that last return; otherwise it is counted as failed. These are the request-level values printed in the report and appended to the CSV row.
 
 The `INSUFFICIENT_POWER` and `NOT_GENERATED_BECAUSE_DEVICE_DEAD` enum values exist in the `Task.FailureReason` enumeration, but the default manager does not assign them. Device death is reported through `FAILED_BECAUSE_DEVICE_DEAD`, including when the source device dies before its tasks are sent. Keep this in mind when you aggregate failure reasons.
 

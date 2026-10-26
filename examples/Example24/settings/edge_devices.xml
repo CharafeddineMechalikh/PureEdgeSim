@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<edge_devices>
+	<!-- Four device types. Every device generates requests, so the offered load
+		stays high while the mix of mobile and fixed devices changes over time.
+
+		Smartphones and vehicles move, so the edge data center they are attached
+		to (their uplink) changes during the run, and the mist neighbours a
+		subtask can reach change with them. Their batteries start partly
+		drained, so the energy cost of the run is paid by mobile devices too.
+
+		Raspberry Pis add computing capacity at the mist tier, and sensors add
+		load without offering any capacity. -->
+
+	<device> <!-- smartphone: slow mobility on a cellular link -->
+		<connectivity>cellular</connectivity>
+		<mobility>true</mobility>
+		<speed>1.4</speed>
+		<minPauseDuration>60</minPauseDuration>
+		<maxPauseDuration>200</maxPauseDuration>
+		<minMobilityDuration>20</minMobilityDuration>
+		<maxMobilityDuration>90</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>30</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>35</initialBatteryLevel>
+		<idleConsumption>1</idleConsumption>
+		<maxConsumption>3.3</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>8</cores>
+		<mips>10000</mips>
+		<ram>4000</ram>
+		<storage>128000</storage>
+	</device>
+	<device> <!-- vehicle: fast mobility, crosses the coverage of several data centers -->
+		<connectivity>cellular</connectivity>
+		<mobility>true</mobility>
+		<speed>12</speed>
+		<minPauseDuration>10</minPauseDuration>
+		<maxPauseDuration>40</maxPauseDuration>
+		<minMobilityDuration>30</minMobilityDuration>
+		<maxMobilityDuration>120</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>15</percentage>
+		<batteryCapacity>56.2</batteryCapacity>
+		<initialBatteryLevel>40</initialBatteryLevel>
+		<idleConsumption>1.7</idleConsumption>
+		<maxConsumption>23.6</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>8</cores>
+		<mips>15000</mips>
+		<ram>8000</ram>
+		<storage>512000</storage>
+	</device>
+	<device> <!-- Raspberry Pi: fixed mist capacity -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>25</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel>
+		<idleConsumption>1.6</idleConsumption>
+		<maxConsumption>5.1</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>4</cores>
+		<mips>4000</mips>
+		<ram>4000</ram>
+		<storage>32000</storage>
+	</device>
+	<device> <!-- sensor: generates requests but cannot execute anything -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>30</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel>
+		<idleConsumption>1</idleConsumption>
+		<maxConsumption>2</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>0</cores>
+		<mips>0</mips>
+		<ram>0</ram>
+		<storage>0</storage>
+	</device>
+</edge_devices>

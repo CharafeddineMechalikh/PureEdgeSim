@@ -40,7 +40,16 @@ The aggregate charts are the ones intended for publications. The per-iteration s
 
 ### The text report
 
-When `save_log_file=true`, the `.txt` file contains the console report for every iteration: task counts, success and failure percentages, network usage, CPU utilization, and energy breakdown. The numbers have more decimal places in the console than in the CSV, and the report includes a few values that never reach the CSV, such as MAN usage.
+When `save_log_file=true`, the `.txt` file contains the console report for every iteration: task counts, success and failure percentages, request counts, network usage, CPU utilization, and energy breakdown. The numbers have more decimal places in the console than in the CSV, and the report includes a few values that never reach the CSV, such as MAN usage.
+
+The task section starts with the four counters that explain what happened before
+execution: tasks not sent because the device died, tasks lost to a failed
+dependency, tasks skipped because their optional input failed, and tasks sent.
+The `Requests` block at the end of the same section reports the number of
+requests generated, the percentage that completed successfully, the number that
+failed, and the average end-to-end makespan of the successful requests. For a
+service graph, the request block is the one to quote when the claim is about the
+whole service rather than about individual subtasks.
 
 ## Reading the CSV correctly
 
@@ -60,7 +69,7 @@ Some columns are not what their names suggest. The notes below are based on the 
 | 6 | Total tasks waiting time (s) | Sum of destination queue time |
 | 7 | Average waiting time (s) | Queue time divided by executed tasks |
 
-The execution delay columns exclude network time. End-to-end delay exists inside the simulator as `task.getTotalDelay()`, which is network time plus waiting time plus CPU time, but it is not written to the CSV. It is used for the latency failure check. If your paper needs end-to-end delay, compute it from a custom logger or a custom simulation manager, or extend `SimLog`. Do not relabel columns 4 and 5 as end-to-end.
+The execution delay columns exclude network time. End-to-end task delay exists inside the simulator as `task.getTotalDelay()`, which is network time plus waiting time plus CPU time, but it is not written to the CSV. It is used for the latency failure check. The request-level end-to-end makespan of a service graph is written in column 56. If your paper needs per-task end-to-end delay, compute it from a custom logger or a custom simulation manager, or extend `SimLog`. Do not relabel columns 4 and 5 as end-to-end.
 
 Executed tasks in columns 5 and 7 are tasks that finished CPU execution and entered the result-return path. A task that later fails the latency check at phase 3 is still included in these averages.
 
@@ -71,23 +80,25 @@ Executed tasks in columns 5 and 7 are tasks that finished CPU execution and ente
 | 8 | Number of generated tasks | Every task in the pre-generated list |
 | 9 | Tasks successfully executed | `sentTasks - failedTasks`, see the warning below |
 | 10 | Task not executed (No resources available or long waiting time) | No eligible destination, or insufficient RAM/storage at the destination |
-| 11 | Tasks failed (delay) | Total delay reached the application's maximum latency |
+| 11 | Tasks failed (delay) | Total delay reached the task latency bound, or the result returned after the request deadline |
 | 12 | Tasks failed (device dead) | Device, orchestrator, or destination died before the task completed |
 | 13 | Tasks failed (mobility) | Destination moved out of range before or during offloading |
 | 14 | Tasks not generated due to the death of devices | Tasks whose generating device died before they were offloaded; they are not failed tasks |
-| 15 | Tasks not executed because a dependency failed | Subtasks that were never offloaded because a parent subtask failed; they are not counted as sent-task failures |
+| 15 | Tasks not executed because a dependency failed | Required subtasks that were never offloaded because a parent subtask failed; they are not counted as sent-task failures |
 | 16-17 | Total / successful tasks executed (Cloud) | Tasks sent to the cloud and those without failure |
 | 18-19 | Total / successful tasks executed (Edge) | Tasks sent to edge data centers and those without failure |
 | 20-21 | Total / successful tasks executed (Mist) | Tasks sent to edge devices and those without failure |
 
-Column 9 is computed as sent tasks minus all failed tasks. Tasks whose device died before offloading are not counted as failures: they were never sent, so they reduce the number of sent tasks and appear in column 14 instead. Column 15 exists only for [service graphs](configuration.md#service-graphs): a subtask that waits for a parent which failed is never sent either, so it stays out of the failure rate and is reported separately.
+Column 9 is computed as sent tasks minus all failed tasks. Tasks whose device died before offloading are not counted as failures: they were never sent, so they reduce the number of sent tasks and appear in column 14 instead. Column 15 exists only for [service graphs](configuration.md#service-graphs): a required subtask that waits for a parent which failed is never sent either, so it stays out of the failure rate and is reported separately. Optional subtasks in the same situation are skipped, not failed, and appear in column 53.
 
 For a robust success rate, derive it from the failure breakdown:
 
 ```text
 completed_or_failed = column 10 + column 11 + column 12 + column 13
-successful = column 8 - column 14 - column 15 - completed_or_failed - still_in_flight
+successful = column 8 - column 14 - column 15 - column 53 - completed_or_failed - still_in_flight
 ```
+
+A request-level alternative is available in columns 54 to 56: a request succeeds only when none of its required subtasks failed, and its makespan is measured from the request arrival to the return of its last result. The average makespan in column 56 covers the successful requests only, because failed requests stop contributing at the failure time and would understate the cost of an outdated placement.
 
 `still_in_flight` is not reported. Tasks whose execution or transfer is still in progress when the simulation horizon is reached are neither successful nor failed in the CSV. This is right-censoring at the end of the run. Keep the simulation long enough relative to task rates and delays, or state the censoring in the methodology.
 
@@ -157,6 +168,10 @@ The average energy per computing node includes idle nodes, and its denominator u
 | 50 | First edge device death time (s) | Earliest death time, or `-1` if no device died |
 | 51 | List of remaining power (%) (only battery powered devices / 0 = dead) | Dash-separated per-device values |
 | 52 | List of the time when each device died (s) | Dash-separated death times for devices that died |
+| 53 | Tasks skipped because their optional input failed | Optional subtasks whose dependency failed; they are not failures and do not fail the request |
+| 54 | Requests generated | One per request; equals the number of generated tasks for a monolithic application |
+| 55 | Successful requests | Requests whose required subtasks all completed successfully |
+| 56 | Average request makespan (s) | Mean end-to-end time from request arrival to the last result, over successful requests |
 
 Column 47 counts only edge devices. Data centers are not battery powered by default, so their deaths are not tracked here. Dead devices contribute `0` to the remaining-power list but are excluded from the average, which is computed over alive battery-powered devices only. A high average remaining power can therefore coexist with many dead devices; read columns 47 and 49 together.
 
@@ -179,7 +194,8 @@ The CSV is a summary, not a complete event log. Common research metrics and how 
 | Metric | How to obtain it |
 | --- | --- |
 | End-to-end task delay | Not in the CSV. Add a custom logger or extend `DefaultSimulationManager` and record `task.getTotalDelay()` in `resultsReturned`. |
-| Success rate | Derive from generated tasks and the failure breakdown, since column 9 is unreliable with pre-send failures. State how in-flight tasks are handled. |
+| End-to-end request makespan | Column 56 (average over successful requests), or the console `Requests` block. For per-request values, extend `SimLog` and use the request identifier carried by every task. |
+| Success rate | Derive from generated tasks and the failure breakdown, since column 9 is unreliable with pre-send failures. State how in-flight tasks are handled. For a service graph, prefer the request success rate in column 55. |
 | Throughput | Successful tasks divided by a time window, using the scenario duration and the number of tasks. Do not use the execution-delay columns. |
 | Energy per successful task | Energy of computing nodes divided by successful tasks. Decide whether link energy belongs in the numerator and state it. |
 | WAN utilization | WAN usage time divided by simulation duration, or use `getWanUpUtilization()` while the simulation runs. The CSV has usage seconds, not a percentage. |

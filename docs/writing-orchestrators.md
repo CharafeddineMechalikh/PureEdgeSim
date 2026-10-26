@@ -85,7 +85,7 @@ protected int findComputingNode(String[] architecture, Task task) {
 }
 ```
 
-A dynamic plan reacts to death, mobility, and queue growth, and pays a decision per subtask. A common middle ground keeps the partition membership static and chooses the node of each partition dynamically among the eligible nodes, which bounds the recomputation while still following the state of the run.
+A dynamic plan reacts to death, mobility, and queue growth, and pays a decision per subtask. A common middle ground keeps the partition membership static and chooses the node of each partition dynamically among the eligible nodes, which bounds the recomputation while still following the state of the run. `Example24DynamicRepartitionOrchestrator` is a complete dynamic plan: it assigns a tier to every subtask, refreshes the assignment every 30 seconds, replans immediately when a planned tier loses all of its nodes, and counts the subtasks that moved. Its README runs the same scenario with a frozen plan and compares request success and makespan.
 
 Whichever moment you choose, clear the application placement after every decision as shown above. Otherwise the first subtask stores its destination and later subtasks of the same device never reach `findComputingNode`.
 

@@ -197,9 +197,9 @@ Each `<application>` describes one workload class. The `name` attribute is an id
 
 | Element | Unit | Constraint | Meaning |
 | --- | --- | --- | --- |
-| `rate` | tasks per minute | `> 0` | Number of tasks each assigned device generates per simulated minute. |
+| `rate` | requests per minute | `> 0` | Number of requests each assigned device generates per simulated minute. A monolithic application produces one task per request; a service graph produces one task per subtask. |
 | `usage_percentage` | percent | `> 0` | Share of task-generating devices assigned to this application. |
-| `latency` | seconds | `> 0` | Maximum acceptable total delay. Tasks whose total delay reaches this value fail at the final check. |
+| `latency` | seconds | `> 0` | Maximum acceptable end-to-end delay of a request. It is drawn once per request and shared by all of its subtasks; a request whose last result returns at or after this deadline fails. For a monolithic application the request and the task are the same thing. |
 | `container_size` | kilobytes | `> 0` | Application container size. Used for RAM and storage checks and for registry downloads. Converted to bits with `* 8000`. |
 | `request_size` | kilobytes | `> 0` | Offloading request size, converted to bits. |
 | `results_size` | kilobytes | `> 0` | Result size, converted to bits. |
@@ -265,17 +265,27 @@ The element supports any acyclic shape. The four common ones are monolithic (no 
 | `request_size` | no | Kilobytes. Overrides the application value. |
 | `results_size` | no | Kilobytes. Overrides the application value. |
 | `container_size` | no | Kilobytes. Overrides the application value. |
-| `latency` | no | Seconds. Overrides the application value. |
+| `latency` | no | Seconds. Overrides the application value for this subtask. The application value remains the end-to-end deadline of the request. |
+| `optional` | no | `true` or `false` (default `false`). An optional subtask is skipped, not failed, when one of its dependencies fails. It must have at least one dependency. |
 
 An omitted attribute inherits the application value, and the application elements remain mandatory. Sizes written on a subtask are converted to bits exactly like the application sizes. Every `<subtask>` is a distribution-friendly value: only plain numbers are accepted here, because a subtask element has no child element to hold a distribution.
 
 How a graph runs:
 
 - One request from a device produces one task per subtask, so `rate` counts requests, not tasks. The `Number of generated tasks` column includes every subtask.
-- Only the roots enter the simulation at the request time. A subtask is submitted when the last of its `depends_on` parents has returned its results, at the time those results reach the device.
-- If a parent fails, its whole subtree fails with `FAILED_BECAUSE_DEPENDENCY_FAILED`. These subtasks are counted in a dedicated column, "Tasks not executed because a dependency failed", and are not added to the failure rate, since they were never sent.
-- Each subtask keeps its own latency bound, sizes, and task length, and each has its own container. The application placement is shared by default, so subtasks of one application follow the same orchestration decision until that placement is invalidated. An orchestrator that routes subtasks to different nodes clears the placement after every decision, as in `Example9` and `Example10`; see [Writing orchestrators](writing-orchestrators.md#placing-the-subtasks-of-a-service-graph).
+- Only the roots enter the simulation at the request time. A subtask is submitted when the last of its `depends_on` parents has returned its results, at the time those results reach the device. The results of each parent are added to the request size of the child before it is offloaded, so the data of a dependency is actually carried over the network.
+- The application `latency` is the end-to-end deadline of the request: it is drawn once, and every subtask of the request carries the same absolute deadline. A subtask whose own `latency` bound is exceeded fails at its return, and a result that arrives after the request deadline fails with `FAILED_DUE_TO_LATENCY`, which fails the request even if every subtask met its own bound.
+- If a required parent fails, its whole subtree fails with `FAILED_BECAUSE_DEPENDENCY_FAILED`. These subtasks are counted in a dedicated column, "Tasks not executed because a dependency failed", and are not added to the failure rate, since they were never sent.
+- A subtask declared `optional="true"` is skipped with status `SKIPPED` when one of its dependencies fails, and the request continues. Its dependents are released without the missing input. Skipped subtasks have their own column, "Tasks skipped because their optional input failed", and are not failures. An optional subtask needs a dependency, so the parser rejects an optional root.
+- Each subtask keeps its own latency bound, sizes, and task length, and each has its own container. The application placement is shared by default, so subtasks of one application follow the same orchestration decision until that placement is invalidated. An orchestrator that routes subtasks to different nodes clears the placement after every decision, as in `Example9`, `Example10`, and `Example24`; see [Writing orchestrators](writing-orchestrators.md#placing-the-subtasks-of-a-service-graph).
 - The graph must be acyclic, every `depends_on` name must exist, and a subtask cannot depend on itself. A violation stops the run with a message naming the application, the subtask, and the file.
+
+The text report and the CSV also contain request-level results: the number of
+requests generated, the percentage that completed successfully, the number that
+failed, and the average end-to-end makespan of the successful ones. A request
+succeeds when none of its required subtasks failed; skipped optional subtasks do
+not fail it. Use these values instead of the task counts when the claim is about
+the service.
 
 Applications without `<subtask>` elements are untouched: they keep producing one independent task per request, with the same fields, the same timing, and the same counts as before. You can mix monolithic and graph applications in one file.
 

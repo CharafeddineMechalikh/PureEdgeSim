@@ -80,7 +80,15 @@ Column 9 is computed as sent tasks minus failed tasks, and the failed counter in
 
 ### Why is the execution delay so small compared with the task latency?
 
-The execution-delay columns contain CPU time only. Network time is not included. End-to-end delay is available inside the simulator as `task.getTotalDelay()` but is not written to the CSV. Use a custom logger if the claim is about end-to-end latency.
+The execution-delay columns contain CPU time only. Network time is not included. End-to-end task delay is available inside the simulator as `task.getTotalDelay()` but is not written to the CSV. For a service graph, the average end-to-end makespan of a request is written in the last CSV column and in the console `Requests` block. Use a custom logger if the claim is about per-task end-to-end latency.
+
+### Why do my service-graph requests fail even though every subtask met its latency?
+
+The application `latency` is the end-to-end deadline of the request, drawn once and shared by all subtasks. A chain of subtasks that each meet their own bound can still finish after that deadline, especially if the plan sends stages to distant nodes. Either raise the application latency or lower the per-subtask bounds so the graph fits the deadline. See [Task lifecycle](task-lifecycle.md#stage-6-result-return).
+
+### Can some subtasks fail without failing the whole request?
+
+Yes, declare them `optional="true"`. A failure in their dependencies skips them with status `SKIPPED` instead of failing the request, and their dependents are released without the missing input. The skipped subtasks are counted in their own report line and CSV column. An optional subtask must list at least one dependency, because only a dependency can fail; the parser rejects an optional root. See [Configuration: service graphs](configuration.md#service-graphs).
 
 ### Why did changing bandwidth not change my results much?
 
@@ -92,7 +100,7 @@ There is no fixed list. An application is defined by its numbers (rate, latency 
 
 ### Can a partitioning policy run once, or must it run per task?
 
-Both work. A **static** plan is computed once from the application profiles, usually in the orchestrator constructor, as in `Example9` and `Example10`. A **dynamic** plan is recomputed inside `findComputingNode` or `orchestrate` from the live node loads and reachability. Either way, clear the application placement after each decision, or the first subtask pins the whole application to one node. See [Writing orchestrators](writing-orchestrators.md#static-and-dynamic-partition-plans).
+Both work. A **static** plan is computed once from the application profiles, usually in the orchestrator constructor, as in `Example9` and `Example10`. A **dynamic** plan is recomputed inside `findComputingNode` or `orchestrate` from the live node loads and reachability; `Example24` refreshes the tier of every subtask every 30 seconds and compares the result with a frozen plan. Either way, clear the application placement after each decision, or the first subtask pins the whole application to one node. See [Writing orchestrators](writing-orchestrators.md#static-and-dynamic-partition-plans).
 
 ### Why do tasks keep going to the same node even though another node is free?
 
