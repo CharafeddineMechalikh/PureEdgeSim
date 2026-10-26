@@ -17,3 +17,427 @@
     await mermaid.run({ querySelector: "pre.mermaid" });
   }
 </script>
+
+<!-- Documentation navigation: a fixed panel with every manual page and the
+     sections of the current page. It is built on the client from the rendered
+     headings, so a new section appears in the panel without touching this file.
+     Only pages under /docs/ get the panel; the project home page is unchanged. -->
+<style>
+  .docs-sidebar,
+  .docs-sidebar-open,
+  .docs-sidebar-backdrop {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  .docs-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 60;
+    width: min(84vw, 320px);
+    padding: 22px 16px 40px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    box-sizing: border-box;
+    background: #f7f9fb;
+    border-right: 1px solid #d8e1e8;
+    font-size: 14px;
+    line-height: 1.45;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+  }
+
+  .docs-sidebar.is-open {
+    transform: none;
+  }
+
+  .docs-sidebar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .docs-sidebar-brand a {
+    color: #155799;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .docs-sidebar-close {
+    padding: 4px 8px;
+    border: 1px solid #c7d3db;
+    border-radius: 4px;
+    background: #fff;
+    color: #3b4b55;
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .docs-sidebar-label {
+    margin: 0 0 6px;
+    color: #6a7b86;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .docs-sidebar ul {
+    margin: 0 0 22px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .docs-sidebar li {
+    margin: 0;
+  }
+
+  .docs-sidebar a {
+    display: block;
+    padding: 4px 10px;
+    border-left: 3px solid transparent;
+    border-radius: 0 3px 3px 0;
+    color: #2f3e46;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .docs-sidebar a:hover,
+  .docs-sidebar a:focus {
+    background: #eaf1f4;
+    color: #0f5f5f;
+    text-decoration: none;
+  }
+
+  .docs-sidebar a[aria-current="page"],
+  .docs-sidebar a.is-active {
+    background: #e3f1ef;
+    border-left-color: #159957;
+    color: #0b5d5d;
+    font-weight: 600;
+  }
+
+  .docs-sidebar .docs-toc a {
+    padding: 3px 10px;
+    color: #4a5a64;
+    font-size: 13px;
+  }
+
+  .docs-sidebar .docs-toc .docs-depth-3 {
+    padding-left: 24px;
+  }
+
+  .docs-sidebar-empty {
+    margin: 0 10px 22px;
+    color: #7a8a94;
+    font-size: 13px;
+  }
+
+  .docs-sidebar-open {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 50;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border: 1px solid #c7d3db;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(20, 40, 60, 0.18);
+    color: #155799;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .docs-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    display: none;
+    background: rgba(20, 30, 40, 0.35);
+  }
+
+  .docs-sidebar-backdrop.is-open {
+    display: block;
+  }
+
+  @media screen and (min-width: 1100px) {
+    body.docs-with-sidebar .page-header {
+      padding-left: calc(272px + 3rem);
+    }
+
+    body.docs-with-sidebar .main-content {
+      margin-left: 272px;
+      margin-right: 0;
+      max-width: calc(64rem + 2rem);
+    }
+
+    .docs-sidebar {
+      width: 272px;
+      transform: none;
+      box-shadow: 1px 0 0 rgba(0, 0, 0, 0.02);
+    }
+
+    .docs-sidebar-close,
+    .docs-sidebar-open,
+    .docs-sidebar-backdrop {
+      display: none !important;
+    }
+  }
+
+  @media print {
+    .docs-sidebar,
+    .docs-sidebar-open,
+    .docs-sidebar-backdrop {
+      display: none !important;
+    }
+
+    body.docs-with-sidebar .main-content {
+      margin-left: 0;
+      max-width: none;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    "use strict";
+
+    function init() {
+      var path = window.location.pathname;
+      if (!/\/docs(\/|$)/.test(path)) {
+        return;
+      }
+
+      var main = document.querySelector("main.main-content") || document.querySelector("main#content");
+      if (!main) {
+        return;
+      }
+
+      var pages = [
+        ["", "Overview"],
+        ["getting-started", "Getting started"],
+        ["architecture", "Architecture"],
+        ["configuration", "Configuration"],
+        ["task-lifecycle", "Task lifecycle"],
+        ["models", "Simulation models"],
+        ["writing-orchestrators", "Writing orchestrators"],
+        ["customizing-models", "Customizing models"],
+        ["output-and-metrics", "Output and metrics"],
+        ["research-guide", "Research guide"],
+        ["faq", "FAQ"],
+        ["contributing-guide", "Contributing"],
+        ["api-reference", "API reference"]
+      ];
+
+      var file = path.charAt(path.length - 1) === "/" ? "" : path.split("/").pop().replace(/\.html$/, "");
+      if (file === "index") {
+        file = "";
+      }
+      var basePath = path.substring(0, path.lastIndexOf("/") + 1);
+
+      var nav = document.createElement("nav");
+      nav.id = "docs-sidebar";
+      nav.className = "docs-sidebar";
+      nav.setAttribute("aria-label", "Documentation navigation");
+
+      var brand = document.createElement("div");
+      brand.className = "docs-sidebar-brand";
+      var brandLink = document.createElement("a");
+      brandLink.href = basePath;
+      brandLink.textContent = "PureEdgeSim docs";
+      var closeButton = document.createElement("button");
+      closeButton.type = "button";
+      closeButton.className = "docs-sidebar-close";
+      closeButton.textContent = "Close";
+      closeButton.setAttribute("aria-label", "Close documentation navigation");
+      brand.appendChild(brandLink);
+      brand.appendChild(closeButton);
+      nav.appendChild(brand);
+
+      var pagesLabel = document.createElement("p");
+      pagesLabel.className = "docs-sidebar-label";
+      pagesLabel.textContent = "Manual";
+      nav.appendChild(pagesLabel);
+
+      var pagesList = document.createElement("ul");
+      pagesList.className = "docs-pages";
+      var activePageLink = null;
+      pages.forEach(function (page) {
+        var item = document.createElement("li");
+        var link = document.createElement("a");
+        link.href = basePath + (page[0] ? page[0] + ".html" : "");
+        link.textContent = page[1];
+        if (page[0] === file) {
+          link.setAttribute("aria-current", "page");
+          activePageLink = link;
+        }
+        item.appendChild(link);
+        pagesList.appendChild(item);
+      });
+      nav.appendChild(pagesList);
+
+      var tocLabel = document.createElement("p");
+      tocLabel.className = "docs-sidebar-label";
+      tocLabel.textContent = "On this page";
+      nav.appendChild(tocLabel);
+
+      var tocList = document.createElement("ul");
+      tocList.className = "docs-toc";
+
+      var headings = Array.prototype.slice.call(main.querySelectorAll("h2, h3"));
+      var tocLinks = [];
+
+      headings.forEach(function (heading) {
+        var text = (heading.textContent || "").trim();
+        if (!text) {
+          return;
+        }
+        if (!heading.id) {
+          var id = text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+          var unique = id || "section";
+          var suffix = 1;
+          while (document.getElementById(unique)) {
+            unique = (id || "section") + "-" + suffix;
+            suffix += 1;
+          }
+          heading.id = unique;
+        }
+
+        var item = document.createElement("li");
+        var link = document.createElement("a");
+        link.href = "#" + heading.id;
+        link.textContent = text;
+        if (heading.tagName === "H3") {
+          link.className = "docs-depth-3";
+        }
+        item.appendChild(link);
+        tocList.appendChild(item);
+
+        tocLinks.push({ link: link, heading: heading });
+      });
+
+      if (tocLinks.length > 0) {
+        nav.appendChild(tocList);
+      } else {
+        var empty = document.createElement("p");
+        empty.className = "docs-sidebar-empty";
+        empty.textContent = "This page has no sections.";
+        nav.appendChild(empty);
+      }
+
+      var backdrop = document.createElement("div");
+      backdrop.className = "docs-sidebar-backdrop";
+
+      var openButton = document.createElement("button");
+      openButton.type = "button";
+      openButton.className = "docs-sidebar-open";
+      openButton.textContent = "Contents";
+      openButton.setAttribute("aria-controls", "docs-sidebar");
+      openButton.setAttribute("aria-expanded", "false");
+
+      document.body.insertBefore(nav, document.body.firstChild);
+      document.body.appendChild(backdrop);
+      document.body.appendChild(openButton);
+      document.body.classList.add("docs-with-sidebar");
+
+      function setOpen(open) {
+        nav.classList.toggle("is-open", open);
+        backdrop.classList.toggle("is-open", open);
+        openButton.setAttribute("aria-expanded", String(open));
+        if (open) {
+          closeButton.focus();
+        }
+      }
+
+      openButton.addEventListener("click", function () {
+        setOpen(true);
+      });
+      closeButton.addEventListener("click", function () {
+        setOpen(false);
+        openButton.focus();
+      });
+      backdrop.addEventListener("click", function () {
+        setOpen(false);
+        openButton.focus();
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && nav.classList.contains("is-open")) {
+          setOpen(false);
+          openButton.focus();
+        }
+      });
+
+      var narrow = window.matchMedia("(max-width: 1099px)");
+      tocList.addEventListener("click", function (event) {
+        if (event.target.tagName === "A" && narrow.matches) {
+          setOpen(false);
+        }
+      });
+
+      function updateActiveSection() {
+        var current = null;
+        for (var index = 0; index < tocLinks.length; index++) {
+          if (tocLinks[index].heading.getBoundingClientRect().top <= 130) {
+            current = tocLinks[index];
+          } else {
+            break;
+          }
+        }
+        if (!current && tocLinks.length > 0) {
+          current = tocLinks[0];
+        }
+        tocLinks.forEach(function (entry) {
+          entry.link.classList.toggle("is-active", entry === current);
+        });
+        if (current) {
+          current.link.setAttribute("aria-current", "location");
+        }
+        tocLinks.forEach(function (entry) {
+          if (entry !== current) {
+            entry.link.removeAttribute("aria-current");
+          }
+        });
+      }
+
+      var scheduled = false;
+      function onScroll() {
+        if (scheduled) {
+          return;
+        }
+        scheduled = true;
+        window.requestAnimationFrame(function () {
+          scheduled = false;
+          updateActiveSection();
+        });
+      }
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      updateActiveSection();
+
+      if (activePageLink) {
+        var linkBox = activePageLink.getBoundingClientRect();
+        var navBox = nav.getBoundingClientRect();
+        if (linkBox.top < navBox.top + 40 || linkBox.bottom > navBox.bottom - 40) {
+          nav.scrollTop += linkBox.top - navBox.top - 80;
+        }
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
+</script>
