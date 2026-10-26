@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<edge_devices>
+	<!-- Mist-only fleet for Example 14. All three types generate tasks and all
+		three can execute them, so every request can stay within the device
+		layer. Sensors are deliberately absent: a sensor has no computing
+		capacity and would have no destination under MIST_ONLY. -->
+
+	<device> <!-- smartphone -->
+		<connectivity>wifi</connectivity>
+		<mobility>true</mobility>
+		<speed>1.4</speed>
+		<minPauseDuration>100</minPauseDuration>
+		<maxPauseDuration>400</maxPauseDuration>
+		<minMobilityDuration>10</minMobilityDuration>
+		<maxMobilityDuration>60</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>40</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>1</idleConsumption>
+		<maxConsumption>3.3</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>8</cores>
+		<mips>10000</mips>
+		<ram>4000</ram>
+		<storage>128000</storage>
+	</device>
+	<device> <!-- tablet -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>30</percentage>
+		<batteryCapacity>32.4</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>1.2</idleConsumption>
+		<maxConsumption>6.5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>8</cores>
+		<mips>20000</mips>
+		<ram>6000</ram>
+		<storage>256000</storage>
+	</device>
+	<device> <!-- laptop -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>30</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel>
+		<idleConsumption>1.7</idleConsumption>
+		<maxConsumption>23.6</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>8</cores>
+		<mips>50000</mips>
+		<ram>8000</ram>
+		<storage>512000</storage>
+	</device>
+</edge_devices>

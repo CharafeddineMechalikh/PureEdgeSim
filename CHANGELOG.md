@@ -67,6 +67,14 @@
     budget is full. Against a `registry_mode=CLOUD` run, the cache removes 60.2
     percent of the WAN usage and lifts the success rate from 10.49 to 50.77
     percent under the same seed.
+*   New `Example22` has edge devices elect their own cluster heads from local
+    scores (capacity, battery, stability, neighbor count) and refresh the
+    clusters every 30 seconds without a central coordinator. A cluster-aware
+    orchestrator places each task inside the origin's cluster, preferring the
+    head when the estimated transfer plus execution time is close. Against the
+    same scenario with `TRADE_OFF`, it lowers the average task execution time by
+    42 percent and the network usage by 24 percent while lifting the success
+    rate from 77.83 to 79.94 percent.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and

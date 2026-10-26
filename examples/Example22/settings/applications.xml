@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- Every numeric parameter below may be a probability distribution instead
+		of a fixed number. Each task then draws its own value, the way real traffic
+		does:
+
+		<request_size distribution="lognormal" mean="25" std="10"/>
+		<task_length distribution="uniform" min="1000" max="5000"/>
+		<latency distribution="normal" mean="0.5" std="0.1" min="0.05"/>
+		<rate distribution="poisson" mean="20"/>
+
+		The size parameters (container_size, request_size, results_size) stay in
+		kilobytes, exactly like the plain values. Add min and max attributes to
+		bound the generated values whatever the distribution. The mean is the value
+		used by the reports and the charts, so a scenario remains comparable to
+		itself. See docs/models.md for the full list of distributions.
+
+		An optional arrival element describes the time between two consecutive
+		tasks of one device. Without it, the tasks of each minute are evenly
+		spaced, as in previous versions:
+
+		<arrival>poisson</arrival>    exponential gaps, mean of 60/rate seconds
+		<arrival>uniform</arrival>    gaps between 0 and twice that mean
+		<arrival distribution="weibull" shape="2" scale="3"/>  gaps in seconds -->
+
+	<application name="Health">
+		<type>Hard Real-time</type> <!-- the type of this application, can be used to differentiate between applications during the orchestration, you can write anything -->
+		<rate>20</rate> <!-- how many tasks are generated each minute -->
+		<usage_percentage>20</usage_percentage> <!-- percentage of devices using this type of applications -->
+		<latency>0.02</latency> <!-- latency in seconds -->
+		<container_size>20</container_size> <!--application/container size in kilobytes -->
+		<request_size>20</request_size> <!-- the offloading request that will be sent to the orchestrator and then to the device where the task will be offloaded in kilobytes -->
+		<results_size>20</results_size> <!-- the results of the offlaoded task in kilobytes -->
+		<task_length>500</task_length> <!--MI: million instructions -->
+	</application>
+	<application name="Augmented reality">
+		<type>Soft Real-time</type>
+		<rate>30</rate>
+		<usage_percentage>30</usage_percentage>
+		<latency>0.5</latency>
+		<container_size>1500</container_size>
+		<request_size>1500</request_size>
+		<results_size>50</results_size>
+		<task_length>5000</task_length>
+	</application>
+	<application name="HEAVY_COMP_APP">
+		<type>Non Real-time</type>
+		<rate>3</rate>
+		<usage_percentage>50</usage_percentage>
+		<latency>300</latency> <!-- a great number represents no latency-sensitivity -->
+		<container_size>2200</container_size>
+		<request_size>2500</request_size>
+		<results_size>200</results_size>
+		<task_length>30000</task_length>
+	</application>
+</applications>
