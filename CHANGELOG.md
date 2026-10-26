@@ -60,6 +60,13 @@
     separate value tables and combines them with adjustable weights at decision
     time, so the trade-off between the objectives can be changed without
     retraining.
+*   New `Example21` keeps the application containers at the edge in a
+    storage-aware least-recently-used cache. A node serves a request from its
+    cache when it already holds the application, stores the container when the
+    download finishes, and evicts the least recently used entry when its storage
+    budget is full. Against a `registry_mode=CLOUD` run, the cache removes 60.2
+    percent of the WAN usage and lifts the success rate from 10.49 to 50.77
+    percent under the same seed.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and
