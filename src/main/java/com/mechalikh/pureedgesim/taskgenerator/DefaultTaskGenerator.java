@@ -57,6 +57,8 @@ public class DefaultTaskGenerator extends TaskGenerator {
 	protected Random random;
 	/** Counter used to assign a unique ID to every generated task. */
 	protected int id = 0;
+	/** Counter used to assign a unique ID to every generated request. */
+	protected int requestId = 0;
 	/** Simulation duration used for generation, in minutes. */
 	protected double simulationTime;
 
@@ -188,12 +190,14 @@ public class DefaultTaskGenerator extends TaskGenerator {
 			insertService(app, dev, appParams, time);
 			return;
 		}
+		double latency = appParams.sampleLatency();
 		Task task = createTask(++id).setType(appParams.getType()).setFileSizeInBits(appParams.sampleRequestSize())
 				.setOutputSizeInBits(appParams.sampleResultsSize())
 				.setContainerSizeInBits(appParams.sampleContainerSize()).setApplicationID(app)
-				.setMaxLatency(appParams.sampleLatency()).setLength(appParams.sampleTaskLength()).setEdgeDevice(dev)
+				.setMaxLatency(latency).setLength(appParams.sampleTaskLength()).setEdgeDevice(dev)
 				.setRegistry(getSimulationManager().getDataCentersManager().getComputingNodesGenerator()
 						.getCloudOnlyList().get(0));
+		task.setRequest(++requestId, 1, time, time + latency);
 
 		scheduleTask(task, time);
 	}
@@ -213,6 +217,9 @@ public class DefaultTaskGenerator extends TaskGenerator {
 	 * @param time      the time in seconds at which the request arrives
 	 */
 	protected void insertService(int app, ComputingNode dev, Application appParams, int time) {
+		int request = ++requestId;
+		int taskCount = appParams.getSubtasks().size();
+		double deadline = time + appParams.sampleLatency();
 		Map<String, Task> byName = new LinkedHashMap<>();
 		for (Subtask subtask : appParams.getSubtasks()) {
 			Task task = createTask(++id).setType(appParams.getType())
@@ -223,6 +230,8 @@ public class DefaultTaskGenerator extends TaskGenerator {
 					.setRegistry(getSimulationManager().getDataCentersManager().getComputingNodesGenerator()
 							.getCloudOnlyList().get(0));
 			task.setSubtaskName(subtask.getName());
+			task.setRequest(request, taskCount, time, deadline);
+			task.setOptional(subtask.isOptional());
 			byName.put(subtask.getName(), task);
 		}
 

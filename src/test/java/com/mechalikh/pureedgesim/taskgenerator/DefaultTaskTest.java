@@ -141,6 +141,7 @@ class DefaultTaskTest {
 		assertTrue(FailureReason.values().length >= 7);
 		assertEquals(FailureReason.INSUFFICIENT_POWER, FailureReason.valueOf("INSUFFICIENT_POWER"));
 		assertEquals(Status.FAILED, Status.valueOf("FAILED"));
-		assertEquals(2, Status.values().length);
+		assertEquals(Status.SKIPPED, Status.valueOf("SKIPPED"));
+		assertEquals(3, Status.values().length);
 	}
 }

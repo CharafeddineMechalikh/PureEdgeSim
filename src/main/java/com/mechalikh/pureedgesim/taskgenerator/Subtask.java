@@ -68,7 +68,13 @@ public class Subtask {
 	protected final Distribution latency;
 
 	/**
-	 * Creates a subtask.
+	 * Whether this subtask may be skipped when one of its dependencies fails,
+	 * instead of failing the request.
+	 */
+	protected final boolean optional;
+
+	/**
+	 * Creates a required subtask.
 	 *
 	 * @param name         name of the subtask, unique within its application
 	 * @param dependencies names of the subtasks it depends on, empty for a root
@@ -80,6 +86,24 @@ public class Subtask {
 	 */
 	public Subtask(String name, List<String> dependencies, Distribution taskLength, Distribution requestSize,
 			Distribution resultsSize, Distribution containerSize, Distribution latency) {
+		this(name, dependencies, taskLength, requestSize, resultsSize, containerSize, latency, false);
+	}
+
+	/**
+	 * Creates a subtask.
+	 *
+	 * @param name         name of the subtask, unique within its application
+	 * @param dependencies names of the subtasks it depends on, empty for a root
+	 * @param taskLength   distribution of the task length, in MI
+	 * @param requestSize  distribution of the request size, in bits
+	 * @param resultsSize  distribution of the results size, in bits
+	 * @param containerSize distribution of the container size, in bits
+	 * @param latency      distribution of the latency requirement, in seconds
+	 * @param optional     whether a failed dependency skips this subtask instead of
+	 *                     failing it
+	 */
+	public Subtask(String name, List<String> dependencies, Distribution taskLength, Distribution requestSize,
+			Distribution resultsSize, Distribution containerSize, Distribution latency, boolean optional) {
 		this.name = name;
 		this.dependencies = List.copyOf(dependencies);
 		this.taskLength = taskLength;
@@ -87,6 +111,7 @@ public class Subtask {
 		this.resultsSize = resultsSize;
 		this.containerSize = containerSize;
 		this.latency = latency;
+		this.optional = optional;
 	}
 
 	/**
@@ -207,6 +232,15 @@ public class Subtask {
 	}
 
 	/**
+	 * Returns whether this subtask can be skipped when a dependency fails.
+	 *
+	 * @return {@code true} when the subtask is optional
+	 */
+	public boolean isOptional() {
+		return optional;
+	}
+
+	/**
 	 * Returns a string representation of this subtask.
 	 *
 	 * @return the name, the dependencies, and the distributions of this subtask
@@ -215,6 +249,6 @@ public class Subtask {
 	public String toString() {
 		return "Subtask [name=" + name + ", dependencies=" + dependencies + ", taskLength=" + taskLength
 				+ ", requestSize=" + requestSize + ", resultsSize=" + resultsSize + ", containerSize=" + containerSize
-				+ ", latency=" + latency + "]";
+				+ ", latency=" + latency + ", optional=" + optional + "]";
 	}
 }

@@ -364,6 +364,33 @@ class ApplicationFileParserTest extends AbstractTest {
 	}
 
 	@Test
+	void subtasksAreRequiredUnlessDeclaredOptional() throws Exception {
+		String xml = applicationWithSubtasks("Health", "<subtask name=\"detect\"/>",
+				"<subtask name=\"track\" depends_on=\"detect\"/>",
+				"<subtask name=\"reidentify\" depends_on=\"detect\" optional=\"true\"/>",
+				"<subtask name=\"explicit\" depends_on=\"detect\" optional=\"false\"/>");
+		assertTrue(parse(xml));
+
+		List<Subtask> subtasks = SimulationParameters.applicationList.get(0).getSubtasks();
+		assertFalse(subtasks.get(0).isOptional());
+		assertFalse(subtasks.get(1).isOptional());
+		assertTrue(subtasks.get(2).isOptional());
+		assertFalse(subtasks.get(3).isOptional());
+	}
+
+	@Test
+	void anOptionalRootSubtaskIsRejected() throws Exception {
+		// A root has no dependency that could fail, so it could never be skipped.
+		assertFalse(parse(applicationWithSubtasks("Health", "<subtask name=\"a\" optional=\"true\"/>")));
+	}
+
+	@Test
+	void aNonBooleanOptionalAttributeIsRejected() throws Exception {
+		assertFalse(parse(applicationWithSubtasks("Health", "<subtask name=\"a\"/>",
+				"<subtask name=\"b\" depends_on=\"a\" optional=\"yes\"/>")));
+	}
+
+	@Test
 	void aSubtaskWithoutNameIsRejected() throws Exception {
 		assertFalse(parse(applicationWithSubtasks("Health", "<subtask task_length=\"10\"/>")));
 	}

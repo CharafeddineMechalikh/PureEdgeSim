@@ -42,6 +42,13 @@ import com.mechalikh.pureedgesim.taskorchestrator.Orchestrator;
 
 class DefaultSimulationManagerTest extends AbstractTest {
 
+	/** An engine whose clock can be moved without running the event loop. */
+	private static class ClockedEngine extends PureEdgeSim {
+		void advanceTo(double time) {
+			this.time = time;
+		}
+	}
+
 	private PureEdgeSim engine;
 	private SimLog simLog;
 	private Scenario scenario;
@@ -51,7 +58,7 @@ class DefaultSimulationManagerTest extends AbstractTest {
 
 	@BeforeEach
 	void setUp() {
-		engine = new PureEdgeSim();
+		engine = new ClockedEngine();
 		simLog = mock(SimLog.class);
 		scenario = new Scenario(10, 0, 0);
 		manager = new DefaultSimulationManager(simLog, engine, 1, 1, scenario);
@@ -885,6 +892,114 @@ class DefaultSimulationManagerTest extends AbstractTest {
 		assertEquals(2, manager.tasksCount);
 		assertEquals(Task.FailureReason.FAILED_BECAUSE_DEPENDENCY_FAILED, child.getFailureReason());
 		assertTrue(engine.getEventsQueue().isEmpty());
+	}
+
+	@Test
+	void theResultsOfAParentAreUploadedWithTheRequestOfItsChild() {
+		ComputingNode edge = node(TYPES.EDGE_DEVICE);
+		DefaultTask parent = graphTask(1, edge, 5);
+		parent.setOutputSizeInBits(8_000);
+		DefaultTask child = graphTask(2, edge, 5);
+		child.setFileSizeInBits(1_000);
+		dependOn(child, parent);
+
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, parent));
+
+		assertEquals(9_000, (long) child.getFileSizeInBits(),
+				"the child must upload its own request plus the results it receives");
+		assertTrue(isQueuedForOrchestration(child));
+	}
+
+	@Test
+	void aSkippedOptionalSubtaskDoesNotFailTheRequest() {
+		ComputingNode edge = node(TYPES.EDGE_DEVICE);
+		// A maximum latency of zero makes the parent fail when its results return.
+		DefaultTask parent = graphTask(1, edge, 0);
+		DefaultTask optional = graphTask(2, edge, 5);
+		optional.setOptional(true);
+		DefaultTask join = graphTask(3, edge, 5);
+		dependOn(optional, parent);
+		dependOn(join, optional);
+
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, parent));
+
+		verify(simLog).incrementTasksSkipped();
+		verify(simLog, never()).incrementTasksFailedDependency();
+		assertEquals(Task.Status.SKIPPED, optional.getStatus());
+		assertNull(optional.getFailureReason(), "a skipped subtask is not a failure");
+		assertTrue(isQueuedForOrchestration(join), "the join runs with the results of the other branches");
+		assertEquals(2, manager.tasksCount);
+	}
+
+	@Test
+	void aRequiredSubtaskStillFailsWhenItsSiblingIsOptional() {
+		ComputingNode edge = node(TYPES.EDGE_DEVICE);
+		DefaultTask parent = graphTask(1, edge, 0);
+		DefaultTask required = graphTask(2, edge, 5);
+		DefaultTask optional = graphTask(3, edge, 5);
+		optional.setOptional(true);
+		DefaultTask join = graphTask(4, edge, 5);
+		dependOn(required, parent);
+		dependOn(optional, parent);
+		dependOn(join, required, optional);
+
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, parent));
+
+		assertEquals(Task.FailureReason.FAILED_BECAUSE_DEPENDENCY_FAILED, required.getFailureReason());
+		assertEquals(Task.Status.SKIPPED, optional.getStatus());
+		assertEquals(Task.FailureReason.FAILED_BECAUSE_DEPENDENCY_FAILED, join.getFailureReason(),
+				"the join needs the required input, so it cannot run");
+		assertFalse(isQueuedForOrchestration(join));
+	}
+
+	@Test
+	void aTaskFailsWhenTheRequestMissesItsEndToEndDeadline() {
+		ComputingNode edge = node(TYPES.EDGE_DEVICE);
+		DefaultTask task = graphTask(1, edge, 60);
+		// The subtask latency is generous, but the request arrived at 0 and had to
+		// finish within one second.
+		task.setRequest(1, 1, 0, 1);
+		((ClockedEngine) engine).advanceTo(2);
+
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, task));
+
+		verify(simLog).incrementTasksFailedLatency(task);
+		assertEquals(Task.FailureReason.FAILED_DUE_TO_LATENCY, task.getFailureReason());
+		assertEquals(1, manager.failedTasksCount);
+	}
+
+	@Test
+	void aRequestCompletesWhenItsLastSubtaskReturns() {
+		ComputingNode edge = node(TYPES.EDGE_DEVICE);
+		DefaultTask first = graphTask(1, edge, 5);
+		DefaultTask second = graphTask(2, edge, 5);
+		first.setRequest(7, 2, 0, 10);
+		second.setRequest(7, 2, 0, 10);
+		dependOn(second, first);
+		((ClockedEngine) engine).advanceTo(3);
+
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, first));
+
+		verify(simLog, never()).requestSucceeded(org.mockito.ArgumentMatchers.anyDouble());
+
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, second));
+
+		verify(simLog, times(1)).incrementGeneratedRequests();
+		verify(simLog).requestSucceeded(3.0);
+		verify(simLog, never()).incrementFailedRequests();
+	}
+
+	@Test
+	void aRequestFailsWhenOneOfItsRequiredSubtasksFails() {
+		ComputingNode edge = node(TYPES.EDGE_DEVICE);
+		DefaultTask task = graphTask(1, edge, 0);
+		task.setRequest(9, 1, 0, 10);
+		((ClockedEngine) engine).advanceTo(1);
+
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, task));
+
+		verify(simLog).incrementFailedRequests();
+		verify(simLog, never()).requestSucceeded(org.mockito.ArgumentMatchers.anyDouble());
 	}
 
 	// ------------------------------------------------------------------- getters

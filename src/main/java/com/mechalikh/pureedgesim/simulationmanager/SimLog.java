@@ -94,6 +94,16 @@ public class SimLog {
 	protected int notGeneratedBecDeviceDead = 0;
 	/** Subtasks that were never offloaded because a dependency failed. */
 	protected int tasksFailedDependency = 0;
+	/** Optional subtasks that were skipped because a dependency failed. */
+	protected int tasksSkipped = 0;
+	/** Application requests generated for the scenario. */
+	protected int generatedRequests = 0;
+	/** Requests whose every required subtask completed successfully. */
+	protected int successfulRequests = 0;
+	/** Requests that failed, because a required subtask failed. */
+	protected int failedRequests = 0;
+	/** Sum of the makespans of the successful requests, in seconds. */
+	protected double totalRequestMakespan = 0;
 	/** Edge devices that died because their battery ran out. */
 	protected int deadDevicesCount = 0;
 	/** Sum of actual CPU execution times of finished tasks, in seconds. */
@@ -170,7 +180,8 @@ public class SimLog {
 					+ "WAN energy consumption (Wh), MAN energy consumption (Wh), LAN energy consumption (Wh),"
 					+ "WiFi energy consumption (Wh), LTE energy consumption (Wh), Ethernet energy consumption (Wh),"
 					+ "Dead devices count,Average remaining power (Wh),Average remaining power (%), First edge device death time (s),"
-					+ "List of remaining power (%) (only battery powered devices / 0 = dead),List of the time when each device died (s)");
+					+ "List of remaining power (%) (only battery powered devices / 0 = dead),List of the time when each device died (s),"
+					+ "Tasks skipped because their optional input failed,Requests generated,Successful requests,Average request makespan (s)");
 		}
 	}
 
@@ -287,6 +298,10 @@ public class SimLog {
 						generatedTasksCount == 0 ? 0.0 : (double) tasksFailedDependency * 100 / generatedTasksCount),
 						20)
 				+ " %% (" + tasksFailedDependency + " tasks)");
+		print("Tasks skipped because their optional input failed                       :"
+				+ padLeftSpaces(decimalFormat.format(
+						generatedTasksCount == 0 ? 0.0 : (double) tasksSkipped * 100 / generatedTasksCount), 20)
+				+ " %% (" + tasksSkipped + " tasks)");
 		print("Tasks sent from edge devices                                            :"
 				+ padLeftSpaces("" + decimalFormat.format(((double) tasksSent * 100) / ((double) generatedTasksCount)),
 						20)
@@ -328,6 +343,20 @@ public class SimLog {
 		print("                                                                         " + " Mist="
 				+ padLeftSpaces("" + tasksExecutedOnMist, 14) + " tasks (where "
 				+ (tasksExecutedOnMist - tasksFailedMist) + " were successfully executed )");
+
+		print("Requests");
+		print("                                                         Requests generated:"
+				+ padLeftSpaces("" + generatedRequests, 20) + " requests");
+		print("                                          Requests that completed successfully:"
+				+ padLeftSpaces(decimalFormat.format(
+						generatedRequests == 0 ? 0.0 : (double) successfulRequests * 100 / generatedRequests), 20)
+				+ " %% (" + successfulRequests + " among " + generatedRequests + " requests)");
+		print("                                                  Requests that failed:"
+				+ padLeftSpaces("" + failedRequests, 20) + " requests");
+		print("                                        Average request makespan (end to end):"
+				+ padLeftSpaces(decimalFormat
+						.format(successfulRequests == 0 ? 0.0 : totalRequestMakespan / successfulRequests), 20)
+				+ " seconds");
 
 		resultsList.add(currentOrchArchitecture + "," + currentOrchAlgorithm + "," + currentEdgeDevicesCount + ","
 				+ decimalFormat.format(totalExecutionTime) + ","
@@ -522,7 +551,9 @@ public class SimLog {
 				+ "," + decimalFormat.format(wifi) + "," + decimalFormat.format(fourG) + "," + decimalFormat.format(eth)
 				+ "," + decimalFormat.format(deadEdgeDevicesCount) + "," + decimalFormat.format(averageRemainingPowerWh)
 				+ "," + decimalFormat.format(averageRemainingPower) + "," + firstDeviceDeathTime + ","
-				+ remainingPower.toString().replace(",", "-") + "," + devicesDeathTime.toString().replace(",", "-"));
+				+ remainingPower.toString().replace(",", "-") + "," + devicesDeathTime.toString().replace(",", "-")
+				+ "," + tasksSkipped + "," + generatedRequests + "," + successfulRequests + ","
+				+ decimalFormat.format(successfulRequests == 0 ? 0.0 : totalRequestMakespan / successfulRequests));
 	}
 
 	/**
@@ -862,6 +893,35 @@ public class SimLog {
 	 */
 	public void incrementTasksFailedDependency() {
 		this.tasksFailedDependency++;
+	}
+
+	/**
+	 * Counts an optional subtask that was skipped because one of its dependencies
+	 * failed. A skipped subtask does not fail the request.
+	 */
+	public void incrementTasksSkipped() {
+		this.tasksSkipped++;
+	}
+
+	/** Counts one application request at generation time. */
+	public void incrementGeneratedRequests() {
+		this.generatedRequests++;
+	}
+
+	/** Counts a request that failed because a required subtask failed. */
+	public void incrementFailedRequests() {
+		this.failedRequests++;
+	}
+
+	/**
+	 * Records a request whose required subtasks all completed.
+	 *
+	 * @param makespan the time elapsed between the arrival of the request and the
+	 *                 completion of its last subtask, in seconds
+	 */
+	public void requestSucceeded(double makespan) {
+		this.successfulRequests++;
+		this.totalRequestMakespan += makespan;
 	}
 
 	/** Counts a node that died because its battery ran out. */

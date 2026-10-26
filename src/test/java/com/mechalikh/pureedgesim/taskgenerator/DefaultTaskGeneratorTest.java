@@ -400,8 +400,69 @@ class DefaultTaskGeneratorTest extends AbstractTest {
 	}
 
 	@Test
-	void aSubtaskWithSeveralDependenciesWaitsForAllOfThem() {
-		Application application = new Application("Join", 1, 100, 1.0, 8_000_000, 8_000_000, 8_000_000, 100);
+	void everySubtaskOfARequestSharesItsIdentifierAndDeadline() {
+		SimulationParameters.applicationList = List.of(serviceApplication());
+		SimulationParameters.simulationDuration = 60;
+
+		List<Task> roots = new DefaultTaskGenerator(manager).generate().stream().collect(Collectors.toList());
+
+		Set<Integer> requestIds = new HashSet<>();
+		for (Task root : roots) {
+			requestIds.add(root.getRequestId());
+			assertEquals(3, root.getRequestTaskCount());
+			assertEquals(root.getTime(), root.getRequestStartTime(), 0.0001);
+			// The application latency is one second, sampled once per request.
+			assertEquals(root.getTime() + 1.0, root.getRequestDeadline(), 0.0001);
+
+			Task detect = root.getDependents().get(0);
+			Task alert = detect.getDependents().get(0);
+			for (Task subtask : List.of(detect, alert)) {
+				assertEquals(root.getRequestId(), subtask.getRequestId());
+				assertEquals(root.getRequestStartTime(), subtask.getRequestStartTime(), 0.0001);
+				assertEquals(root.getRequestDeadline(), subtask.getRequestDeadline(), 0.0001);
+			}
+		}
+		assertEquals(roots.size(), requestIds.size(), "every request has its own identifier");
+	}
+
+	@Test
+	void aMonolithicTaskIsItsOwnRequest() {
+		SimulationParameters.simulationDuration = 60;
+		List<Task> tasks = new DefaultTaskGenerator(manager).generate().stream().collect(Collectors.toList());
+
+		Set<Integer> requestIds = new HashSet<>();
+		for (Task task : tasks) {
+			requestIds.add(task.getRequestId());
+			assertEquals(1, task.getRequestTaskCount());
+			assertEquals(task.getTime(), task.getRequestStartTime(), 0.0001);
+			assertEquals(task.getTime() + task.getMaxLatency(), task.getRequestDeadline(), 0.0001);
+			assertFalse(task.isOptional());
+		}
+		assertEquals(tasks.size(), requestIds.size());
+	}
+
+	@Test
+	void theGeneratorMarksOptionalSubtasks() {
+		Application application = new Application("Optional", 1, 100, 1.0, 8_000_000, 8_000_000, 8_000_000, 100);
+		application.setSubtasks(List.of(
+				new Subtask("detect", List.of(), constant(100), constant(8_000), constant(8_000),
+						constant(8_000_000), constant(1)),
+				new Subtask("reidentify", List.of("detect"), constant(100), constant(8_000), constant(8_000),
+						constant(8_000_000), constant(1), true)));
+		SimulationParameters.applicationList = List.of(application);
+		SimulationParameters.simulationDuration = 60;
+
+		List<Task> roots = new DefaultTaskGenerator(manager).generate().stream().collect(Collectors.toList());
+
+		assertEquals(10, roots.size());
+		for (Task root : roots) {
+			assertFalse(root.isOptional());
+			assertTrue(root.getDependents().get(0).isOptional());
+		}
+	}
+
+	@Test
+	void aSubtaskWithSeveralDependenciesWaitsForAllOfThem() {		Application application = new Application("Join", 1, 100, 1.0, 8_000_000, 8_000_000, 8_000_000, 100);
 		application.setSubtasks(List.of(
 				new Subtask("camera", List.of(), constant(100), constant(8_000), constant(8_000),
 						constant(8_000_000), constant(1)),

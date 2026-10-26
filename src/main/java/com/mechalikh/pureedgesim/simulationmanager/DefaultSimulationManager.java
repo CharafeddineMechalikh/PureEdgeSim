@@ -21,7 +21,9 @@
 package com.mechalikh.pureedgesim.simulationmanager;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
@@ -77,6 +79,27 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 	 * Used to show the tasks success rate in the live chart
 	 **/
 	protected int sentTasks = 0;
+
+	/**
+	 * Tracks one application request: the subtasks that still have to reach a
+	 * terminal state, and whether one of them failed.
+	 */
+	protected static class RequestRecord {
+		/** Time at which the request arrived. */
+		final double startTime;
+		/** Number of subtasks that have not reached a terminal state yet. */
+		int remaining;
+		/** Whether at least one required subtask failed. */
+		boolean failed;
+
+		RequestRecord(double startTime, int taskCount) {
+			this.startTime = startTime;
+			this.remaining = Math.max(1, taskCount);
+		}
+	}
+
+	/** Requests of the scenario, indexed by request identifier. */
+	protected final Map<Integer, RequestRecord> requests = new HashMap<>();
 
 	/**
 	 * Initializes the simulation manager.
@@ -234,6 +257,7 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 			edgeOrchestrator.resultsReturned(task);
 			tasksCount++;
 			releaseDependents(task);
+			requestTaskFinished(task, false);
 			break;
 
 		case SHOW_PROGRESS:
@@ -341,6 +365,7 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 				simLog.incrementTasksFailedLackOfRessources(task);
 				tasksCount++;
 				failDependents(task);
+				requestTaskFinished(task, true);
 				return;
 			}
 
@@ -362,6 +387,7 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 	 * @param task The task that needs to be offloaded.
 	 */
 	protected void sendTaskToOrchestrator(Task task) {
+		registerRequest(task);
 		if (taskFailed(task, 0))
 			return;
 
@@ -385,6 +411,48 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 	}
 
 	/**
+	 * Records the request of a task the first time one of its tasks is sent.
+	 * <p>
+	 * Tasks that carry no request identifier, which is the case for task classes
+	 * that do not extend {@code TaskAbstract}, are ignored so that a custom model
+	 * keeps working without request metrics.
+	 *
+	 * @param task one task of the request
+	 */
+	protected void registerRequest(Task task) {
+		if (task.getRequestId() < 0 || requests.containsKey(task.getRequestId()))
+			return;
+		requests.put(task.getRequestId(),
+				new RequestRecord(task.getRequestStartTime(), task.getRequestTaskCount()));
+		simLog.incrementGeneratedRequests();
+	}
+
+	/**
+	 * Records that one task of a request reached a terminal state. When it was the
+	 * last one, the request is complete: its makespan is the time elapsed since it
+	 * arrived and it succeeds only if no required subtask failed.
+	 *
+	 * @param task   the task that just succeeded, failed, or was skipped
+	 * @param failed whether the task failed a required stage
+	 */
+	protected void requestTaskFinished(Task task, boolean failed) {
+		if (task.getRequestId() < 0)
+			return;
+		registerRequest(task);
+		RequestRecord request = requests.get(task.getRequestId());
+		if (failed)
+			request.failed = true;
+		if (--request.remaining > 0)
+			return;
+		if (request.failed) {
+			simLog.incrementFailedRequests();
+			return;
+		}
+		double makespan = simulation.clock() - request.startTime;
+		simLog.requestSucceeded(makespan);
+	}
+
+	/**
 	 * Sets the task as failed and provides the reason of failure.
 	 *
 	 * @param task  The task that has been offloaded.
@@ -401,6 +469,7 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 				task.getEdgeDevice().setApplicationPlaced(false);
 				simLog.incrementNotGeneratedBeacuseDeviceDead();
 				tasksCount++;
+				requestTaskFinished(task, true);
 				failDependents(task);
 				return true;
 			}
@@ -450,6 +519,13 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 			simLog.incrementTasksFailedLatency(task);
 			return setFailed(task, phase);
 		}
+		// The request missed its end-to-end deadline, even if this subtask met its own
+		// latency bound measured from its release.
+		if (phase == 3 && task.getRequestDeadline() > 0 && simulation.clock() >= task.getRequestDeadline()) {
+			task.setFailureReason(Task.FailureReason.FAILED_DUE_TO_LATENCY);
+			simLog.incrementTasksFailedLatency(task);
+			return setFailed(task, phase);
+		}
 		return false;
 	}
 
@@ -480,21 +556,39 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 		if (phase > 1)
 			edgeOrchestrator.resultsReturned(task);
 		failDependents(task);
+		requestTaskFinished(task, true);
 		return true;
 	}
 
 	/**
-	 * Offloads the subtasks whose last dependency has just returned its results.
+	 * Offloads the subtasks whose last dependency has just returned its results,
+	 * and charges their upload with the results they receive.
 	 * <p>
-	 * A task without dependents, which is every task of an application without
-	 * subtasks, makes this method do nothing.
+	 * The request size of a subtask is the data it needs besides its inputs, so
+	 * every parent that completes successfully adds its output to the size of the
+	 * request that brings the child its input. A task without dependents, which is
+	 * every task of an application without subtasks, makes this method do nothing.
 	 *
 	 * @param task the task whose results were just returned
 	 */
 	protected void releaseDependents(Task task) {
+		releaseDependents(task, true);
+	}
+
+	/**
+	 * Releases the dependents of a task, optionally adding the output of that task
+	 * to the request they will upload.
+	 *
+	 * @param task      the task that just completed or was skipped
+	 * @param withResults whether the results of the task travel with the request of
+	 *                    its dependents
+	 */
+	protected void releaseDependents(Task task, boolean withResults) {
 		for (Task dependent : task.getDependents()) {
-			if (dependent.getStatus() == Task.Status.FAILED)
+			if (isTerminal(dependent))
 				continue;
+			if (withResults)
+				dependent.setFileSizeInBits((long) (dependent.getFileSizeInBits() + task.getOutputSizeInBits()));
 			if (dependent.dependencyFinished()) {
 				dependent.setTime(simulation.clock());
 				scheduleNow(this, SEND_TO_ORCH, dependent);
@@ -503,21 +597,56 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 	}
 
 	/**
+	 * Returns whether a task already reached a final state, either by failing or
+	 * by being skipped.
+	 *
+	 * @param task the task to check
+	 * @return {@code true} when the task is failed or skipped
+	 */
+	protected boolean isTerminal(Task task) {
+		return task.getStatus() == Task.Status.FAILED || task.getStatus() == Task.Status.SKIPPED;
+	}
+
+	/**
+	 * Skips an optional subtask whose input can never be complete, and releases its
+	 * own dependents without results.
+	 * <p>
+	 * A skipped subtask is not a failure: the request can still succeed with the
+	 * results of the other branches.
+	 *
+	 * @param task the optional subtask to skip
+	 */
+	protected void skipTask(Task task) {
+		task.setStatus(Task.Status.SKIPPED);
+		simLog.incrementTasksSkipped();
+		tasksCount++;
+		requestTaskFinished(task, false);
+		releaseDependents(task, false);
+	}
+
+	/**
 	 * Marks as failed the subtasks that will never receive their input because a
 	 * dependency failed, and does the same for their own dependents.
 	 * <p>
-	 * These tasks never leave their device, so they are counted separately from the
-	 * tasks that were sent and failed during their execution.
+	 * An optional subtask is skipped instead of being failed, and the request
+	 * continues without it. These tasks never leave their device, so they are
+	 * counted separately from the tasks that were sent and failed during their
+	 * execution.
 	 *
 	 * @param task the task that failed
 	 */
 	protected void failDependents(Task task) {
 		for (Task dependent : task.getDependents()) {
-			if (dependent.getStatus() == Task.Status.FAILED)
+			if (isTerminal(dependent))
 				continue;
+			if (dependent.isOptional()) {
+				skipTask(dependent);
+				continue;
+			}
 			dependent.setFailureReason(Task.FailureReason.FAILED_BECAUSE_DEPENDENCY_FAILED);
 			simLog.incrementTasksFailedDependency();
 			tasksCount++;
+			requestTaskFinished(dependent, true);
 			failDependents(dependent);
 		}
 	}

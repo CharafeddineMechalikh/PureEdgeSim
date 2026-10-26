@@ -121,6 +121,21 @@ public abstract class TaskAbstract implements Task, Comparable<Task> {
 	 */
 	protected String subtaskName;
 
+	/** Identifier of the application request this task belongs to. */
+	protected int requestId = -1;
+
+	/** Number of tasks that make up the request of this task. */
+	protected int requestTaskCount = 1;
+
+	/** Time at which the request of this task arrived, in seconds. */
+	protected double requestStartTime;
+
+	/** Absolute end-to-end deadline of the request, or {@code 0} when there is none. */
+	protected double requestDeadline;
+
+	/** Whether a failed dependency skips this subtask instead of failing it. */
+	protected boolean optional;
+
 	/**
 	 * 
 	 * Constructs a new TaskAbstract instance with the given ID.
@@ -464,5 +479,81 @@ public abstract class TaskAbstract implements Task, Comparable<Task> {
 	@Override
 	public void setSubtaskName(String name) {
 		this.subtaskName = name;
+	}
+
+	/**
+	 * Returns the identifier of the request this task belongs to.
+	 *
+	 * @return the request identifier, or {@code -1} when the task carries none
+	 */
+	@Override
+	public int getRequestId() {
+		return requestId;
+	}
+
+	/**
+	 * Returns the number of tasks that make up the request of this task.
+	 *
+	 * @return the number of tasks in the request
+	 */
+	@Override
+	public int getRequestTaskCount() {
+		return requestTaskCount;
+	}
+
+	/**
+	 * Returns the time at which the request of this task arrived.
+	 *
+	 * @return the request start time in seconds
+	 */
+	@Override
+	public double getRequestStartTime() {
+		return requestStartTime;
+	}
+
+	/**
+	 * Returns the absolute end-to-end deadline of the request.
+	 *
+	 * @return the deadline in seconds, or {@code 0} when there is none
+	 */
+	@Override
+	public double getRequestDeadline() {
+		return requestDeadline;
+	}
+
+	/**
+	 * Sets the request this task belongs to.
+	 *
+	 * @param requestId        the identifier shared by the tasks of the request
+	 * @param requestTaskCount the number of tasks in the request
+	 * @param startTime        the time at which the request arrived
+	 * @param deadline         the absolute end-to-end deadline, {@code 0} for none
+	 */
+	@Override
+	public void setRequest(int requestId, int requestTaskCount, double startTime, double deadline) {
+		this.requestId = requestId;
+		this.requestTaskCount = requestTaskCount;
+		this.requestStartTime = startTime;
+		this.requestDeadline = deadline;
+	}
+
+	/**
+	 * Returns whether this subtask may be skipped when a dependency fails.
+	 *
+	 * @return {@code true} when the subtask is optional
+	 */
+	@Override
+	public boolean isOptional() {
+		return optional;
+	}
+
+	/**
+	 * Marks this task as an optional subtask.
+	 *
+	 * @param optional whether a failed dependency skips this task instead of failing it
+	 */
+	@Override
+	public void setOptional(boolean optional) {
+		this.optional = optional;
 	}
 }

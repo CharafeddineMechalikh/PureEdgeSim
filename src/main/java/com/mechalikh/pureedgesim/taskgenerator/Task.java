@@ -67,7 +67,12 @@ public interface Task extends QueueElement {
 		/** The task completed within its latency requirement. */
 		SUCCESS,
 		/** The task failed; see {@link #getFailureReason()}. */
-		FAILED
+		FAILED,
+		/**
+		 * The task was never offloaded because a dependency failed and it is declared
+		 * optional, so its absence does not fail the request.
+		 */
+		SKIPPED
 	}
 
 	/**
@@ -493,5 +498,85 @@ public interface Task extends QueueElement {
 	default void setSubtaskName(String name) {
 		throw new UnsupportedOperationException("The task class " + getClass().getName()
 				+ " does not support service graphs; extend TaskAbstract or implement setSubtaskName()");
+	}
+
+	/**
+	 * Returns the identifier of the application request this task belongs to.
+	 * <p>
+	 * A request is one invocation of an application: a single task when the
+	 * application is monolithic, and the whole subtask graph when the application
+	 * declares subtasks. All the tasks of one request share the identifier.
+	 *
+	 * @return the request identifier, or {@code -1} when the task carries none
+	 */
+	default int getRequestId() {
+		return -1;
+	}
+
+	/**
+	 * Returns the number of tasks that make up the request of this task.
+	 *
+	 * @return the size of the request, {@code 1} for an independent task
+	 */
+	default int getRequestTaskCount() {
+		return 1;
+	}
+
+	/**
+	 * Returns the time at which the request of this task arrived.
+	 *
+	 * @return the request start time in seconds, or {@code 0} when unknown
+	 */
+	default double getRequestStartTime() {
+		return 0;
+	}
+
+	/**
+	 * Returns the end-to-end deadline of the request of this task, as an absolute
+	 * simulation time.
+	 * <p>
+	 * The request deadline is sampled once per request from the latency
+	 * distribution of the application and is shared by every subtask, unlike
+	 * {@link #getMaxLatency()} which bounds each subtask from its own release time.
+	 * A value of {@code 0} disables the end-to-end check.
+	 *
+	 * @return the absolute deadline in seconds, or {@code 0} when there is none
+	 */
+	default double getRequestDeadline() {
+		return 0;
+	}
+
+	/**
+	 * Sets the request this task belongs to.
+	 * <p>
+	 * The default implementation rejects the call, for the same reason as
+	 * {@link #addDependency(Task)}.
+	 *
+	 * @param requestId      the identifier shared by the tasks of the request
+	 * @param requestTaskCount the number of tasks in the request
+	 * @param startTime      the time at which the request arrived
+	 * @param deadline       the absolute end-to-end deadline, {@code 0} for none
+	 */
+	default void setRequest(int requestId, int requestTaskCount, double startTime, double deadline) {
+		throw new UnsupportedOperationException("The task class " + getClass().getName()
+				+ " does not support service graphs; extend TaskAbstract or implement setRequest()");
+	}
+
+	/**
+	 * Returns whether this subtask may be skipped when one of its dependencies
+	 * fails, instead of failing.
+	 *
+	 * @return {@code true} when the subtask is optional
+	 */
+	default boolean isOptional() {
+		return false;
+	}
+
+	/**
+	 * Marks this task as an optional subtask.
+	 *
+	 * @param optional whether a failed dependency skips this task instead of failing it
+	 */
+	default void setOptional(boolean optional) {
 	}
 }

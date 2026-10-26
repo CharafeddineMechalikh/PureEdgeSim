@@ -51,8 +51,8 @@ public class ApplicationFileParser extends XmlFileParser {
 	private static final double BITS_PER_KILOBYTE = 8000;
 
 	/** Attributes accepted on a {@code subtask} element. */
-	private static final Set<String> SUBTASK_ATTRIBUTES = new LinkedHashSet<>(
-			List.of("name", "depends_on", "task_length", "request_size", "results_size", "container_size", "latency"));
+	private static final Set<String> SUBTASK_ATTRIBUTES = new LinkedHashSet<>(List.of("name", "depends_on",
+			"task_length", "request_size", "results_size", "container_size", "latency", "optional"));
 
 	/**
 	 * Creates a parser for the given applications file.
@@ -261,7 +261,13 @@ public class ApplicationFileParser extends XmlFileParser {
 				throw subtaskError(appName, name, "is declared more than once.");
 			checkSubtaskAttributes(element, appName, name);
 
-			Subtask subtask = new Subtask(name, readDependencies(element, appName, name),
+			List<String> dependencies = readDependencies(element, appName, name);
+			boolean optional = readOptional(element, appName, name);
+			if (optional && dependencies.isEmpty())
+				throw subtaskError(appName, name, "is optional but has no dependency; an optional subtask is "
+						+ "skipped only when one of its dependencies fails, so it needs at least one.");
+
+			Subtask subtask = new Subtask(name, dependencies,
 					subtaskOverride(element, "task_length", application.getTaskLengthDistribution(), 1, appName, name),
 					subtaskOverride(element, "request_size", application.getRequestSizeDistribution(), BITS_PER_KILOBYTE,
 							appName, name),
@@ -269,7 +275,8 @@ public class ApplicationFileParser extends XmlFileParser {
 							appName, name),
 					subtaskOverride(element, "container_size", application.getContainerSizeDistribution(),
 							BITS_PER_KILOBYTE, appName, name),
-					subtaskOverride(element, "latency", application.getLatencyDistribution(), 1, appName, name));
+					subtaskOverride(element, "latency", application.getLatencyDistribution(), 1, appName, name),
+					optional);
 			byName.put(name, subtask);
 			subtasks.add(subtask);
 		}
@@ -301,6 +308,31 @@ public class ApplicationFileParser extends XmlFileParser {
 			dependencies.add(dependency);
 		}
 		return new ArrayList<>(dependencies);
+	}
+
+	/**
+	 * Reads the optional {@code optional} attribute of a subtask.
+	 * <p>
+	 * An optional subtask is skipped, rather than failed, when one of its
+	 * dependencies fails, and the request continues with the results of the other
+	 * branches. The attribute is absent by default, which makes the subtask
+	 * required.
+	 *
+	 * @param element the subtask element
+	 * @param appName the name of the application, used in error messages
+	 * @param name    the name of the subtask, used in error messages
+	 * @return {@code true} when the subtask is optional
+	 */
+	protected boolean readOptional(Element element, String appName, String name) {
+		String raw = element.getAttribute("optional").trim();
+		if (raw.isEmpty())
+			return false;
+		if (raw.equalsIgnoreCase("true"))
+			return true;
+		if (raw.equalsIgnoreCase("false"))
+			return false;
+		throw subtaskError(appName, name,
+				"has an \"optional\" attribute of \"" + raw + "\", expected \"true\" or \"false\".");
 	}
 
 	/**
