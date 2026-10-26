@@ -21,6 +21,7 @@ files when the default settings are not enough:
 | [Example 14](Example14/README.md) | Mist-only reinforcement placement | `Example14/settings/` | default |
 | [Example 15](Example15/README.md) | Multi-layer guided reinforcement learning | `Example15/settings/` | default |
 | [Example 16](Example16/README.md) | Softmax policy for smart-city offloading | `Example16/settings/` | default |
+| [Example 17](Example17/README.md) | Context-aware deep reinforcement offloading | `Example17/settings/` | default |
 
 The Java classes are in
 `src/main/java/com/mechalikh/pureedgesim/examples/`. Run one from the repository

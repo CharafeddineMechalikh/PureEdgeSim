@@ -44,6 +44,10 @@
     devices. The learning rate, discount, temperature, and failure penalty are
     constants of the orchestrator, and the normalized reward keeps the values
     independent of the task size.
+*   New `Example17` replaces the table with a small neural network whose inputs
+    include the battery level, the access technology, and the device mobility.
+    The agent trains online with a target network, so layers can be valued for
+    contexts that never appeared during the run.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and
