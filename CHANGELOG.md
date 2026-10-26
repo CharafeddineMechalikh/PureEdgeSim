@@ -23,6 +23,11 @@
     each returned task, explores ten percent of the decisions, and picks the least
     loaded node of the chosen tier, so its results can be compared with `TRADE_OFF`
     under the same seed.
+*   New `Example12` models multi-access MEC: 300 devices reach four edge data
+    centers over Wi-Fi or cellular, and an access-aware orchestrator scores each
+    tier from the transfer delay of the device access link, the compute delay,
+    and the tasks pending on the node. The cellular and Wi-Fi rates in the
+    settings file change the decision.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and
