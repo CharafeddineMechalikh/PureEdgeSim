@@ -15,6 +15,7 @@ files when the default settings are not enough:
 | [Example 8](Example8/README.md) | Fuzzy logic orchestration | `Example8/settings/` | needs jFuzzyLogic |
 | [Example 9](Example9/README.md) | Service graph partitioning with graph theory | `Example9/settings/` | default |
 | [Example 10](Example10/README.md) | Service graph partitioning with a genetic algorithm | `Example10/settings/` | default |
+| [Example 11](Example11/README.md) | Tabular Q-learning orchestration | `Example11/settings/` | default |
 
 The Java classes are in
 `src/main/java/com/mechalikh/pureedgesim/examples/`. Run one from the repository

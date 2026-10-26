@@ -18,6 +18,11 @@
     with a genetic algorithm whose fitness estimates the pipeline makespan, the result
     transfers, and the load imbalance. Both clear the application placement after each
     decision so that each subtask is routed on its own.
+*   New `Example11` replaces the placement decision with a tabular Q-learning agent
+    over the cloud, edge, and mist tiers. The agent learns from the total delay of
+    each returned task, explores ten percent of the decisions, and picks the least
+    loaded node of the chosen tier, so its results can be compared with `TRADE_OFF`
+    under the same seed.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and
