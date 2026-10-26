@@ -39,6 +39,11 @@
     and 500 devices, with the decision delegated to an edge orchestrator. The
     agent learns the layer and a guided heuristic picks the least loaded node
     inside it.
+*   New `Example16` replaces epsilon-greedy exploration with a Boltzmann
+    (softmax) policy over the cloud, edge, and mist layers for 300 smart-city
+    devices. The learning rate, discount, temperature, and failure penalty are
+    constants of the orchestrator, and the normalized reward keeps the values
+    independent of the task size.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and
