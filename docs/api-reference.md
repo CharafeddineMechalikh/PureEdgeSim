@@ -296,12 +296,15 @@ Package `taskgenerator`.
 | `TaskAbstract` | Base implementation of the timing and identity fields. |
 | `DefaultTask` | Default task. |
 | `Application` | Parsed application definition, with one distribution per parameter. |
+| `Subtask` | One node of a service graph: name, dependency names, and its own distributions. |
 | `TaskGenerator` | Abstract generator and task list. |
 | `DefaultTaskGenerator` | Default traffic model. |
 
 `Task` exposes the request, result, and container sizes in bits, the length in million instructions, the maximum latency, the generating device, the orchestrator, the registry, the offloading destination, the application identifier, the type, the failure reason, the status, and the timing fields.
 
 `Application` keeps a scalar value and a distribution for each parameter. The getters (`getRequestSize()`, `getLatency()`, `getRate()`, ...) return the mean, which is what the reports and the charts use, while the `sample...()` methods (`sampleRequestSize()`, `sampleResultsSize()`, `sampleContainerSize()`, `sampleTaskLength()`, `sampleLatency()`, `sampleTasksPerMinute()`) draw the value of one task and never return zero or a negative size. `getArrivalDistribution()` is `null` when the tasks are evenly spaced, and `hasRandomArrival()` says the same thing. Setting a parameter with its plain setter, for example `setRequestSize(2000)`, replaces its distribution by a constant one.
+
+`getSubtasks()` returns the service graph of the application, in file order, and `hasSubtasks()` tells whether the application expands into several tasks per request. The dependency methods of `Task` (`getDependencies()`, `getDependents()`, `dependencyFinished()`, `addDependency(Task)`, `addDependent(Task)`) work on every task class that extends `TaskAbstract`; the interface provides neutral defaults, so a custom `Task` implementation still works for monolithic applications.
 
 Timing accessors:
 

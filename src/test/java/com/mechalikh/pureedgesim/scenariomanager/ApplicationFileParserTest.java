@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import com.mechalikh.pureedgesim.AbstractTest;
 import com.mechalikh.pureedgesim.taskgenerator.Application;
+import com.mechalikh.pureedgesim.taskgenerator.Subtask;
 
 class ApplicationFileParserTest extends AbstractTest {
 
@@ -290,5 +291,129 @@ class ApplicationFileParserTest extends AbstractTest {
 	void anUnknownArrivalKeywordIsRejected() throws Exception {
 		String xml = applicationsXml.replaceFirst("<rate>20</rate>", "<rate>20</rate><arrival>markov</arrival>");
 		assertFalse(parse(xml));
+	}
+
+	// ------------------------------------------------------------------
+	// Service graphs
+	// ------------------------------------------------------------------
+
+	/** Adds subtask elements at the end of the given application. */
+	private String applicationWithSubtasks(String appName, String... subtasks) {
+		return applicationsXml.replaceFirst("(?s)(" + "<application name=\"" + appName + "\">.*?)</application>",
+				"$1" + String.join("", subtasks) + "</application>");
+	}
+
+	@Test
+	void anApplicationWithoutSubtaskElementsRemainsASingleTask() throws Exception {
+		assertTrue(parse(applicationsXml));
+		assertFalse(SimulationParameters.applicationList.get(0).hasSubtasks());
+		assertTrue(SimulationParameters.applicationList.get(0).getSubtasks().isEmpty());
+	}
+
+	@Test
+	void aServiceGraphInheritsTheApplicationValues() throws Exception {
+		String xml = applicationWithSubtasks("Health", "<subtask name=\"capture\"/>",
+				"<subtask name=\"detect\" depends_on=\"capture\"/>",
+				"<subtask name=\"alert\" depends_on=\"detect\"/>");
+		assertTrue(parse(xml));
+
+		Application health = SimulationParameters.applicationList.get(0);
+		assertTrue(health.hasSubtasks());
+		List<Subtask> subtasks = health.getSubtasks();
+		assertEquals(3, subtasks.size());
+		assertEquals("capture", subtasks.get(0).getName());
+		assertTrue(subtasks.get(0).isRoot());
+		assertEquals(List.of("capture"), subtasks.get(1).getDependencies());
+		assertEquals(List.of("detect"), subtasks.get(2).getDependencies());
+
+		// The application has no distribution, so the subtasks inherit the fixed
+		// values, converted to bits for the sizes.
+		for (Subtask subtask : subtasks) {
+			assertEquals(500.0, subtask.getTaskLengthDistribution().mean(), 0.0001);
+			assertEquals(160_000.0, subtask.getRequestSizeDistribution().mean(), 0.0001);
+			assertEquals(160_000.0, subtask.getResultsSizeDistribution().mean(), 0.0001);
+			assertEquals(160_000.0, subtask.getContainerSizeDistribution().mean(), 0.0001);
+			assertEquals(0.02, subtask.getLatencyDistribution().mean(), 0.0001);
+		}
+	}
+
+	@Test
+	void subtaskAttributesOverrideTheApplicationValues() throws Exception {
+		String xml = applicationWithSubtasks("Health",
+				"<subtask name=\"capture\" task_length=\"120\" request_size=\"2\" results_size=\"3\" container_size=\"4\" latency=\"0.5\"/>");
+		assertTrue(parse(xml));
+
+		Subtask capture = SimulationParameters.applicationList.get(0).getSubtasks().get(0);
+		assertEquals(120.0, capture.getTaskLengthDistribution().mean(), 0.0001);
+		// Sizes stay in kilobytes in the file and are converted to bits.
+		assertEquals(2.0 * 8000, capture.getRequestSizeDistribution().mean(), 0.0001);
+		assertEquals(3.0 * 8000, capture.getResultsSizeDistribution().mean(), 0.0001);
+		assertEquals(4.0 * 8000, capture.getContainerSizeDistribution().mean(), 0.0001);
+		assertEquals(0.5, capture.getLatencyDistribution().mean(), 0.0001);
+		assertEquals(120, capture.sampleTaskLength());
+	}
+
+	@Test
+	void subtasksMayDependOnSeveralOthers() throws Exception {
+		String xml = applicationWithSubtasks("Health", "<subtask name=\"a\"/>", "<subtask name=\"b\"/>",
+				"<subtask name=\"join\" depends_on=\"a, b\"/>");
+		assertTrue(parse(xml));
+
+		assertEquals(List.of("a", "b"), SimulationParameters.applicationList.get(0).getSubtasks().get(2)
+				.getDependencies());
+	}
+
+	@Test
+	void aSubtaskWithoutNameIsRejected() throws Exception {
+		assertFalse(parse(applicationWithSubtasks("Health", "<subtask task_length=\"10\"/>")));
+	}
+
+	@Test
+	void duplicateSubtaskNamesAreRejected() throws Exception {
+		assertFalse(parse(applicationWithSubtasks("Health", "<subtask name=\"a\"/>", "<subtask name=\"a\"/>")));
+	}
+
+	@Test
+	void anUnknownSubtaskAttributeIsRejected() throws Exception {
+		assertFalse(parse(applicationWithSubtasks("Health", "<subtask name=\"a\" dependencies=\"b\"/>")));
+	}
+
+	@Test
+	void anUnknownDependencyIsRejected() throws Exception {
+		assertFalse(parse(applicationWithSubtasks("Health", "<subtask name=\"a\" depends_on=\"missing\"/>")));
+	}
+
+	@Test
+	void aSubtaskCannotDependOnItself() throws Exception {
+		assertFalse(parse(applicationWithSubtasks("Health", "<subtask name=\"a\" depends_on=\"a\"/>")));
+	}
+
+	@Test
+	void aDependencyCycleIsRejected() throws Exception {
+		assertFalse(parse(applicationWithSubtasks("Health", "<subtask name=\"a\" depends_on=\"b\"/>",
+				"<subtask name=\"b\" depends_on=\"a\"/>")));
+		assertFalse(parse(applicationWithSubtasks("Health", "<subtask name=\"a\" depends_on=\"c\"/>",
+				"<subtask name=\"b\" depends_on=\"a\"/>", "<subtask name=\"c\" depends_on=\"b\"/>")));
+	}
+
+	@Test
+	void anEmptyDependencyInTheListIsRejected() throws Exception {
+		assertFalse(parse(applicationWithSubtasks("Health", "<subtask name=\"a\"/>",
+				"<subtask name=\"b\" depends_on=\"a,\"/>")));
+	}
+
+	@Test
+	void aNonPositiveSubtaskValueIsRejected() throws Exception {
+		for (String attribute : List.of("task_length", "request_size", "results_size", "container_size", "latency")) {
+			assertFalse(parse(applicationWithSubtasks("Health", "<subtask name=\"a\" " + attribute + "=\"0\"/>")),
+					"subtask " + attribute + "=0 should be rejected");
+			assertFalse(parse(applicationWithSubtasks("Health", "<subtask name=\"a\" " + attribute + "=\"-1\"/>")),
+					"subtask " + attribute + "=-1 should be rejected");
+		}
+	}
+
+	@Test
+	void aNonNumericSubtaskValueIsRejected() throws Exception {
+		assertFalse(parse(applicationWithSubtasks("Health", "<subtask name=\"a\" task_length=\"long\"/>")));
 	}
 }

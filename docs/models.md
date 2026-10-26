@@ -97,6 +97,29 @@ Each of those numeric parameters is drawn from the application's distribution, s
 
 The task identifiers are global and increasing within one simulation. They are useful for tracing a task through the debug log.
 
+### Service graphs
+
+An application can model a multi-stage service instead of a single job. Its subtasks are declared in `applications.xml` (see [Configuration](configuration.md#service-graphs)), and the generator turns one request into one task per subtask:
+
+```text
+request at t
+  ├── capture   scheduled at t
+  └── detect    waits for capture
+        └── alert waits for detect
+```
+
+The model has three properties worth knowing before you interpret results:
+
+- **Requests, not tasks, follow the rate.** A device assigned the application issues `rate` requests per minute; each request expands into the whole graph. The task rate observed by the network and the computing nodes is therefore `rate * subtasks`, weighted by the task lengths.
+- **A subtask is released on results.** When a parent returns its results to the device, the manager decrements the remaining-dependency counter of every child. The child enters the event queue only when that counter reaches zero, which is how a join waits for all its parents. Subtask times are set at release time, not at request time, so the waiting time of a child starts when it is submitted.
+- **Failures cascade.** A parent that fails for any reason, including a dead device, insufficient resources, or a missed latency bound, fails every descendant with `FAILED_BECAUSE_DEPENDENCY_FAILED`. Descendants are never sent, so they do not enter the failure rate; they are reported in their own CSV column and in the text report. The simulation still counts them as generated tasks, so termination and progress reach 100 percent.
+
+Each subtask samples its own attributes from the application distributions unless the XML overrides them, and each has its own container size, so the storage and RAM checks at the destination apply per subtask.
+
+The placement cache is an application-level shortcut, not a graph-level one: without intervention, the first subtask decides where the whole application runs. A partitioning policy therefore clears the placement after each decision and selects a node per subtask, from the subtask name and the application identifier. `Example9PartitioningOrchestrator` derives the partitions from the graph structure, and `Example10GeneticOrchestrator` searches them with a genetic algorithm; both run the same video analytics graph, so their plans can be compared.
+
+The dependency bookkeeping lives in `TaskAbstract`: `addDependency`, `addDependent`, `dependencyFinished`, `getDependencies`, and `getDependents`. A task class that implements `Task` directly keeps working for monolithic applications, because the interface provides neutral default methods.
+
 ### What to override
 
 | Goal | Method |

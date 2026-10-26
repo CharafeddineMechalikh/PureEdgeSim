@@ -26,19 +26,20 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationAbstract.Files;
 public class Example6 {
 	/**
 	 * This example shows how to use other simulation parameters files. The files
-	 * used in this example are located in the examples/Example6_settings/ folder.
+	 * used in this example are located in the examples/Example6/settings/ folder.
 	 * By default, if the user doesn't specify the simulation settings folder,
 	 * PureEdgeSim will use the default ones located in settings/ folder.
 	 * 
-	 * in the simulation parameters file that is used in this example
-	 * ("examples/Example6_settings/"), the simulation time is set to 60
-	 * minutes and the update intervals to 0.1 seconds.
+	 * The scenario in "examples/Example6/settings/" runs every architecture in
+	 * parallel with MIST orchestration, container downloads from the cloud
+	 * registry, and the realistic network model. It stops at simulation_time
+	 * instead of waiting for every task.
 	 * 
 	 * @author Charafeddine Mechalikh
 	 * @since PureEdgeSim 2.4
 	 */
 	// Below is the path for the settings folder of this example
-	private static String settingsPath = "examples/Example6_settings/";
+	private static String settingsPath = "examples/Example6/settings/";
 
 	// The custom output folder is
 	private static String outputPath = "output/Example6_output/";

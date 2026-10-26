@@ -13,7 +13,7 @@ You do not need to be a software engineer to contribute. You do need to verify w
 | --- | --- |
 | `src/main/java/com/mechalikh/pureedgesim/` | Framework source, one package per module. |
 | `src/main/java/com/mechalikh/pureedgesim/examples/` | Runnable scenarios and sample custom models. Not part of the published Javadoc. |
-| `examples/ExampleX_settings/` | Scenario files used by the examples. |
+| `examples/ExampleX/settings/` | Scenario files used by example X, next to its `README.md`. |
 | `src/test/java/com/mechalikh/pureedgesim/` | JUnit 5 tests, mirroring the source packages. |
 | `docs/` | This manual. Start at [docs/README.md](README.md). |
 | `settings/` | Default configuration files. |

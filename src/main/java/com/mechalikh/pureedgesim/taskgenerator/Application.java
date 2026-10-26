@@ -21,6 +21,9 @@
  **/
 package com.mechalikh.pureedgesim.taskgenerator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mechalikh.pureedgesim.distribution.ConstantDistribution;
 import com.mechalikh.pureedgesim.distribution.Distribution;
 
@@ -104,6 +107,12 @@ public class Application {
 	 * {@code null} when the tasks are evenly spaced.
 	 */
 	protected Distribution arrivalDistribution;
+
+	/**
+	 * Nodes of the service graph of this application, in declaration order, or an
+	 * empty list when each request is a single independent task.
+	 */
+	protected List<Subtask> subtasks = new ArrayList<>();
 
 	/**
 	 * The number of bits in one megabyte.
@@ -519,6 +528,36 @@ public class Application {
 	 */
 	public Distribution getRateDistribution() {
 		return rateDistribution;
+	}
+
+	/**
+	 * Returns whether each request of this application is a service graph instead
+	 * of a single independent task.
+	 *
+	 * @return {@code true} when subtasks were declared for this application
+	 */
+	public boolean hasSubtasks() {
+		return !subtasks.isEmpty();
+	}
+
+	/**
+	 * Returns the nodes of the service graph of this application, in declaration
+	 * order.
+	 *
+	 * @return the subtasks, empty when each request is a single independent task
+	 */
+	public List<Subtask> getSubtasks() {
+		return subtasks;
+	}
+
+	/**
+	 * Sets the nodes of the service graph of this application.
+	 *
+	 * @param subtasks the subtasks, in declaration order; {@code null} removes the
+	 *                 graph and restores one independent task per request
+	 */
+	public void setSubtasks(List<Subtask> subtasks) {
+		this.subtasks = subtasks == null ? new ArrayList<>() : new ArrayList<>(subtasks);
 	}
 
 }

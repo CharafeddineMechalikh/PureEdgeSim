@@ -21,6 +21,8 @@
 package com.mechalikh.pureedgesim.simulationmanager;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.network.NetworkModel;
@@ -116,7 +118,7 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 	@Override
 	public void onSimulationStart() {
 		// Initialize logger variables.
-		simLog.setGeneratedTasks(taskList.size());
+		simLog.setGeneratedTasks(countGeneratedTasks());
 		simLog.setCurrentOrchPolicy(scenario.getStringOrchArchitecture());
 
 		simLog.print("%s - Simulation: %d  , iteration: %d", getClass().getSimpleName(), getSimulationId(),
@@ -143,6 +145,36 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 		scheduleNow(this, SHOW_PROGRESS);
 
 		simLog.printSameLine("Simulation progress : [", "red");
+	}
+
+	/**
+	 * Counts every task of the scenario, including the subtasks that are not in the
+	 * task list because they wait for their dependencies.
+	 * <p>
+	 * For applications without subtasks, each task of the list has no dependent and
+	 * the result is the size of the list, as before.
+	 *
+	 * @return the number of tasks that the simulation will process
+	 */
+	protected int countGeneratedTasks() {
+		Set<Integer> counted = new HashSet<>();
+		return taskList.stream().mapToInt(task -> countTaskAndDependents(task, counted)).sum();
+	}
+
+	/**
+	 * Counts one task and its transitive dependents, each of them once.
+	 *
+	 * @param task    the task to count
+	 * @param counted the identifiers of the tasks already counted
+	 * @return the number of newly counted tasks
+	 */
+	protected int countTaskAndDependents(Task task, Set<Integer> counted) {
+		if (!counted.add(task.getId()))
+			return 0;
+		int total = 1;
+		for (Task dependent : task.getDependents())
+			total += countTaskAndDependents(dependent, counted);
+		return total;
 	}
 
 	/**
@@ -201,6 +233,7 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 
 			edgeOrchestrator.resultsReturned(task);
 			tasksCount++;
+			releaseDependents(task);
 			break;
 
 		case SHOW_PROGRESS:
@@ -307,6 +340,7 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 				task.setFailureReason(Task.FailureReason.NO_OFFLOADING_DESTINATIONS);
 				simLog.incrementTasksFailedLackOfRessources(task);
 				tasksCount++;
+				failDependents(task);
 				return;
 			}
 
@@ -367,6 +401,7 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 				task.getEdgeDevice().setApplicationPlaced(false);
 				simLog.incrementNotGeneratedBeacuseDeviceDead();
 				tasksCount++;
+				failDependents(task);
 				return true;
 			}
 			simLog.incrementFailedBeacauseDeviceDead(task);
@@ -444,7 +479,47 @@ public class DefaultSimulationManager extends SimulationManager implements OnSim
 		// orchestrator previously.
 		if (phase > 1)
 			edgeOrchestrator.resultsReturned(task);
+		failDependents(task);
 		return true;
+	}
+
+	/**
+	 * Offloads the subtasks whose last dependency has just returned its results.
+	 * <p>
+	 * A task without dependents, which is every task of an application without
+	 * subtasks, makes this method do nothing.
+	 *
+	 * @param task the task whose results were just returned
+	 */
+	protected void releaseDependents(Task task) {
+		for (Task dependent : task.getDependents()) {
+			if (dependent.getStatus() == Task.Status.FAILED)
+				continue;
+			if (dependent.dependencyFinished()) {
+				dependent.setTime(simulation.clock());
+				scheduleNow(this, SEND_TO_ORCH, dependent);
+			}
+		}
+	}
+
+	/**
+	 * Marks as failed the subtasks that will never receive their input because a
+	 * dependency failed, and does the same for their own dependents.
+	 * <p>
+	 * These tasks never leave their device, so they are counted separately from the
+	 * tasks that were sent and failed during their execution.
+	 *
+	 * @param task the task that failed
+	 */
+	protected void failDependents(Task task) {
+		for (Task dependent : task.getDependents()) {
+			if (dependent.getStatus() == Task.Status.FAILED)
+				continue;
+			dependent.setFailureReason(Task.FailureReason.FAILED_BECAUSE_DEPENDENCY_FAILED);
+			simLog.incrementTasksFailedDependency();
+			tasksCount++;
+			failDependents(dependent);
+		}
 	}
 
 	/**

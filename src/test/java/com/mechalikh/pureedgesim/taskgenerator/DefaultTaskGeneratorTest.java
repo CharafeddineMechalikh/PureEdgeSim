@@ -31,6 +31,8 @@ import com.mechalikh.pureedgesim.distribution.ExponentialDistribution;
 import com.mechalikh.pureedgesim.distribution.UniformDistribution;
 import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.DefaultSimulationManager;
+import com.mechalikh.pureedgesim.taskgenerator.Application;
+import com.mechalikh.pureedgesim.taskgenerator.Subtask;
 
 class DefaultTaskGeneratorTest extends AbstractTest {
 
@@ -303,5 +305,125 @@ class DefaultTaskGeneratorTest extends AbstractTest {
 		assertEquals(10 * 299, tasks.size(), "one task per second after the initial gap on each of the ten generating devices");
 		for (Task task : tasks)
 			assertTrue(task.getTime() < 300, "task generated at " + task.getTime() + " s, after the end");
+	}
+
+	// ------------------------------------------------------------------
+	// Service graphs
+	// ------------------------------------------------------------------
+
+	private static ConstantDistribution constant(double value) {
+		return new ConstantDistribution(value);
+	}
+
+	/** An application whose requests are a capture-detect-alert chain. */
+	private static Application serviceApplication() {
+		Application application = new Application("Service", 2, 100, 1.0, 8_000_000, 8_000_000, 8_000_000, 100);
+		application.setSubtasks(List.of(
+				new Subtask("capture", List.of(), constant(100), constant(8_000), constant(8_000), constant(8_000_000),
+						constant(1)),
+				new Subtask("detect", List.of("capture"), constant(500), constant(8_000), constant(8_000),
+						constant(8_000_000), constant(1)),
+				new Subtask("alert", List.of("detect"), constant(50), constant(1_600), constant(800),
+						constant(8_000_000), constant(1))));
+		return application;
+	}
+
+	@Test
+	void aServiceGraphIsInstantiatedOncePerRequest() {
+		SimulationParameters.applicationList = List.of(serviceApplication());
+		SimulationParameters.simulationDuration = 60;
+
+		List<Task> roots = new DefaultTaskGenerator(manager).generate().stream().collect(Collectors.toList());
+
+		// Two requests per minute on each of the ten generating devices, each request
+		// having a single root subtask.
+		assertEquals(20, roots.size());
+		for (Task root : roots) {
+			assertEquals("capture", root.getSubtaskName());
+			assertTrue(root.getDependencies().isEmpty());
+			assertEquals(1, root.getDependents().size());
+			assertEquals(100, (long) root.getLength());
+
+			Task detect = root.getDependents().get(0);
+			assertEquals("detect", detect.getSubtaskName());
+			assertEquals(List.of(root), detect.getDependencies());
+			assertEquals(500, (long) detect.getLength());
+
+			Task alert = detect.getDependents().get(0);
+			assertEquals("alert", alert.getSubtaskName());
+			assertEquals(List.of(detect), alert.getDependencies());
+			assertEquals(50, (long) alert.getLength());
+			assertEquals(1_600, (long) alert.getFileSizeInBits());
+			assertEquals(800, (long) alert.getOutputSizeInBits());
+			assertTrue(alert.getDependents().isEmpty());
+		}
+	}
+
+	@Test
+	void onlyTheRootsOfTheGraphsAreAddedToTheTaskList() {
+		SimulationParameters.applicationList = List.of(serviceApplication());
+		SimulationParameters.simulationDuration = 60;
+
+		DefaultTaskGenerator taskGenerator = new DefaultTaskGenerator(manager);
+		List<Task> roots = taskGenerator.generate().stream().collect(Collectors.toList());
+
+		assertEquals(20, taskGenerator.getTaskList().size());
+		assertTrue(roots.stream().allMatch(task -> "capture".equals(task.getSubtaskName())));
+		// Every service instantiates the three subtasks.
+		Set<String> names = new HashSet<>();
+		for (Task root : roots) {
+			names.add(root.getSubtaskName());
+			names.add(root.getDependents().get(0).getSubtaskName());
+			names.add(root.getDependents().get(0).getDependents().get(0).getSubtaskName());
+		}
+		assertEquals(Set.of("capture", "detect", "alert"), names);
+	}
+
+	@Test
+	void subtaskIdsAreUniqueAndSequential() {
+		SimulationParameters.applicationList = List.of(serviceApplication());
+		SimulationParameters.simulationDuration = 60;
+
+		List<Task> roots = new DefaultTaskGenerator(manager).generate().stream().collect(Collectors.toList());
+
+		Set<Integer> ids = new HashSet<>();
+		for (Task root : roots) {
+			ids.add(root.getId());
+			Task detect = root.getDependents().get(0);
+			Task alert = detect.getDependents().get(0);
+			ids.add(detect.getId());
+			ids.add(alert.getId());
+		}
+		// Two requests per minute on ten devices, three subtasks each.
+		assertEquals(60, ids.size());
+		assertEquals(60, ids.stream().mapToInt(Integer::intValue).max().orElse(0));
+	}
+
+	@Test
+	void aSubtaskWithSeveralDependenciesWaitsForAllOfThem() {
+		Application application = new Application("Join", 1, 100, 1.0, 8_000_000, 8_000_000, 8_000_000, 100);
+		application.setSubtasks(List.of(
+				new Subtask("camera", List.of(), constant(100), constant(8_000), constant(8_000),
+						constant(8_000_000), constant(1)),
+				new Subtask("sensor", List.of(), constant(100), constant(8_000), constant(8_000),
+						constant(8_000_000), constant(1)),
+				new Subtask("fusion", List.of("camera", "sensor"), constant(100), constant(8_000), constant(8_000),
+						constant(8_000_000), constant(1))));
+		SimulationParameters.applicationList = List.of(application);
+		SimulationParameters.simulationDuration = 60;
+
+		List<Task> roots = new DefaultTaskGenerator(manager).generate().stream().collect(Collectors.toList());
+
+		// Two roots per request, one request per minute on ten devices.
+		assertEquals(20, roots.size());
+		Task camera = roots.get(0);
+		Task sensor = roots.get(1);
+		assertEquals("camera", camera.getSubtaskName());
+		assertEquals("sensor", sensor.getSubtaskName());
+		Task fusion = camera.getDependents().get(0);
+		assertSame(fusion, sensor.getDependents().get(0));
+		assertFalse(fusion.dependencyFinished(), "the fusion subtask must wait for the second root");
+		assertTrue(fusion.dependencyFinished(), "the fusion subtask is ready once both roots completed");
+		assertFalse(fusion.dependencyFinished(), "a released subtask must not be released twice");
 	}
 }

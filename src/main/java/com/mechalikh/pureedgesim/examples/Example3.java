@@ -28,7 +28,7 @@ public class Example3 {
 	 * centers/servers work cooperatively.
 	 * 
 	 * To do this, first, we defined the Edge data centers characteristics in the
-	 * edge_datacenters.xml file (in PureEdgeSim\examples\Example3_settings\)
+	 * edge_datacenters.xml file (in examples/Example3/settings/)
 	 * 
 	 * Then, in the simulation_parameters.properties file, we used the
 	 * Edge_and_Cloud architecture, which means the tasks will be offloaded to the
@@ -50,7 +50,7 @@ public class Example3 {
 	 * @since PureEdgeSim 3.1
 	 */
 	// Below is the path for the settings folder of this example
-	private static String settingsPath = "examples/Example3_settings/";
+	private static String settingsPath = "examples/Example3/settings/";
 
 	// The custom output folder is
 	private static String outputPath = "output/Example3_output/";

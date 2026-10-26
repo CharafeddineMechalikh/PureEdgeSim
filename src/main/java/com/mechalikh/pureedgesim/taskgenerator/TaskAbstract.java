@@ -21,6 +21,8 @@
  **/
 package com.mechalikh.pureedgesim.taskgenerator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -91,6 +93,33 @@ public abstract class TaskAbstract implements Task, Comparable<Task> {
 	 * The serial number of this task
 	 */
 	protected long serial;
+
+	/**
+	 * The tasks that must complete before this one is offloaded; empty when the
+	 * task is not part of a service graph.
+	 */
+	protected final List<Task> dependencies = new ArrayList<>();
+
+	/**
+	 * The tasks that become eligible for offloading when this one completes.
+	 */
+	protected final List<Task> dependents = new ArrayList<>();
+
+	/**
+	 * Number of dependencies that have not completed yet.
+	 */
+	protected int remainingDependencies = 0;
+
+	/**
+	 * Whether every dependency of this task has already completed.
+	 */
+	protected boolean dependenciesCompleted = false;
+
+	/**
+	 * Name of the subtask this task instantiates, or {@code null} when the task is
+	 * not part of a service graph.
+	 */
+	protected String subtaskName;
 
 	/**
 	 * 
@@ -353,5 +382,87 @@ public abstract class TaskAbstract implements Task, Comparable<Task> {
 	 */
 	public long getSerial() {
 		return this.serial;
+	}
+
+	/**
+	 * Returns the tasks that must complete before this one is offloaded.
+	 *
+	 * @return the dependencies of this task, empty for an independent task
+	 */
+	@Override
+	public List<Task> getDependencies() {
+		return dependencies;
+	}
+
+	/**
+	 * Returns the tasks that become eligible for offloading when this one
+	 * completes.
+	 *
+	 * @return the tasks waiting for this one, empty for an independent task
+	 */
+	@Override
+	public List<Task> getDependents() {
+		return dependents;
+	}
+
+	/**
+	 * Registers a task that must complete before this one is offloaded.
+	 *
+	 * @param dependency the task that must complete first
+	 */
+	@Override
+	public void addDependency(Task dependency) {
+		dependencies.add(dependency);
+		remainingDependencies++;
+	}
+
+	/**
+	 * Registers a task that becomes eligible for offloading when this one
+	 * completes.
+	 *
+	 * @param dependent the task waiting for this one
+	 */
+	@Override
+	public void addDependent(Task dependent) {
+		dependents.add(dependent);
+	}
+
+	/**
+	 * Records that one of the dependencies of this task has completed.
+	 * <p>
+	 * The call is idempotent: once every dependency has completed, later calls
+	 * return {@code false}, so a task is never released twice.
+	 *
+	 * @return {@code true} when all the dependencies have completed
+	 */
+	@Override
+	public boolean dependencyFinished() {
+		if (dependenciesCompleted)
+			return false;
+		remainingDependencies--;
+		if (remainingDependencies > 0)
+			return false;
+		dependenciesCompleted = true;
+		return true;
+	}
+
+	/**
+	 * Returns the name of the subtask this task instantiates.
+	 *
+	 * @return the subtask name, or {@code null} for an independent task
+	 */
+	@Override
+	public String getSubtaskName() {
+		return subtaskName;
+	}
+
+	/**
+	 * Sets the name of the subtask this task instantiates.
+	 *
+	 * @param name the subtask name declared in the applications file
+	 */
+	@Override
+	public void setSubtaskName(String name) {
+		this.subtaskName = name;
 	}
 }

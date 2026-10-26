@@ -21,6 +21,9 @@
  **/
 package com.mechalikh.pureedgesim.taskgenerator;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.mechalikh.pureedgesim.datacentersmanager.ComputingNode;
 import com.mechalikh.pureedgesim.simulationengine.QueueElement;
 
@@ -52,7 +55,9 @@ public interface Task extends QueueElement {
 		/** The destination lacked the CPU, memory, or storage required by the task. */
 		INSUFFICIENT_RESOURCES,
 		/** The destination did not have enough battery energy for the task. */
-		INSUFFICIENT_POWER
+		INSUFFICIENT_POWER,
+		/** A subtask this one depends on failed, so it could never be offloaded. */
+		FAILED_BECAUSE_DEPENDENCY_FAILED
 	}
 
 	/**
@@ -397,4 +402,96 @@ public interface Task extends QueueElement {
 	 * @return the serial number of the task
 	 */
 	long getSerial();
+
+	/**
+	 * Returns the tasks that must complete before this one can be offloaded.
+	 * <p>
+	 * A task that is not part of a service graph has no dependency, so the default
+	 * implementation returns an empty list and the simulation manager offloads it
+	 * as soon as its arrival time is reached.
+	 *
+	 * @return the tasks this one depends on, empty for an independent task
+	 */
+	default List<Task> getDependencies() {
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Returns the tasks that become eligible for offloading when this one
+	 * completes successfully.
+	 * <p>
+	 * A task that is not part of a service graph has no dependent, so the default
+	 * implementation returns an empty list.
+	 *
+	 * @return the tasks waiting for this one, empty for an independent task
+	 */
+	default List<Task> getDependents() {
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Records that one of the dependencies of this task has completed and tells
+	 * whether the task can now be offloaded.
+	 * <p>
+	 * The default implementation returns {@code true} because an independent task
+	 * is always ready. Implementations that support service graphs decrement their
+	 * remaining dependency count and return {@code true} only once it reaches zero.
+	 *
+	 * @return {@code true} when all the dependencies have completed
+	 */
+	default boolean dependencyFinished() {
+		return true;
+	}
+
+	/**
+	 * Registers a task that must complete before this one can be offloaded.
+	 * <p>
+	 * The default implementation rejects the call: a task class that does not
+	 * extend {@link TaskAbstract} cannot be used with a service graph, while it
+	 * works unchanged when applications declare no subtask.
+	 *
+	 * @param dependency the task that must complete first
+	 */
+	default void addDependency(Task dependency) {
+		throw new UnsupportedOperationException("The task class " + getClass().getName()
+				+ " does not support service graphs; extend TaskAbstract or implement addDependency()");
+	}
+
+	/**
+	 * Registers a task that becomes eligible for offloading when this one completes
+	 * successfully.
+	 * <p>
+	 * The default implementation rejects the call, for the same reason as
+	 * {@link #addDependency(Task)}.
+	 *
+	 * @param dependent the task waiting for this one
+	 */
+	default void addDependent(Task dependent) {
+		throw new UnsupportedOperationException("The task class " + getClass().getName()
+				+ " does not support service graphs; extend TaskAbstract or implement addDependent()");
+	}
+
+	/**
+	 * Returns the name of the subtask this task instantiates, or {@code null} when
+	 * the task is not part of a service graph.
+	 *
+	 * @return the subtask name declared in the applications file, or {@code null}
+	 */
+	default String getSubtaskName() {
+		return null;
+	}
+
+	/**
+	 * Sets the name of the subtask this task instantiates.
+	 * <p>
+	 * The default implementation rejects the call: a task class that does not
+	 * extend {@link TaskAbstract} cannot be used with a service graph, while it
+	 * works unchanged when applications declare no subtask.
+	 *
+	 * @param name the subtask name declared in the applications file
+	 */
+	default void setSubtaskName(String name) {
+		throw new UnsupportedOperationException("The task class " + getClass().getName()
+				+ " does not support service graphs; extend TaskAbstract or implement setSubtaskName()");
+	}
 }

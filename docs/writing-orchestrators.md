@@ -38,6 +38,25 @@ Your decision function can therefore be called once per device for the whole sim
 
 Placement is a simplification. If your algorithm needs a per-task decision, clear the placement at the end of the decision, or override `orchestrate` in your class. Clearing it too aggressively has a cost: each task then pays the request transfer to the orchestrator again.
 
+### Placing the subtasks of a service graph
+
+When an application declares a service graph, one request is a set of subtasks, and a partition plan usually sends different subtasks to different nodes. The placement cache works against that: the first subtask would store its destination and every later subtask of the same device would reuse it. Clear the placement after each decision in the orchestrator:
+
+```java
+@Override
+public void orchestrate(Task task) {
+    super.orchestrate(task);
+    task.getEdgeDevice().setApplicationPlaced(false);
+}
+```
+
+`findComputingNode` can then read `task.getSubtaskName()` and `task.getApplicationID()` to look up the partition or the node chosen for that subtask, and fall back to `tradeOff` when the named node is not eligible for this request. Two examples implement the pattern on the same video analytics graph:
+
+- `Example9` (`examples.Example9PartitioningOrchestrator`) cuts each connected component into balanced partitions with a graph-theory heuristic, then maps the partitions to mist, edge, and cloud.
+- `Example10` (`examples.Example10GeneticOrchestrator`) searches the node of every subtask with a genetic algorithm, whose fitness estimates the pipeline makespan, the result transfers, and the load imbalance.
+
+Both print the plan they computed before the simulation starts, so the two strategies can be compared on the same scenario.
+
 ### `resultsReturned`
 
 This callback fires after the task's results have reached the generating device. It is also called for failures that occur after the task has left the orchestrator (phases 2 and 3), not for failures before that point. Use it to update learned state:

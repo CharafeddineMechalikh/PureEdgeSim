@@ -43,7 +43,7 @@ import com.mechalikh.pureedgesim.simulationmanager.Simulation;
 public class Example8 {
 
 	// Below is the path for the settings folder of this example
-	private static String settingsPath = "examples/Example8_settings/";
+	private static String settingsPath = "examples/Example8/settings/";
 
 	// The custom output folder is
 	private static String outputPath = "output/Example8_output/";

@@ -30,7 +30,7 @@ git clone https://github.com/CharafeddineMechalikh/PureEdgeSim.git
 cd PureEdgeSim
 ```
 
-The runnable examples live in `src/main/java/com/mechalikh/pureedgesim/examples/` and belong to the `examples` Java package. The scenario files they use are in `examples/ExampleX_settings/` at the repository root, next to the default `settings/` folder.
+The runnable examples live in `src/main/java/com/mechalikh/pureedgesim/examples/` and belong to the `examples` Java package. Each example that needs its own scenario has a folder at the repository root, with its README and its settings: `examples/ExampleX/README.md` and `examples/ExampleX/settings/`. The other examples use the default `settings/` folder.
 
 The default configuration files are in `settings/`, and the default output folder is `output/`. These paths are relative to the working directory, so **run commands from the repository root** unless you configure absolute paths.
 

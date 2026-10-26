@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- One application is a service graph and the other is a monolithic
+		application, to show that both styles can share a scenario.
+
+		The video analytics pipeline is one weakly connected component:
+		the capture feeds the preprocessing, the detection feeds the
+		classification and the tracking, and their results are aggregated
+		before the notification. Example9 partitions this graph with graph
+		theory, Example10 searches the same graph with a genetic algorithm. -->
+
+	<application name="Video analytics">
+		<type>Soft Real-time</type>
+		<rate>2</rate> <!-- two requests per minute, each one a whole subtask graph -->
+		<usage_percentage>60</usage_percentage>
+		<latency>20</latency> <!-- default latency, overridden by some subtasks -->
+		<container_size>20</container_size>
+		<request_size>5</request_size>
+		<results_size>100</results_size>
+		<task_length>1000</task_length> <!-- default length, overridden by every subtask -->
+
+		<subtask name="capture" task_length="200" results_size="5" latency="2"/>
+		<subtask name="preprocess" depends_on="capture" task_length="600" results_size="20" latency="5"/>
+		<subtask name="detect" depends_on="preprocess" task_length="4000" results_size="10" latency="10"/>
+		<subtask name="classify" depends_on="detect" task_length="2500" results_size="50" latency="10"/>
+		<subtask name="track" depends_on="detect" task_length="800" results_size="100" latency="10"/>
+		<subtask name="aggregate" depends_on="classify,track" task_length="300" results_size="20" latency="15"/>
+		<subtask name="notify" depends_on="aggregate" task_length="50" results_size="1" latency="20"/>
+	</application>
+
+	<application name="Health">
+		<type>Hard Real-time</type>
+		<rate>20</rate>
+		<usage_percentage>40</usage_percentage>
+		<latency>1</latency> <!-- one second, so a cloud round trip still meets it -->
+		<container_size>20</container_size>
+		<request_size>20</request_size>
+		<results_size>20</results_size>
+		<task_length>500</task_length>
+	</application>
+</applications>

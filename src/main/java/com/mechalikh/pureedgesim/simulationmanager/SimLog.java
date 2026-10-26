@@ -92,6 +92,8 @@ public class SimLog {
 	protected int tasksFailedBeacauseDeviceDead = 0;
 	/** Tasks that were never sent because their device died. */
 	protected int notGeneratedBecDeviceDead = 0;
+	/** Subtasks that were never offloaded because a dependency failed. */
+	protected int tasksFailedDependency = 0;
 	/** Edge devices that died because their battery ran out. */
 	protected int deadDevicesCount = 0;
 	/** Sum of actual CPU execution times of finished tasks, in seconds. */
@@ -156,7 +158,8 @@ public class SimLog {
 					+ "Total tasks execution delay (s),Average execution delay (s),Total tasks waiting time (s),"
 					+ "Average waiting time (s),Number of generated tasks,Tasks successfully executed,"
 					+ "Task not executed (No resources available or long waiting time),Tasks failed (delay),Tasks failed (device dead),"
-					+ "Tasks failed (mobility),Tasks not generated due to the death of devices,Total tasks executed (Cloud),"
+					+ "Tasks failed (mobility),Tasks not generated due to the death of devices,"
+					+ "Tasks not executed because a dependency failed,Total tasks executed (Cloud),"
 					+ "Tasks successfully executed (Cloud),Total tasks executed (Edge),Tasks successfully executed (Edge),"
 					+ "Total tasks executed (Mist),Tasks successfully executed (Mist),"
 					+ "Network usage (s),Wan usage (s),Lan usage (s), Total network traffic (MBytes), Containers wan usage (s), Containers lan usage (s),Average bandwidth per task (Mbps),Average CPU usage (%),"
@@ -279,6 +282,11 @@ public class SimLog {
 						generatedTasksCount == 0 ? 0.0 : (double) notGeneratedBecDeviceDead * 100 / generatedTasksCount),
 						20)
 				+ " %% (" + notGeneratedBecDeviceDead + " tasks)");
+		print("Tasks not executed because a dependency failed                          :"
+				+ padLeftSpaces(decimalFormat.format(
+						generatedTasksCount == 0 ? 0.0 : (double) tasksFailedDependency * 100 / generatedTasksCount),
+						20)
+				+ " %% (" + tasksFailedDependency + " tasks)");
 		print("Tasks sent from edge devices                                            :"
 				+ padLeftSpaces("" + decimalFormat.format(((double) tasksSent * 100) / ((double) generatedTasksCount)),
 						20)
@@ -328,6 +336,7 @@ public class SimLog {
 				+ decimalFormat.format(totalWaitingTime / executedTasksCount) + "," + generatedTasksCount + ","
 				+ (tasksSent - tasksFailed) + "," + tasksFailedRessourcesUnavailable + "," + tasksFailedLatency + ","
 				+ tasksFailedBeacauseDeviceDead + "," + tasksFailedMobility + "," + notGeneratedBecDeviceDead + ","
+				+ tasksFailedDependency + ","
 				+ tasksExecutedOnCloud + "," + (tasksExecutedOnCloud - tasksFailedCloud) + "," + tasksExecutedOnEdge
 				+ "," + (tasksExecutedOnEdge - tasksFailedEdge) + "," + tasksExecutedOnMist + ","
 				+ (tasksExecutedOnMist - tasksFailedMist) + ",");
@@ -845,6 +854,14 @@ public class SimLog {
 	 */
 	public void incrementNotGeneratedBeacuseDeviceDead() {
 		this.notGeneratedBecDeviceDead++;
+	}
+
+	/**
+	 * Counts a subtask that was never offloaded because one of its dependencies
+	 * failed, so it could never run.
+	 */
+	public void incrementTasksFailedDependency() {
+		this.tasksFailedDependency++;
 	}
 
 	/** Counts a node that died because its battery ran out. */

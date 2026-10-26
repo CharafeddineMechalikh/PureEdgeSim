@@ -107,6 +107,7 @@ Each module provides a default implementation and a set of adjustable settings. 
   - Nine mobility models: random waypoint, random walk, Gauss-Markov, Manhattan, fixed waypoints, circular, Lévy walk, Brownian, and reference point group movement, selected per device type from the scenario file.
   - Realistic energy model.
 - **Everything is a random variable**: task sizes, task lengths, arrival gaps, device capacities, battery levels, and initial positions accept any of sixteen probability distributions (uniform, normal, lognormal, exponential, Poisson, gamma, Erlang, Weibull, beta, Pareto, triangular, Bernoulli, binomial, geometric, categorical, constant), or stay a fixed number as before.
+- **Monolithic tasks or service graphs**: an application can generate one independent task per request, or a graph of subtasks linked by dependencies, where each stage runs only after the stages it needs have returned their results and a failure cancels the whole subtree. The two styles coexist in one scenario file, and existing scenarios are unchanged.
 - **Reproducible runs**: set `random_seed` once and the whole scenario, including node generation and movement, replays identically. Parallel runs of the same sweep reuse the seed per scenario, so conditions stay comparable.
 - **Support for online decision making**: task orchestration, scheduling, and offloading.
 - **QoS-aware architectures and topologies**.
@@ -152,7 +153,7 @@ mvn clean install -DskipTests
 mvn exec:java -Dexec.mainClass="examples.Example1"
 ```
 
-The examples live in [`src/main/java/com/mechalikh/pureedgesim/examples`](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/src/main/java/com/mechalikh/pureedgesim/examples). Each example demonstrates a different feature or computing paradigm. To create a new scenario, add a class to the `examples` package and configure it as shown below.
+The examples live in [`src/main/java/com/mechalikh/pureedgesim/examples`](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/src/main/java/com/mechalikh/pureedgesim/examples), and each one has a README with its scenario files under [`examples/`](examples/README.md). Each example demonstrates a different feature or computing paradigm. To create a new scenario, add a class to the `examples` package and configure it as shown below.
 
 You can also import the project as a Maven project in Eclipse, IntelliJ IDEA, or NetBeans, and run any example class directly from the IDE.
 
@@ -224,7 +225,7 @@ dependencies {
 - [Documentation manual](docs/): step-by-step tutorials, architecture, models, output metrics, and a research guide for new users.
 - [Published documentation](https://charafeddinemechalikh.github.io/PureEdgeSim/docs/): the same manual, rendered as a website.
 - [Wiki](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki): installation, configuration files, modules, and tutorials.
-- [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/src/main/java/com/mechalikh/pureedgesim/examples): runnable scenarios covering cloud, edge, and mist computing.
+- [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/src/main/java/com/mechalikh/pureedgesim/examples): runnable scenarios covering cloud, edge, and mist computing, including service-graph partitioning with graph theory (`Example9`) and with a genetic algorithm (`Example10`).
 - [Javadoc](https://javadoc.io/doc/com.mechalikh/pureedgesim): API documentation.
 - [CHANGELOG.md](CHANGELOG.md): release notes.
 

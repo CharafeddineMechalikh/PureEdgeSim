@@ -142,6 +142,7 @@ class SimLogTest extends AbstractTest {
 		log.getTasksExecutionInfos(finished);
 		log.taskSentFromOrchToDest(finished);
 		log.incrementTasksFailedLatency(finished);
+		log.incrementTasksFailedDependency();
 
 		TransferProgress container = new TransferProgress(finished, 8_000_000, TransferProgress.Type.CONTAINER);
 		container.setLanNetworkUsage(2.0);
@@ -168,6 +169,9 @@ class SimLogTest extends AbstractTest {
 		List<String> csv = Files.readAllLines(Path.of(base + "/Sequential_simulation.csv"));
 		assertEquals(2, csv.size(), "one header and one result row");
 		assertTrue(csv.get(1).startsWith("ALL,TRADE_OFF,20,"));
+		assertTrue(csv.get(0).contains("Tasks not executed because a dependency failed"),
+				"the header must describe the dependency failures column");
+		assertEquals("1", csv.get(1).split(",", -1)[14], "the dependency failures column follows the dead-device one");
 
 		assertEquals(1.5, log.totalExecutionTime, 1e-9);
 		assertEquals(0.5, log.totalWaitingTime, 1e-9);

@@ -1,0 +1,34 @@
+# Examples
+
+Each runnable scenario has a folder here with its own README, and its scenario
+files when the default settings are not enough:
+
+| Example | Shows | Scenario | Build |
+| --- | --- | --- | --- |
+| [Example 1](Example1/README.md) | Every extension point of `Simulation` in one place | default `settings/` | default |
+| [Example 2](Example2/README.md) | A custom mobility model | default `settings/` | default |
+| [Example 3](Example3/README.md) | Cooperative edge data centers with edge orchestrators | `Example3/settings/` | default |
+| [Example 4](Example4/README.md) | A custom computing node and its own events | default `settings/` | default |
+| [Example 5](Example5/README.md) | Plugging in a custom orchestrator | `Example5/settings/` | needs jFuzzyLogic |
+| [Example 6](Example6/README.md) | Custom settings files and a parallel sweep | `Example6/settings/` | default |
+| [Example 7](Example7/README.md) | Clustering and cooperative container caching | `Example7/settings/` | default |
+| [Example 8](Example8/README.md) | Fuzzy logic orchestration | `Example8/settings/` | needs jFuzzyLogic |
+| [Example 9](Example9/README.md) | Service graph partitioning with graph theory | `Example9/settings/` | default |
+| [Example 10](Example10/README.md) | Service graph partitioning with a genetic algorithm | `Example10/settings/` | default |
+
+The Java classes are in
+`src/main/java/com/mechalikh/pureedgesim/examples/`. Run one from the repository
+root after `mvn clean install -DskipTests`:
+
+```bash
+mvn exec:java -Dexec.mainClass="examples.Example1"
+```
+
+`Example5`, `Example8`, and `Example8FuzzyLogicOrchestrator` are excluded from
+the default Maven build because they need the jFuzzyLogic jar in
+`PureEdgeSim/libs/`. Their READMEs explain how to run them from an IDE.
+
+Start with [Example 1](Example1/README.md) for the structure of a simulation,
+[Example 3](Example3/README.md) for edge coordination, and
+[Example 9](Example9/README.md) and [Example 10](Example10/README.md) for
+service graphs. The full manual is in [docs/](../docs/).

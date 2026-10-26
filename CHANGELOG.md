@@ -1,5 +1,30 @@
 # Changelog
 
+## Unreleased
+
+*   An application can now declare a service graph: a request generates several
+    subtasks linked by dependencies, declared as `<subtask>` elements in
+    `applications.xml`. A subtask is submitted only after all the subtasks it
+    depends on have returned their results, and a failure propagates to the whole
+    subtree. An application without `<subtask>` elements keeps producing exactly one
+    independent task per request, with the same fields, timing, and counts as before.
+*   The report has a new "Tasks not executed because a dependency failed" line in the
+    text log and a matching column in the CSV, inserted after the dead-device column.
+    Positions of the following CSV columns shift by one.
+*   New `Example9` and `Example10` scenarios partition the same service graph. `Example9`
+    splits each connected component into balanced partitions with a graph-theory
+    heuristic (heaviest step first, then Kernighan-Lin style pair swaps), and maps the
+    partitions to mist, edge, and cloud. `Example10` searches the node of every subtask
+    with a genetic algorithm whose fitness estimates the pipeline makespan, the result
+    transfers, and the load imbalance. Both clear the application placement after each
+    decision so that each subtask is routed on its own.
+*   The example settings folders moved from `examples/ExampleX_settings/` to
+    `examples/ExampleX/settings/`, next to the example that uses them. Each example now
+    has a `README.md` describing its scenario and what it demonstrates, and
+    `examples/README.md` indexes them. `Example5` no longer reads the default `settings/`
+    folder but its own copy, which uses `FUZZY_LOGIC` and `ROUND_ROBIN`, so it runs with
+    the `Example8FuzzyLogicOrchestrator` it installs.
+
 ## Version 5.9 Changelog (October 25th 2026)
 
 *   Each node now keeps a distinct uplink and downlink. The `DOWN_LINK` orientation

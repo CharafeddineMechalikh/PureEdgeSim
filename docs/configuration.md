@@ -234,6 +234,52 @@ Consequences:
 - Device selection is random, so the realized counts can differ slightly from the requested counts due to truncation.
 - With a distribution for `rate`, the number of tasks generated in a minute varies from one minute to the next while the mean stays the configured value.
 
+### Service graphs
+
+A `task` is a single independent job by default. An application may instead describe a **service graph**: several subtasks that depend on each other, declared with `<subtask>` elements inside the application. The attributes carry the graph, so the child elements of `<application>` keep their usual meaning.
+
+```xml
+<application name="Video analytics">
+    <type>Soft Real-time</type>
+    <rate>10</rate>
+    <usage_percentage>40</usage_percentage>
+    <latency>0.5</latency>
+    <container_size>1500</container_size>
+    <request_size>1500</request_size>
+    <results_size>50</results_size>
+    <task_length>5000</task_length>
+    <subtask name="capture" task_length="500"/>
+    <subtask name="detect" depends_on="capture" task_length="5000"/>
+    <subtask name="track" depends_on="detect" task_length="2000"/>
+    <subtask name="alert" depends_on="detect" request_size="10" results_size="5"/>
+</application>
+```
+
+| Attribute | Required | Meaning |
+| --- | --- | --- |
+| `name` | yes | Identifier of the subtask inside the application. Unique, and referenced by `depends_on`. |
+| `depends_on` | no | Comma-separated names of the subtasks whose results this one needs. Omit it for a root, which is submitted as soon as the request arrives. |
+| `task_length` | no | Million instructions. Overrides the application value. |
+| `request_size` | no | Kilobytes. Overrides the application value. |
+| `results_size` | no | Kilobytes. Overrides the application value. |
+| `container_size` | no | Kilobytes. Overrides the application value. |
+| `latency` | no | Seconds. Overrides the application value. |
+
+An omitted attribute inherits the application value, and the application elements remain mandatory. Sizes written on a subtask are converted to bits exactly like the application sizes. Every `<subtask>` is a distribution-friendly value: only plain numbers are accepted here, because a subtask element has no child element to hold a distribution.
+
+How a graph runs:
+
+- One request from a device produces one task per subtask, so `rate` counts requests, not tasks. The `Number of generated tasks` column includes every subtask.
+- Only the roots enter the simulation at the request time. A subtask is submitted when the last of its `depends_on` parents has returned its results, at the time those results reach the device.
+- If a parent fails, its whole subtree fails with `FAILED_BECAUSE_DEPENDENCY_FAILED`. These subtasks are counted in a dedicated column, "Tasks not executed because a dependency failed", and are not added to the failure rate, since they were never sent.
+- Each subtask keeps its own latency bound, sizes, and task length, and each has its own container. The application placement is shared by default, so subtasks of one application follow the same orchestration decision until that placement is invalidated. An orchestrator that routes subtasks to different nodes clears the placement after every decision, as in `Example9` and `Example10`; see [Writing orchestrators](writing-orchestrators.md#placing-the-subtasks-of-a-service-graph).
+- The graph must be acyclic, every `depends_on` name must exist, and a subtask cannot depend on itself. A violation stops the run with a message naming the application, the subtask, and the file.
+
+Applications without `<subtask>` elements are untouched: they keep producing one independent task per request, with the same fields, the same timing, and the same counts as before. You can mix monolithic and graph applications in one file.
+
+Custom task classes that implement `Task` directly keep working for monolithic applications through the default methods of the interface. To take part in a graph, a task class must also implement the dependency methods, which `TaskAbstract` already does.
+
+
 ## Cloud data centers
 
 `cloud.xml` contains one or more `<datacenter>` entries. The default file defines a single cloud data center.

@@ -2,24 +2,33 @@ package com.mechalikh.pureedgesim.scenariomanager;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.mechalikh.pureedgesim.distribution.ConstantDistribution;
 import com.mechalikh.pureedgesim.distribution.Distribution;
 import com.mechalikh.pureedgesim.distribution.ExponentialDistribution;
 import com.mechalikh.pureedgesim.distribution.ScaledDistribution;
 import com.mechalikh.pureedgesim.distribution.UniformDistribution;
 import com.mechalikh.pureedgesim.simulationmanager.SimLog;
 import com.mechalikh.pureedgesim.taskgenerator.Application;
+import com.mechalikh.pureedgesim.taskgenerator.Subtask;
 
 /**
  * Reads the applications XML file and loads the application profiles into
@@ -29,11 +38,21 @@ import com.mechalikh.pureedgesim.taskgenerator.Application;
  * distribution, and the file may add an {@code arrival} element to describe how
  * the tasks of a device are spread in time. See {@link DistributionReader} for
  * the syntax.
+ * <p>
+ * An application may also declare {@code subtask} elements to turn each request
+ * into a service graph: the subtasks without dependencies are offloaded when the
+ * request arrives, and the others once their dependencies have returned their
+ * results. An application without subtasks keeps generating one independent
+ * task per request.
  */
 public class ApplicationFileParser extends XmlFileParser {
 
 	/** Number of bits in one kilobyte, as used by the scenario files. */
 	private static final double BITS_PER_KILOBYTE = 8000;
+
+	/** Attributes accepted on a {@code subtask} element. */
+	private static final Set<String> SUBTASK_ATTRIBUTES = new LinkedHashSet<>(
+			List.of("name", "depends_on", "task_length", "request_size", "results_size", "container_size", "latency"));
 
 	/**
 	 * Creates a parser for the given applications file.
@@ -119,10 +138,11 @@ public class ApplicationFileParser extends XmlFileParser {
 				Distribution arrival = readArrival(appElement, rate.mean());
 
 				// Save applications parameters.
-				SimulationParameters.applicationList.add(new Application(type, (int) rate.mean(), usagePercentage,
-						latency.mean(), (long) containerSize.mean(), (long) requestSize.mean(),
-						(long) resultsSize.mean(), taskLength.mean(), requestSize, resultsSize, containerSize,
-						taskLength, latency, rate, arrival));
+				Application application = new Application(type, (int) rate.mean(), usagePercentage, latency.mean(),
+						(long) containerSize.mean(), (long) requestSize.mean(), (long) resultsSize.mean(),
+						taskLength.mean(), requestSize, resultsSize, containerSize, taskLength, latency, rate, arrival);
+				application.setSubtasks(readSubtasks(appElement, application));
+				SimulationParameters.applicationList.add(application);
 			}
 
 		} catch (IllegalArgumentException e) {
@@ -202,6 +222,195 @@ public class ApplicationFileParser extends XmlFileParser {
 		throw new IllegalArgumentException(getClass().getSimpleName() + " - Error, the arrival pattern \"" + value
 				+ "\" of the \"" + appElement.getAttribute("name") + "\" application is unknown, expected "
 				+ "\"constant\", \"poisson\", \"uniform\", or a distribution.");
+	}
+
+	/**
+	 * Reads the optional {@code subtask} elements of an application, which describe
+	 * the service graph generated for every request.
+	 * <p>
+	 * A subtask is an empty element whose parameters are attributes. All of them
+	 * are optional except {@code name}: a missing numeric attribute inherits the
+	 * distribution of the application, while a value replaces it with a constant.
+	 * Sizes are expressed in kilobytes, like the application parameters.
+	 * 
+	 * <pre>
+	 * &lt;subtask name="detect"/&gt;
+	 * &lt;subtask name="classify" depends_on="detect" task_length="4000"/&gt;
+	 * &lt;subtask name="alert" depends_on="classify" request_size="2" results_size="1"/&gt;
+	 * </pre>
+	 *
+	 * @param appElement  the application element
+	 * @param application the application being built, used for the inherited values
+	 * @return the subtasks in declaration order, empty when the application is a
+	 *         single independent task
+	 */
+	protected List<Subtask> readSubtasks(Element appElement, Application application) {
+		NodeList list = appElement.getElementsByTagName("subtask");
+		if (list.getLength() == 0)
+			return List.of();
+
+		String appName = appElement.getAttribute("name");
+		List<Subtask> subtasks = new ArrayList<>();
+		Map<String, Subtask> byName = new HashMap<>();
+		for (int i = 0; i < list.getLength(); i++) {
+			Element element = (Element) list.item(i);
+			String name = element.getAttribute("name").trim();
+			if (name.isEmpty())
+				throw subtaskError(appName, "subtask " + (i + 1), "has no \"name\" attribute.");
+			if (byName.containsKey(name))
+				throw subtaskError(appName, name, "is declared more than once.");
+			checkSubtaskAttributes(element, appName, name);
+
+			Subtask subtask = new Subtask(name, readDependencies(element, appName, name),
+					subtaskOverride(element, "task_length", application.getTaskLengthDistribution(), 1, appName, name),
+					subtaskOverride(element, "request_size", application.getRequestSizeDistribution(), BITS_PER_KILOBYTE,
+							appName, name),
+					subtaskOverride(element, "results_size", application.getResultsSizeDistribution(), BITS_PER_KILOBYTE,
+							appName, name),
+					subtaskOverride(element, "container_size", application.getContainerSizeDistribution(),
+							BITS_PER_KILOBYTE, appName, name),
+					subtaskOverride(element, "latency", application.getLatencyDistribution(), 1, appName, name));
+			byName.put(name, subtask);
+			subtasks.add(subtask);
+		}
+
+		checkGraph(subtasks, byName, appName);
+		return subtasks;
+	}
+
+	/**
+	 * Reads the dependencies of a subtask from its {@code depends_on} attribute, a
+	 * comma separated list of subtask names.
+	 *
+	 * @param element the subtask element
+	 * @param appName the name of the application, used in error messages
+	 * @param name    the name of the subtask, used in error messages
+	 * @return the dependency names, empty for a root subtask
+	 */
+	protected List<String> readDependencies(Element element, String appName, String name) {
+		String raw = element.getAttribute("depends_on").trim();
+		if (raw.isEmpty())
+			return List.of();
+		Set<String> dependencies = new LinkedHashSet<>();
+		for (String part : raw.split(",", -1)) {
+			String dependency = part.trim();
+			if (dependency.isEmpty())
+				throw subtaskError(appName, name, "has an empty name in its \"depends_on\" attribute.");
+			if (dependency.equals(name))
+				throw subtaskError(appName, name, "cannot depend on itself.");
+			dependencies.add(dependency);
+		}
+		return new ArrayList<>(dependencies);
+	}
+
+	/**
+	 * Rejects an unknown attribute of a subtask, suggesting the closest valid one.
+	 *
+	 * @param element the subtask element
+	 * @param appName the name of the application, used in error messages
+	 * @param name    the name of the subtask, used in error messages
+	 */
+	protected void checkSubtaskAttributes(Element element, String appName, String name) {
+		NamedNodeMap attributes = element.getAttributes();
+		for (int i = 0; i < attributes.getLength(); i++) {
+			String attribute = attributes.item(i).getNodeName();
+			if (SUBTASK_ATTRIBUTES.contains(attribute))
+				continue;
+			String suggestion = suggest(attribute, SUBTASK_ATTRIBUTES);
+			throw subtaskError(appName, name,
+					"has an unknown attribute \"" + attribute + "\"" + (suggestion == null ? "" : " (did you mean \""
+							+ suggestion + "\"?)") + ". Expected " + String.join(", ", SUBTASK_ATTRIBUTES) + ".");
+		}
+	}
+
+	/**
+	 * Reads one optional numeric override of a subtask.
+	 * <p>
+	 * Without the attribute the subtask inherits the distribution of the
+	 * application, so its values keep varying from request to request.
+	 *
+	 * @param element   the subtask element
+	 * @param attribute the name of the attribute
+	 * @param inherited the distribution of the application, used when absent
+	 * @param scale     multiplier applied to the value, {@code 1} or
+	 *                  {@link #BITS_PER_KILOBYTE} for sizes
+	 * @param appName   the name of the application, used in error messages
+	 * @param name      the name of the subtask, used in error messages
+	 * @return the inherited distribution, or a constant with the declared value
+	 */
+	protected Distribution subtaskOverride(Element element, String attribute, Distribution inherited, double scale,
+			String appName, String name) {
+		String raw = element.getAttribute(attribute).trim();
+		if (raw.isEmpty())
+			return inherited;
+		double value;
+		try {
+			value = Double.parseDouble(raw);
+		} catch (NumberFormatException e) {
+			throw subtaskError(appName, name,
+					"has a non-numeric \"" + attribute + "\" attribute \"" + raw + "\".");
+		}
+		if (!(value > 0) || Double.isInfinite(value))
+			throw subtaskError(appName, name,
+					"has a \"" + attribute + "\" attribute of \"" + raw + "\", which must be greater than zero.");
+		return new ConstantDistribution(value * scale);
+	}
+
+	/**
+	 * Checks that every dependency names a declared subtask and that the graph has
+	 * no cycle, so that at least one subtask can start when a request arrives.
+	 *
+	 * @param subtasks the declared subtasks
+	 * @param byName   the same subtasks, indexed by name
+	 * @param appName  the name of the application, used in error messages
+	 */
+	protected void checkGraph(List<Subtask> subtasks, Map<String, Subtask> byName, String appName) {
+		Map<String, Integer> remaining = new HashMap<>();
+		Map<String, List<String>> dependents = new HashMap<>();
+		Deque<String> ready = new ArrayDeque<>();
+		for (Subtask subtask : subtasks) {
+			for (String dependency : subtask.getDependencies())
+				if (!byName.containsKey(dependency))
+					throw subtaskError(appName, subtask.getName(), "depends on the unknown subtask \"" + dependency
+							+ "\". Declared subtasks are " + String.join(", ", byName.keySet()) + ".");
+			remaining.put(subtask.getName(), subtask.getDependencies().size());
+			if (subtask.isRoot())
+				ready.add(subtask.getName());
+			for (String dependency : subtask.getDependencies())
+				dependents.computeIfAbsent(dependency, key -> new ArrayList<>()).add(subtask.getName());
+		}
+
+		int ordered = 0;
+		while (!ready.isEmpty()) {
+			String name = ready.poll();
+			ordered++;
+			for (String dependent : dependents.getOrDefault(name, List.of()))
+				if (remaining.merge(dependent, -1, Integer::sum) == 0)
+					ready.add(dependent);
+		}
+		if (ordered != subtasks.size()) {
+			List<String> cycle = new ArrayList<>();
+			for (Map.Entry<String, Integer> entry : remaining.entrySet())
+				if (entry.getValue() > 0)
+					cycle.add(entry.getKey());
+			throw new IllegalArgumentException(getClass().getSimpleName() + " - Error, the subtasks of the \"" + appName
+					+ "\" application contain a dependency cycle involving " + String.join(", ", cycle)
+					+ " in the \"" + file + "\" file.");
+		}
+	}
+
+	/**
+	 * Builds the description of an invalid subtask, naming the application, the
+	 * subtask, and the file.
+	 *
+	 * @param appName the name of the application
+	 * @param name    the name of the subtask
+	 * @param reason  what is wrong with this subtask
+	 * @return the exception describing the problem
+	 */
+	protected IllegalArgumentException subtaskError(String appName, String name, String reason) {
+		return new IllegalArgumentException(getClass().getSimpleName() + " - Error, the \"" + name
+				+ "\" subtask of the \"" + appName + "\" application in the \"" + file + "\" file " + reason);
 	}
 
 	/**

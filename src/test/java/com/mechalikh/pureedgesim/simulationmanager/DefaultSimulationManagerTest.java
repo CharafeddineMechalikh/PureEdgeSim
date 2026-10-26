@@ -37,6 +37,7 @@ import com.mechalikh.pureedgesim.simulationvisualizer.SimulationVisualizer;
 import com.mechalikh.pureedgesim.taskgenerator.DefaultTask;
 import com.mechalikh.pureedgesim.taskgenerator.Task;
 import com.mechalikh.pureedgesim.taskgenerator.Task.FailureReason;
+import com.mechalikh.pureedgesim.taskgenerator.TaskAbstract;
 import com.mechalikh.pureedgesim.taskorchestrator.Orchestrator;
 
 class DefaultSimulationManagerTest extends AbstractTest {
@@ -751,6 +752,139 @@ class DefaultSimulationManagerTest extends AbstractTest {
 		MobilityModel veryFarMobility = mobility(300);
 		when(edge.getMobilityModel()).thenReturn(veryFarMobility);
 		assertFalse(manager.sameLocation(edge, edgeDatacenter));
+	}
+
+	// ------------------------------------------------------------ service graphs
+
+	/**
+	 * Creates a real task, so that the dependency bookkeeping of {@link TaskAbstract}
+	 * is exercised rather than mocked.
+	 */
+	private static DefaultTask graphTask(int id, ComputingNode edge, double maxLatency) {
+		DefaultTask task = new DefaultTask(id);
+		task.setEdgeDevice(edge);
+		task.setMaxLatency(maxLatency);
+		return task;
+	}
+
+	private static void dependOn(DefaultTask dependent, DefaultTask... parents) {
+		for (DefaultTask parent : parents) {
+			parent.addDependent(dependent);
+			dependent.addDependency(parent);
+		}
+	}
+
+	private boolean isQueuedForOrchestration(Task task) {
+		return engine.getEventsQueue().stream()
+				.anyMatch(event -> event.getTag() == SimulationManager.SEND_TO_ORCH && event.getData() == task);
+	}
+
+	@Test
+	void theGeneratedCountIncludesTheSubtasksWaitingForTheirDependencies() {
+		SimulationParameters.batchSize = 10;
+		ComputingNode edge = node(TYPES.EDGE_DEVICE);
+		DefaultTask root = graphTask(1, edge, 5);
+		DefaultTask left = graphTask(2, edge, 5);
+		DefaultTask right = graphTask(3, edge, 5);
+		DefaultTask join = graphTask(4, edge, 5);
+		dependOn(left, root);
+		dependOn(right, root);
+		dependOn(join, left, right);
+		FutureQueue<Task> tasks = new FutureQueue<>();
+		tasks.add(root);
+		manager.setTaskList(tasks);
+
+		manager.onSimulationStart();
+
+		verify(simLog).setGeneratedTasks(4);
+		// Only the root enters the task list; the others wait in the graph.
+		assertEquals(1, countTag(SimulationManager.SEND_TO_ORCH));
+	}
+
+	@Test
+	void aSuccessfulParentReleasesItsDependent() {
+		ComputingNode edge = node(TYPES.EDGE_DEVICE);
+		DefaultTask parent = graphTask(1, edge, 5);
+		DefaultTask child = graphTask(2, edge, 5);
+		dependOn(child, parent);
+
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, parent));
+
+		assertEquals(1, manager.tasksCount);
+		assertTrue(isQueuedForOrchestration(child), "the child must be offloaded once its parent finished");
+		assertEquals(0, manager.failedTasksCount);
+	}
+
+	@Test
+	void aJoinIsReleasedOnlyWhenEveryParentReturnedItsResults() {
+		ComputingNode edge = node(TYPES.EDGE_DEVICE);
+		DefaultTask firstParent = graphTask(1, edge, 5);
+		DefaultTask secondParent = graphTask(2, edge, 5);
+		DefaultTask join = graphTask(3, edge, 5);
+		dependOn(join, firstParent, secondParent);
+
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, firstParent));
+
+		assertFalse(isQueuedForOrchestration(join), "the join still waits for its second parent");
+
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, secondParent));
+
+		assertTrue(isQueuedForOrchestration(join));
+	}
+
+	@Test
+	void aFailedParentCascadesToItsWholeSubtree() {
+		ComputingNode edge = node(TYPES.EDGE_DEVICE);
+		// A maximum latency of zero makes the parent fail when its results return.
+		DefaultTask parent = graphTask(1, edge, 0);
+		DefaultTask child = graphTask(2, edge, 5);
+		DefaultTask grandChild = graphTask(3, edge, 5);
+		dependOn(child, parent);
+		dependOn(grandChild, child);
+
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, parent));
+
+		verify(simLog).incrementTasksFailedLatency(parent);
+		verify(simLog, times(2)).incrementTasksFailedDependency();
+		assertEquals(3, manager.tasksCount);
+		// Only the parent was sent, so only it counts in the sent-task failure rate.
+		assertEquals(1, manager.failedTasksCount);
+		assertEquals(Task.FailureReason.FAILED_BECAUSE_DEPENDENCY_FAILED, child.getFailureReason());
+		assertEquals(Task.FailureReason.FAILED_BECAUSE_DEPENDENCY_FAILED, grandChild.getFailureReason());
+		assertFalse(isQueuedForOrchestration(child));
+		assertFalse(isQueuedForOrchestration(grandChild));
+	}
+
+	@Test
+	void aDependentIsNotCountedTwiceWhenItsSecondParentAlsoFails() {
+		ComputingNode edge = node(TYPES.EDGE_DEVICE);
+		DefaultTask firstParent = graphTask(1, edge, 0);
+		DefaultTask secondParent = graphTask(2, edge, 0);
+		DefaultTask join = graphTask(3, edge, 5);
+		dependOn(join, firstParent, secondParent);
+
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, firstParent));
+		manager.processEvent(event(SimulationManager.RESULT_RETURN_FINISHED, secondParent));
+
+		verify(simLog, times(1)).incrementTasksFailedDependency();
+		assertEquals(3, manager.tasksCount);
+	}
+
+	@Test
+	void aDeadDeviceAlsoFailsTheDependentsOfItsTask() {
+		ComputingNode edge = node(TYPES.EDGE_DEVICE);
+		when(edge.isDead()).thenReturn(true);
+		DefaultTask parent = graphTask(1, edge, 5);
+		DefaultTask child = graphTask(2, edge, 5);
+		dependOn(child, parent);
+
+		manager.processEvent(event(SimulationManager.SEND_TO_ORCH, parent));
+
+		verify(simLog).incrementNotGeneratedBeacuseDeviceDead();
+		verify(simLog).incrementTasksFailedDependency();
+		assertEquals(2, manager.tasksCount);
+		assertEquals(Task.FailureReason.FAILED_BECAUSE_DEPENDENCY_FAILED, child.getFailureReason());
+		assertTrue(engine.getEventsQueue().isEmpty());
 	}
 
 	// ------------------------------------------------------------------- getters

@@ -147,6 +147,7 @@ The result path mirrors the request path:
 4. Otherwise, the network model transfers the results from the destination to the orchestrator, then from the orchestrator to the source device if the orchestrator is not the device.
 5. When the results reach the source device, the manager performs `taskFailed(task, 3)`, the final failure check.
 6. If the task survived, the manager calls `edgeOrchestrator.resultsReturned(task)` and increments the completed-task counter.
+7. If the task belongs to a [service graph](configuration.md#service-graphs), the manager releases the subtasks that depend on it: every dependent whose last parent has now returned enters the queue through `SEND_TO_ORCH` at the current time.
 
 Total delay is defined as:
 
@@ -171,6 +172,9 @@ Failures are checked at four points. The `phase` argument identifies the check.
 | 2 | When the destination receives the request | Destination is dead; RAM or storage is insufficient; or the destination or orchestrator is no longer reachable from the source device | `FAILED_BECAUSE_DEVICE_DEAD`, `INSUFFICIENT_RESOURCES`, or `FAILED_DUE_TO_DEVICE_MOBILITY` |
 | 3 | When the results reach the source device | Total delay is greater than or equal to the application latency bound | `FAILED_DUE_TO_LATENCY` |
 | Decision | After orchestration | No candidate satisfies the architecture and reachability rules | `NO_OFFLOADING_DESTINATIONS` |
+| Cascade | When a task fails at any point | The task has subtasks that depend on it | `FAILED_BECAUSE_DEPENDENCY_FAILED` on every descendant |
+
+A failing task propagates the failure to its whole subtree: the descendants are never sent, so they do not count as sent-task failures. They increment the dependency counter that feeds the "Tasks not executed because a dependency failed" column and the corresponding text report line.
 
 The `INSUFFICIENT_POWER` and `NOT_GENERATED_BECAUSE_DEVICE_DEAD` enum values exist in the `Task.FailureReason` enumeration, but the default manager does not assign them. Device death is reported through `FAILED_BECAUSE_DEVICE_DEAD`, including when the source device dies before its tasks are sent. Keep this in mind when you aggregate failure reasons.
 

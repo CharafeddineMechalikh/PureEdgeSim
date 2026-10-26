@@ -20,6 +20,8 @@
  **/
 package com.mechalikh.pureedgesim.taskgenerator;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -170,6 +172,11 @@ public class DefaultTaskGenerator extends TaskGenerator {
 	/**
 	 * Creates a single task from the distributions of the given application and
 	 * adds it to the task list at the given time.
+	 * <p>
+	 * When the application declares subtasks, one instance of every subtask is
+	 * created instead, and only the root ones are added to the task list: the
+	 * others are released by the simulation manager when their dependencies have
+	 * returned their results.
 	 * 
 	 * @param app       the application type of the task
 	 * @param dev       the device that generates the task
@@ -177,6 +184,10 @@ public class DefaultTaskGenerator extends TaskGenerator {
 	 * @param time      the time in seconds at which the task is offloaded
 	 */
 	protected void insert(int app, ComputingNode dev, Application appParams, int time) {
+		if (appParams.hasSubtasks()) {
+			insertService(app, dev, appParams, time);
+			return;
+		}
 		Task task = createTask(++id).setType(appParams.getType()).setFileSizeInBits(appParams.sampleRequestSize())
 				.setOutputSizeInBits(appParams.sampleResultsSize())
 				.setContainerSizeInBits(appParams.sampleContainerSize()).setApplicationID(app)
@@ -184,11 +195,62 @@ public class DefaultTaskGenerator extends TaskGenerator {
 				.setRegistry(getSimulationManager().getDataCentersManager().getComputingNodesGenerator()
 						.getCloudOnlyList().get(0));
 
-		task.setTime(time);
+		scheduleTask(task, time);
+	}
 
+	/**
+	 * Creates one instance of every subtask of the application for a single
+	 * request, links them according to their dependencies, and adds only the root
+	 * subtasks to the task list.
+	 * <p>
+	 * Every subtask inherits the distributions of the application unless its
+	 * declaration overrides a value, so a service graph can mix a heavy detection
+	 * step, a light classification step, and a tiny notification step.
+	 * 
+	 * @param app       the application type of the request
+	 * @param dev       the device that generates the request
+	 * @param appParams the application whose subtasks are instantiated
+	 * @param time      the time in seconds at which the request arrives
+	 */
+	protected void insertService(int app, ComputingNode dev, Application appParams, int time) {
+		Map<String, Task> byName = new LinkedHashMap<>();
+		for (Subtask subtask : appParams.getSubtasks()) {
+			Task task = createTask(++id).setType(appParams.getType())
+					.setFileSizeInBits(subtask.sampleRequestSize())
+					.setOutputSizeInBits(subtask.sampleResultsSize())
+					.setContainerSizeInBits(subtask.sampleContainerSize()).setApplicationID(app)
+					.setMaxLatency(subtask.sampleLatency()).setLength(subtask.sampleTaskLength()).setEdgeDevice(dev)
+					.setRegistry(getSimulationManager().getDataCentersManager().getComputingNodesGenerator()
+							.getCloudOnlyList().get(0));
+			task.setSubtaskName(subtask.getName());
+			byName.put(subtask.getName(), task);
+		}
+
+		for (Subtask subtask : appParams.getSubtasks()) {
+			Task child = byName.get(subtask.getName());
+			for (String dependency : subtask.getDependencies()) {
+				Task parent = byName.get(dependency);
+				parent.addDependent(child);
+				child.addDependency(parent);
+			}
+		}
+
+		for (Subtask subtask : appParams.getSubtasks())
+			if (subtask.isRoot())
+				scheduleTask(byName.get(subtask.getName()), time);
+	}
+
+	/**
+	 * Places a task in the task list at the given time and logs its generation.
+	 * 
+	 * @param task the task to generate
+	 * @param time the time in seconds at which the task is offloaded
+	 */
+	protected void scheduleTask(Task task, int time) {
+		task.setTime(time);
 		taskList.add(task);
 		getSimulationManager().getSimulationLogger()
-				.deepLog("BasicTasksGenerator, Task " + id + " with execution time " + time + " (s) generated.");
+				.deepLog("BasicTasksGenerator, Task " + task.getId() + " with execution time " + time + " (s) generated.");
 	}
 
 	/**
