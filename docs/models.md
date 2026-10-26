@@ -108,6 +108,63 @@ request at t
         └── alert waits for detect
 ```
 
+#### Task-graph shapes
+
+PureEdgeSim does not restrict applications to a fixed list of graphs. Any acyclic
+graph that `depends_on` can express is valid, and one scenario file can mix the
+shapes below. The four names describe what a workload looks like, not separate
+framework classes: every one of them is parsed into the same `Subtask` list.
+
+**Monolithic.** The application has no `<subtask>` element. One request becomes
+one independent task, which is the behaviour of every release before 6.0.
+
+```mermaid
+flowchart LR
+    R[request] --> T[task] --> D[results to device]
+```
+
+**Sequential (pipeline).** Each stage needs the results of the previous one, so
+the stages execute in order and the chain is the critical path of the graph.
+
+```mermaid
+flowchart LR
+    C[capture] --> D[detect] --> T[track] --> A[alert]
+```
+
+**Parallel (fork-join).** A root fans out to independent stages, and a join
+waits for all of them. The join is released by its slowest parent, so the
+siblings can overlap only if they run on different nodes.
+
+```mermaid
+flowchart LR
+    S[collect] --> P1[preprocess A]
+    S --> P2[preprocess B]
+    P1 --> F[fuse]
+    P2 --> F
+    F --> U[upload]
+```
+
+**Complex DAG.** Fan-out, fan-in, several roots, and diamonds in the same graph.
+Any acyclic arrangement is accepted, including disconnected components.
+
+```mermaid
+flowchart LR
+    R1[sensor feed] --> D[detect]
+    R2[metadata] --> D
+    D --> T[track]
+    D --> A[alert]
+    T --> M[merge]
+    A --> M
+    M --> U[upload]
+```
+
+What the model does not represent: dependency edges are unconditional, so
+conditional branches and loops cannot be expressed; an edge carries no data
+size, because only the request and results of each subtask are charged; and the
+latency bound is per subtask, counted from its release time, not an end-to-end
+deadline shared by the graph. A graph-level SLO therefore has to be decomposed
+into per-subtask bounds by the scenario author.
+
 The model has three properties worth knowing before you interpret results:
 
 - **Requests, not tasks, follow the rate.** A device assigned the application issues `rate` requests per minute; each request expands into the whole graph. The task rate observed by the network and the computing nodes is therefore `rate * subtasks`, weighted by the task lengths.
@@ -117,6 +174,8 @@ The model has three properties worth knowing before you interpret results:
 Each subtask samples its own attributes from the application distributions unless the XML overrides them, and each has its own container size, so the storage and RAM checks at the destination apply per subtask.
 
 The placement cache is an application-level shortcut, not a graph-level one: without intervention, the first subtask decides where the whole application runs. A partitioning policy therefore clears the placement after each decision and selects a node per subtask, from the subtask name and the application identifier. `Example9PartitioningOrchestrator` derives the partitions from the graph structure, and `Example10GeneticOrchestrator` searches them with a genetic algorithm; both run the same video analytics graph, so their plans can be compared.
+
+A partition plan can be **static** or **dynamic**. A static plan is computed once, before the simulation starts, from the declared subtasks and their distributions; both examples above build theirs in the orchestrator constructor. A dynamic plan is recomputed per request inside `findComputingNode` or `orchestrate`, from the current node loads, placement, and reachability, so it reacts to device death, mobility, and load drift at the cost of a decision per task. The clearing rule of the previous paragraph applies to both. See [Writing orchestrators](writing-orchestrators.md#static-and-dynamic-partition-plans).
 
 The dependency bookkeeping lives in `TaskAbstract`: `addDependency`, `addDependent`, `dependencyFinished`, `getDependencies`, and `getDependents`. A task class that implements `Task` directly keeps working for monolithic applications, because the interface provides neutral default methods.
 

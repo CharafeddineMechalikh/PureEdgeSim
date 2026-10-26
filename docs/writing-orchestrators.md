@@ -57,6 +57,38 @@ public void orchestrate(Task task) {
 
 Both print the plan they computed before the simulation starts, so the two strategies can be compared on the same scenario.
 
+### Static and dynamic partition plans
+
+The task graph always comes from `applications.xml`, so partitioning never decomposes a task. It only decides how the declared subtasks are grouped and where each group runs, and that decision can be taken at two moments.
+
+**Static.** Build the plan once, in the orchestrator constructor, from `SimulationParameters.applicationList`, then look it up by application identifier and subtask name in `findComputingNode`. `Example9` and `Example10` work this way. A static plan is cheap, reproducible, and easy to print before the run, but it cannot see a device that died, a node whose queue filled up, or a destination that moved out of range.
+
+**Dynamic.** Recompute the grouping or the destination per request, either inside `findComputingNode` or before calling `super` in `orchestrate`, from the live candidate list and the task attributes:
+
+```java
+@Override
+protected int findComputingNode(String[] architecture, Task task) {
+    int selected = -1;
+    double lowestLoad = Double.MAX_VALUE;
+    for (int index = 0; index < nodeList.size(); index++) {
+        ComputingNode node = nodeList.get(index);
+        if (!offloadingIsPossible(task, node, architectureLayers))
+            continue;
+        // CPU utilization in [0, 1]; each queued task weighs one full CPU.
+        double load = node.getCurrentCpuUtilization() / 100.0 + node.getTasksQueue().size();
+        if (load < lowestLoad) {
+            lowestLoad = load;
+            selected = index;
+        }
+    }
+    return selected;
+}
+```
+
+A dynamic plan reacts to death, mobility, and queue growth, and pays a decision per subtask. A common middle ground keeps the partition membership static and chooses the node of each partition dynamically among the eligible nodes, which bounds the recomputation while still following the state of the run.
+
+Whichever moment you choose, clear the application placement after every decision as shown above. Otherwise the first subtask stores its destination and later subtasks of the same device never reach `findComputingNode`.
+
 ### `resultsReturned`
 
 This callback fires after the task's results have reached the generating device. It is also called for failures that occur after the task has left the orchestrator (phases 2 and 3), not for failures before that point. Use it to update learned state:

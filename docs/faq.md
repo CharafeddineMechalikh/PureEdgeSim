@@ -86,6 +86,14 @@ The execution-delay columns contain CPU time only. Network time is not included.
 
 Check `realistic_network_model`. When it is `false`, each transfer completes in one step and uses only its instantaneous bandwidth share, so there is no congestion over time. Bandwidth still affects the computed transfer time, but much less than in a loaded, realistic run. Also confirm that the changed parameter corresponds to the link type used by your traffic.
 
+### Which application types and task-graph shapes can I model?
+
+There is no fixed list. An application is defined by its numbers (rate, latency bound, sizes, and task length), and `type` is a free-text label that the orchestrator can read. Any acyclic task graph can be declared: a monolithic application (one task per request), a sequential chain, a parallel fan-out with a join, or a mixed graph with several roots and branches. The shapes and their limitations are in [Simulation models](models.md#task-graph-shapes).
+
+### Can a partitioning policy run once, or must it run per task?
+
+Both work. A **static** plan is computed once from the application profiles, usually in the orchestrator constructor, as in `Example9` and `Example10`. A **dynamic** plan is recomputed inside `findComputingNode` or `orchestrate` from the live node loads and reachability. Either way, clear the application placement after each decision, or the first subtask pins the whole application to one node. See [Writing orchestrators](writing-orchestrators.md#static-and-dynamic-partition-plans).
+
 ### Why do tasks keep going to the same node even though another node is free?
 
 Application placement is cached per device. The orchestrator is called only when the device has no placement. Later tasks reuse the first decision until a failure or a mobility event clears it. See [Models](models.md) for the exact invalidation rules.

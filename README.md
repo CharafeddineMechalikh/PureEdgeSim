@@ -107,7 +107,7 @@ Each module provides a default implementation and a set of adjustable settings. 
   - Nine mobility models: random waypoint, random walk, Gauss-Markov, Manhattan, fixed waypoints, circular, Lévy walk, Brownian, and reference point group movement, selected per device type from the scenario file.
   - Realistic energy model.
 - **Everything is a random variable**: task sizes, task lengths, arrival gaps, device capacities, battery levels, and initial positions accept any of sixteen probability distributions (uniform, normal, lognormal, exponential, Poisson, gamma, Erlang, Weibull, beta, Pareto, triangular, Bernoulli, binomial, geometric, categorical, constant), or stay a fixed number as before.
-- **Monolithic tasks or service graphs**: an application can generate one independent task per request, or a graph of subtasks linked by dependencies, where each stage runs only after the stages it needs have returned their results and a failure cancels the whole subtree. The two styles coexist in one scenario file, and existing scenarios are unchanged.
+- **Monolithic tasks or service graphs**: an application can generate one independent task per request, or a sequential, parallel, or arbitrarily complex acyclic graph of subtasks linked by dependencies, where each stage runs only after the stages it needs have returned their results and a failure cancels the whole subtree. The two styles coexist in one scenario file, and existing scenarios are unchanged.
 - **Reproducible runs**: set `random_seed` once and the whole scenario, including node generation and movement, replays identically. Parallel runs of the same sweep reuse the seed per scenario, so conditions stay comparable.
 - **Support for online decision making**: task orchestration, scheduling, and offloading.
 - **QoS-aware architectures and topologies**.
@@ -132,6 +132,42 @@ Each module provides a default implementation and a set of adjustable settings. 
 </p>
 
 <p align="center">The live visualization of the simulated environment</p>
+
+### Application and task-graph shapes
+
+There is no closed list of application types. A workload is defined by its numbers (arrival rate, latency bound, request, result, and container sizes, and task length), and its `type` label is free text used by the orchestrator. What the framework does constrain is the shape of the workload, and every acyclic shape is accepted:
+
+```mermaid
+flowchart LR
+    subgraph Monolithic
+        direction LR
+        M1[request] --> M2[task] --> M3[results]
+    end
+    subgraph Sequential
+        direction LR
+        S1[stage 1] --> S2[stage 2] --> S3[stage 3]
+    end
+    subgraph Parallel
+        direction LR
+        P1[root] --> P2[worker A]
+        P1 --> P3[worker B]
+        P2 --> P4[join]
+        P3 --> P4
+    end
+    subgraph Complex
+        direction LR
+        C1[root A] --> C3[stage]
+        C2[root B] --> C3
+        C3 --> C4[branch A]
+        C3 --> C5[branch B]
+        C4 --> C6[merge]
+        C5 --> C6
+    end
+```
+
+A monolithic application produces one task per request. A service graph produces one task per `<subtask>`, releases each stage only after the stages listed in its `depends_on` have returned their results, gives every subtask its own latency bound and sizes, and fails the whole subtree when a parent fails. Graphs are declared in `applications.xml` with `<subtask name="detect" depends_on="capture" task_length="5000"/>`, and both styles can coexist in one scenario.
+
+The model does not represent conditional branches, loops, per-edge data sizes, or a graph-wide end-to-end deadline. See [Simulation models](docs/models.md#task-graph-shapes) for the diagrams and their runtime consequences, and [Configuration](docs/configuration.md#service-graphs) for the XML attributes.
 
 ## Quick start
 
@@ -430,6 +466,27 @@ Usability work, in the order it is planned. The XML formats and the setter-based
 - [ ] Ship `create` scenario scaffolding and a Maven archetype for custom models.
 - [ ] Publish a shaded CLI jar as a release artifact.
 - [ ] Add a troubleshooting page that maps common exceptions to their causes and fixes.
+
+### Phase 4: extensibility
+
+What is already available:
+
+- [x] Eight setter-based extension points on `SimulationAbstract`, plus `setCustomTaskClass` on the task generator: mobility model, computing node, task generator, edge orchestrator, network model, simulation manager, topology creator, and computing nodes generator.
+- [x] A runnable example for every point, so each hook can be copied from working code. [Example 23](examples/Example23/README.md) covers the four that the earlier examples leave at their defaults, and [examples/README.md](examples/README.md) lists them all.
+- [x] Scenario behavior that needs no code: distributions for every numeric parameter, nine mobility models selectable per device type by name, and the architecture and algorithm matrix.
+- [x] The constructor signatures, the event-tag range, and the topology-refresh rule documented in [Customizing models](docs/customizing-models.md), with unit and integration tests for the custom models.
+- [x] Every model replaced by composition: the framework has no compile-time switch, no fork, and no generated code.
+
+What comes next:
+
+- [ ] A model registry so a settings file can name any custom class (`task_generator`, `topology_creator`, and the rest) instead of calling a setter.
+- [ ] `create model` scaffolding and a Maven archetype that generate a compilable custom model and its test.
+- [ ] A compatibility test that builds and boots every custom model of the examples, catching constructor or API drift before a release.
+- [ ] A cookbook page with the smallest working recipe per hook, each one linking to its runnable example.
+- [ ] `ServiceLoader` discovery for third-party model jars, so a custom model needs no edit to the scenario class.
+- [ ] A documented extension API policy: which base classes and methods stay compatible across minor releases.
+
+Acceptance: a user picks a hook, generates or copies a model, names it in the settings file, and runs it without editing framework code.
 
 ## Contributing and support
 

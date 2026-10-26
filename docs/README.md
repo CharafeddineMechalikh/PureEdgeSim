@@ -39,7 +39,7 @@ If you are looking for the shortest path to a running simulation, read [Getting 
 | [Architecture](architecture.md) | How is the simulator organized? How does the discrete-event engine work? How are scenarios initialized? |
 | [Configuration](configuration.md) | What does every parameter in every configuration file mean, and what are its units? |
 | [Task lifecycle](task-lifecycle.md) | What happens to a task from generation to result, and where can it fail? |
-| [Simulation models](models.md) | How are computing nodes, energy, mobility, and network transfers modeled? |
+| [Simulation models](models.md) | How are applications, task graphs, computing nodes, energy, mobility, and network transfers modeled? |
 | [Writing orchestrators](writing-orchestrators.md) | How do I implement and plug in my own orchestration algorithm? |
 | [Customizing models](customizing-models.md) | How do I replace the mobility, energy, network, task generation, topology, or simulation manager? |
 | [Output and metrics](output-and-metrics.md) | How do I read the CSV, the console report, and the charts? |

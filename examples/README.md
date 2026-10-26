@@ -27,6 +27,7 @@ files when the default settings are not enough:
 | [Example 20](Example20/README.md) | Multi-objective reinforcement learning | `Example20/settings/` | default |
 | [Example 21](Example21/README.md) | Storage-aware container caching with LRU eviction | `Example21/settings/` | default |
 | [Example 22](Example22/README.md) | Self-organizing device clusters with an elected head | `Example22/settings/` | default |
+| [Example 23](Example23/README.md) | Custom nodes generator, task generator, topology creator, and simulation manager | `Example23/settings/` | default |
 
 The Java classes are in
 `src/main/java/com/mechalikh/pureedgesim/examples/`. Run one from the repository

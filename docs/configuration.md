@@ -180,7 +180,7 @@ The same source is available programmatically through `com.mechalikh.pureedgesim
 
 ## Applications
 
-Each `<application>` describes one workload class. The `name` attribute is an identifier, and `type` is free text that the orchestrator can use to distinguish workloads.
+Each `<application>` describes one workload class. The `name` attribute is an identifier, and `type` is free text that the orchestrator can use to distinguish workloads. The framework does not enforce a closed set of application types: a workload is defined by its numbers (rate, latency bound, sizes, and task length), and `type` only labels it. The shipped `settings/applications.xml` uses three latency classes, `Hard Real-time`, `Soft Real-time`, and `Non Real-time`, while some examples add `Normal` or a workload name such as `Video analytics`. Orchestrators read the label with `task.getType()` and store it as a string, so any wording works.
 
 ```xml
 <application name="Augmented reality">
@@ -237,6 +237,8 @@ Consequences:
 ### Service graphs
 
 A `task` is a single independent job by default. An application may instead describe a **service graph**: several subtasks that depend on each other, declared with `<subtask>` elements inside the application. The attributes carry the graph, so the child elements of `<application>` keep their usual meaning.
+
+The element supports any acyclic shape. The four common ones are monolithic (no `<subtask>`, one task per request), sequential (a chain of `depends_on`), parallel (a root that fans out, and a join that lists several parents), and complex (mixed fan-out, fan-in, and several roots). Diagrams and their runtime consequences are in [Simulation models](models.md#task-graph-shapes).
 
 ```xml
 <application name="Video analytics">

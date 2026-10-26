@@ -53,6 +53,8 @@ The generator:
 
 All sizes are converted to bits during parsing (`kilobytes * 8000`). Task length remains in million instructions (MI). Latency remains in seconds.
 
+When the application declares `<subtask>` elements, step 6 becomes one task per subtask, and only the roots are scheduled at the request time; the others wait for their dependencies. Any acyclic shape is accepted, see [task-graph shapes](models.md#task-graph-shapes).
+
 The result is a `FutureQueue<Task>` sorted by task time. The manager receives this list through `setTaskList`.
 
 ## Stage 2: submission to the orchestrator

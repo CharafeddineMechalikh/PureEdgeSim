@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<edge_devices>
+	<!-- Fleet for Example 23. Twenty devices are split into four types with
+		shares of 39, 29, 30, and 2 percent. At this fleet size the 2 percent
+		wearable type rounds to zero devices, so the custom computing nodes
+		generator reserves one for it. All four types generate tasks. -->
+
+	<device> <!-- smartphone, cellular access -->
+		<connectivity>cellular</connectivity>
+		<mobility>true</mobility>
+		<speed>1.4</speed>
+		<minPauseDuration>100</minPauseDuration>
+		<maxPauseDuration>400</maxPauseDuration>
+		<minMobilityDuration>10</minMobilityDuration>
+		<maxMobilityDuration>60</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>39</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>1</idleConsumption>
+		<maxConsumption>3.3</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>8</cores>
+		<mips>5000</mips>
+		<ram>4000</ram>
+		<storage>128000</storage>
+	</device>
+	<device> <!-- tablet, Wi-Fi access -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>29</percentage>
+		<batteryCapacity>32.4</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>1.2</idleConsumption>
+		<maxConsumption>6.5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>8</cores>
+		<mips>8000</mips>
+		<ram>6000</ram>
+		<storage>256000</storage>
+	</device>
+	<device> <!-- laptop, Wi-Fi access, mains powered -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>30</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel>
+		<idleConsumption>1.7</idleConsumption>
+		<maxConsumption>23.6</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>8</cores>
+		<mips>20000</mips>
+		<ram>8000</ram>
+		<storage>512000</storage>
+	</device>
+	<device> <!-- wearable, Wi-Fi access, rare type -->
+		<connectivity>wifi</connectivity>
+		<mobility>true</mobility>
+		<speed>0.5</speed>
+		<minPauseDuration>30</minPauseDuration>
+		<maxPauseDuration>120</maxPauseDuration>
+		<minMobilityDuration>5</minMobilityDuration>
+		<maxMobilityDuration>30</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>2</percentage>
+		<batteryCapacity>5</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>0.5</idleConsumption>
+		<maxConsumption>1.2</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>2</cores>
+		<mips>2000</mips>
+		<ram>1000</ram>
+		<storage>16000</storage>
+	</device>
+</edge_devices>

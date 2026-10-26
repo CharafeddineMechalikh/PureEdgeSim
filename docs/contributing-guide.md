@@ -302,6 +302,27 @@ Acceptance: a first-time user runs a scenario, reads the summary, and inspects t
 
 Acceptance: a paper-grade sweep is one command, and every figure can be traced back to a stored configuration snapshot.
 
+### Phase 4: extensibility
+
+What is already available:
+
+- [x] Eight setter-based extension points on `SimulationAbstract`, plus `setCustomTaskClass` on the task generator: mobility model, computing node, task generator, edge orchestrator, network model, simulation manager, topology creator, and computing nodes generator.
+- [x] A runnable example for every point, so each hook can be copied from working code. [Example 23](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/examples/Example23) covers the four that the earlier examples leave at their defaults.
+- [x] Scenario behavior that needs no code: distributions for every numeric parameter, nine mobility models selectable per device type by name, and the architecture and algorithm matrix.
+- [x] The constructor signatures, the event-tag range, and the topology-refresh rule documented in [Customizing models](customizing-models.md), with unit and integration tests for the custom models.
+- [x] Every model replaced by composition: no compile-time switch, no fork, and no generated code.
+
+What comes next:
+
+- [ ] A model registry so a settings file can name any custom class (`task_generator`, `topology_creator`, and the rest) instead of calling a setter.
+- [ ] `create model` scaffolding and a Maven archetype that generate a compilable custom model and its test.
+- [ ] A compatibility test that builds and boots every custom model of the examples, catching constructor or API drift before a release.
+- [ ] A cookbook page with the smallest working recipe per hook, each one linking to its runnable example.
+- [ ] `ServiceLoader` discovery for third-party model jars, so a custom model needs no edit to the scenario class.
+- [ ] A documented extension API policy: which base classes and methods stay compatible across minor releases.
+
+Acceptance: a user picks a hook, generates or copies a model, names it in the settings file, and runs it without editing framework code.
+
 ## Reporting a bug
 
 Include:

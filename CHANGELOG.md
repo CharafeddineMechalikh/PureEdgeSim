@@ -75,6 +75,13 @@
     same scenario with `TRADE_OFF`, it lowers the average task execution time by
     42 percent and the network usage by 24 percent while lifting the success
     rate from 77.83 to 79.94 percent.
+*   New `Example23` demonstrates the four model hooks that the other examples leave
+    at their defaults: a computing nodes generator that reserves one device for a
+    declared type that rounding would drop, a task generator that synchronizes the
+    minute bursts of the whole fleet, a topology creator that completes the edge
+    ring into a full mesh, and a simulation manager that audits the failures by
+    reason when the run ends. Together with the earlier examples, all eight
+    setter-based extension points now have a runnable scenario.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and
