@@ -81,5 +81,6 @@ Two changes show the effect of the temperature:
 
 ## References
 
-- Softmax-based deep reinforcement learning for computation offloading in
-  smart cities, doi:10.1016/j.comcom.2025.108105
+- Multi-layer guided reinforcement learning task offloading based on Softmax
+  policy in smart cities, Computer Communications 235:108105, 2025,
+  doi:10.1016/j.comcom.2025.108105
