@@ -17,6 +17,7 @@ files when the default settings are not enough:
 | [Example 10](Example10/README.md) | Service graph partitioning with a genetic algorithm | `Example10/settings/` | default |
 | [Example 11](Example11/README.md) | Tabular Q-learning orchestration | `Example11/settings/` | default |
 | [Example 12](Example12/README.md) | Multi-access MEC with an access-aware orchestrator | `Example12/settings/` | default |
+| [Example 13](Example13/README.md) | Multi-layer fog for a smart home | `Example13/settings/` | default |
 
 The Java classes are in
 `src/main/java/com/mechalikh/pureedgesim/examples/`. Run one from the repository

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<edge_devices>
+	<!-- Smart-home fleet for Example 13. Sensors have no computing capacity and
+		only generate tasks. Home gateways execute mist-layer tasks and never
+		generate their own. The 300 meters range lets a sensor reach the gateways
+		of its neighbourhood. -->
+
+	<device> <!-- temperature, motion, and door sensor -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>67</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel>
+		<idleConsumption>0.001</idleConsumption>
+		<maxConsumption>0.002</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>0</cores>
+		<mips>0</mips>
+		<ram>0</ram>
+		<storage>0</storage>
+	</device>
+	<device> <!-- home gateway, the mist layer -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>33</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel>
+		<idleConsumption>1.5</idleConsumption>
+		<maxConsumption>5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>false</generateTasks>
+		<cores>4</cores>
+		<mips>20000</mips>
+		<ram>4000</ram>
+		<storage>64000</storage>
+	</device>
+</edge_devices>

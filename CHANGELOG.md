@@ -28,6 +28,10 @@
     tier from the transfer delay of the device access link, the compute delay,
     and the tasks pending on the node. The cellular and Wi-Fi rates in the
     settings file change the decision.
+*   New `Example13` places a smart-home workload over a three-layer fog: 200
+    sensors generate tasks, 100 gateways form the mist layer, one edge data
+    center covers the neighbourhood, and the cloud is the fallback. The
+    `FOG_LAYERS` orchestrator fills the innermost feasible layer first.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and
