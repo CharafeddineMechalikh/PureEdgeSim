@@ -23,6 +23,7 @@ files when the default settings are not enough:
 | [Example 16](Example16/README.md) | Softmax policy for smart-city offloading | `Example16/settings/` | default |
 | [Example 17](Example17/README.md) | Context-aware deep reinforcement offloading | `Example17/settings/` | default |
 | [Example 18](Example18/README.md) | Ant colony offloading | `Example18/settings/` | default |
+| [Example 19](Example19/README.md) | Deadline-aware placement by task criticality | `Example19/settings/` | default |
 
 The Java classes are in
 `src/main/java/com/mechalikh/pureedgesim/examples/`. Run one from the repository

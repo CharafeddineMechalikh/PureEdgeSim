@@ -52,6 +52,10 @@
     pheromone trail that grows with the latency margin of the tasks it completed
     and evaporates on failure, and a placement is sampled from the trail and the
     inverse of the estimated delay.
+*   New `Example19` places each task class with its own objective: the hard
+    real-time tasks keep the largest margin before their latency bound, the soft
+    real-time ones minimize the normalized delay, and the background ones
+    minimize the estimated energy.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and
