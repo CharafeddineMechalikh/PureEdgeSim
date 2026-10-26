@@ -35,6 +35,10 @@
 *   New `Example14` restricts the Q-learning agent of `Example11` to the mist
     layer. All 200 devices both generate and execute tasks, and the `MIST_ONLY`
     architecture leaves device-to-device placement as the only option.
+*   New `Example15` runs the Q-learning agent over four linked edge data centers
+    and 500 devices, with the decision delegated to an edge orchestrator. The
+    agent learns the layer and a guided heuristic picks the least loaded node
+    inside it.
 *   The example settings folders moved from `examples/ExampleX_settings/` to
     `examples/ExampleX/settings/`, next to the example that uses them. Each example now
     has a `README.md` describing its scenario and what it demonstrates, and

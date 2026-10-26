@@ -19,6 +19,7 @@ files when the default settings are not enough:
 | [Example 12](Example12/README.md) | Multi-access MEC with an access-aware orchestrator | `Example12/settings/` | default |
 | [Example 13](Example13/README.md) | Multi-layer fog for a smart home | `Example13/settings/` | default |
 | [Example 14](Example14/README.md) | Mist-only reinforcement placement | `Example14/settings/` | default |
+| [Example 15](Example15/README.md) | Multi-layer guided reinforcement learning | `Example15/settings/` | default |
 
 The Java classes are in
 `src/main/java/com/mechalikh/pureedgesim/examples/`. Run one from the repository
