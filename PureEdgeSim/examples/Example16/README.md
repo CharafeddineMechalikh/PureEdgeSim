@@ -16,6 +16,22 @@ by its least loaded eligible node.
 This is a compact scenario inspired by softmax offloading studies for smart
 cities, not a reproduction of their experiments.
 
+```mermaid
+flowchart LR
+    T["Task arrives<br/>local decision"] --> S["State<br/>app type, length bucket<br/>tier load bucket"]
+    S --> V["Values, one per tier<br/>normalized by the task latency"]
+    V --> B["Boltzmann draw<br/>weight of a tier<br/>is exp of its value over 0.05"]
+    B --> Ch["Chosen tier"]
+    Ch --> N["Least loaded eligible node<br/>of that tier"]
+    N --> R["Reward: minus delay over latency<br/>failure: minus 10"]
+    R --> U["Value update<br/>0.2 step, 0.9 discount"]
+    U --> V
+    classDef sample fill:#ffe3b3,stroke:#333;
+    class B,Ch sample;
+    classDef learn fill:#cfe8ff,stroke:#333;
+    class R,U learn;
+```
+
 ## The scenario
 
 The files in `settings/` describe:
@@ -42,21 +58,23 @@ From the repository root, after `mvn clean install -DskipTests`:
 mvn exec:java -Dexec.mainClass="examples.Example16"
 ```
 
-Results go to `output/Example16_output/`.
+Results go to `PureEdgeSim/examples/Example16/output/`.
 
 ## What to look for
 
-With seed 11, 16870 tasks are generated and 75.89 percent of them complete
-within their latency. The edge layer executes 11577 tasks and 9887 of them
-succeed, the mist layer executes 2486 tasks with 2120 successes, and the cloud
-receives 2807 tasks of which only 795 succeed. The average execution delay is
-0.1693 s and energy consumption is 78.4957 Wh, split between the cloud
-(4.9886 Wh), the edge (38.0436 Wh), and the mist devices (35.4636 Wh).
+With seed 11, 16870 tasks are generated and 12264 of them, 72.70 percent,
+complete within their latency. The edge layer executes 12017 tasks and 10041 of
+them succeed, the mist layer executes 1851 tasks with 1383 successes, and the
+cloud receives 3002 tasks of which only 840 succeed. The average execution delay
+is 0.1665 s and energy consumption is 78.877 Wh, split between the cloud
+(5.2744 Wh), the edge (38.0492 Wh), and the mist devices (35.5534 Wh). Of the
+4606 failures, 4604 are deadline misses and 2 are mobility losses.
 
-The cloud share is the interesting part: the WAN delay makes cloud samples
-return a worse reward, so their values fall and the Boltzmann distribution
-sends fewer tasks there over time. That learning happens without tuning an
-exploration schedule.
+The cloud share is the interesting part: 3002 placements, 17.8 percent of the
+workload, and a 27.98 percent tier success rate (840 of 3002), against 83.56
+percent on the edge. The WAN carries 944.21 s of the 1048.52 s of network usage,
+so cloud samples return a worse reward and their values fall. That learning
+happens without tuning an exploration schedule.
 
 Two changes show the effect of the temperature:
 

@@ -40,6 +40,27 @@ device takes over on the following round. Rounds happen every 30 seconds, and
 no message is exchanged to decide membership, which is why the scheme is called
 self-organizing.
 
+```mermaid
+flowchart TD
+    S["Every 30 s"] --> Sc["Score each device locally<br/>0.40 capacity, 0.25 battery<br/>0.20 stability, 0.15 neighbourhood"]
+    Sc --> P["Point to the best reachable<br/>neighbour, ties to the lower id"]
+    P --> H{"Points at itself?"}
+    H -->|Yes| Head["Cluster head"]
+    H -->|No| F["Follow the pointers<br/>until a head"]
+    F --> Head
+    Head --> Pl["Placement inside the cluster"]
+    Pl --> C1["Origin device, no transfer"]
+    Pl --> C2["Head, 25 percent cost discount"]
+    Pl --> C3["Reachable member"]
+    C1 -->|"cost = transfer latency<br/>+ (1 + pending) * length / capacity"| R["Cheapest candidate runs the task"]
+    C2 --> R
+    C3 --> R
+    classDef elect fill:#cfe8ff,stroke:#333;
+    class Sc,P,H,F,Head elect;
+    classDef place fill:#ffe3b3,stroke:#333;
+    class Pl,C1,C2,C3,R place;
+```
+
 ## How tasks are placed
 
 The orchestrator considers the head, the members of the head's cluster that the
@@ -72,6 +93,8 @@ From the repository root, after `mvn clean install -DskipTests`:
 mvn exec:java -Dexec.mainClass="examples.Example22"
 ```
 
+Results go to `PureEdgeSim/examples/Example22/output/`.
+
 ## What to look for
 
 At the end of the run the console prints two lines:
@@ -83,33 +106,41 @@ Example22 - clustering: 10 clusters over 200 devices, 11 rounds, average size 20
 
 A placement is an orchestration decision. Once an application is placed on a
 device, its later tasks go to the same device directly, so the placement count
-is smaller than the number of tasks. The CSV under `output/Example22_output/`
-holds the usual latency, success, network and energy columns.
+is smaller than the number of tasks. The CSV in the timestamped folder holds the
+usual latency, success, network and energy columns.
 
-## Measured effect
+## Measured run
 
-Both runs use the same seed, fleet, duration and architecture. The baseline
-keeps the clustering device but places tasks with the built-in `TRADE_OFF`
-policy, an ablation that isolates the placement rule.
+The seed 71 run above produced the following report:
 
-| Metric | `TRADE_OFF` | Cluster placement | Change |
-| --- | --- | --- | --- |
-| Tasks successfully executed | 77.83 % | 79.94 % | +2.11 points |
-| Failed due to latency | 22.10 % | 20.00 % | -2.10 points |
-| Average task execution time | 0.2314 s | 0.1332 s | -42 % |
-| Total task execution time | 3352 s | 1931 s | -42 % |
-| Network usage | 106.53 s | 81.14 s | -24 % |
-| Transferred data | 17,311 MB | 13,186 MB | -24 % |
+| Metric | Cluster placement |
+| --- | --- |
+| Tasks successfully executed | 79.94 percent (11592 of 14500) |
+| Failed due to latency | 20.00 percent (2900 tasks) |
+| Lost to mobility | 0.0552 percent (8 tasks) |
+| Average task execution time | 0.1332 s |
+| Total task execution time | 1930.6 s |
+| Network usage | 81.1428 s, all of it on the LAN |
+| Transferred data | 13185.7 MB |
+| Energy consumption | 45.1608 Wh |
+| Average CPU utilization | 0.3733 percent |
 
 The cluster policy keeps most tasks on the device that generated them (79.4
-percent), sends the rest to the stronger nodes that the election promoted, and
-cuts both compute time and radio time. The gain is modest in success rate but
-clear in execution time and traffic, which is the intended trade-off of putting
-a fast head at the center of each neighborhood.
+percent of the 3051 placements, against 18.6 percent on the heads, 2.0 percent
+on other members, and 0.0 percent outside the cluster). Every one of the 14500
+tasks is executed in the mist: the cloud and edge columns stay at zero, and the
+WAN and MAN report 0 seconds, so the placement rule only ever spends local radio
+time.
 
 The 200 devices form 10 clusters of 20 devices on average, the largest holding
-33. With a 100 meter range on a 500 by 500 meters map, that is roughly one head
-per neighborhood, which is what the degree and capacity terms should produce.
+33, over 11 election rounds. With a 100 meter range on a 500 by 500 meters map,
+that is roughly one head per neighborhood, which is what the degree and capacity
+terms should produce.
+
+The ablation that would isolate the placement rule, keeping the clustering
+device but placing tasks with the built-in `TRADE_OFF` policy at the same seed,
+has no capture or CSV on disk, so this README quotes no comparison against it.
+Run it once and fill the table above with both columns.
 
 ## Tune it
 

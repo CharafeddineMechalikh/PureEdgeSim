@@ -230,7 +230,7 @@ The settings folder must contain exactly these five files: `simulation_parameter
 mvn test
 ```
 
-The suite contains more than 500 tests. Some are integration tests that launch small simulations, so the full run takes longer than a typical unit-test suite. To run only the fast unit tests:
+The suite contains more than 1100 tests. Some are integration tests that launch small simulations, so the full run takes longer than a typical unit-test suite. To run only the fast unit tests:
 
 ```bash
 mvn test -Punit-tests

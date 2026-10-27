@@ -19,6 +19,30 @@ This is a compact scenario inspired by multi-objective reinforcement learning
 for offloading, not a reproduction of its experiments or of its network
 architecture.
 
+```mermaid
+flowchart TD
+    State["State: class plus length bucket"] --> Delay["Delay table Qd"]
+    State --> Energy["Energy table Qe"]
+    Delay --> Sum["score = 1.0 * Qd + 1.0 * Qe"]
+    Energy --> Sum
+    Sum --> Act["argmax: Cloud, Edge, or Mist"]
+    Act --> Run["Task runs on the chosen tier"]
+    Run -->|success| Rwd["Qd reward: -delay / latency"]
+    Run -->|success| Rwe["Qe reward: -energy / 0.01 Wh"]
+    Run -->|failure| Rwf["both rewards: -200"]
+    Rwd --> Delay
+    Rwe --> Energy
+    Rwf --> Delay
+    Rwf --> Energy
+    classDef table fill:#cfe8ff,stroke:#333;
+    classDef reward fill:#ffe0b3,stroke:#333;
+    class Delay,Energy table;
+    class Rwd,Rwe,Rwf reward;
+```
+
+The two tables keep the objectives separate, so the weights, both 1.0 here, are
+applied only at decision time and can be retuned without relearning.
+
 ## The scenario
 
 The files in `settings/` describe:
@@ -42,24 +66,26 @@ From the repository root, after `mvn clean install -DskipTests`:
 mvn exec:java -Dexec.mainClass="examples.Example20"
 ```
 
-Results go to `output/Example20_output/`.
+Results go to `PureEdgeSim/examples/Example20/output/`.
 
 ## What to look for
 
-With seed 53, 16870 tasks are generated and 75.72 percent complete within their
-latency, with an average execution delay of 0.1810 s. The edge layer executes
-11705 tasks and 9356 of them succeed, the mist layer executes 3736 tasks with
-3208 successes, and the cloud receives 1429 tasks of which only 210 succeed.
-Energy consumption is 74.0626 Wh, with 1.3912 Wh on the cloud, 38.3144 Wh on the
-edge, and 34.3570 Wh on the mist devices.
+With seed 53, 16870 tasks are generated and 72.69 percent complete within their
+latency (12263 tasks), with an average execution delay of 0.1816 s. The edge layer
+executes 11068 tasks and 9251 of them succeed, the mist layer executes 3858 tasks
+with 2847 successes, and the cloud receives 1944 tasks of which only 165 succeed.
+Energy consumption is 73.7211 Wh, with 1.1766 Wh on the cloud, 38.326 Wh on the
+edge, and 34.2186 Wh on the mist devices.
 
-The cloud share is the interesting part. It receives 1429 tasks, almost exactly
-the 10 percent exploration rate: the learned values send essentially no task
-there, because the hard real-time tasks miss their 20 ms bound over the WAN and
-each failure writes a large negative value into both tables. Two extra runs with
-`ENERGY_WEIGHT` set to 10 and to 0 leave the cloud share at 1423 and 1430 tasks,
-which shows that the failures, not the weights, set the policy for this
-scenario.
+The cloud share is the interesting part. It takes 1944 tasks, 11.5 percent of the
+workload, which is the exploration rate `EPSILON` of 0.1 plus a little greedy
+spillage: the learned values send essentially no task there, because the hard
+real-time tasks miss their 20 ms bound over the WAN and each failure writes a
+large negative value into both tables. The network report shows the cost of that
+exploration, 210.288 s of WAN occupancy out of 311.2585 s of total link usage,
+and 0.3908 Wh of the 73.7211 Wh. The two objectives barely disagree for this
+scenario: 4606 of the 4607 failures are deadline misses, so both tables punish the
+same placement and the weights have little to trade off.
 
 To see the weights matter, give the cloud a chance to succeed:
 

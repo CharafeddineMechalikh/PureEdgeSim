@@ -85,7 +85,7 @@ Example9PartitioningOrchestrator - Application 0 (Soft Real-time): 3 partitions,
   tiers. The per-tier count columns show how many subtasks executed on each.
 - With seed 42 the shipped scenario exceeds 99.9 percent success. The graph
   tasks and the monolithic tasks are counted together.
-- Results go to `output/Example9_output/`.
+- Results go to `PureEdgeSim/examples/Example9/output/`.
 
 Change `PARTITIONS_PER_COMPONENT` in the orchestrator to see the trade-off: more
 partitions spread the load further but cut more edges.

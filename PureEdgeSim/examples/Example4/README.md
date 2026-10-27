@@ -18,11 +18,29 @@ handles one custom tag in a `switch`, then forwards every other tag to
 updating energy consumption and CPU utilization, which silently corrupts the
 results.
 
+```mermaid
+sequenceDiagram
+    participant SM as SimulationManager
+    participant Node as Custom computing node
+    participant Ev as Event queue
+    participant Def as DefaultComputingNode
+    SM->>Node: onSimulationStart()
+    Node->>Def: super.onSimulationStart()
+    Node->>Ev: scheduleNow(this, DO_SOMETHING)
+    Ev->>Node: deliver DO_SOMETHING
+    Node->>Node: println "Event received..."
+    Ev->>Node: later energy and CPU events
+    Node->>Def: super.processEvent(ev) in the default branch
+    Def-->>SM: energy and utilisation charts keep updating
+    classDef mine fill:#cfe8ff,stroke:#333;
+    class Node mine;
+```
+
 ## The scenario
 
-This example uses the repository default settings in `settings/`. The point is
-the node class, not the workload, so the default applications, map, and device
-types are kept.
+The `settings/` folder of this example is a byte for byte copy of the packaged
+defaults in `PureEdgeSim/settings/`. The point is the node class, not the
+workload, so the default applications, map, and device types are kept.
 
 ## Run it
 
@@ -34,21 +52,56 @@ mvn exec:java -Dexec.mainClass="examples.Example4"
 
 ## What to look for
 
-- The console prints `Event received, you can do any action here` for every node
-  when the simulation starts. This line comes from the custom tag.
-- Energy and CPU charts still update, because the other events reach the default
-  handler through `super.processEvent`.
-- Every node type is an instance of the custom class, since the framework
-  instantiates that class for clouds, edge data centers, and devices.
+The run finishes in `41 minutes, 17 seconds` of wall clock and writes 42 rows
+to the sweep CSV. The last row, `ALL / ROUND_ROBIN / 300 devices`, is the
+console tail and the clearest place to read the cost of the pattern:
 
-Use this pattern to add per-node metrics, custom scheduling, or a state machine
-without rewriting the default node model.
+| Metric | Value |
+| --- | --- |
+| Tasks generated, sent | 33740, 100 % of generated |
+| Successfully executed | 26629, 78.9241 % of sent |
+| Failed on delay, on mobility, on device death | 6805 (20.1689 %), 306 (0.9069 %), 0 |
+| Average execution, waiting, request makespan | 0.2032 s, 0.0235 s, 0.2914 s |
+| Tasks placed on cloud, edge, mist | 2409 (731 ok), 12333 (10691 ok), 18998 (15207 ok) |
+| Energy (computing, WAN, MAN, LAN) | 102.9106 Wh, 1.6079 Wh, 0 Wh, 26.2859 Wh |
+| WAN time, LAN time, total traffic | 848.34 s, 207.5328 s, 35844.93 MBytes |
+| Average remaining device battery | 99.4792 %, 32.7678 Wh, 0 dead devices |
+
+Reading the run against the point of the example:
+
+- The hook is exercised, not the outcome. `Event received, you can do any
+  action here` appears once per node at simulation start on all 42 iterations
+  (the capture has 11187 lines, most of them that line), and every other event
+  still reaches `super.processEvent`, which is why the energy and CPU columns
+  stay populated: 26629 successful tasks, 102.9106 Wh of computing energy, an
+  average CPU utilisation of 1.2291 %. Removing the `default` branch of the
+  `switch` would zero those columns, and this run is the reference for what a
+  healthy subclass produces.
+- The pattern is a per-node print at simulation start, so the run does not
+  change the placement policy. The `ALL / ROUND_ROBIN / 300` metrics differ
+  from Example 1's identical row (76.802 % success against 78.9241 %, 1011
+  mobility failures against 306) only because Example 1 also registers the
+  custom mobility model from Example 2. The example itself buys nothing on the
+  results axis, it just proves the subclass survives the event dispatch.
+- The real cost is wall clock. This run is roughly eight times slower than
+  Example 1's identical 42-row sweep (41 minutes 17 seconds against 4 minutes
+  58 seconds). Example 1 layers the trivial `Example2CustomMobilityModel`
+  on top of this same custom computing node, so the pair here, custom node
+  plus the framework default mobility model, is the configuration that shows
+  the cost. Narrow `orchestration_architectures` or `orchestration_algorithms`
+  before adding expensive per-node logic.
+- Use the pattern for per-node metrics, custom scheduling, or a state machine.
+  Keep the workload narrow when you do: `settings/simulation_parameters.properties`
+  sweeps 7 architectures times 2 algorithms times 3 device counts, so drop
+  `orchestration_architectures` down to one value before adding expensive
+  per-node logic.
+- Results go to `PureEdgeSim/examples/Example4/output/`.
 
 ## Files
 
 - `Example4.java`
 - `Example4CustomComputingNode.java`
-- `settings/` at the repository root
+- `settings/`, a copy of the packaged defaults in `PureEdgeSim/settings/`
 
 ## Where to go next
 

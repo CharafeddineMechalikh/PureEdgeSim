@@ -22,6 +22,22 @@ The policy is epsilon-greedy, so one decision in ten explores a random tier. The
 three application types of the default settings (hard, soft, and non real-time)
 give the agent states that differ in their latency requirement.
 
+```mermaid
+flowchart LR
+    St["Build state<br/>app type, length bucket<br/>cuts 1000, 5000, 20000, tier load bucket"]
+    Eg["Epsilon greedy<br/>0.1 random tier<br/>0.9 highest Q"]
+    Ac["Pick tier<br/>Cloud, Edge, Mist<br/>least loaded node"]
+    Rt["resultsReturned<br/>measured total delay"]
+    Rw["Reward<br/>success -delay<br/>failure -1000"]
+    Up["Table update<br/>Q += 0.2(r + 0.9 maxQ(s') - Q)"]
+    St --> Eg --> Ac --> Rt --> Rw --> Up
+    Up -->|"next task"| St
+    classDef learn fill:#cfe8ff,stroke:#333;
+    class Rw,Up learn;
+    classDef act fill:#ffe3b3,stroke:#333;
+    class Eg,Ac act;
+```
+
 ## The scenario
 
 The files in `settings/` describe:
@@ -42,25 +58,33 @@ mvn exec:java -Dexec.mainClass="examples.Example11"
 
 ## What to look for
 
-With the same seed and scenario, the two policies produce:
+With the same seed and scenario, and only the policy changed, the two runs give:
 
-| Policy | Average delay (s) | Succeeded | Failed (delay) | Failed (mobility) | Cloud tasks | Mist tasks |
-| --- | --- | --- | --- | --- | --- | --- |
-| `TRADE_OFF` | 0.1735 | 4205 | 1207 | 138 | 465 | 2485 |
-| `Q_LEARNING` | 0.1566 | 4182 | 1343 | 25 | 817 | 1320 |
+| Policy | Average delay (s) | Succeeded | Failed (delay) | Failed (mobility) | Cloud tasks | Edge tasks | Mist tasks | Energy (Wh) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `TRADE_OFF` | 0.1736 | 4018 | 1394 | 138 | 465 | 2600 | 2485 | 23.6954 |
+| `Q_LEARNING` | 0.1588 | 4030 | 1502 | 18 | 1081 | 3071 | 1398 | 24.5304 |
 
-- The learned policy lowers the average delay by about 10 percent. It sends more
-  tasks to the cloud and fewer to mist devices, which is where most mobility
-  failures come from.
-- The number of successful tasks is slightly lower: the agent optimizes the
-  delay of the tasks it completes, not the count of tasks that meet their
-  deadline. A different reward would trade one for the other.
+Both rows are the measured output of `settings/` with seed 42, 5550 tasks. The
+baseline comes from the same files with the custom orchestrator removed and
+`orchestration_algorithms=TRADE_OFF`, so the difference is only the policy.
+
+- The learned policy lowers the average delay from 0.1736 to 0.1588 s and completes
+  slightly more tasks, 4030 against 4018. It gets there by moving work off the
+  mist tier: 1398 tasks against 2485, and 1221 of them succeed.
+- Mobility failures collapse, from 138 to 18, for the same reason. A task that
+  stays on the device it was generated on cannot be lost when the device moves out
+  of range.
+- The price is on the other two tiers and on energy. The cloud takes 1081 tasks and
+  only 226 of them meet their latency, and consumption rises from 23.6954 to
+  24.5304 Wh; the WAN share alone goes from 0.3108 to 0.5074 Wh, which is what
+  those extra cloud round trips cost.
 - The values are learned during the run, so five simulated minutes are enough to
   show a difference but not to converge. Raise `simulation_time` or lower
   `EXPLORATION_RATE` to give the agent more experience.
 - The table is small: 3 application types times 4 length buckets times 3 load
   buckets times 3 actions.
-- Results go to `output/Example11_output/`.
+- Results go to `PureEdgeSim/examples/Example11/output/`.
 
 ## The paper behind the scenario
 

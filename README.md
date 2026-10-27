@@ -21,7 +21,8 @@
 
 > **PureEdgeSim is now available in Python.** The same simulator, the same five configuration
 > files and the same 56-column output, in a companion repository:
-> [CharafeddineMechalikh/PureEdgeSim_Python](https://github.com/CharafeddineMechalikh/PureEdgeSim_Python).
+> [CharafeddineMechalikh/PureEdgeSim_Python](https://github.com/CharafeddineMechalikh/PureEdgeSim_Python),
+> with its own [manual](https://charafeddinemechalikh.github.io/PureEdgeSim_Python/docs/).
 > Results from the two versions can be placed side by side, so you can run your study in
 > whichever language you work in.
 
@@ -205,7 +206,7 @@ You can also import the project as a Maven project in Eclipse, IntelliJ IDEA, or
 mvn test
 ```
 
-The test suite contains more than 900 automated tests. To run only the unit tests, excluding the integration tests:
+The test suite contains more than 1100 automated tests. To run only the unit tests, excluding the integration tests:
 
 ```bash
 mvn test -Punit-tests

@@ -19,6 +19,29 @@ generated over Wi-Fi.
 This is a compact scenario inspired by multi-access MEC studies, not a
 reproduction of their experiments.
 
+```mermaid
+flowchart LR
+    Sm["40 percent smartphones<br/>cellular"]
+    Tb["30 percent tablets<br/>Wi-Fi"]
+    Lp["30 percent laptops<br/>Wi-Fi, mains powered"]
+    Ce["Cellular link<br/>100 Mbps, 30 ms"]
+    Wi["Wi-Fi link<br/>1300 Mbps, 5 ms"]
+    Sc["Score each tier<br/>access transfer + compute<br/>+ pending tasks / cores"]
+    Ed["Edge, 4 nodes<br/>16 cores, 60000 MIPS"]
+    Mi["Mist nodes"]
+    Cl["Cloud<br/>WAN 20 Mbps + 60 ms"]
+    Sm --> Ce --> Sc
+    Tb --> Wi --> Sc
+    Lp --> Wi
+    Sc --> Ed --> Win["Lowest score wins"]
+    Sc --> Mi --> Win
+    Sc --> Cl --> Win
+    classDef score fill:#cfe8ff,stroke:#333;
+    class Sc,Win score;
+    classDef link fill:#ffe3b3,stroke:#333;
+    class Ce,Wi link;
+```
+
 ## The scenario
 
 The files in `settings/` describe:
@@ -41,7 +64,7 @@ From the repository root, after `mvn clean install -DskipTests`:
 mvn exec:java -Dexec.mainClass="examples.Example12"
 ```
 
-Results go to `output/Example12_output/`.
+Results go to `PureEdgeSim/examples/Example12/output/`.
 
 ## What to look for
 

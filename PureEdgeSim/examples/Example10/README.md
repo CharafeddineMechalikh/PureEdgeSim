@@ -82,7 +82,7 @@ Example10GeneticOrchestrator - Application 0 (Soft Real-time): fitness 0.2313 (m
 - The placement shows which node type each subtask chose. A plan can keep a
   whole chain on one fast node, or split it to use idle devices.
 - With seed 42 the shipped scenario exceeds 99.9 percent success.
-- Results go to `output/Example10_output/`.
+- Results go to `PureEdgeSim/examples/Example10/output/`.
 
 Compare the plan and its estimated cost with the cut printed by Example 9. The
 two examples solve the same problem with different information: one reads the

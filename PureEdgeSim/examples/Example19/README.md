@@ -18,6 +18,29 @@ The estimate covers the compute time, the tasks already queued on the node, the
 device access latency, and the WAN latency for the cloud. Energy is estimated as
 the active consumption of the node multiplied by the compute time.
 
+```mermaid
+flowchart TD
+    Task["Arriving task"] --> Q{"Task class?"}
+    Q -->|Hard Real-time| Hard["Health: 500 MI, 20 ms bound"]
+    Q -->|Soft Real-time| Soft["Augmented reality: 5000 MI, 0.5 s bound"]
+    Q -->|Non Real-time| Heavy["HEAVY_COMP_APP: 30000 MI, 300 s bound"]
+    Hard --> HardCrit{"Any node meets 20 ms?"}
+    HardCrit -->|Yes| HardEdge["Largest margin, Edge wins"]
+    HardCrit -->|No| HardCloud["Fastest node, Cloud fallback"]
+    Soft --> SoftEdge["Smallest delay share, Edge wins"]
+    Heavy --> HeavyMist["Lowest energy, Mist wins"]
+    classDef hard fill:#ffe0b3,stroke:#333;
+    classDef soft fill:#cfe8ff,stroke:#333;
+    classDef heavy fill:#d5f0d5,stroke:#333;
+    class Hard,HardCrit,HardEdge,HardCloud hard;
+    class Soft,SoftEdge soft;
+    class Heavy,HeavyMist heavy;
+```
+
+The criticality test is the deadline check on the hard branch: the hard class
+only trades its margin rule for the raw-capacity fallback when no node can meet
+the 20 ms bound.
+
 This is a compact scenario inspired by deadline-aware and energy-efficient
 offloading studies, not a reproduction of their experiments.
 
@@ -41,16 +64,18 @@ From the repository root, after `mvn clean install -DskipTests`:
 mvn exec:java -Dexec.mainClass="examples.Example19"
 ```
 
-Results go to `output/Example19_output/`.
+Results go to `PureEdgeSim/examples/Example19/output/`.
 
 ## What to look for
 
-With seed 41, 16870 tasks are generated and 74.59 percent complete within their
-latency, with an average execution delay of 0.1804 s. The edge layer executes
-13910 tasks and 9990 of them succeed, the mist layer executes 2945 tasks with
-2594 successes, and the cloud receives only 15 tasks, none of which succeeds.
-Energy consumption is 73.0566 Wh, almost all of it on the edge (38.4908 Wh) and
-the mist devices (34.5507 Wh), with only 0.015 Wh on the cloud.
+With seed 41, 16870 tasks are generated and 72.64 percent complete within their
+latency (12255 tasks), with an average execution delay of 0.1804 s. All 4615
+failures are deadline misses; none comes from a device that moved away or died.
+The edge layer executes 13929 tasks and 9990 of them succeed, the mist layer
+executes 2926 tasks with 2265 successes, and the cloud receives only 15 tasks,
+none of which succeeds. Energy consumption is 73.0572 Wh, almost all of it on the
+edge (38.4911 Wh) and the mist devices (34.551 Wh), with only 0.015 Wh on the
+cloud.
 
 The cloud is nearly unused because none of the three rules sends work there for
 this workload: the WAN delay breaks the 20 ms bound of the hard tasks, the edge

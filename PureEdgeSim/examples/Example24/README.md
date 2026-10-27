@@ -121,7 +121,7 @@ more bits over the WAN, as the per-tier energy lines of the report show. Whether
 that trade-off is worth it depends on the deadline, which is exactly what the
 example lets you vary.
 
-- Results go to `output/Example24_output/`.
+- Results go to `PureEdgeSim/examples/Example24/output/`.
 - Changing the number of simulated minutes or the seed changes the numbers; run
   both modes to compare them in your own scenario.
 

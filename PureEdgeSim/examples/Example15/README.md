@@ -16,6 +16,24 @@ The agent observes the layer load after each completed task, as in Example 11.
 This is a compact scenario inspired by multi-layer guided reinforcement
 learning studies, not a reproduction of their experiments.
 
+```mermaid
+flowchart LR
+    Dev["Device<br/>Wi-Fi or cellular<br/>2000 m map"] -->|"Request over the radio"| Orch["Edge orchestrator<br/>enable_orchestrators=true<br/>deploy_orchestrator=EDGE"]
+    Orch --> Pol["Tier choice, shared with Example 11<br/>0.1 random tier, 0.9 highest Q"]
+    Pol --> Edge["Edge: 4 data centers<br/>10 cores, 40000 MIPS each<br/>ring over the 1000 Mbps MAN"]
+    Pol --> Mist["Mist: reachable neighbours"]
+    Pol --> Cloud["Cloud over the 20 Mbps WAN"]
+    Edge --> Node["Least loaded eligible node<br/>of the chosen tier"]
+    Mist --> Node
+    Cloud --> Node
+    Node -->|"result"| Reward["Q update<br/>success minus normalized delay<br/>failure minus 1000"]
+    Reward --> Pol
+    classDef remote fill:#ffe3b3,stroke:#333;
+    class Cloud,Dev remote;
+    classDef learn fill:#cfe8ff,stroke:#333;
+    class Pol,Reward learn;
+```
+
 ## The scenario
 
 The files in `settings/` describe:
@@ -37,16 +55,23 @@ From the repository root, after `mvn clean install -DskipTests`:
 mvn exec:java -Dexec.mainClass="examples.Example15"
 ```
 
-Results go to `output/Example15_output/`.
+Results go to `PureEdgeSim/examples/Example15/output/`.
 
 ## What to look for
 
-With seed 7, 37541 of 56550 tasks execute on the edge layer and 36490 of them
-succeed. The cloud receives 11193 tasks and completes only 660 within their
-latency, because the agent still explores ten percent of the decisions and the
-WAN is slow. The mist layer executes 7816 tasks. The average execution delay is
-0.1661 s, the overall success rate is 78.4 percent, and energy consumption is
-200.80 Wh.
+With seed 7, 56550 tasks are generated and 41462 of them, 73.32 percent,
+complete within their latency. The edge layer executes 37650 tasks and 36499 of
+them succeed. The mist layer executes 4805 tasks with 4303 successes, and the
+cloud receives 14095 tasks of which only 660 succeed. The average execution
+delay is 0.1653 s and energy consumption is 201.2012 Wh. Of the 15088 failures,
+15082 are deadline misses and 6 are mobility losses; no task was dropped for
+want of resources.
+
+The cloud share is the honest negative result of this run: 14095 placements, 24.9
+percent of the workload, against a 10 percent exploration floor, and a 4.68
+percent success rate on that tier (660 of 14095). The WAN carries 935.61 s of the
+1322.88 s of network usage, so a cloud sample almost always misses its bound, and
+the table has to learn to stop choosing that tier.
 
 The most useful comparison is with Example 11: same agent, same reward, but a
 larger map, four edge servers, and a delegating orchestrator. The cloud share

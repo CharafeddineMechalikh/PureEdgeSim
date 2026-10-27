@@ -9,6 +9,26 @@ runs immediately; a request whose container is missing downloads it from the
 registry first, and the downloaded container is kept for the next request. When
 the cache is full, the least recently used container is evicted.
 
+```mermaid
+flowchart TD
+    Arrive["Task arrives at an edge node"] --> Lookup{"Container already cached?"}
+    Lookup -->|Hit| Run["Run now, no download"]
+    Lookup -->|Miss| Download["Download from registry over 20 Mbps WAN"]
+    Download --> Insert["Insert into the node cache"]
+    Insert --> Over{"Node cache over 3 MB?"}
+    Over -->|Yes| Evict["Evict the least recently used"]
+    Evict --> Run
+    Over -->|No| Run
+    classDef hit fill:#d5f0d5,stroke:#333;
+    classDef cost fill:#ffe0b3,stroke:#333;
+    class Run hit;
+    class Download,Insert,Evict cost;
+```
+
+The savings this produces show up in the report as WAN usage (3140.92 s cached
+against 7894.40 s without) and transferred data (29090.3 MB against 40974.0 MB),
+both quoted under What to look for.
+
 Two classes implement it:
 
 - `Example21CacheDevice` gives every node a least-recently-used cache, sized
@@ -47,11 +67,14 @@ From the repository root, after `mvn clean install -DskipTests`:
 mvn exec:java -Dexec.mainClass="examples.Example21"
 ```
 
-Results go to `output/Example21_output/`. The console ends with a line such as:
+Results go to `PureEdgeSim/examples/Example21/output/`. The console ends with a line such as:
 
 ```text
-Example21 - container cache: 10477 hits, 6393 misses (62.10 % hit ratio), 1323 evictions, 0 refused, 7.42 MB used of 372.00 MB
+Example21 - container cache: 10477 hits, 6393 misses (62,10 % hit ratio), 1323 evictions, 0 refused, 7,42 MB used of 372,00 MB
 ```
+
+The line is printed with the locale decimal comma, and the numbers are those of
+the run described below.
 
 ## What to look for
 
@@ -78,15 +101,12 @@ plenty of computing capacity.
 
 Two changes make the storage constraint visible:
 
-1. Lower `CACHE_CAPACITY_MB` in `Example21CacheDevice` to 1.5 and rerun. The
-   heavy application container is now larger than the cache, so it is refused
-   and every heavy request downloads again: the hit ratio falls to 45.12
-   percent, 1770 containers are refused, and the success rate falls to 41.93
-   percent.
-2. Lower it to 1.0 and rerun. Only the 20 KB health container fits, and the
-   cache barely helps: 27.23 percent hit ratio, 12270 refused containers, WAN
-   usage back at 7857.65 s, and a success rate of 10.49 percent, almost the
-   no-cache baseline.
+1. Lower `CACHE_CAPACITY_MB` in `Example21CacheDevice` to 1.5 and rerun. The heavy
+   application container is then larger than the cache, so it is refused and every
+   heavy request downloads again: the hit ratio and the success rate both fall.
+2. Lower it to 1.0 and rerun. Only the 20 KB health container fits, so the cache
+   barely helps: almost every request is refused and the run returns to the
+   no-cache behaviour.
 
 The request and the results still travel to and from the cloud orchestrator, so
 the cache only removes container traffic. Turn orchestrators off and the tasks

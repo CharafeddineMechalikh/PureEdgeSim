@@ -15,6 +15,26 @@ cooperate directly instead of sending their work to an infrastructure node.
 This is a compact scenario inspired by pure mist and device-to-device
 reinforcement placement studies, not a reproduction of their experiments.
 
+With a single tier the agent trades off peers instead of tiers: the state keeps
+the task signals, but the action selects which nearby device runs the task.
+
+```mermaid
+flowchart TD
+    De["200 devices<br/>500 by 500 m map, 100 m range<br/>no cloud or edge destination"]
+    Ty["3 peer types<br/>smartphone 10000, tablet 20000,<br/>laptop 50000 MIPS, all Wi-Fi"]
+    St["Build state<br/>app type, length bucket<br/>cuts 1000, 5000, 20000"]
+    Pi["Choose peer, not a tier<br/>least loaded reachable Mist node<br/>Wi-Fi 1300 Mbps"]
+    Rw["Reward<br/>success -delay<br/>failure -1000"]
+    Up["Q update<br/>0.1 explore, 0.2 learn, 0.9 discount"]
+    De --> Ty --> Pi
+    St --> Pi --> Rw --> Up
+    Up -->|"next task"| St
+    classDef peer fill:#ffe3b3,stroke:#333;
+    class Pi peer;
+    classDef val fill:#cfe8ff,stroke:#333;
+    class Rw,Up val;
+```
+
 ## The scenario
 
 The files in `settings/` describe:
@@ -38,15 +58,18 @@ From the repository root, after `mvn clean install -DskipTests`:
 mvn exec:java -Dexec.mainClass="examples.Example14"
 ```
 
-Results go to `output/Example14_output/`.
+Results go to `PureEdgeSim/examples/Example14/output/`.
 
 ## What to look for
 
 With seed 42, all 14500 tasks are placed on the mist layer, 11539 of them
-succeed (79.6 percent), and the average execution delay is 0.2295 s. The cloud
-and edge columns of the report stay at zero. Energy consumption is 48.89 Wh,
-most of it in the device layer. The failures are tasks that exceeded their
-latency on a busy peer, which is the cost of having no infrastructure fallback.
+succeed (79.58 percent), and the average execution delay is 0.2295 s. The cloud
+and edge columns of the report stay at zero tasks. Energy consumption is 48.8867
+Wh, most of it in the device layer (39.9978 Wh, against 8.8889 Wh for the edge
+data center that only anchors the topology). The 2961 failures split into 2943
+tasks that exceeded their latency on a busy peer and 18 that lost their
+destination to mobility, which is the cost of having no infrastructure fallback.
+The whole run stays local: 106.92 s of network usage, all of it on the LAN, 17375.2 MB transferred, and no WAN time.
 
 Compare this run with Example 11, which uses the same agent and seed but lets
 the cloud and the edge compete for the tasks. The difference in success rate and

@@ -20,6 +20,23 @@ This is a compact scenario inspired by context-aware deep reinforcement
 learning for multi-access edge computing, not a reproduction of its
 experiments or of its network architecture.
 
+```mermaid
+flowchart LR
+    F["Context, 10 features<br/>app type one-hot (3), length<br/>battery, cellular, mobile, 3 tier loads"] --> H["Hidden layer<br/>12 sigmoid units"]
+    H --> Q["Three values, one per tier<br/>Mist, Edge, Cloud"]
+    Q --> E["Epsilon greedy<br/>0.3 falling to 0.02 by 0.999<br/>over the available tiers"]
+    E --> N["Least loaded eligible node<br/>of the chosen tier"]
+    N --> R["Return: success minus delay over latency<br/>failure minus 1"]
+    R --> U["One gradient step<br/>0.02 step, 0.9 discount"]
+    U -->|"every 200 updates"| TG["Target network<br/>copy of the online weights"]
+    TG --> Q
+    U -->|"next task"| F
+    classDef act fill:#ffe3b3,stroke:#333;
+    class E,N act;
+    classDef learn fill:#cfe8ff,stroke:#333;
+    class R,U,TG learn;
+```
+
 ## The scenario
 
 The files in `settings/` describe:
@@ -43,7 +60,7 @@ From the repository root, after `mvn clean install -DskipTests`:
 mvn exec:java -Dexec.mainClass="examples.Example17"
 ```
 
-Results go to `output/Example17_output/`.
+Results go to `PureEdgeSim/examples/Example17/output/`.
 
 ## What to look for
 

@@ -26,6 +26,19 @@ sim.setCustomSimulationManager(Example23AuditSimulationManager.class);
 sim.launchSimulation();
 ```
 
+The four classes take the order the framework builds a scenario: the nodes come
+first, then the links, then the workload, and the manager runs the events.
+
+```mermaid
+flowchart LR
+    Files["settings/<br/>4 device types<br/>ring of 4 edge DC"] --> Gen["Nodes generator<br/>allocateInstances<br/>7/6/6/0 becomes 7/6/6/1"]
+    Gen --> Topo["Topology creator<br/>generateTopologyGraph<br/>+4 directed MAN links"]
+    Topo --> Task["Task generator<br/>generateTasksForDevice<br/>burst at minute x 60"]
+    Task --> Run["Simulation manager<br/>taskFailed, processEvent<br/>audit line"]
+    classDef override fill:#cfe8ff,stroke:#333;
+    class Gen,Topo,Task,Run override;
+```
+
 Together, the examples now exercise all eight setter-based extension points:
 
 | Extension point | Demonstrated by |
