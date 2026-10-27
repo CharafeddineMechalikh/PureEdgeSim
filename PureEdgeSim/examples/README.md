@@ -12,10 +12,10 @@ class from another folder (for instance the Q-learning orchestrator of
 | [Example 2](Example2/README.md) | A custom mobility model | `Example2/settings/` | default |
 | [Example 3](Example3/README.md) | Cooperative edge data centers with edge orchestrators | `Example3/settings/` | default |
 | [Example 4](Example4/README.md) | A custom computing node and its own events | `Example4/settings/` | default |
-| [Example 5](Example5/README.md) | Plugging in a custom orchestrator | `Example5/settings/` | needs jFuzzyLogic |
+| [Example 5](Example5/README.md) | Plugging in a custom orchestrator | `Example5/settings/` | default (jFuzzyLogic) |
 | [Example 6](Example6/README.md) | Custom settings files and a parallel sweep | `Example6/settings/` | default |
 | [Example 7](Example7/README.md) | Clustering and cooperative container caching | `Example7/settings/` | default |
-| [Example 8](Example8/README.md) | Fuzzy logic orchestration | `Example8/settings/` | needs jFuzzyLogic |
+| [Example 8](Example8/README.md) | Fuzzy logic orchestration | `Example8/settings/` | default (jFuzzyLogic) |
 | [Example 9](Example9/README.md) | Service graph partitioning with graph theory | `Example9/settings/` | default |
 | [Example 10](Example10/README.md) | Service graph partitioning with a genetic algorithm | `Example10/settings/` | default |
 | [Example 11](Example11/README.md) | Tabular Q-learning orchestration | `Example11/settings/` | default |
@@ -40,9 +40,9 @@ repository root after `mvn clean install -DskipTests`:
 mvn exec:java -Dexec.mainClass="examples.Example1"
 ```
 
-`Example5`, `Example8`, and `Example8FuzzyLogicOrchestrator` are excluded from
-the default Maven build because they need the jFuzzyLogic jar in `libs/` at the
-repository root. Their READMEs explain how to run them from an IDE.
+`Example5` and `Example8` use the jFuzzyLogic jar that is committed at `libs/` in
+the repository root. The `exec` plugin of the pom runs with the compile classpath,
+so the two examples start with the same command as all the others.
 
 Start with [Example 1](Example1/README.md) for the structure of a simulation,
 [Example 3](Example3/README.md) for edge coordination, and

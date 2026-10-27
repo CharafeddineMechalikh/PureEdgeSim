@@ -365,13 +365,20 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
-					<excludes>
-						<exclude>**/Example8/Example8.java</exclude>
-						<exclude>**/Example8/Example8FuzzyLogicOrchestrator.java</exclude>
-						<exclude>**/Example5/Example5.java</exclude>
-					</excludes>
 					<source>1.8</source>
 					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<!-- Runs the examples with `mvn exec:java`. The compile classpath
+			scope is		 required so that the fuzzy logic examples see the
+			system scoped jar in libs/. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<classpathScope>compile</classpathScope>
 				</configuration>
 			</plugin>
 

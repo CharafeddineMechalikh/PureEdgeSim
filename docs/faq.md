@@ -19,7 +19,7 @@ Run from the repository root with Maven, which compiles the sources first:
 mvn compile exec:java -Dexec.mainClass="examples.Example1"
 ```
 
-The Java package is `examples`, even though each scenario has its own folder under `PureEdgeSim/examples/ExampleX/`. The Maven build adds every example folder as a source root, so the files keep the flat package. Three optional examples (`Example5`, `Example8`, `Example8FuzzyLogicOrchestrator`) are excluded from the default build because they need jFuzzyLogic. Run those from an IDE after adding the bundled library.
+The Java package is `examples`, even though each scenario has its own folder under `PureEdgeSim/examples/ExampleX/`. The Maven build adds every example folder as a source root, so the files keep the flat package. `Example5` and `Example8` need the jFuzzyLogic jar committed at `libs/jFuzzyLogic_v3.0.jar`; it is declared as a system-scoped dependency and the `exec` plugin runs with the compile classpath, so `mvn exec:java -Dexec.mainClass="examples.Example8"` works without extra setup.
 
 ### The JVM does not exit when the simulation finishes.
 

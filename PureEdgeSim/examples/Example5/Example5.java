@@ -30,10 +30,10 @@ public class Example5 {
 	 * algorithm of Example 8. By removing the setCustomEdgeOrchestrator line,
 	 * PureEdgeSim uses the default orchestrator.
 	 * 
-	 * This example needs the jFuzzyLogic jar from PureEdgeSim/libs/ and is excluded
-	 * from the default Maven build for that reason. Its scenario, in
-	 * examples/Example5/settings/, keeps the default files and adds FUZZY_LOGIC to
-	 * the algorithm list.
+	 * This example needs the jFuzzyLogic jar that is committed under PureEdgeSim/
+	 * libs/, because the custom orchestrator evaluates Fuzzy Control Language files
+	 * with it. Its scenario, in PureEdgeSim/examples/Example5/settings/, keeps the
+	 * default files and adds FUZZY_LOGIC to the algorithm list.
 	 * 
 	 * @author Charafeddine Mechalikh
 	 * @since PureEdgeSim 2.2

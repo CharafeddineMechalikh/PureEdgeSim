@@ -116,6 +116,15 @@
 *   The documentation and the example READMEs now include diagrams of the task
     lifecycle, the service graph tiers, the two partitioning searches, and the
     dynamic replanning comparison.
+*   The fuzzy logic examples run out of the box. `Example8FuzzyLogicOrchestrator`
+    looked for `stage1.fcl` and `stage2.fcl` under the pre-restructure path
+    `examples/Example8/settings/`, so every `FUZZY_LOGIC` row came back with all
+    tasks unexecuted. The two paths now point at
+    `PureEdgeSim/examples/Example8/settings/`, and the `exec` plugin of the pom runs
+    with the compile classpath, which is what makes the system-scoped jFuzzyLogic jar
+    visible to `FIS.load`. The three dead compiler exclusions for those classes are
+    gone, and `docs/faq.md`, `docs/getting-started.md` and the examples index no
+    longer tell the reader to set the jar up in an IDE.
 *   Bumped the project version to 6.0.
 
 ## Version 5.9 Changelog (October 25th 2026)

@@ -40,7 +40,10 @@ import net.sourceforge.jFuzzyLogic.FIS;
  * We also started with stage 2 and then stage 1, as this decreases the
  * algorithm complexity. Hence, shorter simulation time.
  * 
- * To use it you must add JFuzzy_Logic jar file PureEdgeSim/Libs/ folder
+ * The jFuzzyLogic jar it needs is committed under libs/, and the exec plugin of
+ * the pom runs the examples with the compile classpath so that the jar is found.
+ * The two Fuzzy Control Language files it evaluates, stage1.fcl and stage2.fcl,
+ * sit next to the settings files of this example.
  * 
  * @author Charafeddine Mechalikh
  * @since PureEdgeSim 3.0
@@ -63,7 +66,7 @@ public class Example8FuzzyLogicOrchestrator extends DefaultOrchestrator {
 	}
 
 	private int fuzzyLogic(Task task) {
-		String fileName = "examples/Example8/settings/stage1.fcl";
+		String fileName = "PureEdgeSim/examples/Example8/settings/stage1.fcl";
 		FIS fis = FIS.load(fileName, true);
 		// Error while loading?
 		if (fis == null) {
@@ -105,7 +108,7 @@ public class Example8FuzzyLogicOrchestrator extends DefaultOrchestrator {
 	private int stage2(String[] architecture2, Task task) {
 		double min = -1;
 		int selected = -1;
-		String fileName = "examples/Example8/settings/stage2.fcl";
+		String fileName = "PureEdgeSim/examples/Example8/settings/stage2.fcl";
 		FIS fis = FIS.load(fileName, true);
 		// Error while loading?
 		if (fis == null) {

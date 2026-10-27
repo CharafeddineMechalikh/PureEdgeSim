@@ -46,7 +46,7 @@ This compiles the framework, runs the packaging steps, and installs the artifact
 mvn clean compile
 ```
 
-The build excludes `Example5`, `Example8`, and `Example8FuzzyLogicOrchestrator` because they demonstrate optional of the jFuzzyLogic library and are intended to be run from an IDE after you add the bundled jar. The other examples, including `Example1`, are compiled normally.
+Every example compiles, including `Example5`, `Example8`, and `Example8FuzzyLogicOrchestrator`. Those three need the jFuzzyLogic jar that is committed at `libs/jFuzzyLogic_v3.0.jar` and declared as a system-scoped dependency, and the `exec` plugin in the pom runs the examples with the compile classpath so the jar is found. So `mvn exec:java -Dexec.mainClass="examples.Example8"` works from a fresh clone without any IDE setup.
 
 ## Run your first simulation
 
