@@ -250,10 +250,11 @@ Do not mix formatting-only changes with functional changes.
 
 ### Continuous integration
 
-Two workflows run on GitHub:
+Three workflows run on GitHub:
 
-- `test.yml` runs `mvn test` on JDK 11 for every push.
-- `coverage.yml` runs the tests on JDK 17, generates JaCoCo badges, and commits `jacoco.xml` and `.github/badges` back to `master` on pushes.
+- `coverage.yml` is the one that gates the code. It runs `mvn -B test` on JDK 17 under Xvfb, because the visualizer tests open a real Swing frame and abort with `HeadlessException` on a machine with no display. It then generates the JaCoCo badges and commits `jacoco.xml` and `.github/badges` back to `master` on pushes, which is why the README badges are absolute `raw.githubusercontent.com` URLs.
+- `javadoc.yml` builds the API documentation and uploads it as a workflow artifact.
+- `test.yml` is an older JDK 11 job that duplicates the coverage workflow. It is disabled in the Actions UI, so its badge reports no status; leave it alone unless you mean to re-enable it.
 
 Because the coverage workflow pushes to `master`, always rebase before pushing your own work:
 

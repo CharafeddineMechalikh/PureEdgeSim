@@ -125,6 +125,12 @@
     visible to `FIS.load`. The three dead compiler exclusions for those classes are
     gone, and `docs/faq.md`, `docs/getting-started.md` and the examples index no
     longer tell the reader to set the jar up in an IDE.
+*   The coverage workflow runs the test suite under a virtual display. The
+    visualizer tests open a real Swing frame, so on a CI machine with no display
+    they aborted with `HeadlessException`, the job went red, and the JaCoCo badges
+    stopped being regenerated. The README now shows the workflow status as a build
+    badge in place of the Travis badge, which pointed at a service the project no
+    longer uses.
 *   Bumped the project version to 6.0.
 
 ## Version 5.9 Changelog (October 25th 2026)
