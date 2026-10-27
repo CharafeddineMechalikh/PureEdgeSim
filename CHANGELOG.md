@@ -144,9 +144,24 @@
     into a profile activated by the presence of its jar, so the pom that
     Central serves declares no `systemPath` that a consumer cannot resolve.
     The `description` that Central shows as the project summary lost its
-    typo ("A simualtor for edge computing environments").
-    The upload itself needs a Portal user token, which only the account owner
-    can generate; the bundle is built and signed, not yet published.
+    typo ("A simualtor for edge computing environments"). With the tests
+    skipped the bundle builds and signs in under three minutes and waits only
+    on the Portal user token, which only the account owner can generate;
+    measured against the upload endpoint with no token it answers HTTP 401 and
+    `Invalid token`.
+*   The Maven group id moved from `com.mechalikh` to
+    `io.github.charafeddinemechalikh`. Central validates a bundle against the
+    namespaces the uploading account has verified, and a domain namespace is
+    verified by publishing a DNS TXT record on that domain. `mechalikh.com` has
+    expired, measured as NXDOMAIN for its A, TXT and NS records, so a
+    `com.mechalikh` bundle that passed the pom, signature, sources and Javadoc
+    checks was still rejected with `Namespace 'com.mechalikh' is not allowed`.
+    The GitHub namespace `io.github.<username>` is verified automatically for a
+    Portal account created with a GitHub login and needs no domain. Only the
+    pom group id is compared with the namespaces, so the Java packages stay
+    `com.mechalikh.pureedgesim` and no import changes; the dependency
+    coordinates move, and releases up to 5.1.0 remain available under
+    `com.mechalikh`.
 *   The GitHub release `6.0` publishes the three jars (library, sources,
     Javadoc) as release assets for anyone who needs a jar without Maven.
 

@@ -203,13 +203,13 @@ mvn compile exec:java -Dexec.mainClass="examples.MyFirstOrchestrator"
 
 ## Use PureEdgeSim as a library
 
-You do not have to clone the repository. The simulator is published on Maven Central as `com.mechalikh:pureedgesim`. Add it to your project, create a `Simulation`, and call `launchSimulation()`:
+You do not have to clone the repository. The simulator is on Maven Central, and from release `6.0` the coordinates are `io.github.charafeddinemechalikh:pureedgesim`; releases up to `5.1.0` are under the older group id `com.mechalikh`. Add it to your project, create a `Simulation`, and call `launchSimulation()`:
 
 ```xml
 <dependency>
-  <groupId>com.mechalikh</groupId>
+  <groupId>io.github.charafeddinemechalikh</groupId>
   <artifactId>pureedgesim</artifactId>
-  <version>5.1.0</version>
+  <version>6.0</version>
 </dependency>
 ```
 

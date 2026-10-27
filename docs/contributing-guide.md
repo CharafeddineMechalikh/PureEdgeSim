@@ -185,11 +185,13 @@ GitHub Pages builds the website from the root of the `master` branch with Jekyll
 
 Releases go to the Central Publisher Portal at `central.sonatype.com`. It replaced the OSSRH staging repository at `s01.oss.sonatype.org`, which was retired on 2025-06-30, so the pom no longer carries a `distributionManagement` block and no longer needs one.
 
+The pom publishes under the group id `io.github.charafeddinemechalikh`, because Central validates that every coordinate in a bundle starts with a namespace the uploading account has verified. The older group id `com.mechalikh` was granted in 2021 against the domain `mechalikh.com`. A domain namespace is claimed by publishing a DNS TXT record on that domain, so once the domain expires it cannot be re-verified: uploading a `com.mechalikh` bundle to the Portal on 2026-10-28 passed the pom, signature, sources and Javadoc checks and was rejected with `Namespace 'com.mechalikh' is not allowed`. The GitHub namespace `io.github.<username>` needs no domain, since it is verified automatically for a Portal account created with a GitHub login. Only the pom group id is compared against the namespaces, not the contents of the jars, so the Java packages stay `com.mechalikh.pureedgesim` and existing imports keep working; releases up to 5.1.0 remain downloadable under `com.mechalikh`.
+
 Three things must exist before the upload can succeed:
 
 1. A GPG private key whose public part is reachable on a key server (`gpg --send-keys <fingerprint>`). The Portal verifies every signature against that public key.
 2. The fingerprint in `gpg.keyname`, and the key passphrase available to Maven. Passing it through the environment is what worked here; the settings.xml lookup by `passphraseServerId` left the plugin to call `gpg` with `--pinentry-mode error`, which fails with `No pinentry`.
-3. A Portal user token, generated once in the web interface (Account, Token Generator) for the account that owns the `com.mechalikh` namespace, stored in `~/.m2/settings.xml` under a server with the id `central`.
+3. A Portal user token, generated once in the web interface (Account, Token Generator) for the account that owns the `io.github.charafeddinemechalikh` namespace, stored in `~/.m2/settings.xml` under a server with the id `central`.
 
 With those in place:
 
@@ -199,6 +201,8 @@ mvn -B -Prelease clean deploy -DskipTests -Dgpg.keyname=<fingerprint>
 ```
 
 The `release` profile runs at the `verify` phase, so `clean deploy` reaches it; `package` alone builds the jars but never signs them, which is easy to mistake for a signed bundle. It attaches the sources and Javadoc jars, signs four artifacts (jar, sources, javadoc, pom), then `central-publishing-maven-plugin` packs them under `target/central-publishing/central-bundle.zip` and uploads it. `<autoPublish>true</autoPublish>` means a bundle that passes validation is released without a click in the Portal.
+
+Without a token the same command still leaves a publishable bundle, because the upload is the only step that fails; measured with placeholder credentials it answers HTTP 401 and `Invalid token`, the build stops after two and a half minutes with `-DskipTests`, and `target/central-publishing/central-bundle.zip` stays on disk with its 24 entries. That zip can be uploaded from the Publishing area of the Portal while signed in to the account that owns the namespace, which is the only way to publish without generating a token. Upload the zip and not the jar: a lone jar is rejected with `Bundle has content that does NOT have a .pom file`, because the pom, the sources, the Javadoc and the four signatures are expected beside it inside the archive. A manual upload always waits for the Publish button, since `<autoPublish>` belongs to the plugin and not to the web form, and publishing cannot be undone, only superseded by a newer version.
 
 Two pom details exist only because of what the Portal checks, and are worth keeping:
 

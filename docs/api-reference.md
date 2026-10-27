@@ -3,7 +3,7 @@ description: "PureEdgeSim public API: entry points, event engine, configuration,
 ---
 # API reference
 
-This is a curated map of the public API. It explains what each package and type is for, which methods are the intended entry points, and which contracts a custom implementation must respect. The complete signature-level documentation is published as Javadoc at [javadoc.io/doc/com.mechalikh/pureedgesim](https://javadoc.io/doc/com.mechalikh/pureedgesim).
+This is a curated map of the public API. It explains what each package and type is for, which methods are the intended entry points, and which contracts a custom implementation must respect. The complete signature-level documentation is published as Javadoc at [javadoc.io/doc/io.github.charafeddinemechalikh/pureedgesim](https://javadoc.io/doc/io.github.charafeddinemechalikh/pureedgesim).
 
 The reference is organized by task, not alphabetically. If you are looking for a specific class, the package tables point you to the right module.
 

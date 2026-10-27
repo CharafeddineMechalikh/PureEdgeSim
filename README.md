@@ -10,12 +10,12 @@
 
 <p align="center">
   <a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="GPL v3 license"></a>
-  <a href="https://search.maven.org/search?q=g:%22com.mechalikh%22%20AND%20a:%22pureedgesim%22"><img src="https://img.shields.io/maven-central/v/com.mechalikh/pureedgesim.svg?label=Maven%20Central" alt="Maven Central version"></a>
+  <a href="https://search.maven.org/search?q=g:%22io.github.charafeddinemechalikh%22%20AND%20a:%22pureedgesim%22"><img src="https://img.shields.io/maven-central/v/io.github.charafeddinemechalikh/pureedgesim.svg?label=Maven%20Central" alt="Maven Central version"></a>
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src="https://img.shields.io/github/actions/workflow/status/CharafeddineMechalikh/PureEdgeSim/coverage.yml?branch=master&label=build" alt="GitHub Actions build status"></a>
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src="https://raw.githubusercontent.com/CharafeddineMechalikh/PureEdgeSim/master/.github/badges/jacoco.svg" alt="JaCoCo instruction coverage"></a>
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src="https://raw.githubusercontent.com/CharafeddineMechalikh/PureEdgeSim/master/.github/badges/branches.svg" alt="JaCoCo branch coverage"></a>
   <a href="https://www.codacy.com/gh/CharafeddineMechalikh/PureEdgeSim/dashboard"><img src="https://app.codacy.com/project/badge/Grade/7bcee5c75c3741b5923e0158c6e79b37" alt="Codacy code quality"></a>
-  <a href="https://javadoc.io/doc/com.mechalikh/pureedgesim"><img src="https://javadoc.io/badge2/com.mechalikh/pureedgesim/javadoc.svg" alt="Javadoc"></a>
+  <a href="https://javadoc.io/doc/io.github.charafeddinemechalikh/pureedgesim"><img src="https://javadoc.io/badge2/io.github.charafeddinemechalikh/pureedgesim/javadoc.svg" alt="Javadoc"></a>
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim_Python"><img src="https://img.shields.io/badge/Python%20version-available-blue?logo=python" alt="PureEdgeSim for Python"></a>
 </p>
 
@@ -265,15 +265,15 @@ sim.launchSimulation();
 
 ## Use PureEdgeSim as a dependency
 
-PureEdgeSim is available on [Maven Central](https://search.maven.org/search?q=g:%22com.mechalikh%22%20AND%20a:%22pureedgesim%22). Version `5.1.0` is the latest published artifact.
+PureEdgeSim releases are on [Maven Central](https://search.maven.org/search?q=g:%22io.github.charafeddinemechalikh%22%20AND%20a:%22pureedgesim%22). Release `6.0` takes the group id `io.github.charafeddinemechalikh`. Releases up to `5.1.0` sit under the older group id `com.mechalikh` and stay downloadable there: that namespace was granted against `mechalikh.com` in 2021, the domain has since expired, and Central re-verifies a domain namespace only through its DNS records, so new releases move to the GitHub namespace. The Java packages are unchanged, so only the dependency coordinates differ. If a resolver cannot find `6.0`, the last artifact published under the old coordinates is `com.mechalikh:pureedgesim:5.1.0`.
 
 Maven:
 
 ```xml
 <dependency>
-  <groupId>com.mechalikh</groupId>
+  <groupId>io.github.charafeddinemechalikh</groupId>
   <artifactId>pureedgesim</artifactId>
-  <version>5.1.0</version>
+  <version>6.0</version>
 </dependency>
 ```
 
@@ -281,7 +281,7 @@ Gradle:
 
 ```groovy
 dependencies {
-  implementation 'com.mechalikh:pureedgesim:5.1.0'
+  implementation 'io.github.charafeddinemechalikh:pureedgesim:6.0'
 }
 ```
 
@@ -289,9 +289,8 @@ dependencies {
 
 - [Documentation manual](docs/): step-by-step tutorials, architecture, models, output metrics, and a research guide for new users.
 - [Published documentation](https://charafeddinemechalikh.github.io/PureEdgeSim/docs/): the same manual, rendered as a website.
-- [Wiki](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki): installation, configuration files, modules, and tutorials.
 - [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples): runnable scenarios covering cloud, edge, and mist computing, including service-graph partitioning with graph theory (`Example9`), with a genetic algorithm (`Example10`), and with a plan that is repartitioned every 30 seconds while the simulation runs (`Example24`).
-- [Javadoc](https://javadoc.io/doc/com.mechalikh/pureedgesim): API documentation.
+- [Javadoc](https://javadoc.io/doc/io.github.charafeddinemechalikh/pureedgesim): API documentation.
 - [CHANGELOG.md](CHANGELOG.md): release notes.
 
 ## Performance and scalability
@@ -383,7 +382,7 @@ Edge computing and its related paradigms can be classified by their placement in
 <details>
 <summary><strong>Ease of use</strong></summary>
 
-A simulator helps identify which factors have the greatest impact on performance by evaluating different configurations, such as the number of entities, resource types, and network settings. Each module ships with a default implementation (the Default Mobility Model, the Default Computing Node class, and so on), and all modules expose adjustable settings. Users can therefore start from a working simulation and change only what their research requires. The examples, the Wiki, and the Javadoc provide further guidance, and the console reports incorrect input.
+A simulator helps identify which factors have the greatest impact on performance by evaluating different configurations, such as the number of entities, resource types, and network settings. Each module ships with a default implementation (the Default Mobility Model, the Default Computing Node class, and so on), and all modules expose adjustable settings. Users can therefore start from a working simulation and change only what their research requires. The examples, the manual, and the Javadoc provide further guidance, and the console reports incorrect input.
 
 </details>
 
@@ -397,7 +396,7 @@ PureEdgeSim follows software engineering guidelines that favor reusability, accu
 <details>
 <summary><strong>Correctness</strong></summary>
 
-Correctness is verified with an automated test suite. The JaCoCo coverage reports show how much of the codebase the tests exercise; more than 99% of instructions and 97% of branches are covered. The tests focus on the technical feasibility and logical consistency of simulation scenarios, not on validating simulation outcomes. Validation of the models was performed through a case study, as described in the original PureEdgeSim publication.
+Correctness is verified with an automated test suite. The JaCoCo coverage reports show how much of the codebase the tests exercise; more than 98% of instructions and 96% of branches are covered, measured on the full suite of 1103 tests. The tests focus on the technical feasibility and logical consistency of simulation scenarios, not on validating simulation outcomes. Validation of the models was performed through a case study, as described in the original PureEdgeSim publication.
 
 </details>
 

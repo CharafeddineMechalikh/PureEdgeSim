@@ -56,7 +56,7 @@ PureEdgeSim is a **discrete-event simulator**. You describe a scenario in five c
 
 - [Project README](../): installation, features, publications, citation.
 - [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples): runnable scenarios with increasing complexity.
-- [Javadoc](https://javadoc.io/doc/com.mechalikh/pureedgesim): method-level API documentation.
+- [Javadoc](https://javadoc.io/doc/io.github.charafeddinemechalikh/pureedgesim): method-level API documentation.
 - [CHANGELOG](../CHANGELOG.md): release notes and behavioral changes.
 - [Issue tracker](https://github.com/CharafeddineMechalikh/PureEdgeSim/issues): questions and bug reports.
 
