@@ -7,7 +7,7 @@
 	<version>6.0</version>
 	<name>PureEdgeSim</name>
 	<url>https://github.com/CharafeddineMechalikh/PureEdgeSim</url>
-	<description>A simualtor for edge computing environments</description>
+	<description>A simulator for edge computing environments</description>
 
 	<organization>
 		<name>LIPAH laboratory, Faculty of Science of Tunis</name>
@@ -105,7 +105,13 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
-							<excludePackageNames>examples</excludePackageNames>
+							<!-- Naming the package tree, instead of excluding
+							"examples", is what keeps the examples out: javadoc
+							applies -excludepackagenames only to packages it
+							discovers by walking a source path, while every
+							example folder is a compile source root whose files
+							are handed over explicitly. -->
+							<subpackages>com.mechalikh.pureedgesim</subpackages>
 						</configuration>
 						<executions>
 							<execution>
@@ -153,31 +159,12 @@
 		</profile>
 
 		<profile>
-			<!-- A profile used to execute all goals required to deploy the
-			project 
-				to the Maven Central. To execute use: mvn clean deploy -P sonatype To check 
-				the deployed artifact and probably release it to maven central you should 
-				visit https://oss.sonatype.org. MAKE SURE YOU ARE LOGGED IN TO SEE YOUR
-			DEPLOYMENTS. -->
-			<id>sonatype</id>
-
-			<!-- URLs to deploy the project at the Maven Central
-			(http://mvnrepository.com) 
-				using a Sonatype account (http://central.sonatype.org) See the "all" profile 
-				in this pom for deployment information. -->
-			<!-- repository for uploading -->
-			<distributionManagement>
-				<snapshotRepository>
-					<id>ossrh</id>
-					<url>
-						https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-				</snapshotRepository>
-				<repository>
-					<id>ossrh</id>
-					<url>
-						https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-				</repository>
-			</distributionManagement>
+			<!-- Builds the release bundle and publishes it to the Maven Central
+			Publisher
+				Portal. Needs a GPG key whose public part is on a key server, its id in
+				the gpg.keyname property, and a Portal user token in settings.xml under
+				a server with the id "central". Run with: mvn -Prelease clean deploy -->
+			<id>release</id>
 
 			<build>
 				<plugins>
@@ -211,7 +198,13 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
-							<excludePackageNames>examples</excludePackageNames>
+							<!-- Naming the package tree, instead of excluding
+							"examples", is what keeps the examples out: javadoc
+							applies -excludepackagenames only to packages it
+							discovers by walking a source path, while every
+							example folder is a compile source root whose files
+							are handed over explicitly. -->
+							<subpackages>com.mechalikh.pureedgesim</subpackages>
 						</configuration>
 						<executions>
 							<execution>
@@ -223,13 +216,13 @@
 						</executions>
 					</plugin>
 
-					<!-- Signs the generated jar using GPG, as required for
-					deploying at 
-						the Maven Central. Configurations are defined into the local repo settings.xml -->
+					<!-- Signs every artifact with GPG, which the Portal requires.
+					The
+						public key must be reachable on a key server beforehand. -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
+						<version>3.2.8</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -238,14 +231,56 @@
 									<goal>sign</goal>
 								</goals>
 								<configuration>
-									<keyname>${key.id}</keyname>
-									<passphraseServerId>${key.id}</passphraseServerId>
+									<keyname>${gpg.keyname}</keyname>
+									<passphraseServerId>${gpg.keyname}</passphraseServerId>
+									<gpgArguments>
+										<arg>--pinentry-mode</arg>
+										<arg>loopback</arg>
+									</gpgArguments>
 								</configuration>
 							</execution>
 						</executions>
 					</plugin>
+
+					<!-- Uploads the bundle to the Central Portal, which replaced the
+					OSSRH
+						staging repository retired on 2025-06-30. -->
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>0.12.0</version>
+						<extensions>true</extensions>
+						<configuration>
+							<publishingServerId>central</publishingServerId>
+							<autoPublish>true</autoPublish>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
+		</profile>
+
+		<profile>
+			<!-- jFuzzyLogic is on no public repository, so the jar lives in
+			libs/.
+				Declaring it here, activated only while that jar exists, keeps the
+				pom that reaches Maven Central free of a systemPath that points
+				inside this repository: such a path resolves on no consumer
+				machine. Only Example5 and Example8 compile against it. -->
+			<id>local-fuzzylogic</id>
+			<activation>
+				<file>
+					<exists>libs/jFuzzyLogic_v3.0.jar</exists>
+				</file>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>net.sourceforge.jFuzzyLogic</groupId>
+					<artifactId>jFuzzyLogic</artifactId>
+					<version>3.0</version>
+					<scope>system</scope>
+					<systemPath>${project.basedir}/libs/jFuzzyLogic_v3.0.jar</systemPath>
+				</dependency>
+			</dependencies>
 		</profile>
 	</profiles>
 
@@ -489,13 +524,6 @@
 			<artifactId>mockito-core</artifactId>
 			<version>4.0.0</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.sourceforge.jFuzzyLogic</groupId>
-			<artifactId>jFuzzyLogic</artifactId>
-			<version>3.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/jFuzzyLogic_v3.0.jar</systemPath>
 		</dependency>
 	</dependencies>
 </project>

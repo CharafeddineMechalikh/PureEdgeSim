@@ -495,7 +495,8 @@ public class SimulationParameters {
 	 * destination (the node that actually executes the task).
 	 * 
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.ComputingNode#getOrchestrator()
-	 * @see examples.Example7
+	 * @see <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples/Example7">Example
+	 *      7</a>
 	 */
 	public static boolean enableOrchestrators;
 
@@ -504,7 +505,8 @@ public class SimulationParameters {
 	 * centers, edge device, or custom strategy.
 	 * 
 	 * @see com.mechalikh.pureedgesim.datacentersmanager.ComputingNode#getOrchestrator()
-	 * @see examples.Example7
+	 * @see <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples/Example7">Example
+	 *      7</a>
 	 */
 	public static String deployOrchestrators;
 
@@ -527,14 +529,16 @@ public class SimulationParameters {
 	 * If enable, a container will be pulled from the registry before executing the
 	 * task.
 	 * 
-	 * @see examples.Example7
+	 * @see <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples/Example7">Example
+	 *      7</a>
 	 */
 	public static boolean enableRegistry;
 
 	/**
 	 * Sets a custom strategy for downloading containers.
 	 * 
-	 * @see examples.Example7
+	 * @see <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples/Example7">Example
+	 *      7</a>
 	 */
 	public static String registryMode;
 

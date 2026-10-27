@@ -175,19 +175,35 @@ Build the Javadoc locally:
 mvn javadoc:javadoc
 ```
 
-Output goes to `target/site/apidocs/index.html`. The build is configured with `failOnError=false`, which means a green build does not prove the Javadoc is clean. Read the warnings. The codebase currently builds with no documentation warnings, so treat a new one as a regression. The `javadoc` workflow runs the same goal on every push and pull request and uploads the generated site as a downloadable artifact; it does not publish to GitHub Pages.
+Output goes to `target/site/apidocs/index.html`. The build is configured with `failOnError=false`, which means a green build does not prove the Javadoc is clean. Read the warnings. The release build reports no errors and one warning, about the JDK 1.8 API link running against a modular JDK; treat any new warning as a regression. The `javadoc` workflow runs the same goal on every push and pull request and uploads the generated site as a downloadable artifact; it does not publish to GitHub Pages.
 
 ### Publishing the documentation website
 
 GitHub Pages builds the website from the root of the `master` branch with Jekyll. `_config.yml` selects the Cayman theme and enables relative links and the sitemap, so `README.md` becomes the home page, `docs/README.md` becomes `/docs/`, and links between markdown files are rewritten to their `.html` pages. Add a guide as a plain markdown file in `docs/`, give it a `description:` front matter line, link it from `docs/README.md`, push, and it is published. The description is used for the page meta description and social card; GitHub shows it as a one-row table at the top of the file, so keep it to that single key. `docs/README.md` additionally carries `permalink: /docs/` because Jekyll's README index only applies to files without front matter; keep it so the manual stays at `/docs/`. `_config.yml` also sets `kramdown.parse_block_html: true`, so fenced blocks nested inside `<details>` sections stay rendered and highlighted; keep that line if you change the Kramdown options. The two JaCoCo badge SVGs live in `.github/badges/`, a dot directory the Pages build refuses to publish even when `_config.yml` lists it under `include:` (measured on 2026-10-27: `/PureEdgeSim/.github/badges/jacoco.svg` still answered 404 with that line in place), so the README points at absolute `raw.githubusercontent.com` URLs instead. Those render on GitHub and on the site, and always show the badge of the current `master`; keep them absolute. The `_includes/head-custom.html` partial renders fenced mermaid blocks and builds the documentation sidebar, which opens on every page under `/docs/` and on the project home page; when you add a guide, add its slug and label to the `pages` array in that file. Avoid Jekyll's filename denylist for pages (`README`, `LICENSE`, `CONTRIBUTING`, `CODE_OF_CONDUCT`, `ISSUE_TEMPLATE`, `PULL_REQUEST_TEMPLATE`): those files are copied but not rendered.
 
-Generate the Javadoc and source JARs that are attached during deployment:
+### Publishing a release to Maven Central
+
+Releases go to the Central Publisher Portal at `central.sonatype.com`. It replaced the OSSRH staging repository at `s01.oss.sonatype.org`, which was retired on 2025-06-30, so the pom no longer carries a `distributionManagement` block and no longer needs one.
+
+Three things must exist before the upload can succeed:
+
+1. A GPG private key whose public part is reachable on a key server (`gpg --send-keys <fingerprint>`). The Portal verifies every signature against that public key.
+2. The fingerprint in `gpg.keyname`, and the key passphrase available to Maven. Passing it through the environment is what worked here; the settings.xml lookup by `passphraseServerId` left the plugin to call `gpg` with `--pinentry-mode error`, which fails with `No pinentry`.
+3. A Portal user token, generated once in the web interface (Account, Token Generator) for the account that owns the `com.mechalikh` namespace, stored in `~/.m2/settings.xml` under a server with the id `central`.
+
+With those in place:
 
 ```bash
-mvn -P default package
+export MAVEN_GPG_PASSPHRASE="$(cat ~/.gnupg/release_pw.txt)"
+mvn -B -Prelease clean deploy -DskipTests -Dgpg.keyname=<fingerprint>
 ```
 
-The `examples` package is excluded from published Javadoc.
+The `release` profile runs at the `verify` phase, so `clean deploy` reaches it; `package` alone builds the jars but never signs them, which is easy to mistake for a signed bundle. It attaches the sources and Javadoc jars, signs four artifacts (jar, sources, javadoc, pom), then `central-publishing-maven-plugin` packs them under `target/central-publishing/central-bundle.zip` and uploads it. `<autoPublish>true</autoPublish>` means a bundle that passes validation is released without a click in the Portal.
+
+Two pom details exist only because of what the Portal checks, and are worth keeping:
+
+- The Javadoc uses `<subpackages>com.mechalikh.pureedgesim</subpackages>` rather than `<excludePackageNames>examples</excludePackageNames>`. Javadoc applies the exclusion only to packages it finds by walking a source path, and since every example folder is added as a compile source root its files are handed over explicitly, so the exclusion silently did nothing. Measured: the subpackages form gives 349 entries and zero `examples/` pages, the exclude form gave 470 entries with 121 of them under `examples/`. Because the examples are now absent, four `@see examples.Example7` tags in `SimulationParameters` became broken references and were replaced by links to the example folder on GitHub.
+- `jFuzzyLogic` is declared inside the `local-fuzzylogic` profile, activated by the presence of `libs/jFuzzyLogic_v3.0.jar`, and not in the top-level dependencies. The jar is on no public repository, and a `systemPath` pointing inside this repository resolves on no consumer machine, so the pom that Central serves must not mention it. Example5 and Example8 still compile, because the profile is active whenever the jar is checked out next to the pom.
 
 ## Documentation
 

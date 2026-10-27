@@ -67,6 +67,7 @@ Mechalikh, C., Silem, A. E. H., Safavifar, Z., & Golpayegani, F. (2025). Quality
 
 - [Citation](#citation)
 - [What is PureEdgeSim?](#what-is-pureedgesim)
+- [How it compares](#how-it-compares)
 - [Key features](#key-features)
 - [Quick start](#quick-start)
 - [Use PureEdgeSim as a dependency](#use-pureedgesim-as-a-dependency)

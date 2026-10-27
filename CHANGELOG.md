@@ -131,6 +131,25 @@
     stopped being regenerated. The README now shows the workflow status as a build
     badge in place of the Travis badge, which pointed at a service the project no
     longer uses.
+*   The pom can build and sign a release bundle for the Central Publisher
+    Portal. The retired OSSRH `sonatype` profile is replaced by a `release`
+    profile that attaches the sources and Javadoc jars, signs four artifacts
+    with `maven-gpg-plugin` 3.2.8, and uploads the bundle with
+    `central-publishing-maven-plugin` 0.12.0, which auto-publishes it once
+    validation passes. Three defects in the bundle were fixed on the way: the
+    sources jar packed the simulation `output/` and `settings/` folders of all
+    24 examples (202 MB, now 324 KB), the published Javadoc still carried 121
+    example pages because `excludePackageNames` does not apply to explicitly
+    listed sources, and six Javadoc errors were repaired. `jFuzzyLogic` moved
+    into a profile activated by the presence of its jar, so the pom that
+    Central serves declares no `systemPath` that a consumer cannot resolve.
+    The `description` that Central shows as the project summary lost its
+    typo ("A simualtor for edge computing environments").
+    The upload itself needs a Portal user token, which only the account owner
+    can generate; the bundle is built and signed, not yet published.
+*   The GitHub release `6.0` publishes the three jars (library, sources,
+    Javadoc) as release assets for anyone who needs a jar without Maven.
+
 *   Bumped the project version to 6.0.
 
 ## Version 5.9 Changelog (October 25th 2026)
