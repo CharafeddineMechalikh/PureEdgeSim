@@ -4,5 +4,11 @@ description: An open-source discrete-event simulator for cloud, edge, fog, and m
 plugins:
   - jekyll-relative-links
   - jekyll-sitemap
+# Jekyll skips dot directories, so the JaCoCo badge SVGs the coverage workflow
+# commits into .github/badges would 404 on the Pages site and break the images
+# at the top of the README. Publishing the folder keeps the README paths working
+# on GitHub and on the site.
+include:
+  - .github
 kramdown:
   parse_block_html: true

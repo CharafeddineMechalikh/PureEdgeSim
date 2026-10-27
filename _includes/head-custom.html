@@ -21,7 +21,8 @@
 <!-- Documentation navigation: a fixed panel with every manual page and the
      sections of the current page. It is built on the client from the rendered
      headings, so a new section appears in the panel without touching this file.
-     Only pages under /docs/ get the panel; the project home page is unchanged. -->
+     The panel appears on every page under /docs/ and on the project home page;
+     other pages keep the plain single-column layout. -->
 <style>
   .docs-sidebar,
   .docs-sidebar-open,
@@ -213,8 +214,13 @@
     "use strict";
 
     function init() {
-      var path = window.location.pathname;
-      if (!/\/docs(\/|$)/.test(path)) {
+      var path = window.location.pathname.replace(/index\.html$/, "");
+      var docsAt = path.indexOf("/docs/");
+      var onDocs = docsAt >= 0;
+      // The panel opens on every manual page and on the project home page, so the
+      // manual is reachable from the page a visitor lands on. Any other page (an
+      // example README, for instance) keeps its plain single-column layout.
+      if (!onDocs && path.charAt(path.length - 1) !== "/") {
         return;
       }
 
@@ -239,11 +245,11 @@
         ["api-reference", "API reference"]
       ];
 
-      var file = path.charAt(path.length - 1) === "/" ? "" : path.split("/").pop().replace(/\.html$/, "");
-      if (file === "index") {
-        file = "";
-      }
-      var basePath = path.substring(0, path.lastIndexOf("/") + 1);
+      var file = onDocs ? path.substring(docsAt + 6).replace(/\.html$/, "") : "__home__";
+      // Links are rebuilt from the site root, because on the home page the current
+      // directory is the root while the manual lives one level below it.
+      var siteRoot = onDocs ? path.substring(0, docsAt + 1) : path;
+      var basePath = siteRoot + "docs/";
 
       var nav = document.createElement("nav");
       nav.id = "docs-sidebar";
@@ -253,8 +259,8 @@
       var brand = document.createElement("div");
       brand.className = "docs-sidebar-brand";
       var brandLink = document.createElement("a");
-      brandLink.href = basePath;
-      brandLink.textContent = "PureEdgeSim docs";
+      brandLink.href = siteRoot;
+      brandLink.textContent = "PureEdgeSim";
       var closeButton = document.createElement("button");
       closeButton.type = "button";
       closeButton.className = "docs-sidebar-close";
