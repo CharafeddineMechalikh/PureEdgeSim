@@ -492,7 +492,7 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 	 * &lt;mips distribution="normal" mean="2000" std="300" min="500"/&gt;
 	 * &lt;ram distribution="uniform" min="2048" max="8192"/&gt;
 	 * &lt;storage&gt;1000000&lt;/storage&gt;
-	 * &lt;/pre&gt;
+	 * </pre>
 	 * 
 	 * Use this to model a heterogeneous fleet instead of identical machines. The
 	 * sampled value is always clamped to the given range, so a distribution with
@@ -528,7 +528,7 @@ public class DefaultComputingNodesGenerator extends ComputingNodesGenerator {
 	 *     &lt;x_pos distribution="normal" mean="150" std="30" min="0" max="300"/&gt;
 	 *     &lt;y_pos distribution="normal" mean="150" std="30" min="0" max="300"/&gt;
 	 * &lt;/location&gt;
-	 * &lt;/pre&gt;
+	 * </pre>
 	 *
 	 * @param deviceElement the element describing the device type
 	 * @param random        the random source used for the uniform placement

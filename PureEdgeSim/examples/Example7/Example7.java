@@ -34,7 +34,7 @@ public class Example7 {
 	 * presented in the following paper: Mechalikh, C., Taktak, H., Moussa, F.:
 	 * Towards a Scalable and QoS-Aware Load Balancing Platform for Edge Computing
 	 * Environments. The 2019 International Conference on High Performance Computing
-	 * & Simulation (2019) 684-691
+	 * &amp; Simulation (2019) 684-691
 	 *
 	 * Before running this example you need to
 	 * 

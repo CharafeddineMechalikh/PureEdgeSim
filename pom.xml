@@ -82,6 +82,15 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
 						<version>3.2.1</version>
+						<configuration>
+							<!-- Each example folder is a compile source root, so
+							without these excludes the source jar packs the
+							simulation output and settings of every example. -->
+							<excludes>
+								<exclude>output/**</exclude>
+								<exclude>settings/**</exclude>
+							</excludes>
+						</configuration>
 						<executions>
 							<execution>
 								<id>attach-sources</id>
@@ -181,6 +190,12 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
 						<version>3.2.1</version>
+						<configuration>
+							<excludes>
+								<exclude>output/**</exclude>
+								<exclude>settings/**</exclude>
+							</excludes>
+						</configuration>
 						<executions>
 							<execution>
 								<id>attach-sources</id>
