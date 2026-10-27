@@ -28,7 +28,7 @@ public class Example3 {
 	 * centers/servers work cooperatively.
 	 * 
 	 * To do this, first, we defined the Edge data centers characteristics in the
-	 * edge_datacenters.xml file (in examples/Example3/settings/)
+	 * edge_datacenters.xml file (in PureEdgeSim/examples/Example3/settings/)
 	 * 
 	 * Then, in the simulation_parameters.properties file, we used the
 	 * Edge_and_Cloud architecture, which means the tasks will be offloaded to the
