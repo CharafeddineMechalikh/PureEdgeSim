@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="GPL v3 license"></a>
   <a href="https://search.maven.org/search?q=g:%22com.mechalikh%22%20AND%20a:%22pureedgesim%22"><img src="https://img.shields.io/maven-central/v/com.mechalikh/pureedgesim.svg?label=Maven%20Central" alt="Maven Central version"></a>
-  <a href="https://app.travis-ci.com/CharafeddineMechalikh/PureEdgeSim"><img src="https://app.travis-ci.com/CharafeddineMechalikh/PureEdgeSim.svg?token=qNkfvhf2yHSENsapmmtY&branch=master" alt="Travis CI build status"></a>
+  <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src="https://img.shields.io/github/actions/workflow/status/CharafeddineMechalikh/PureEdgeSim/coverage.yml?branch=master&label=build" alt="GitHub Actions build status"></a>
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src="https://raw.githubusercontent.com/CharafeddineMechalikh/PureEdgeSim/master/.github/badges/jacoco.svg" alt="JaCoCo instruction coverage"></a>
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src="https://raw.githubusercontent.com/CharafeddineMechalikh/PureEdgeSim/master/.github/badges/branches.svg" alt="JaCoCo branch coverage"></a>
   <a href="https://www.codacy.com/gh/CharafeddineMechalikh/PureEdgeSim/dashboard"><img src="https://app.codacy.com/project/badge/Grade/7bcee5c75c3741b5923e0158c6e79b37" alt="Codacy code quality"></a>
@@ -376,7 +376,7 @@ Correctness is verified with an automated test suite. The JaCoCo coverage report
 <details>
 <summary><strong>Reliability</strong></summary>
 
-PureEdgeSim handles runtime errors with extensive exception handling. Errors do not stop the execution unless they concern critical parameters without which the simulation cannot continue. The models themselves are read-only, and only the output and configuration files can be modified. Continuous integration (GitHub Actions, Travis, and AppVeyor) builds and tests the project on Linux and Windows, and reports failures promptly.
+PureEdgeSim handles runtime errors with extensive exception handling. Errors do not stop the execution unless they concern critical parameters without which the simulation cannot continue. The models themselves are read-only, and only the output and configuration files can be modified. Continuous integration (GitHub Actions) builds and tests the project on Linux and reports failures promptly.
 
 </details>
 
