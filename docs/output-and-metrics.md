@@ -47,7 +47,28 @@ execution: tasks not sent because the device died, tasks lost to a failed
 dependency, tasks skipped because their optional input failed, and tasks sent.
 The `Requests` block at the end of the same section reports the number of
 requests generated, the percentage that completed successfully, the number that
-failed, and the average end-to-end makespan of the successful requests. For a
+failed, and the average end-to-end makespan of the successful requests. A request
+is one invocation of an application, so it has one to seven tasks. Its bookkeeping
+follows the lifecycle below; the `Requests` block and columns 54 to 56 report the
+outcome of that bookkeeping.
+
+```mermaid
+sequenceDiagram
+    participant D as Source device
+    participant O as Orchestrator
+    participant T as Subtask
+    participant L as SimLog
+    D->>O: request arrives, tasks registered<br/>remaining = request task count
+    O->>T: root subtasks released, children wait
+    T-->>O: results returned
+    O->>T: child released, parent output added to its request size
+    Note over O,T: required failure fails the subtree,<br/>optional failure skips it
+    T-->>L: terminal state, remaining--
+    Note over L: at remaining == 0 the request is complete
+    L->>L: failed if a required task failed,<br/>otherwise success and makespan += now - arrival
+```
+
+For a
 service graph, the request block is the one to quote when the claim is about the
 whole service rather than about individual subtasks.
 

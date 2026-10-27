@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## Version 6.0 Changelog (October 27th 2026)
 
 *   An application can now declare a service graph: a request generates several
     subtasks linked by dependencies, declared as `<subtask>` elements in
@@ -22,9 +22,9 @@
 *   The report now measures requests, not only tasks: the number generated, the
     percentage that completed successfully, the number that failed, and the
     average end-to-end makespan of the successful ones. The text report has a
-    `Requests` block, the CSV has three new columns, and the "Tasks skipped"
-    counter is the first of the four columns appended at the end of the row, so
-    the positions of the existing columns do not change.
+    `Requests` block and the CSV has four new columns appended at the end of the
+    row (skipped tasks, requests generated, successful requests, average request
+    makespan), so the positions of the existing columns do not change.
 *   New `Example24` recomputes the tier of every subtask of a service graph every
     30 seconds and replans immediately when a planned tier loses all of its
     nodes. Against the same scenario with a frozen plan, it moves 114 subtasks
@@ -110,6 +110,10 @@
     `examples/README.md` indexes them. `Example5` no longer reads the default `settings/`
     folder but its own copy, which uses `FUZZY_LOGIC` and `ROUND_ROBIN`, so it runs with
     the `Example8FuzzyLogicOrchestrator` it installs.
+*   The documentation and the example READMEs now include diagrams of the task
+    lifecycle, the service graph tiers, the two partitioning searches, and the
+    dynamic replanning comparison.
+*   Bumped the project version to 6.0.
 
 ## Version 5.9 Changelog (October 25th 2026)
 

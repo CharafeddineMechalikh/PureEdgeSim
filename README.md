@@ -435,6 +435,7 @@ If your paper uses PureEdgeSim, feel free to open a pull request and add it to t
 
 The full release notes are maintained in [CHANGELOG.md](CHANGELOG.md).
 
+- **6.0**: service graphs gain realistic payloads, one end-to-end deadline per request, optional subtasks with `SKIPPED`, and request-level metrics; all twenty-four examples have a README, and `Example24` replans a service graph every 30 seconds.
 - **5.9**: nodes keep separate uplink and downlink (issue #47), the wireless energy model charges each direction correctly, the CSV network usage column includes MAN and WAN, tasks of dead devices are counted as not generated, device types are allocated without truncation, `settings/` and `output/` moved to the repository root, every run writes `run.properties` with a snapshot of its settings, node-generation errors stop the run with the file and element, and failing tests fail the build.
 - **5.8**: the quick start example `Example1` is compiled by the default build, and XChart is updated to 3.8.8, clearing four medium advisories.
 - **5.7**: probability distributions for every scenario parameter, sixteen distribution types, nine mobility models selectable per device type, placement hotspots, and a `random_seed` parameter for reproducible runs.

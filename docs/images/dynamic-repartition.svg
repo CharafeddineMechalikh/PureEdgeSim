@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560" role="img" aria-labelledby="title desc">
+  <title id="title">Dynamic replanning of a service graph compared with a frozen plan</title>
+  <desc id="desc">The dynamic orchestrator recomputes the tier of every subtask every 30 seconds, moves 114 subtasks during the run, and lifts the request success rate from 41.7 to 80.1 percent while lowering the average request makespan from 6.60 to 5.85 seconds.</desc>
+  <style>
+    .label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 14px; fill: #1f2328; }
+    .title { font-size: 17px; font-weight: 600; }
+    .small { font-size: 12px; fill: #57606a; }
+    .axis { stroke: #d0d7de; stroke-width: 1.5; }
+    .tick { stroke: #8c959f; stroke-width: 1.5; }
+    .dynamic { fill: #159957; }
+    .frozen { fill: #c96a1b; }
+    .grid { stroke: #eaeef2; stroke-width: 1; }
+  </style>
+
+  <text x="40" y="40" class="label title">Plan refreshed every 30 seconds, 10 minute run</text>
+  <text x="40" y="64" class="label small">Each tick is one replan. Between two ticks the plan is a tier, and the node inside the tier is picked per task.</text>
+
+  <line x1="60" y1="150" x2="1040" y2="150" class="axis"/>
+  <g class="tick">
+    <line x1="60" y1="142" x2="60" y2="158"/><line x1="109" y1="142" x2="109" y2="158"/>
+    <line x1="158" y1="142" x2="158" y2="158"/><line x1="207" y1="142" x2="207" y2="158"/>
+    <line x1="256" y1="142" x2="256" y2="158"/><line x1="305" y1="142" x2="305" y2="158"/>
+    <line x1="354" y1="142" x2="354" y2="158"/><line x1="403" y1="142" x2="403" y2="158"/>
+    <line x1="452" y1="142" x2="452" y2="158"/><line x1="501" y1="142" x2="501" y2="158"/>
+    <line x1="550" y1="142" x2="550" y2="158"/><line x1="599" y1="142" x2="599" y2="158"/>
+    <line x1="648" y1="142" x2="648" y2="158"/><line x1="697" y1="142" x2="697" y2="158"/>
+    <line x1="746" y1="142" x2="746" y2="158"/><line x1="795" y1="142" x2="795" y2="158"/>
+    <line x1="844" y1="142" x2="844" y2="158"/><line x1="893" y1="142" x2="893" y2="158"/>
+    <line x1="942" y1="142" x2="942" y2="158"/><line x1="991" y1="142" x2="991" y2="158"/>
+    <line x1="1040" y1="142" x2="1040" y2="158"/>
+  </g>
+  <text x="60" y="180" class="label small">0 s</text>
+  <text x="340" y="180" class="label small">120 s</text>
+  <text x="620" y="180" class="label small">240 s</text>
+  <text x="900" y="180" class="label small">360 s</text>
+  <text x="1010" y="180" class="label small">420 s</text>
+  <text x="880" y="200" class="label small">Migrations: 114 subtasks changed tier, 21 plans computed.</text>
+
+  <text x="40" y="252" class="label title">Request success rate</text>
+  <line x1="60" y1="370" x2="500" y2="370" class="axis"/>
+  <line x1="60" y1="290" x2="500" y2="290" class="grid"/>
+  <rect x="110" y="266" width="120" height="104" class="dynamic"/>
+  <rect x="290" y="317" width="120" height="53" class="frozen"/>
+  <text x="170" y="256" text-anchor="middle" class="label">80.1 %</text>
+  <text x="350" y="307" text-anchor="middle" class="label">41.7 %</text>
+  <text x="170" y="392" text-anchor="middle" class="label small">dynamic</text>
+  <text x="350" y="392" text-anchor="middle" class="label small">frozen plan</text>
+
+  <text x="560" y="252" class="label title">Average request makespan</text>
+  <line x1="580" y1="370" x2="1020" y2="370" class="axis"/>
+  <line x1="580" y1="290" x2="1020" y2="290" class="grid"/>
+  <rect x="630" y="287" width="120" height="83" class="dynamic"/>
+  <rect x="810" y="276" width="120" height="94" class="frozen"/>
+  <text x="690" y="277" text-anchor="middle" class="label">5.85 s</text>
+  <text x="870" y="266" text-anchor="middle" class="label">6.60 s</text>
+  <text x="690" y="392" text-anchor="middle" class="label small">dynamic</text>
+  <text x="870" y="392" text-anchor="middle" class="label small">frozen plan</text>
+
+  <text x="560" y="438" class="label title">Average edge data center CPU usage</text>
+  <line x1="580" y1="520" x2="1020" y2="520" class="axis"/>
+  <rect x="630" y="466" width="120" height="54" class="dynamic"/>
+  <rect x="810" y="440" width="120" height="80" class="frozen"/>
+  <text x="690" y="456" text-anchor="middle" class="label">50.9 %</text>
+  <text x="870" y="430" text-anchor="middle" class="label">75.9 %</text>
+  <text x="690" y="540" text-anchor="middle" class="label small">dynamic</text>
+  <text x="870" y="540" text-anchor="middle" class="label small">frozen plan</text>
+  <text x="40" y="500" class="label small">Same scenario, seed 42, ALL architecture.</text>
+  <text x="40" y="520" class="label small">The frozen plan piles the heavy stages on the edge tier,</text>
+  <text x="40" y="540" class="label small">so queues grow and the 12 s deadline is missed.</text>
+</svg>

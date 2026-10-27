@@ -108,6 +108,13 @@ request at t
         └── alert waits for detect
 ```
 
+A pipeline can also branch and join, and its stages do not share a tier. The
+figure shows the seven-stage graph of [Example24](../examples/Example24/README.md),
+where the light stages stay on mist devices while the heavy ones move to edge
+data centers or the cloud:
+
+![A service graph spread over the mist, edge, and cloud tiers](images/service-graph.svg)
+
 #### Task-graph shapes
 
 PureEdgeSim does not restrict applications to a fixed list of graphs. Any acyclic

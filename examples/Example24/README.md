@@ -7,6 +7,8 @@ of deciding once at the start. The applications file declares one video
 analytics pipeline: seven subtasks, from `capture` to `notify`, one instance of
 each per request.
 
+![The seven subtasks of the video analytics request, spread over the mist, edge, and cloud tiers](../../docs/images/service-graph.svg)
+
 `Example24DynamicRepartitionOrchestrator` assigns a tier to every subtask and
 refreshes that plan every 30 seconds:
 
@@ -23,6 +25,20 @@ refreshes that plan every 30 seconds:
 The plan is a tier, not a node. The node inside the tier is chosen per task
 among the reachable nodes, least loaded first, so a mobile device that moved out
 of range of one node is served by another without invalidating the plan.
+
+```mermaid
+flowchart LR
+    Request["Request arrives"] --> Plan{"Plan age >= 30 s<br/>or a planned tier is empty?"}
+    Plan -->|no| Reuse["Reuse the tier of every subtask"]
+    Plan -->|yes| Score["Score each allowed tier<br/>pending tasks, CPU, capacity, weight"]
+    Score --> Charge["Charge the tier with the stages<br/>already planned on it"]
+    Charge --> Assign["Assign a tier to every subtask<br/>of the graph"]
+    Assign --> Count["Count the subtasks that changed tier"]
+    Count --> Reuse
+    Reuse --> Node["Pick the least loaded reachable<br/>node of the tier, per task"]
+```
+
+![Dynamic replanning against a frozen plan in the same scenario](../../docs/images/dynamic-repartition.svg)
 
 ## The API detail this example exists to show
 

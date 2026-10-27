@@ -21,6 +21,15 @@ available tiers in the order mist, edge, cloud. The subtask name and the
 application identifier select the partition at runtime, and the orchestrator
 picks the next eligible node of that tier in round robin.
 
+```mermaid
+flowchart LR
+    Graph["Seven subtasks<br/>capture ... notify"] --> Components["Weakly connected<br/>components"]
+    Components --> Lpt["Longest processing time first<br/>assign to least loaded partition"]
+    Lpt --> Swap["Pair swaps while they<br/>remove more edges than they add"]
+    Swap --> Tiers["Partitions mapped to<br/>mist, edge, cloud"]
+    Tiers --> RoundRobin["Round robin over the<br/>eligible nodes of the tier"]
+```
+
 ## The API detail this example exists to show
 
 PureEdgeSim caches an application placement: after the first decision, later

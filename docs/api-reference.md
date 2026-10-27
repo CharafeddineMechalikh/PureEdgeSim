@@ -400,7 +400,7 @@ The Javadoc contains the full list of methods, parameters, returns, and `@see` r
 
 ## Version notes
 
-This documentation describes PureEdgeSim 5.9. The latest published Maven Central artifact may lag the repository. Check the version in `pom.xml` and the README before copying dependency snippets.
+This documentation describes PureEdgeSim 6.0. The latest published Maven Central artifact may lag the repository. Check the version in `pom.xml` and the README before copying dependency snippets.
 
 ## Where to go next
 

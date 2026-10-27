@@ -22,6 +22,19 @@ resolves each subtask name to its gene, checks that the chosen node is eligible
 for this request, and falls back to the default policy when it is not, for
 example when a mist device has moved out of range.
 
+```mermaid
+flowchart TD
+    Init["Random population<br/>one gene per subtask"] --> Evaluate["Fitness: pipeline makespan<br/>plus result transfers plus imbalance"]
+    Evaluate --> Select["Tournament selection"]
+    Select --> Cross["Uniform crossover"]
+    Cross --> Mutate["Small per-gene mutation"]
+    Mutate --> Elitism["Keep the best chromosome"]
+    Elitism --> Done{"Generation budget<br/>reached?"}
+    Done -->|no| Evaluate
+    Done -->|yes| Plan["Best chromosome<br/>becomes the static plan"]
+    Plan --> Runtime["At runtime: gene to node,<br/>eligibility check, fallback"]
+```
+
 ## The API detail this example exists to show
 
 As in Example 9, the application placement cache must be cleared after every
