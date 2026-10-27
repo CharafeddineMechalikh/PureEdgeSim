@@ -11,13 +11,14 @@ You do not need to be a software engineer to contribute. You do need to verify w
 
 | Path | Contents |
 | --- | --- |
-| `src/main/java/com/mechalikh/pureedgesim/` | Framework source, one package per module. |
-| `src/main/java/com/mechalikh/pureedgesim/examples/` | Runnable scenarios and sample custom models. Not part of the published Javadoc. |
-| `examples/ExampleX/settings/` | Scenario files used by example X, next to its `README.md`. |
-| `src/test/java/com/mechalikh/pureedgesim/` | JUnit 5 tests, mirroring the source packages. |
+| `PureEdgeSim/main/java/com/mechalikh/pureedgesim/` | Framework source, one package per module. |
+| `PureEdgeSim/examples/ExampleX/` | One folder per runnable scenario: its Java sources, `README.md`, `settings/`, and `output/`. Not part of the published Javadoc. |
+| `PureEdgeSim/test/java/com/mechalikh/pureedgesim/` | JUnit 5 tests, mirroring the source packages. |
 | `docs/` | This manual. Start at [docs/README.md](README.md). |
-| `settings/` | Default configuration files. |
-| `output/` | Default output folder, created at run time and ignored by git. |
+| `PureEdgeSim/settings/` | Default configuration files. |
+| `PureEdgeSim/output/` | Default output folder, created at run time and ignored by git. |
+| `libs/` | Bundled third-party jars (jFuzzyLogic for the optional examples). |
+| `resources/` | Images used by the README and the documentation. |
 | `.github/workflows/` | Continuous integration: tests, coverage, and Javadoc. |
 | `CHANGELOG.md` | Every user-visible change, newest first. |
 | `pom.xml` | Build, profiles, dependencies, publishing. |
@@ -51,7 +52,7 @@ mvn clean compile
 Run an example from an IDE by running its `main` method. From the command line, the examples are plain classes with a `main` method, for example:
 
 ```bash
-mvn -q exec:java -Dexec.mainClass=com.mechalikh.pureedgesim.examples.Example1
+mvn -q exec:java -Dexec.mainClass=examples.Example1
 ```
 
 The `exec` plugin is not configured in the POM, so Maven downloads it on first use. Running examples from the IDE is the path used by most contributors. See [Getting started](getting-started.md) for the expected output layout.
@@ -117,7 +118,7 @@ Follow the existing patterns:
 - Assert on observable behavior, not on private fields. Avoid reflection in tests unless you are testing serialization or registration.
 - Name tests after the behavior: `failedTaskIsCountedOnce`, not `testFailure2`.
 
-If a test requires a specific fixture, put it under `src/test/resources/` and load it through the class loader so it works from IDEs and Maven alike.
+If a test requires a specific fixture, put it under `PureEdgeSim/test/resources/` and load it through the class loader so it works from IDEs and Maven alike.
 
 ## Code conventions
 
@@ -137,7 +138,7 @@ Formatting: use tabs, as the existing sources do. Keep lines readable; the proje
 
 ## Javadoc
 
-Public classes and methods in `src/main/java` should have Javadoc that states the contract, not a restatement of the signature.
+Public classes and methods in `PureEdgeSim/main/java` should have Javadoc that states the contract, not a restatement of the signature.
 
 Write:
 
@@ -307,7 +308,7 @@ Acceptance: a paper-grade sweep is one command, and every figure can be traced b
 What is already available:
 
 - [x] Eight setter-based extension points on `SimulationAbstract`, plus `setCustomTaskClass` on the task generator: mobility model, computing node, task generator, edge orchestrator, network model, simulation manager, topology creator, and computing nodes generator.
-- [x] A runnable example for every point, so each hook can be copied from working code. [Example 23](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/examples/Example23) covers the four that the earlier examples leave at their defaults.
+- [x] A runnable example for every point, so each hook can be copied from working code. [Example 23](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples/Example23) covers the four that the earlier examples leave at their defaults.
 - [x] Scenario behavior that needs no code: distributions for every numeric parameter, nine mobility models selectable per device type by name, and the architecture and algorithm matrix.
 - [x] The constructor signatures, the event-tag range, and the topology-refresh rule documented in [Customizing models](customizing-models.md), with unit and integration tests for the custom models.
 - [x] Every model replaced by composition: no compile-time switch, no fork, and no generated code.

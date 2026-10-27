@@ -104,12 +104,15 @@
     ring into a full mesh, and a simulation manager that audits the failures by
     reason when the run ends. Together with the earlier examples, all eight
     setter-based extension points now have a runnable scenario.
-*   The example settings folders moved from `examples/ExampleX_settings/` to
-    `examples/ExampleX/settings/`, next to the example that uses them. Each example now
-    has a `README.md` describing its scenario and what it demonstrates, and
-    `examples/README.md` indexes them. `Example5` no longer reads the default `settings/`
-    folder but its own copy, which uses `FUZZY_LOGIC` and `ROUND_ROBIN`, so it runs with
-    the `Example8FuzzyLogicOrchestrator` it installs.
+*   The repository is organized around `PureEdgeSim/`: the framework sources are in
+    `PureEdgeSim/main/java` and `PureEdgeSim/main/resources`, the tests in
+    `PureEdgeSim/test`, the default configuration in `PureEdgeSim/settings/`, and the
+    default output in `PureEdgeSim/output/`. Each example is a self-contained folder
+    under `PureEdgeSim/examples/ExampleN/` that holds its sources, a `README.md`, its
+    `settings/`, and an `output/` folder; `PureEdgeSim/examples/README.md` indexes
+    them. The README images moved to `resources/` and the bundled jar to `libs/` at the
+    repository root. Simulation defaults, the build (`sourceDirectory`), the tests, and
+    the workflows follow the new paths.
 *   The documentation and the example READMEs now include diagrams of the task
     lifecycle, the service graph tiers, the two partitioning searches, and the
     dynamic replanning comparison.

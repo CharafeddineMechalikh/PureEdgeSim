@@ -16,7 +16,7 @@ PureEdgeSim is built around four ideas:
 
 ## Package map
 
-The source tree is under `src/main/java/com/mechalikh/pureedgesim/`.
+The framework source tree is under `PureEdgeSim/main/java/com/mechalikh/pureedgesim/`, and the runnable scenarios are in `PureEdgeSim/examples/`.
 
 | Package | Responsibility | Key classes |
 | --- | --- | --- |

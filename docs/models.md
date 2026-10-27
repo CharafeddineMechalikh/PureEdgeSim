@@ -109,7 +109,7 @@ request at t
 ```
 
 A pipeline can also branch and join, and its stages do not share a tier. The
-figure shows the seven-stage graph of [Example24](../examples/Example24/README.md),
+figure shows the seven-stage graph of [Example24](../PureEdgeSim/examples/Example24/README.md),
 where the light stages stay on mist devices while the heavy ones move to edge
 data centers or the cloud:
 

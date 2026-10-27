@@ -1,5 +1,8 @@
 target/
-output/
+/output/
+/PureEdgeSim/output/
+/PureEdgeSim/examples/*/output/*
+!/PureEdgeSim/examples/*/output/.gitkeep
 
 #Ignore IntelliJ IDEA project files
 .idea/

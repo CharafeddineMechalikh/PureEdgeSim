@@ -21,7 +21,7 @@ The behavioral details of the defaults are in [Models](models.md). Read that fir
 | Overall control flow and failure policy | `setCustomSimulationManager` | `DefaultSimulationManager` |
 | Offloading decisions | `setCustomEdgeOrchestrator` | `Orchestrator` or `DefaultOrchestrator` |
 
-Every hook has a runnable example. [Example 23](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/examples/Example23) implements the four that the earlier examples leave at their defaults (task generator, topology creator, computing nodes generator, and simulation manager), and the [examples index](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/examples) lists the example for each of the others.
+Every hook has a runnable example. [Example 23](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples/Example23) implements the four that the earlier examples leave at their defaults (task generator, topology creator, computing nodes generator, and simulation manager), and the [examples index](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples) lists the example for each of the others.
 
 All setters are on `SimulationAbstract`, so they are available on `Simulation` before `launchSimulation()`.
 

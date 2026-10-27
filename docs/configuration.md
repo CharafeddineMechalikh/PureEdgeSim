@@ -5,7 +5,7 @@ description: "Reference for the five PureEdgeSim settings files: parameters, sce
 
 PureEdgeSim is configured through five files. This guide documents every parameter, its unit, its default value, and its effect on the simulation. It also explains the validation rules, the scenario sweep, and the topology format.
 
-All default files are under `settings/`. You can place them anywhere and call `sim.setCustomSettingsFolder("path/with/trailing/slash/")`, or configure files individually with `sim.setCustomFilePath(path, Simulation.Files.X)`.
+All default files are under `PureEdgeSim/settings/`. You can place them anywhere and call `sim.setCustomSettingsFolder("path/with/trailing/slash/")`, or configure files individually with `sim.setCustomFilePath(path, Simulation.Files.X)`.
 
 The five files are:
 
@@ -180,7 +180,7 @@ The same source is available programmatically through `com.mechalikh.pureedgesim
 
 ## Applications
 
-Each `<application>` describes one workload class. The `name` attribute is an identifier, and `type` is free text that the orchestrator can use to distinguish workloads. The framework does not enforce a closed set of application types: a workload is defined by its numbers (rate, latency bound, sizes, and task length), and `type` only labels it. The shipped `settings/applications.xml` uses three latency classes, `Hard Real-time`, `Soft Real-time`, and `Non Real-time`, while some examples add `Normal` or a workload name such as `Video analytics`. Orchestrators read the label with `task.getType()` and store it as a string, so any wording works.
+Each `<application>` describes one workload class. The `name` attribute is an identifier, and `type` is free text that the orchestrator can use to distinguish workloads. The framework does not enforce a closed set of application types: a workload is defined by its numbers (rate, latency bound, sizes, and task length), and `type` only labels it. The shipped `PureEdgeSim/settings/applications.xml` uses three latency classes, `Hard Real-time`, `Soft Real-time`, and `Non Real-time`, while some examples add `Normal` or a workload name such as `Video analytics`. Orchestrators read the label with `task.getType()` and store it as a string, so any wording works.
 
 ```xml
 <application name="Augmented reality">

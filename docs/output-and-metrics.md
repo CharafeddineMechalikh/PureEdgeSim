@@ -7,7 +7,7 @@ A PureEdgeSim run produces a CSV row per scenario, an optional text report, and 
 
 ## Where the output goes
 
-The output folder is `SimulationParameters.outputFolder`. The default is `output/` at the repository root; change it with `sim.setCustomOutputFolder("path/with/trailing/slash/")`. Each launch creates a timestamped folder named `yyyy-MM-dd_HH-mm-ss`.
+The output folder is `SimulationParameters.outputFolder`. The default is `PureEdgeSim/output/`; change it with `sim.setCustomOutputFolder("path/with/trailing/slash/")`. Each launch creates a timestamped folder named `yyyy-MM-dd_HH-mm-ss`.
 
 `clear_output_folder=true` deletes that folder at the start of the first iteration. If you point the output folder at a directory that contains other work, that work is removed. The default is `false`, so old runs remain until you delete them.
 
@@ -248,7 +248,7 @@ A short Python sketch:
 ```python
 import pandas as pd
 
-df = pd.read_csv("output/2026-10-24_23-29-48/Sequential_simulation.csv")
+df = pd.read_csv("PureEdgeSim/output/2026-10-24_23-29-48/Sequential_simulation.csv")
 df.columns = [c.strip() for c in df.columns]
 
 df["failed"] = df[["Task not executed (No resources available or long waiting time)",

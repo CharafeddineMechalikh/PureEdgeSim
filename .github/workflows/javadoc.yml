@@ -6,12 +6,12 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'src/main/java/**'
+      - 'PureEdgeSim/main/java/**'
       - 'pom.xml'
       - '.github/workflows/javadoc.yml'
   pull_request:
     paths:
-      - 'src/main/java/**'
+      - 'PureEdgeSim/main/java/**'
       - 'pom.xml'
 
 permissions:

@@ -137,8 +137,10 @@ Keep one directory per experiment:
 
 ```text
 experiments/2026-10-24-policy-comparison/
-├── settings/                  # the five input files
-├── src/                       # custom classes, if any
+├── PureEdgeSim/               # simulator source, examples, default settings
+│   ├── settings/              # the five input files
+│   └── examples/              # scenario classes and their own settings
+├── custom/                    # custom classes, if any
 ├── raw/                       # unmodified CSV and text reports
 ├── analysis/                  # scripts that produce the tables and figures
 ├── figures/                   # generated figures

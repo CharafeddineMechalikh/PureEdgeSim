@@ -20,7 +20,7 @@
 </p>
 
 > **PureEdgeSim is now available in Python.** The same simulator, the same five configuration
-> files and the same 51-column output, in a companion repository:
+> files and the same 56-column output, in a companion repository:
 > [CharafeddineMechalikh/PureEdgeSim_Python](https://github.com/CharafeddineMechalikh/PureEdgeSim_Python).
 > Results from the two versions can be placed side by side, so you can run your study in
 > whichever language you work in.
@@ -128,7 +128,7 @@ Each module provides a default implementation and a set of adjustable settings. 
 - **Reliability and correctness**, backed by an automated test suite and continuous integration.
 
 <p align="center">
-  <img width="520" src="https://raw.githubusercontent.com/CharafeddineMechalikh/PureEdgeSim/master/PureEdgeSim/files/real%20time.gif" alt="Live visualization of a running PureEdgeSim simulation">
+  <img width="520" src="https://raw.githubusercontent.com/CharafeddineMechalikh/PureEdgeSim/master/resources/real%20time.gif" alt="Live visualization of a running PureEdgeSim simulation">
 </p>
 
 <p align="center">The live visualization of the simulated environment</p>
@@ -189,12 +189,12 @@ mvn clean install -DskipTests
 mvn exec:java -Dexec.mainClass="examples.Example1"
 ```
 
-The examples live in [`src/main/java/com/mechalikh/pureedgesim/examples`](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/src/main/java/com/mechalikh/pureedgesim/examples), and each one has a README with its scenario files under [`examples/`](examples/README.md). Each example demonstrates a different feature or computing paradigm. To create a new scenario, add a class to the `examples` package and configure it as shown below.
+The examples live in [`PureEdgeSim/examples`](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples), and each one has a README, its sources, and its scenario files in the same folder ([`examples/README.md`](PureEdgeSim/examples/README.md)). Each example demonstrates a different feature or computing paradigm. To create a new scenario, add a folder under `PureEdgeSim/examples` with a class in the `examples` package and configure it as shown below.
 
 You can also import the project as a Maven project in Eclipse, IntelliJ IDEA, or NetBeans, and run any example class directly from the IDE.
 
 <p align="center">
-  <img width="520" src="https://raw.githubusercontent.com/CharafeddineMechalikh/PureEdgeSim/master/PureEdgeSim/files/importingproject.gif" alt="Importing the PureEdgeSim Maven project into an IDE">
+  <img width="520" src="https://raw.githubusercontent.com/CharafeddineMechalikh/PureEdgeSim/master/resources/importingproject.gif" alt="Importing the PureEdgeSim Maven project into an IDE">
 </p>
 
 <p align="center">Importing the PureEdgeSim project into an IDE (click to zoom)</p>
@@ -261,7 +261,7 @@ dependencies {
 - [Documentation manual](docs/): step-by-step tutorials, architecture, models, output metrics, and a research guide for new users.
 - [Published documentation](https://charafeddinemechalikh.github.io/PureEdgeSim/docs/): the same manual, rendered as a website.
 - [Wiki](https://github.com/CharafeddineMechalikh/PureEdgeSim/wiki): installation, configuration files, modules, and tutorials.
-- [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/src/main/java/com/mechalikh/pureedgesim/examples): runnable scenarios covering cloud, edge, and mist computing, including service-graph partitioning with graph theory (`Example9`), with a genetic algorithm (`Example10`), and with a plan that is repartitioned every 30 seconds while the simulation runs (`Example24`).
+- [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples): runnable scenarios covering cloud, edge, and mist computing, including service-graph partitioning with graph theory (`Example9`), with a genetic algorithm (`Example10`), and with a plan that is repartitioned every 30 seconds while the simulation runs (`Example24`).
 - [Javadoc](https://javadoc.io/doc/com.mechalikh/pureedgesim): API documentation.
 - [CHANGELOG.md](CHANGELOG.md): release notes.
 
@@ -473,7 +473,7 @@ Usability work, in the order it is planned. The XML formats and the setter-based
 What is already available:
 
 - [x] Eight setter-based extension points on `SimulationAbstract`, plus `setCustomTaskClass` on the task generator: mobility model, computing node, task generator, edge orchestrator, network model, simulation manager, topology creator, and computing nodes generator.
-- [x] A runnable example for every point, so each hook can be copied from working code. [Example 23](examples/Example23/README.md) covers the four that the earlier examples leave at their defaults, and [examples/README.md](examples/README.md) lists them all.
+- [x] A runnable example for every point, so each hook can be copied from working code. [Example 23](PureEdgeSim/examples/Example23/README.md) covers the four that the earlier examples leave at their defaults, and [examples/README.md](PureEdgeSim/examples/README.md) lists them all.
 - [x] Scenario behavior that needs no code: distributions for every numeric parameter, nine mobility models selectable per device type by name, and the architecture and algorithm matrix.
 - [x] The constructor signatures, the event-tag range, and the topology-refresh rule documented in [Customizing models](docs/customizing-models.md), with unit and integration tests for the custom models.
 - [x] Every model replaced by composition: the framework has no compile-time switch, no fork, and no generated code.

@@ -236,12 +236,21 @@
 
 	<build>
 
+		<sourceDirectory>PureEdgeSim/main/java</sourceDirectory>
+		<testSourceDirectory>PureEdgeSim/test/java</testSourceDirectory>
+
 		<resources>
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>PureEdgeSim/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+
+		<testResources>
+			<testResource>
+				<directory>PureEdgeSim/test/resources</directory>
+			</testResource>
+		</testResources>
 		
 		<pluginManagement>
 			<!-- Plugins to be reused for different <profile>'s -->
@@ -284,6 +293,48 @@
 
 		<plugins>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>add-example-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+					<source>PureEdgeSim/examples/Example1</source>
+					<source>PureEdgeSim/examples/Example2</source>
+					<source>PureEdgeSim/examples/Example3</source>
+					<source>PureEdgeSim/examples/Example4</source>
+					<source>PureEdgeSim/examples/Example5</source>
+					<source>PureEdgeSim/examples/Example6</source>
+					<source>PureEdgeSim/examples/Example7</source>
+					<source>PureEdgeSim/examples/Example8</source>
+					<source>PureEdgeSim/examples/Example9</source>
+					<source>PureEdgeSim/examples/Example10</source>
+					<source>PureEdgeSim/examples/Example11</source>
+					<source>PureEdgeSim/examples/Example12</source>
+					<source>PureEdgeSim/examples/Example13</source>
+					<source>PureEdgeSim/examples/Example14</source>
+					<source>PureEdgeSim/examples/Example15</source>
+					<source>PureEdgeSim/examples/Example16</source>
+					<source>PureEdgeSim/examples/Example17</source>
+					<source>PureEdgeSim/examples/Example18</source>
+					<source>PureEdgeSim/examples/Example19</source>
+					<source>PureEdgeSim/examples/Example20</source>
+					<source>PureEdgeSim/examples/Example21</source>
+					<source>PureEdgeSim/examples/Example22</source>
+					<source>PureEdgeSim/examples/Example23</source>
+					<source>PureEdgeSim/examples/Example24</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.2.0</version>
@@ -315,9 +366,9 @@
 				<version>3.8.1</version>
 				<configuration>
 					<excludes>
-						<exclude>**/examples/Example8.java</exclude>
-						<exclude>**/examples/Example8FuzzyLogicOrchestrator.java</exclude>
-						<exclude>**/examples/Example5.java</exclude>
+						<exclude>**/Example8/Example8.java</exclude>
+						<exclude>**/Example8/Example8FuzzyLogicOrchestrator.java</exclude>
+						<exclude>**/Example5/Example5.java</exclude>
 					</excludes>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -422,7 +473,7 @@
 			<artifactId>jFuzzyLogic</artifactId>
 			<version>3.0</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/PureEdgeSim/libs/jFuzzyLogic_v3.0.jar</systemPath>
+			<systemPath>${project.basedir}/libs/jFuzzyLogic_v3.0.jar</systemPath>
 		</dependency>
 	</dependencies>
 </project>
