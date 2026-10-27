@@ -24,8 +24,16 @@ jobs:
           java-version: '17'
           cache: maven
 
+      # The visualizer tests show a real Swing frame, which needs a display
+      # server; without one they abort with HeadlessException and the badges
+      # below are never regenerated.
+      - name: Install a virtual display
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb
+
       - name: Run tests with JaCoCo
-        run: mvn -B test
+        run: xvfb-run -a mvn -B test
 
       - name: Generate coverage badges
         uses: cicirello/jacoco-badge-generator@v2
