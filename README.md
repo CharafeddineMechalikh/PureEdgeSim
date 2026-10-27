@@ -98,6 +98,33 @@ Each module provides a default implementation and a set of adjustable settings. 
 
 <p align="center">A simple representation of the simulation scenarios supported by PureEdgeSim</p>
 
+## How it compares
+
+The [2025 comparative study of 24 edge computing simulators](https://doi.org/10.1016/j.simpat.2024.103042) ran the same baseline scenario, 100 mobile AR users over one simulated hour, in every tool that could start it. Two measurements decided the ranking:
+
+| Shared baseline scenario | PureEdgeSim | The rest of the field in that study |
+| --- | --- | --- |
+| Execution time | **1.81 s** | 3.53 s EdgeCloudSim, 49.4 s LEAF, 259 s PFogSim, 42.1 h FogNetSim++ |
+| Devices before the run stops being usable | **≈ 80,000** | ≈ 10,000 EdgeCloudSim, ≈ 7,000 LEAF, ≈ 250 PFogSim, ≈ 4 FogNetSim++ |
+
+That study also places PureEdgeSim with the widest modeling coverage it checked, with LEAF among the best code quality it measured, and as one of only two simulators still under active maintenance. Most edge simulators stop receiving updates within months of release, and iFogSim, the most cited one, has not changed since 2016.
+
+### The combination, not the feature
+
+Individual capabilities exist elsewhere. What no other simulator in that study offers is all of them in one run, because a model that is missing one of them silently changes the result of the others:
+
+| Capability | Why the others cannot substitute |
+| --- | --- |
+| Network delay that follows the load, with asymmetrical up/down links | EdgeCloudSim, LEAF and the iFogSim family apply a constant transmission delay or bandwidth, so a scalability study cannot see congestion it creates itself |
+| Mobility that feeds back into placement, routing, and failures | Enigma moves devices but ignores the effect of movement on execution and failure rates; FogExplorer has no mobility at all |
+| Energy accounted per node, per radio interface, and per link class, with a battery that dies | Most energy models in the study cover data centers or one constrained device class, and stop there |
+| A battery running out as a measured cause of task failure, counted separately from latency and resource shortage | A failure cause that is not modeled cannot be attributed, so energy-aware orchestrators are graded on incomplete data |
+| Service graphs: subtasks released by their dependencies, parent results carried as payload, one end-to-end deadline, optional stages | Added after the study. FogExplorer schedules interdependent tasks, but without mobility, energy, or load-aware links in the same run |
+| Every numeric scenario parameter declared as a random variable out of sixteen distributions, replayed from one seed | Added after the study. A scenario is a distribution, not a table of constants |
+| The same simulator in Java and in Python, producing the same 56-column output | Added after the study: [PureEdgeSim_Python](https://github.com/CharafeddineMechalikh/PureEdgeSim_Python) |
+
+What it does not model, stated plainly: there is no pricing or cost model, which the study records as the main gap of PureEdgeSim, and a service graph is acyclic, so conditional branches, loops, and "wait for any parent" joins are out of scope.
+
 ## Key features
 
 - **Realistic edge computing modeling** (and related computing paradigms)
