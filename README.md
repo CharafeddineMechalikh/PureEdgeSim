@@ -66,6 +66,7 @@ Mechalikh, C., Silem, A. E. H., Safavifar, Z., & Golpayegani, F. (2025). Quality
 ## Contents
 
 - [Citation](#citation)
+- [Why researchers choose it](#why-researchers-choose-it)
 - [What is PureEdgeSim?](#what-is-pureedgesim)
 - [How it compares](#how-it-compares)
 - [Key features](#key-features)
@@ -80,6 +81,19 @@ Mechalikh, C., Silem, A. E. H., Safavifar, Z., & Golpayegani, F. (2025). Quality
 - [Contributing and support](#contributing-and-support)
 - [License](#license)
 - [Keywords](#keywords)
+
+## Why researchers choose it
+
+A 2025 peer-reviewed study compared 24 edge computing simulators on functionality, code quality, maintenance, and runtime, running the same scenario in every tool that could start it. Four of its measurements are the shortest argument for this framework:
+
+| Claim | Measurement |
+| --- | --- |
+| **The fastest tool in the study that could run the scenario** | 1.81 s on a baseline of 100 mobile AR users over one simulated hour, against 3.53 s for EdgeCloudSim, 49.4 s for LEAF, 259 s for PFogSim, and 42.1 hours for FogNetSim++ |
+| **The largest usable scenarios** | about 80,000 devices, against 10,000 for EdgeCloudSim, 7,000 for LEAF, 250 for PFogSim, and 4 for FogNetSim++ |
+| **The only simulator in the study that reported test coverage** | 91% then; 98.2% of instructions and 96.2% of branches now, from more than 1,100 automated tests |
+| **Still maintained, unlike almost all of the field** | edge simulators receive updates for 12 months on average, and iFogSim, the most cited of them, has not changed since 2016 |
+
+The first two lines are the study's measurements; the last two also include numbers from this repository's current build. [How PureEdgeSim compares](docs/comparison.md) separates the two, states what PureEdgeSim does **not** model, and lists the cases where another simulator is the better fit.
 
 ## What is PureEdgeSim?
 
@@ -125,6 +139,8 @@ Individual capabilities exist elsewhere. What no other simulator in that study o
 | The same simulator in Java and in Python, producing the same 56-column output | Added after the study: [PureEdgeSim_Python](https://github.com/CharafeddineMechalikh/PureEdgeSim_Python) |
 
 What it does not model, stated plainly: there is no pricing or cost model, which the study records as the main gap of PureEdgeSim, and a service graph is acyclic, so conditional branches, loops, and "wait for any parent" joins are out of scope.
+
+[How PureEdgeSim compares](docs/comparison.md) carries the full version of this comparison: the SonarQube code-quality table, the repository maintenance statistics, the drawbacks the study listed against version 5 and where each one stands now, and a table of the research questions that are better served by EdgeCloudSim, LEAF, YAFS, FogNetSim++, FogExplorer or DISSECT-CF-Fog.
 
 ## Key features
 
@@ -289,8 +305,9 @@ dependencies {
 ## Documentation and examples
 
 - [Documentation manual](docs/): step-by-step tutorials, architecture, models, output metrics, and a research guide for new users.
+- [How PureEdgeSim compares](docs/comparison.md): the measurements behind the tables above, and when to choose another simulator.
 - [Published documentation](https://charafeddinemechalikh.github.io/PureEdgeSim/docs/): the same manual, rendered as a website.
-- [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples): runnable scenarios covering cloud, edge, and mist computing, including service-graph partitioning with graph theory (`Example9`), with a genetic algorithm (`Example10`), with a plan that is repartitioned every 30 seconds while the simulation runs (`Example24`), and with a traffic replayed from a recorded production trace of 8819 LLM inference requests rather than drawn from a distribution (`Example25`).
+- [Examples](https://github.com/CharafeddineMechalikh/PureEdgeSim/tree/master/PureEdgeSim/examples): runnable scenarios covering cloud, edge, and mist computing, including service-graph partitioning with graph theory (`Example9`), with a genetic algorithm (`Example10`), with a plan that is repartitioned every 30 seconds while the simulation runs (`Example24`), with a traffic replayed from a recorded production trace of 8819 LLM inference requests rather than drawn from a distribution (`Example25`), and with a Q-learning orchestrator that keeps a pure edge fleet running through the crash of the device carrying the orchestration (`Example26`).
 - [Javadoc](https://javadoc.io/doc/io.github.charafeddinemechalikh/pureedgesim): API documentation.
 - [CHANGELOG.md](CHANGELOG.md): release notes.
 

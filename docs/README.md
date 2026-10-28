@@ -10,6 +10,10 @@ If you are looking for the shortest path to a running simulation, read [Getting 
 
 ## Reading paths
 
+### Path 0: I am still choosing a simulator
+
+1. [How PureEdgeSim compares](comparison.md): the modeling coverage, runtime, code quality, and maintenance of PureEdgeSim against the 24 edge computing simulators of a peer-reviewed comparison, including the cases where another tool is the better fit.
+
 ### Path 1: I want to run an experiment this week
 
 1. [Getting started](getting-started.md): install, build, run an example, read the output.
@@ -17,6 +21,7 @@ If you are looking for the shortest path to a running simulation, read [Getting 
 3. [Output and metrics](output-and-metrics.md): understand the CSV columns and the charts.
 4. [Research guide](research-guide.md): design a defensible experiment and report it.
 5. If your workload was measured rather than assumed, replay it: [Example 25](../PureEdgeSim/examples/Example25/README.md) feeds a recorded production trace of 8819 LLM inference requests to the simulator and compares it with random arrivals at the same means.
+6. If your claim is about fault tolerance, say what fails: [Example 26](../PureEdgeSim/examples/Example26/README.md) crashes the device that carries the orchestration halfway through a pure edge run, and each of its four mechanisms is switched off from the command line to measure what it is worth.
 
 ### Path 2: I want to implement a new offloading algorithm
 
@@ -24,6 +29,7 @@ If you are looking for the shortest path to a running simulation, read [Getting 
 2. [Task lifecycle](task-lifecycle.md): where decisions happen in the event flow.
 3. [Writing orchestrators](writing-orchestrators.md): a complete, buildable custom orchestrator.
 4. [API reference](api-reference.md): the classes and methods you will call.
+5. [Example 26](../PureEdgeSim/examples/Example26/README.md) puts three of the extension points together for one scenario: an orchestrator that learns its placements, devices that defend their real-time traffic, and a simulation manager that injects the crash.
 
 ### Path 3: I want to change how the simulated system works
 
@@ -36,6 +42,7 @@ If you are looking for the shortest path to a running simulation, read [Getting 
 
 | Document | What it answers |
 | --- | --- |
+| [How PureEdgeSim compares](comparison.md) | How does PureEdgeSim stack up against the other edge computing simulators, and when should I pick one of them instead? |
 | [Getting started](getting-started.md) | How do I install, build, and run PureEdgeSim? What does a first simulation look like? |
 | [Architecture](architecture.md) | How is the simulator organized? How does the discrete-event engine work? How are scenarios initialized? |
 | [Configuration](configuration.md) | What does every parameter in every configuration file mean, and what are its units? |
