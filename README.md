@@ -265,7 +265,7 @@ sim.launchSimulation();
 
 ## Use PureEdgeSim as a dependency
 
-PureEdgeSim releases are on [Maven Central](https://search.maven.org/search?q=g:%22io.github.charafeddinemechalikh%22%20AND%20a:%22pureedgesim%22). Release `6.0` takes the group id `io.github.charafeddinemechalikh`. Releases up to `5.1.0` sit under the older group id `com.mechalikh` and stay downloadable there: that namespace was granted against `mechalikh.com` in 2021, the domain has since expired, and Central re-verifies a domain namespace only through its DNS records, so new releases move to the GitHub namespace. The Java packages are unchanged, so only the dependency coordinates differ. If a resolver cannot find `6.0`, the last artifact published under the old coordinates is `com.mechalikh:pureedgesim:5.1.0`.
+PureEdgeSim is available on [Maven Central](https://search.maven.org/search?q=g:%22io.github.charafeddinemechalikh%22%20AND%20a:%22pureedgesim%22). Version `6.0` is the latest published artifact, under the group id `io.github.charafeddinemechalikh`. Releases up to `5.1.0` stay under the older group id `com.mechalikh`: that namespace was granted against `mechalikh.com` in 2021, the domain has since expired, and Central re-verifies a domain namespace only through its DNS records, so new releases use the GitHub one. The Java packages are unchanged, so only the dependency coordinates differ.
 
 Maven:
 
