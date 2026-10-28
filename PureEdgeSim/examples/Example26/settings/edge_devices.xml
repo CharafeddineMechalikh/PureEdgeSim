@@ -1,0 +1,264 @@
+<?xml version="1.0"?>
+<edge_devices>
+	<!-- One hundred devices, all of them fixed, all of them sending requests: the
+		scenario is pure edge, there is no server to fall back on. Twenty five of
+		them can compute, the rest are sensors whose requests those twenty five have
+		to carry, which is what makes the orchestration decision matter.
+
+		A task runs on a single core, so the speed of a device is the speed of one of
+		its cores, and the three computing classes are an order of magnitude apart.
+		The fifteen milliseconds of the health monitor are the tightest bound of the
+		scenario, and they are tight because of the radio as much as of the processor:
+		an offloaded request crosses four wireless hops of one millisecond each, and
+		its two hundred million instructions then take two milliseconds on a server,
+		eight on a workstation and twenty five on a phone. A phone can thus never
+		answer a health monitor that is not its own, and a workstation only when
+		nothing else is queued in front of it. That is the trade the orchestrator has
+		to learn: the fast devices are the only ones that can carry real time, and
+		they are also the ones every background computation would like to have.
+
+		Two devices carry the orchestration. The first is the primary, the second is a
+		cold standby that starts switched off and is only brought up when the primary
+		crashes, halfway through the run. That is what the fault tolerance of the
+		paper is about, and it is why both of them belong to the server class.
+
+		Storage is what makes a fleet that is only a little busy refuse work: a phone
+		holds two containers of fifty megabytes at a time, a workstation three, and a
+		task that waits in the queue of a device already occupies the storage of its
+		container. Five of the twenty five computing devices also start with their
+		battery almost flat, below the level at which a device stops accepting work
+		that can be done elsewhere, while keeping their own real-time requests, which
+		cost them only a few milliseconds. -->
+
+	<device> <!-- the primary orchestrator, a server -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>1</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>0.2</idleConsumption>
+		<maxConsumption>5</maxConsumption>
+		<isOrchestrator>true</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>1</cores>
+		<mips>110000</mips>
+		<ram>2000</ram>
+		<storage>250</storage>
+	</device>
+	<device> <!-- the standby orchestrator, switched off until the crash -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>1</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>0.2</idleConsumption>
+		<maxConsumption>5</maxConsumption>
+		<isOrchestrator>true</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>1</cores>
+		<mips>110000</mips>
+		<ram>2000</ram>
+		<storage>250</storage>
+	</device>
+	<device> <!-- server, fully charged: fast enough to answer a health task it did not generate -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>4</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>0.2</idleConsumption>
+		<maxConsumption>5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>1</cores>
+		<mips>110000</mips>
+		<ram>2000</ram>
+		<storage>250</storage>
+	</device>
+	<device> <!-- server, almost flat: keeps its own real-time work, refuses the rest -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>1</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>8</initialBatteryLevel>
+		<idleConsumption>0.2</idleConsumption>
+		<maxConsumption>5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>1</cores>
+		<mips>110000</mips>
+		<ram>2000</ram>
+		<storage>250</storage>
+	</device>
+	<device> <!-- workstation, fully charged: fits two containers at a time -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>6</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>0.2</idleConsumption>
+		<maxConsumption>5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>1</cores>
+		<mips>25000</mips>
+		<ram>1500</ram>
+		<storage>180</storage>
+	</device>
+	<device> <!-- workstation, almost flat -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>2</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>8</initialBatteryLevel>
+		<idleConsumption>0.2</idleConsumption>
+		<maxConsumption>5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>1</cores>
+		<mips>25000</mips>
+		<ram>1500</ram>
+		<storage>180</storage>
+	</device>
+	<device> <!-- phone, fully charged: one core, one container at a time -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>8</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>0.2</idleConsumption>
+		<maxConsumption>5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>1</cores>
+		<mips>8000</mips>
+		<ram>1000</ram>
+		<storage>120</storage>
+	</device>
+	<device> <!-- phone, almost flat -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>2</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>8</initialBatteryLevel>
+		<idleConsumption>0.2</idleConsumption>
+		<maxConsumption>5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>1</cores>
+		<mips>8000</mips>
+		<ram>1000</ram>
+		<storage>120</storage>
+	</device>
+	<device> <!-- battery powered sensor: sends requests, computes nothing -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>30</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>0.2</idleConsumption>
+		<maxConsumption>5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>0</cores>
+		<mips>0</mips>
+		<ram>0</ram>
+		<storage>0</storage>
+	</device>
+	<device> <!-- mains powered sensor, plugged in so it never runs out -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>20</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel>
+		<idleConsumption>0.4011</idleConsumption>
+		<maxConsumption>0.436</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>0</cores>
+		<mips>0</mips>
+		<ram>0</ram>
+		<storage>0</storage>
+	</device>
+	<device> <!-- a second mains powered sensor type, to spread the sensors over the map -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>25</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel>
+		<idleConsumption>0.4011</idleConsumption>
+		<maxConsumption>0.436</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>0</cores>
+		<mips>0</mips>
+		<ram>0</ram>
+		<storage>0</storage>
+	</device>
+</edge_devices>

@@ -16,6 +16,20 @@
     `example25.miPerContextToken`, `example25.miPerGeneratedToken`, `example25.ttftBudget`
     and `example25.decodeBudget` system properties. No framework class changed: the replay
     uses the existing `setCustomTaskGenerator` extension point.
+*   New `Example26` reproduces the fault tolerant, robust and adaptive orchestration of
+    Safavifar, Mechalikh and Golpayegani (ICAART 2023) on a pure edge fleet: three
+    real-time classes share one hundred battery powered devices with no server to fall
+    back on, and the primary orchestrator crashes halfway through the run. A tabular
+    Q-learning agent chooses between four ranking rules per traffic class, devices put
+    hard real-time tasks at the head of their queue and refuse work they can no longer
+    afford, and a cold standby takes the fleet over ten seconds after the crash. Each
+    mechanism is switched off independently with `-Dexample26.fault`, `backup`,
+    `priority` or `reallocation`, and the run prints what each is worth: the standby
+    saves 3400 of the 4085 requests the crash would destroy, the queue jump takes the
+    hard real-time mean delay from 22 ms to 17 ms, and battery-aware refusal costs 1712
+    requests in a five minute run where no battery reaches zero. No framework class
+    changed: the example uses `setCustomEdgeOrchestrator`, `setCustomComputingNode` and
+    `setCustomSimulationManager`.
 
 ## Version 6.0 Changelog (October 27th 2026)
 

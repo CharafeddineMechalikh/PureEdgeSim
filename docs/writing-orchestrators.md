@@ -313,6 +313,8 @@ protected List<ComputingNode> nodeList;           // inherited
 
 `simulationManager.getSimulation().clock()` returns the current simulated time in seconds. Use it for time-dependent policies, for example an epsilon-greedy strategy that explores more at the beginning.
 
+A learned table is state too. `Example11QLearningOrchestrator` keeps one, and `Example26FaultTolerantOrchestrator` keeps one whose reward is shaped by the class of the traffic that came back: a hard real-time miss costs three times a normal one, scaled by how far the task missed its budget, so the agent is pushed toward the class the scenario cares about. Both read the clock to decide when to explore, and neither keeps mutable static state; the ablation switches `Example26` reads are constants fixed when the class loads.
+
 ## What you cannot do from `findComputingNode`
 
 The decision is synchronous. You cannot wait for a message, query a remote service, or run an experiment inside the method. If your algorithm needs information that is not available locally, precompute it in the constructor or in `onSimulationStart()`, or maintain it incrementally in `resultsReturned`.
@@ -355,6 +357,8 @@ Fast checks that do not require a full sweep:
 
 For automated tests, instantiate the orchestrator with a real `SimulationManager` created by a small simulation, as the test suite does. Testing a decision in isolation with hand-built nodes is misleading, because the eligibility rules depend on current links and mobility state, which are only consistent after the topology is generated.
 
+`Example26FaultToleranceTest` is the pattern to copy for a policy with side effects: mock the nodes the decision reads, assert one behaviour per mechanism on the device and on the orchestrator, then add a single run of the real simulation, tagged `integration`, that reads back the console summary and the CSV row. The shrunk scenario it runs against lives in `test/resources/test-settings/example26/`, the same three classes and the same latency budgets as the example, ten devices instead of a hundred and one simulated minute instead of five, so the whole thing costs a few seconds.
+
 ## Design advice
 
 - State the question first. If you compare algorithms, keep everything except the decision fixed and run enough repetitions to average out task-time randomness.
@@ -368,3 +372,4 @@ For automated tests, instantiate the orchestrator with a real `SimulationManager
 - Understand when the orchestrator is called: [Task lifecycle](task-lifecycle.md).
 - Replace the underlying network or computing model: [Customizing models](customizing-models.md).
 - Measure the result correctly: [Output and metrics](output-and-metrics.md).
+- See a policy that learns and defends its real-time traffic through an outage: [Example 26](../PureEdgeSim/examples/Example26/README.md), which combines a custom orchestrator, a custom computing node and a custom simulation manager without touching the framework.

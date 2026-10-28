@@ -224,6 +224,8 @@ Computing nodes do not have a `simLog` field. Access the logger through `simulat
 
 For a different queue discipline, override `getTasksQueue()` to return a custom list, or override `submitTask` and implement admission control. Keep the contract: a task that is accepted must eventually either execute or be failed explicitly through the simulation manager. Silently dropping tasks makes the CSV totals inconsistent.
 
+[Example 26](../PureEdgeSim/examples/Example26/README.md) takes the second route in both senses: its node overrides `submitTask` to put a hard real-time task at the head of the queue when every core is already taken, and refuses an incoming task outright when its container no longer fits in the free storage or RAM, or when the battery is almost flat and the traffic is elastic. The refusal is decided by the orchestrator through a public predicate on the node, so the placement never lands on a device that would drop it; the task that is refused is reported as a normal failure, with the reason, and stays inside the CSV totals.
+
 Subclass `ComputingNode` directly only if you need a fundamentally different node. The interface has many methods used by the orchestrator, logger, topology, and network model, and the default implementations take care of all of them.
 
 ## Custom mobility model
@@ -374,6 +376,8 @@ If you replace the whole process, you must produce consistent values for every l
 Most methods are protected, including `sendTaskToOrchestrator`, `sendFromOrchToDestination`, `sendResultsToOchestrator`, `setFailed`, and `taskFailed`. Override them and call `super` for the parts you do not intend to replace.
 
 Changing the event tags or the schedule order can break the simulation silently. If a task never reaches `RESULT_RETURN_FINISHED`, it is never counted, and the CSV loses a row of information without an exception.
+
+The same extension is how a scenario injects a fault of its own. [Example 26](../PureEdgeSim/examples/Example26/README.md) schedules three events on tags of its own, crashes the orchestrating device halfway through the run, boots its cold standby ten seconds later, and counts the requests that were in flight with the primary when it died. Because the framework has no notion of an outage, the loss is measured from the tasks the manager still sees: a task whose device is alive but whose orchestrator is dead never reaches a placement, and the example reports those, per class of traffic, in the console summary it prints on top of the usual CSV row.
 
 ## Testing a custom model
 

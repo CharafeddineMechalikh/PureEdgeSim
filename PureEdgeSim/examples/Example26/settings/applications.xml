@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- The three application classes of the FTR-AdWOrch scenario, with the
+		latency budgets, the shares of the fleet, the container sizes and the task
+		lengths published in the paper: a health monitor that must answer in fifteen
+		milliseconds, an augmented reality application with half a second of budget,
+		and a background computation given thirty seconds. The arrival rate is the
+		one thing that is ours: the paper sends one hundred and thirty five, one
+		hundred and thirty five and two hundred and seventy tasks per minute per
+		device, and the generator spaces the arrivals of an application by a whole
+		number of seconds, so a rate above sixty would be emitted in one burst. A
+		quarter of the paper's rate keeps the traffic spread over the run.
+
+		The three types are what makes the orchestration adaptive. The class of a
+		task decides how heavily its failure is punished in the learning reward (a
+		hard real-time miss costs three times a normal one), whether it may jump the
+		queue of its destination, and whether its destination may refuse it when that
+		destination runs low on battery. -->
+
+	<application name="Health">
+		<type>Hard Real-time</type>
+		<rate>30</rate> <!-- tasks generated each minute by one device -->
+		<usage_percentage>25</usage_percentage> <!-- share of the devices running it -->
+		<latency>0.015</latency> <!-- latency budget in seconds -->
+		<container_size>30000</container_size> <!-- kilobytes -->
+		<request_size>20</request_size> <!-- kilobytes -->
+		<results_size>20</results_size> <!-- kilobytes -->
+		<task_length>200</task_length> <!-- million instructions -->
+	</application>
+	<application name="Augmented reality">
+		<type>Soft Real-time</type>
+		<rate>30</rate>
+		<usage_percentage>35</usage_percentage>
+		<latency>0.5</latency>
+		<container_size>50000</container_size>
+		<request_size>1500</request_size>
+		<results_size>50</results_size>
+		<task_length>5000</task_length>
+	</application>
+	<application name="HEAVY_COMP_APP">
+		<type>Normal</type>
+		<rate>60</rate>
+		<usage_percentage>40</usage_percentage>
+		<latency>30</latency> <!-- thirty seconds, the loose bound of the paper -->
+		<container_size>40000</container_size>
+		<request_size>2500</request_size>
+		<results_size>200</results_size>
+		<task_length>10000</task_length>
+	</application>
+</applications>

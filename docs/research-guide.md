@@ -117,6 +117,10 @@ If you compare many scenarios, say so and correct for multiple comparisons, or f
 
 - **Sizing capacity from the mean of synthetic traffic.** A generator tuned to the mean rate and mean task sizes of a real workload reproduces its average and none of its bursts. On the one 8-core server of [Example 25](../PureEdgeSim/examples/Example25/README.md), a recorded hour of 8819 production LLM inference requests and a poisson stream with the same means report the same utilization, 42.42 and 41.56 percent, and queue depths of 120201 and 173 seconds. A capacity study that used only the synthetic arm would conclude that the server has headroom. If the claim is about capacity, replay a measured trace or add burstiness deliberately, and say which.
 
+- **Writing a deadline the radio already busts.** A latency budget shorter than the network time of the scenario is unreachable by every placement, and the run then measures the link settings instead of the policy. An offloaded request crosses four wireless hops, device to orchestrator, orchestrator to destination, and the results back the same way, so at the default `wifi_latency` of five milliseconds those hops alone cost twenty, and a fifteen millisecond budget is spent before a core is touched. [Example 26](../PureEdgeSim/examples/Example26/README.md) keeps the fifteen milliseconds of its health monitor and gives the radio one millisecond per hop, which makes the bound tight but attainable, and documents the change next to the setting that carries it.
+
+- **Reading an ablation as a clean comparison when the policy learns.** Turning one mechanism off changes the traffic the agent is rewarded on, so the second run differs in the policy it converged to as well as in the mechanism under test. The console summary of [Example 26](../PureEdgeSim/examples/Example26/README.md) prints how often each ranking rule was used, so the two arms can be compared on more than their success rate; even then, read the gap as what the mechanism is worth together with the behaviour it induces, not as its isolated cost.
+
 ## Reproducibility checklist
 
 Before you submit or publish, make sure you can answer these questions:

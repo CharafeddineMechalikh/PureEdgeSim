@@ -33,6 +33,7 @@ class from another folder (for instance the Q-learning orchestrator of
 | [Example 23](Example23/README.md) | Custom nodes generator, task generator, topology creator, and simulation manager | `Example23/settings/` | default |
 | [Example 24](Example24/README.md) | Repartitioning a service graph while the simulation runs | `Example24/settings/` | default |
 | [Example 25](Example25/README.md) | Replaying a recorded production trace instead of random arrivals | `Example25/settings/` | default |
+| [Example 26](Example26/README.md) | Learning an orchestration that survives the crash of the orchestrating device | `Example26/settings/` | default |
 
 The Java classes of each example are in its own folder. Run one from the
 repository root after `mvn clean install -DskipTests`:
@@ -50,6 +51,8 @@ from the repository root.
 Start with [Example 1](Example1/README.md) for the structure of a simulation,
 [Example 3](Example3/README.md) for edge coordination,
 [Example 9](Example9/README.md) and [Example 10](Example10/README.md) for
-service graphs, and [Example 25](Example25/README.md) to drive the traffic from
-measured data rather than from a distribution. The full manual is in
+service graphs, [Example 25](Example25/README.md) to drive the traffic from
+measured data rather than from a distribution, and
+[Example 26](Example26/README.md) for a fleet that keeps working after the
+device orchestrating it crashes. The full manual is in
 [docs/](../../docs/).

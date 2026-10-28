@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- The three classes of Example 26, on a fleet ten times smaller than the one
+		of the paper. Each device sends one request per second instead of the two or
+		three of the scenario, which is what the generator spaces out at all, and the
+		background application is made heavier rather than more frequent: a task of
+		80000 million instructions holds the single core of a server for most of a
+		second and that of a phone for ten. A fleet whose processors are busy while
+		its links are not is what makes the three mechanisms of the example show up
+		in one simulated minute: hard real-time tasks find devices whose core is taken
+		and jump the queue, devices whose storage is filled by the work they already
+		carry refuse the requests they are given, and the requests sent while the
+		primary orchestrator is down reach it and are lost. -->
+
+	<application name="Health">
+		<type>Hard Real-time</type>
+		<rate>60</rate>
+		<usage_percentage>34</usage_percentage>
+		<latency>0.015</latency>
+		<container_size>30000</container_size>
+		<request_size>20</request_size>
+		<results_size>20</results_size>
+		<task_length>200</task_length>
+	</application>
+	<application name="Augmented reality">
+		<type>Soft Real-time</type>
+		<rate>60</rate>
+		<usage_percentage>23</usage_percentage>
+		<latency>0.5</latency>
+		<container_size>50000</container_size>
+		<request_size>1500</request_size>
+		<results_size>50</results_size>
+		<task_length>5000</task_length>
+	</application>
+	<application name="HEAVY_COMP_APP">
+		<type>Normal</type>
+		<rate>60</rate>
+		<usage_percentage>40</usage_percentage>
+		<latency>30</latency>
+		<container_size>40000</container_size>
+		<request_size>2500</request_size>
+		<results_size>200</results_size>
+		<task_length>80000</task_length>
+	</application>
+</applications>

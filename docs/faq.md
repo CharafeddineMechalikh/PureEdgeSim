@@ -185,6 +185,10 @@ Models are instantiated reflectively with fixed constructor signatures. Check th
 
 Not through a top-level setter. The default generator constructs `EnergyModelComputingNode` inside `createComputingNode`. Replace the model in a custom computing node constructor, or provide a custom computing nodes generator that assigns your energy model. See [Customizing models](customizing-models.md).
 
+### Can I model a node that crashes and a standby that takes over?
+
+Not through configuration. The framework switches a device off only when its battery reaches zero, and nothing in it re-points the requests already on their way to a node that just died. Both are example-level work: `Example26` schedules three events of its own, on tags of its own, from a custom simulation manager, marks the orchestrating device dead halfway through the run, brings a cold standby up ten simulated seconds later, and lets every device re-decide which live orchestrator it works for on its next request. What the outage costs is counted from the tasks the manager still sees, device alive and orchestrator dead, and is printed per class of traffic in the console summary. See [Customizing models](customizing-models.md#custom-simulation-manager).
+
 ### Why does my custom event never arrive?
 
 Common causes:

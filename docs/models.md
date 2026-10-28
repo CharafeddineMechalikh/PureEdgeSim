@@ -318,7 +318,7 @@ Death is only checked on the update tick. A device can consume more than its rem
 
 ### What to override
 
-Extend `DefaultComputingNode` to change scheduling (for example, shortest-job-first), to add GPU or accelerator resources, to model a different execution-time formula, or to add admission control. Extend `ComputingNode` directly only if you also provide the many accessors used by the orchestrator and the logger; `DefaultComputingNode` already implements them.
+Extend `DefaultComputingNode` to change scheduling (for example, shortest-job-first), to add GPU or accelerator resources, to model a different execution-time formula, or to add admission control. [Example 26](../PureEdgeSim/examples/Example26/README.md) does the last two together: its node puts hard real-time tasks at the head of the queue that the default model keeps in FIFO order, and refuses a task whose container the node can no longer host, for storage, for RAM, or because its battery is almost flat. Extend `ComputingNode` directly only if you also provide the many accessors used by the orchestrator and the logger; `DefaultComputingNode` already implements them.
 
 ## Energy model
 
