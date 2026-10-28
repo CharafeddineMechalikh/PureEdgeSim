@@ -115,6 +115,8 @@ If you compare many scenarios, say so and correct for multiple comparisons, or f
 - **Reporting device-count effects with a fixed total workload.** If the task generator produces proportional workload, delay reflects scale. If it produces a fixed total workload, delay may fall with more devices. State which one you use.
 - **Using wall-clock time as a simulated result.** Simulation speed is a property of your machine and model complexity. Never mix it into a performance claim about the simulated system.
 
+- **Sizing capacity from the mean of synthetic traffic.** A generator tuned to the mean rate and mean task sizes of a real workload reproduces its average and none of its bursts. On the one 8-core server of [Example 25](../PureEdgeSim/examples/Example25/README.md), a recorded hour of 8819 production LLM inference requests and a poisson stream with the same means report the same utilization, 42.42 and 41.56 percent, and queue depths of 120201 and 173 seconds. A capacity study that used only the synthetic arm would conclude that the server has headroom. If the claim is about capacity, replay a measured trace or add burstiness deliberately, and say which.
+
 ## Reproducibility checklist
 
 Before you submit or publish, make sure you can answer these questions:
@@ -126,6 +128,7 @@ Before you submit or publish, make sure you can answer these questions:
 - How many repetitions per scenario?
 - Which `random_seed` was used, and was it varied across repetitions or left empty?
 - Which probability distributions replaced the default fixed values, and with which means?
+- Was the workload synthetic or recorded? If recorded, which trace, under which licence, and how were its units converted into task sizes, lengths, and deadlines?
 - How were runs parallelized?
 - How were `NaN`, `-1` death times, and in-flight tasks handled?
 - What is the simulation horizon, and why is it long enough?

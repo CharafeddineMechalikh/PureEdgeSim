@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<edge_devices>
+	<!-- Fifty devices, all of them fixed and all of them sending requests, so
+		that the only variability left in the run is the one of the trace. The
+		batteries are disabled (the parser still wants the capacity and the
+		initial level of every device), because a device running out of energy
+		would drop requests and make the comparison with the synthetic baseline
+		harder to read.
+
+		Twenty of the fifty use the cellular access and thirty the wifi access,
+		which is enough to keep the uplink and downlink costs of the two radios in
+		the report. -->
+
+	<device> <!-- smartphone on a cellular link -->
+		<connectivity>cellular</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>40</percentage>
+		<batteryCapacity>18.75</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>1</idleConsumption>
+		<maxConsumption>3.3</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>8</cores>
+		<mips>10000</mips>
+		<ram>4000</ram>
+		<storage>128000</storage>
+	</device>
+	<device> <!-- fixed workstation on the wifi access point -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>60</percentage>
+		<batteryCapacity>32.4</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>10</idleConsumption>
+		<maxConsumption>30</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>8</cores>
+		<mips>15000</mips>
+		<ram>16000</ram>
+		<storage>512000</storage>
+	</device>
+</edge_devices>

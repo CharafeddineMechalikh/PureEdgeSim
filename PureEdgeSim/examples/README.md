@@ -32,6 +32,7 @@ class from another folder (for instance the Q-learning orchestrator of
 | [Example 22](Example22/README.md) | Self-organizing device clusters with an elected head | `Example22/settings/` | default |
 | [Example 23](Example23/README.md) | Custom nodes generator, task generator, topology creator, and simulation manager | `Example23/settings/` | default |
 | [Example 24](Example24/README.md) | Repartitioning a service graph while the simulation runs | `Example24/settings/` | default |
+| [Example 25](Example25/README.md) | Replaying a recorded production trace instead of random arrivals | `Example25/settings/` | default |
 
 The Java classes of each example are in its own folder. Run one from the
 repository root after `mvn clean install -DskipTests`:
@@ -42,9 +43,13 @@ mvn exec:java -Dexec.mainClass="examples.Example1"
 
 `Example5` and `Example8` use the jFuzzyLogic jar that is committed at `libs/` in
 the repository root. The `exec` plugin of the pom runs with the compile classpath,
-so the two examples start with the same command as all the others.
+so the two examples start with the same command as all the others. `Example25` reads
+its trace from a path relative to the working directory, so it too must be started
+from the repository root.
 
 Start with [Example 1](Example1/README.md) for the structure of a simulation,
-[Example 3](Example3/README.md) for edge coordination, and
+[Example 3](Example3/README.md) for edge coordination,
 [Example 9](Example9/README.md) and [Example 10](Example10/README.md) for
-service graphs. The full manual is in [docs/](../../docs/).
+service graphs, and [Example 25](Example25/README.md) to drive the traffic from
+measured data rather than from a distribution. The full manual is in
+[docs/](../../docs/).

@@ -201,6 +201,27 @@ To run this class from the command line after adding it to the source tree:
 mvn compile exec:java -Dexec.mainClass="examples.MyFirstOrchestrator"
 ```
 
+## Feed the simulator with measured traffic
+
+Task sizes and arrival times are drawn from the distributions you write in
+`applications.xml`, which reproduces the mean of a workload but not its bursts. A
+task generator can instead read a recorded file and emit one task per line, because
+`generate()` returns the whole task list before the first event.
+[Example 25](../PureEdgeSim/examples/Example25/README.md) does that with a published
+production trace of 8819 LLM inference requests and runs it against the same scenario
+fed with random arrivals:
+
+```bash
+mvn exec:java -Dexec.mainClass="examples.Example25"                                  # recorded trace
+mvn exec:java -Dexec.mainClass="examples.Example25" -Dexample25.syntheticBaseline=true # same means, poisson
+```
+
+The two runs do the same amount of work on the same server and report almost the same
+CPU utilization, but the recorded one spends 120201 seconds in queues against 173 for
+the random one, and only 36.06 percent of its requests meet their deadline against 100
+percent. It is the shortest demonstration that the shape of a traffic, not only its
+average, decides whether a deployment looks adequate. See [Simulation models](models.md#recorded-traces).
+
 ## Use PureEdgeSim as a library
 
 You do not have to clone the repository. The simulator is on Maven Central, and from release `6.0` the coordinates are `io.github.charafeddinemechalikh:pureedgesim`; releases up to `5.1.0` are under the older group id `com.mechalikh`. Add it to your project, create a `Simulation`, and call `launchSimulation()`:

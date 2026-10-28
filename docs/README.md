@@ -16,6 +16,7 @@ If you are looking for the shortest path to a running simulation, read [Getting 
 2. [Configuration](configuration.md): change the scenario, workload, devices, network, and algorithms.
 3. [Output and metrics](output-and-metrics.md): understand the CSV columns and the charts.
 4. [Research guide](research-guide.md): design a defensible experiment and report it.
+5. If your workload was measured rather than assumed, replay it: [Example 25](../PureEdgeSim/examples/Example25/README.md) feeds a recorded production trace of 8819 LLM inference requests to the simulator and compares it with random arrivals at the same means.
 
 ### Path 2: I want to implement a new offloading algorithm
 

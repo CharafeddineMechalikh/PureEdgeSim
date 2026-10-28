@@ -152,6 +152,23 @@ Yes. The charts are drawn from the CSV. Read the CSV directly and plot it with y
 
 ## Custom models and orchestrators
 
+### Can I replay a recorded production trace instead of generating random tasks?
+
+Yes, and it is worth doing when the claim depends on burstiness. Override `generate()`
+in a task generator, read the file, and call `scheduleTask` per line: the whole task
+list is returned before the first event, so no core change is needed.
+[Example 25](../PureEdgeSim/examples/Example25/README.md) replays 8819 recorded LLM
+inference requests from the Azure dataset published with the Splitwise paper. On the
+same server, the recorded hour produced 120201 seconds of queueing and a 36.06 percent
+deadline success rate, while a Poisson generator tuned to its mean rate and mean task
+sizes produced 173 seconds and a 100 percent success rate, at 42.42 and 41.56 percent
+CPU utilization.
+
+Two limits to know: the simulation clock ticks in whole seconds, so arrivals are
+rounded to their second and requests sharing a second lose their internal order; and
+`generate()` runs before the event loop, so the trace is a fixed schedule that cannot
+react to what the simulation decides. See [Simulation models](models.md#recorded-traces).
+
 ### How do I add a new orchestration algorithm?
 
 Set a free-form algorithm name in `orchestration_algorithms` and handle that name in a custom orchestrator. Algorithm names are not validated by the parser; your class decides what they mean. Architecture names, by contrast, are fixed by `Orchestrator.initialize()`. See [Writing orchestrators](writing-orchestrators.md).

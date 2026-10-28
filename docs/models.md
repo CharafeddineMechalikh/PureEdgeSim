@@ -209,6 +209,39 @@ A partition plan can be **static** or **dynamic**. A static plan is computed onc
 
 The dependency bookkeeping lives in `TaskAbstract`: `addDependency`, `addDependent`, `dependencyFinished`, `getDependencies`, and `getDependents`. A task class that implements `Task` directly keeps working for monolithic applications, because the interface provides neutral default methods.
 
+### Recorded traces
+
+Every mechanism above draws its arrivals from a distribution, which reproduces the
+mean and the spread of a workload but not its shape. `generate()` is called once,
+before the first event, and returns whatever queue you can build, so nothing forces
+it to sample: it can read a file and emit one task per recorded line.
+[Example 25](../PureEdgeSim/examples/Example25/README.md) does exactly that with a
+published production trace, the 8819 LLM inference requests of the Azure dataset
+released with the Splitwise paper, each recorded with its arrival instant and its
+prompt and completion token counts.
+
+The reason to do it is measurable rather than cosmetic. That hour has a mean rate of
+2.57 requests per second and an inter-arrival coefficient of variation of 13.15,
+against 1 for a Poisson process; its busiest ten-second window carries 412 requests,
+16 times the hourly mean, and 12 of its 58 minutes carry nothing at all. Replayed on
+one 8-core edge server sized to the trace's mean demand, it produced 120201 seconds
+of queueing and 36.06 percent of the requests inside their deadline. The same
+scenario fed by a Poisson generator tuned to the same mean rate and the same mean
+task sizes did the same amount of work, 42.42 against 41.56 percent CPU utilization,
+and produced 173 seconds of queueing with every request meeting its deadline. A study
+of that server's capacity run on synthetic traffic would have concluded that it has
+headroom.
+
+A trace names what a request is, not how long it takes on the machine you simulate,
+so the conversion into simulator units stays your responsibility: prompt and
+completion tokens become task length, token counts become request and results sizes,
+and a service-level objective becomes `setMaxLatency`. Two properties of the
+framework limit how faithfully a file can be replayed. The clock ticks in whole
+seconds, so arrival offsets are rounded: bursts survive, their internal order does
+not, and 99.6 percent of the requests of that hour share their second with another
+one. And `generate()` runs before the event loop, so a trace is a fixed schedule
+known at the start, not a stream that can react to what the simulation does.
+
 ### What to override
 
 | Goal | Method |
@@ -219,6 +252,7 @@ The dependency bookkeeping lives in `TaskAbstract`: `addDependency`, `addDepende
 | Change the fields of one task | `insert(int, ComputingNode, Application, int)` and `createTask(int)` |
 | Change a whole burst | `insert(int, int, ComputingNode)` |
 | Use a completely different traffic model | Extend `TaskGenerator` and override `generate()` |
+| Replay a recorded workload | Override `generate()`, read the file, build each task and call `scheduleTask`, as in `Example25TraceTaskGenerator` |
 
 `DefaultTaskGenerator` is intentionally simple. Real workloads often need bursts, diurnal patterns, or correlated tasks; those belong in a custom generator.
 

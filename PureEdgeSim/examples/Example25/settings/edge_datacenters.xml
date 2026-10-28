@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<edge_datacenters>
+	<!-- One edge server, sized for the recorded hour. The replay asks it for
+		1.58 billion million instructions, and the trace spans 3436 s, so the mean
+		demand is about 458000 MIPS when a token costs 60 MI for the prompt and
+		2000 MI for the completion. With the cheaper prefill of the Splitwise
+		characterization, which this example uses, the mean demand is about 206000
+		MIPS, or 43 percent of the 480000 MIPS of this server: the run is not
+		saturated on average, and only the bursts of the trace push it over. -->
+	<datacenter name="edge-server">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>400</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>1000</x_pos>
+			<y_pos>1000</y_pos>
+		</location>
+		<cores>8</cores>
+		<mips>60000</mips>
+		<ram>64000</ram>
+		<storage>500000</storage>
+	</datacenter>
+</edge_datacenters>

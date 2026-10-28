@@ -149,6 +149,42 @@ public class PeriodicTaskGenerator extends TaskGenerator {
 
 `devicesList` is built by the `TaskGenerator` constructor from the generated Mist node list. If your generator needs a different population, clear or replace it before generating.
 
+### A generator that reads a file
+
+Nothing forces a generator to sample a distribution. `generate()` is called once,
+before the first event, and returns whatever queue you can build, so a recorded
+workload can be replayed line by line. [Example 25](../PureEdgeSim/examples/Example25/README.md)
+does exactly that with a published production trace of 8819 LLM inference
+requests: each line carries an arrival offset and two token counts, and becomes
+one task whose generation time, sizes, length and latency budget come from the
+file rather than from `applications.xml`.
+
+Three things are worth copying from that generator:
+
+- It maps workload *descriptors* to simulator units through named constants
+  (tokens to bytes, tokens to millions of instructions, completion length to a
+  latency budget) instead of hiding the conversion inside the sampling. Each one
+  is a documented tuning knob, so a reader can disagree with the calibration
+  without touching the code.
+- A recorded stream describes a service, not a device. The example hands the
+  requests to the devices in turn, which keeps the offered load of the fleet even
+  while the instantaneous arrival rate stays as measured.
+- It reports what it replayed. The first console line of the run says how many
+  requests were scheduled, over what simulated period, and how many were dropped
+  because they arrive after `simulation_time`, so a truncated replay is visible
+  instead of silent.
+
+The framework clock resolution is one second, so arrival offsets are rounded to
+their second. That preserves bursts, but not the internal order of the requests
+that land in the same second: in the hour of that trace, 99.6 percent of the
+requests share their second with another one, and one second holds 68 of them.
+
+The payoff is measurable. On the same scenario, with the same mean rate and the
+same mean task sizes, the recorded trace produced 120201 seconds of queueing
+against 173 for poisson arrivals, and 36.06 percent of its requests met their
+latency requirement against 100 percent. A generator tuned to the means of a
+real workload reproduces its average and loses the part that breaks systems.
+
 ## Custom computing node
 
 Extending `DefaultComputingNode` gives you the resource bookkeeping and execution loop. The constructor order is `(SimulationManager, mipsPerCore, cores, storage, ram)`.

@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+*   New `Example25` replays a recorded production workload instead of drawing one.
+    `Example25TraceTaskGenerator` reads `trace/azure_llm_code_1h.csv`, the 8819 LLM
+    inference requests of the Azure dataset published with the Splitwise paper (CC-BY-4.0,
+    attributed in `trace/NOTICE.md`), and turns each line into one request whose size,
+    length and deadline come from the recorded prompt and completion token counts. The
+    same scenario runs with random arrivals at the mean rate and mean sizes of the trace
+    when `-Dexample25.syntheticBaseline=true`. Both modes use one 8-core edge server
+    sized to the mean demand of the hour: the recorded trace spends 120201 s in queues
+    and 36.06 percent of its requests meet their deadline, against 173 s and 100 percent
+    for poisson arrivals, at 42.42 and 41.56 percent CPU utilization. The
+    token-to-instruction mapping is configurable through the `example25.bytesPerToken`,
+    `example25.miPerContextToken`, `example25.miPerGeneratedToken`, `example25.ttftBudget`
+    and `example25.decodeBudget` system properties. No framework class changed: the replay
+    uses the existing `setCustomTaskGenerator` extension point.
+
 ## Version 6.0 Changelog (October 27th 2026)
 
 *   An application can now declare a service graph: a request generates several

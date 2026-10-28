@@ -222,6 +222,16 @@ Every element above may be a distribution, in which case each task draws its own
 </application>
 ```
 
+No configuration element replays a measured workload. The elements above describe a
+distribution, from which each task is drawn independently, so a scenario reproduces
+the average and the spread of a traffic but not the shape of its bursts. When the
+traffic exists as data, replace the generator instead:
+[Example 25](../PureEdgeSim/examples/Example25/README.md) reads a recorded trace of
+8819 production LLM inference requests, one task per line, and on a server sized to
+the mean demand of that hour it turns the 173 seconds of queueing measured with
+poisson arrivals into 120201. The values in `applications.xml` then serve as defaults
+for what a trace does not carry, such as the container size.
+
 ### How applications are assigned to devices
 
 `DefaultTaskGenerator` iterates over applications in file order, except the last one. For each, it computes `usage_percentage * generatingDevices / 100`, removes that many devices at random from the pool, assigns them the application, and generates their tasks. The last application receives **all remaining devices**, regardless of its configured percentage.

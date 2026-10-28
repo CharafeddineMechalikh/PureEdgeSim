@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- One application: a generative AI assistant, the workload of the Azure
+		trace replayed by this example.
+
+		When the trace is replayed, only the values this generator cannot read
+		from the recorded invocations are used here: the type, the container size,
+		and the application name. The request size, the result size, the task
+		length and the latency of every task are taken from the trace instead of
+		from the elements below.
+
+		With -Dexample25.syntheticBaseline=true the custom generator is not used
+		at all, so this block describes the whole workload. Every number below is
+		the mean of the trace, measured on the committed file:
+
+		- 2047.85 prompt tokens on average, 4 bytes per token -> 8 KB up, and 12
+		  MI per token on the prefill phase
+		- 27.88 completion tokens on average -> 0.109 KB down, and 2000 MI per
+		  token on the decode phase
+		- 2 s of time-to-first-token budget plus 0.1 s per completion token ->
+		  4.79 s, written as 4.8
+		- 8819 requests over the 3436 s of the hour, spread on 50 devices -> 3.08
+		  requests per minute per device, written as the integer 3 because `rate`
+		  is an integer, which is why the baseline offers about 2.5 percent fewer
+		  requests than the trace does
+
+		The task length is the mean of the per-request products, 708511688 MI
+		over 8819 requests, not the product of the two means (which would give
+		80960 MI): token counts and their costs are correlated through the
+		prompt length. -->
+
+	<application name="LLM inference">
+		<type>Soft Real-time</type>
+		<rate>3</rate>
+		<usage_percentage>100</usage_percentage>
+		<arrival>poisson</arrival>
+		<latency>4.8</latency>
+		<container_size>2000</container_size>
+		<request_size>8</request_size>
+		<results_size>0.109</results_size>
+		<task_length>80339</task_length>
+	</application>
+</applications>

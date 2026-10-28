@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<cloud_data_centers>
+	<!-- The cloud is only the registry of this scenario: the orchestration
+		architecture is EDGE_ONLY, so no request is ever executed there. -->
+	<datacenter>
+		<idleConsumption>0</idleConsumption>
+		<maxConsumption>5776</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<cores>200</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>1000000</storage>
+	</datacenter>
+</cloud_data_centers>
