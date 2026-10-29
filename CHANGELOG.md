@@ -30,6 +30,33 @@
     requests in a five minute run where no battery reaches zero. No framework class
     changed: the example uses `setCustomEdgeOrchestrator`, `setCustomComputingNode` and
     `setCustomSimulationManager`.
+*   New `Example27` puts a shared WAN uplink over its own capacity and runs the same
+    scenario through both network models. Twenty devices upload a 1500 KB clip once a
+    minute, four megabits per second offered against the three the link carries, with a
+    25 s budget and a task that is a tenth of a second anywhere, so the deadline is a
+    promise about the radio. `Example27CongestionAuditor`, a custom simulation manager,
+    samples the delay breakdown of every task that reaches an end, failed ones included,
+    and prints the median, ninetieth percentile and maximum of the network time that the
+    aggregate report averages away. Under the realistic model the transfers queue and 182
+    of 189 requests miss their deadline at a median network time of 157.440 s; under the
+    default one step model all 189 return in exactly 8.507 s, the price of one request on
+    an empty link, while the same run books 781 s of transfer on a link that existed for
+    600 s. `-Dexample27.realistic=false` selects the ablation, a second parameters file
+    that differs in one setting line. An `EDGE_ONLY` iteration is the control: the same
+    clips over the radio cross in 0.210 s. No framework class changed.
+*   New `Example28` makes the placement decision a question of whose battery pays, on a
+    fleet that can die of the answer. Forty battery powered devices, all of them
+    generating two requests a minute and all able to compute, serve each other in a
+    `MIST_ONLY` scenario whose batteries hold sixteen to thirty minutes of idle draw
+    against a fifteen minute run, so only the work can kill a device. The orchestrator
+    ranks candidates by their autonomy, the seconds of idle life left once they have paid
+    for the task and for their queue, and `Example28FleetReporter` counts the devices
+    alive at the end of each simulated minute plus the three ways a task can be lost.
+    Measured, the autonomy ranking ends with all 40 devices alive and 1196 of 1200
+    requests served, `-Dexample28.batteryAware=false` ranks by speed and kills 10 devices
+    at a cost of 83 requests, and `-Dexample28.perTask=false` reuses the framework's
+    placement cache and kills 15 while taking 120. No framework class changed: the
+    example uses `setCustomEdgeOrchestrator` and `setCustomSimulationManager`.
 
 ## Version 6.0 Changelog (October 27th 2026)
 

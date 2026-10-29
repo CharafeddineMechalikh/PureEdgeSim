@@ -379,6 +379,8 @@ Changing the event tags or the schedule order can break the simulation silently.
 
 The same extension is how a scenario injects a fault of its own. [Example 26](../PureEdgeSim/examples/Example26/README.md) schedules three events on tags of its own, crashes the orchestrating device halfway through the run, boots its cold standby ten seconds later, and counts the requests that were in flight with the primary when it died. Because the framework has no notion of an outage, the loss is measured from the tasks the manager still sees: a task whose device is alive but whose orchestrator is dead never reaches a placement, and the example reports those, per class of traffic, in the console summary it prints on top of the usual CSV row.
 
+A manager is also the place to measure something the aggregate report does not keep. [Example 27](../PureEdgeSim/examples/Example27/README.md) overrides the two terminal hooks, `RESULT_RETURN_FINISHED` inside `processEvent` and `taskFailed`, and stores the delay breakdown of every task that reaches either, successes and failures alike. That is what lets it report the median, ninetieth percentile and maximum of the network time of a congested link, where the standard report would print one mean over the requests that completed and hide the tail behind it. Deduplicate by task identifier: a failed task passes through `taskFailed` at each of the three checkpoints, and sampling it three times would weight the average by the number of checks rather than by the number of tasks.
+
 ## Testing a custom model
 
 1. **Start with one scenario.** Set `simulation_time=1`, one architecture, one algorithm, and one device count. A custom model that has an initialization bug usually fails in the first seconds.

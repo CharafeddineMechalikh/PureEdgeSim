@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<edge_datacenters>
+	<!-- The same computing power as the cloud, a hundred metres from every device,
+		reached over a wifi link of thirteen hundred megabits per second instead of
+		over a metropolitan link of three. This is the iteration the congested one is
+		read against. -->
+	<datacenter name="dc1">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>250</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>100</x_pos>
+			<y_pos>100</y_pos>
+		</location>
+		<cores>50</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<network_links>
+		<!-- A single data center, so there is nothing to link. -->
+	</network_links>
+</edge_datacenters>

@@ -22,6 +22,7 @@ If you are looking for the shortest path to a running simulation, read [Getting 
 4. [Research guide](research-guide.md): design a defensible experiment and report it.
 5. If your workload was measured rather than assumed, replay it: [Example 25](../PureEdgeSim/examples/Example25/README.md) feeds a recorded production trace of 8819 LLM inference requests to the simulator and compares it with random arrivals at the same means.
 6. If your claim is about fault tolerance, say what fails: [Example 26](../PureEdgeSim/examples/Example26/README.md) crashes the device that carries the orchestration halfway through a pure edge run, and each of its four mechanisms is switched off from the command line to measure what it is worth.
+7. If your claim is about delay under load, say which network model you ran: [Example 27](../PureEdgeSim/examples/Example27/README.md) saturates a shared WAN uplink and shows the same scenario under both models, where the default one step model reports no congestion at all on a link offered four megabits per second against three carried.
 
 ### Path 2: I want to implement a new offloading algorithm
 

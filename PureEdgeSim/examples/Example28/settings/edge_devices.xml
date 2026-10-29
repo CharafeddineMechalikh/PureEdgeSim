@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<edge_devices>
+	<!-- Forty fixed devices, ten of each of the four types below, every one of them
+		on a battery, every one of them able to compute and every one of them
+		generating traffic. Nothing moves: a device that left the range of its peers
+		would lose its tasks for a reason that has nothing to do with its battery, and
+		the only way anything is allowed to fail here is a battery reaching zero.
+
+		The batteries are the scenario. Each device draws its capacity from a uniform
+		distribution whose endpoints are sixteen and thirty minutes of its own idle
+		draw, while the run lasts fifteen minutes. No device can therefore die of
+		staying awake: the idle drain of a whole run always fits, and a device only
+		goes when the work it was handed pushes its drain past what it holds. Which
+		devices end up in that group is the whole question, and it is decided by the
+		placement policy. A device dies when its own charge runs out, and what goes
+		with it is what it was holding: a task queued inside a dying device is lost, a
+		task it would have generated after that is never generated.
+
+		The four types differ in the two quantities that decide which device a task
+		should be handed to: how many million instructions a watt-second buys, and how
+		hungry the machine is when it has nothing to do, which is what the battery is
+		measured against. The gateway is the quick and thirsty one, the wearable the
+		slow and frugal one, and the two phone types sit between them; the old phone is
+		single core, so a clip takes it fifty seconds and costs it six times the energy
+		it costs the gateway. That spread is what makes a device that should be handed
+		work and a device that should be left alone two different questions.
+
+		The framework books a device's serving energy against the whole capacity of its
+machine while it executes a task on one core, so a two core device is credited
+		with half the energy of the same work on a single core one. The orchestrator of
+		this example predicts exactly that model rather than arguing with it. -->
+
+	<device arch="x86" os="linux" vmm="xen">
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>25</percentage>
+		<batteryCapacity distribution="uniform" min="1.07" max="2"/> <!-- watt-hours, sixteen to thirty minutes of the 4 W idle draw -->
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>4</idleConsumption> <!-- watts -->
+		<maxConsumption>10</maxConsumption> <!-- watts, at full load -->
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>1</cores>
+		<mips>20000</mips>
+		<ram>4000</ram>
+		<storage>100000</storage>
+	</device>
+
+	<device arch="x86" os="linux" vmm="xen">
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>25</percentage>
+		<batteryCapacity distribution="uniform" min="0.53" max="1"/> <!-- sixteen to thirty minutes of the 2 W idle draw -->
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>2</idleConsumption>
+		<maxConsumption>6</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>2</cores>
+		<mips>8000</mips>
+		<ram>4000</ram>
+		<storage>100000</storage>
+	</device>
+
+	<device arch="x86" os="linux" vmm="xen">
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>25</percentage>
+		<batteryCapacity distribution="uniform" min="0.27" max="0.5"/> <!-- sixteen to thirty minutes of the 1 W idle draw -->
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>1</idleConsumption>
+		<maxConsumption>3</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>2</cores>
+		<mips>3000</mips>
+		<ram>2000</ram>
+		<storage>100000</storage>
+	</device>
+
+	<device arch="x86" os="linux" vmm="xen">
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>25</percentage>
+		<batteryCapacity distribution="uniform" min="0.53" max="1"/> <!-- sixteen to thirty minutes of the 2 W idle draw -->
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>2</idleConsumption>
+		<maxConsumption>6</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>1</cores>
+		<mips>4000</mips>
+		<ram>4000</ram>
+		<storage>100000</storage>
+	</device>
+</edge_devices>

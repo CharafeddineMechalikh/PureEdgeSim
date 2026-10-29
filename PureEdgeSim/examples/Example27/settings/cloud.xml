@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<cloud_data_centers>
+	<!-- One region, and it is never short of capacity: the point of the scenario is
+		that the requests get stuck in front of it, not inside it. -->
+	<datacenter>
+		<idleConsumption>0</idleConsumption>
+		<maxConsumption>5776</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<cores>200</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>1000000</storage>
+	</datacenter>
+</cloud_data_centers>

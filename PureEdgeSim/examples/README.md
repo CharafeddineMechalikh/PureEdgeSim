@@ -34,6 +34,8 @@ class from another folder (for instance the Q-learning orchestrator of
 | [Example 24](Example24/README.md) | Repartitioning a service graph while the simulation runs | `Example24/settings/` | default |
 | [Example 25](Example25/README.md) | Replaying a recorded production trace instead of random arrivals | `Example25/settings/` | default |
 | [Example 26](Example26/README.md) | Learning an orchestration that survives the crash of the orchestrating device | `Example26/settings/` | default |
+| [Example 27](Example27/README.md) | A shared uplink offered more than it can carry, seen through both network models | `Example27/settings/` | default |
+| [Example 28](Example28/README.md) | Placing work by the autonomy it leaves a battery, on a fleet that can die of it | `Example28/settings/` | default |
 
 The Java classes of each example are in its own folder. Run one from the
 repository root after `mvn clean install -DskipTests`:
@@ -52,7 +54,10 @@ Start with [Example 1](Example1/README.md) for the structure of a simulation,
 [Example 3](Example3/README.md) for edge coordination,
 [Example 9](Example9/README.md) and [Example 10](Example10/README.md) for
 service graphs, [Example 25](Example25/README.md) to drive the traffic from
-measured data rather than from a distribution, and
+measured data rather than from a distribution,
 [Example 26](Example26/README.md) for a fleet that keeps working after the
-device orchestrating it crashes. The full manual is in
-[docs/](../../docs/).
+device orchestrating it crashes, [Example 27](Example27/README.md) for what
+a loaded link does to a delay budget under each of the two network models, and
+[Example 28](Example28/README.md) for a battery powered fleet in which the
+placement decides which devices are left standing. The
+full manual is in [docs/](../../docs/).

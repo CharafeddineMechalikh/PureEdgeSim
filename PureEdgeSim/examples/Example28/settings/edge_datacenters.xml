@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<edge_datacenters>
+	<!-- The architecture of this scenario is MIST_ONLY, so not one task is placed
+		here: the fleet is its own infrastructure and the only failures it can suffer
+		are battery failures. The data center exists because the topology builder
+		links every edge device to the closest one and wires that one to the cloud,
+		and a device with no data center in range has no link at all. It is on mains
+		power, so it cannot die and cannot be confused with a member of the fleet. -->
+	<datacenter name="dc1">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>250</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>100</x_pos>
+			<y_pos>100</y_pos>
+		</location>
+		<cores>50</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<network_links>
+		<!-- A single data center, so there is nothing to link. -->
+	</network_links>
+</edge_datacenters>

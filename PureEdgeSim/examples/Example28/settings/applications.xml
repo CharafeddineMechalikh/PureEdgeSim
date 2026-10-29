@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- Three workloads instead of one, because what a placement costs a device is
+		measured in the energy of the work, not in the task: a sensor reports, a phone
+		analyses a photo and a camera transcodes a clip, and the three cost twenty,
+		eighty and two hundred thousand million instructions. The task generator picks
+		a device for each application at random, so which hardware ends up with which
+		application is part of the seed rather than part of the scenario, and the fleet
+		is mixed in both directions.
+
+		The sizes are chosen so that the energy of computing is a quarter of the
+		energy of the fleet, and not a rounding error. Measured on this scenario the
+		devices burn 32 watt-hours in a run: 24 of them doing nothing and 8 of them
+		computing. That second number is the only one a placement policy can move, and a
+		policy that spends it badly is the one that hands the fleet's work to a few
+		devices and watches them die of it. With tasks ten times smaller the computing
+		share falls below 5 % and no placement policy, however clever, changes which
+		devices survive: measured then, every arm of the scenario lost a third of its
+		fleet and the ranking made no difference to it.
+
+		The lengths are means. They are drawn from a distribution, so two minutes of
+		the same device are not the same and the battery of a device is not emptied at
+		a steady pace:
+
+		<task_length distribution="uniform" min="150000" max="250000"/>
+
+		See docs/models.md for the distributions. The arrivals stay evenly spaced
+		inside each minute, which is what the framework does without an arrival
+		element: the scenario is about which device pays for a task, and that does not
+		depend on when in the minute the task arrives.
+
+		The latency budgets are wide on purpose. Two requests a minute of a task that
+		takes a device ten seconds already fills half of its minutes, and a budget
+		 tight enough to be missed would report queueing, not energy. What is counted
+		here is what a dying device takes with it. -->
+
+	<application name="Motion sensor">
+		<type>Sensor</type>
+		<rate>2</rate> <!-- two reports a minute -->
+		<usage_percentage>50</usage_percentage> <!-- half of the fleet -->
+		<latency>30</latency> <!-- seconds -->
+		<container_size>1</container_size> <!-- kilobytes, and the registry is off -->
+		<request_size>2</request_size> <!-- kilobytes -->
+		<results_size>1</results_size> <!-- kilobytes -->
+		<task_length>20000</task_length> <!-- million instructions -->
+	</application>
+
+	<application name="Photo analysis">
+		<type>Photo</type>
+		<rate>2</rate>
+		<usage_percentage>30</usage_percentage>
+		<latency>60</latency>
+		<container_size>1</container_size>
+		<request_size>15</request_size>
+		<results_size>5</results_size>
+		<task_length>80000</task_length> <!-- million instructions -->
+	</application>
+
+	<application name="Video transcoding">
+		<type>Video</type>
+		<rate>2</rate>
+		<usage_percentage>20</usage_percentage>
+		<latency>150</latency>
+		<container_size>1</container_size>
+		<request_size>50</request_size>
+		<results_size>20</results_size>
+		<task_length>200000</task_length> <!-- million instructions -->
+	</application>
+</applications>

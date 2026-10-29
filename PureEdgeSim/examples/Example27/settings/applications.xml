@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- One workload, and its shape is the whole scenario: a clip of a megabyte
+		and a half, so a request carries twelve megabits up, computed on the link
+		rather than on the processor. The task itself is nothing: five thousand
+		million instructions are a tenth of a second on the edge server and less on
+		the cloud. Twenty five seconds of budget is therefore a promise about the
+		network, and the request only misses it when the link was busy.
+
+		The arrivals are poisson rather than spaced by a whole number of seconds,
+		which is what makes the two network models disagree. The default generator
+		sends every device at the same instant, so the transfers of one burst are
+		already together when the first of them starts, and even the one step model
+		sees them share the link. Spread over the minute, a transfer that is still
+		crossing the link when the next one arrives has to hold back that next one,
+		and only a model that lets transfers live over time can say so. -->
+
+	<application name="Video upload">
+		<type>Normal</type>
+		<rate>1</rate> <!-- one clip per device per minute -->
+		<arrival>poisson</arrival>
+		<usage_percentage>100</usage_percentage>
+		<latency>25</latency> <!-- seconds of end to end budget -->
+		<container_size>1500</container_size> <!-- kilobytes -->
+		<request_size>1500</request_size> <!-- kilobytes, twelve megabits up -->
+		<results_size>50</results_size> <!-- kilobytes -->
+		<task_length>5000</task_length> <!-- million instructions -->
+	</application>
+</applications>

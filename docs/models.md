@@ -411,6 +411,17 @@ A link can carry several transfers at once. On every `network_update_interval`, 
 
 With `realistic_network_model=false`, the remaining size is set to zero on the first update, so the transfer finishes in a single step. Its network time is still computed as `fileSize / allocatedBandwidth` and added to the task delay, but the transfer does not occupy the link over later intervals. Bandwidth therefore still affects each transfer's delay through the share it receives when it starts, while queueing and temporal congestion between transfers that start at different times are not modeled. This makes runs much faster, but it is not a latency-only model.
 
+The two modes are not equivalent on a loaded link, and the difference is not a
+detail: [Example 27](../PureEdgeSim/examples/Example27/README.md) offers four
+megabits per second of video uploads to a three megabit shared WAN uplink and runs the
+same scenario twice, once per mode. The realistic model queues the transfers and
+loses 182 of 189 requests on their deadline, at a median network time of 157 s;
+the single step model finishes all 189 in 8.507 s each, which is exactly what one
+request of that size costs on an empty link. A scenario may offer more than the
+link can carry while the one step model reports no congestion at all, so read the
+`Network usage` column against the simulated duration before trusting a
+saturated-link result.
+
 Latency is added per hop when that hop finishes. There is no propagation delay while bits are being serialized, and no processing delay at intermediate nodes. The model is store-and-forward at the granularity of `network_update_interval`.
 
 ### What travels over the network

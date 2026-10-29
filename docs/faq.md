@@ -94,6 +94,12 @@ Yes, declare them `optional="true"`. A failure in their dependencies skips them 
 
 Check `realistic_network_model`. When it is `false`, each transfer completes in one step and uses only its instantaneous bandwidth share, so there is no congestion over time. Bandwidth still affects the computed transfer time, but much less than in a loaded, realistic run. Also confirm that the changed parameter corresponds to the link type used by your traffic.
 
+The gap is not small: [Example 27](../PureEdgeSim/examples/Example27/README.md)
+saturates a shared WAN uplink at four megabits per second offered against three
+carried, and the default model reports every one of its 189 requests succeeding
+in the time one request costs on an empty link, while the realistic model queues
+them and loses 182 on their deadline.
+
 ### Which application types and task-graph shapes can I model?
 
 There is no fixed list. An application is defined by its numbers (rate, latency bound, sizes, and task length), and `type` is a free-text label that the orchestrator can read. Any acyclic task graph can be declared: a monolithic application (one task per request), a sequential chain, a parallel fan-out with a join, or a mixed graph with several roots and branches. The shapes and their limitations are in [Simulation models](models.md#task-graph-shapes).

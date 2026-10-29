@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<edge_devices>
+	<!-- Twenty phones on wifi, fixed and on mains power, all of them generating
+		traffic and none of them intended to serve it. The scenario is about the link
+		they share, so nothing else is allowed to vary: no battery that can empty, no
+		movement that can break a connection, no processor that can be the bottleneck.
+		The hardware is stated because a device is always a candidate destination for
+		its own task, and here it is fast enough that the edge and cloud iterations
+		differ by their network and not by their compute. -->
+
+	<device arch="x86" os="linux" vmm="xen">
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>100</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel>
+		<idleConsumption>0.2</idleConsumption>
+		<maxConsumption>5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>8</cores>
+		<mips>25000</mips>
+		<ram>4000</ram>
+		<storage>100000</storage>
+	</device>
+</edge_devices>

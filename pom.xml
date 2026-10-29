@@ -381,6 +381,8 @@
 					<source>PureEdgeSim/examples/Example24</source>
 					<source>PureEdgeSim/examples/Example25</source>
 					<source>PureEdgeSim/examples/Example26</source>
+					<source>PureEdgeSim/examples/Example27</source>
+					<source>PureEdgeSim/examples/Example28</source>
 							</sources>
 						</configuration>
 					</execution>
