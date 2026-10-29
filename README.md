@@ -15,7 +15,7 @@
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src="https://raw.githubusercontent.com/CharafeddineMechalikh/PureEdgeSim/master/.github/badges/jacoco.svg" alt="JaCoCo instruction coverage"></a>
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim/actions/workflows/coverage.yml"><img src="https://raw.githubusercontent.com/CharafeddineMechalikh/PureEdgeSim/master/.github/badges/branches.svg" alt="JaCoCo branch coverage"></a>
   <a href="https://www.codacy.com/gh/CharafeddineMechalikh/PureEdgeSim/dashboard"><img src="https://app.codacy.com/project/badge/Grade/7bcee5c75c3741b5923e0158c6e79b37" alt="Codacy code quality"></a>
-  <a href="https://javadoc.io/doc/io.github.charafeddinemechalikh/pureedgesim"><img src="https://javadoc.io/badge2/io.github.charafeddinemechalikh/pureedgesim/javadoc.svg" alt="Javadoc"></a>
+  <a href="https://javadoc.io/doc/io.github.charafeddinemechalikh/pureedgesim"><img src="https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Frepo1.maven.org%2Fmaven2%2Fio%2Fgithub%2Fcharafeddinemechalikh%2Fpureedgesim%2Fmaven-metadata.xml&query=%2Fmetadata%2Fversioning%2Frelease&label=Javadoc&color=orange&logo=readthedocs&cacheSeconds=600" alt="PureEdgeSim Javadoc"></a>
   <a href="https://github.com/CharafeddineMechalikh/PureEdgeSim_Python"><img src="https://img.shields.io/badge/Python%20version-available-blue?logo=python" alt="PureEdgeSim for Python"></a>
 </p>
 
@@ -181,37 +181,47 @@ What it does not model, stated plainly: there is no pricing or cost model, which
 
 ### Application and task-graph shapes
 
-There is no closed list of application types. A workload is defined by its numbers (arrival rate, latency bound, request, result, and container sizes, and task length), and its `type` label is free text used by the orchestrator. What the framework does constrain is the shape of the workload, and every acyclic shape is accepted:
+There is no closed list of application types. A workload is defined by its numbers (arrival rate, latency bound, request, result, and container sizes, and task length), and its `type` label is free text used by the orchestrator. What the framework does constrain is the shape of the workload, and every acyclic shape is accepted.
+
+**Monolithic.** The application has no subtask, so one request becomes one independent task.
 
 ```mermaid
 flowchart LR
-    subgraph Monolithic
-        direction LR
-        M1[request] --> M2[task] --> M3[results]
-    end
-    subgraph Sequential
-        direction LR
-        S1[stage 1] --> S2[stage 2] --> S3[stage 3]
-    end
-    subgraph Parallel
-        direction LR
-        P1[root] --> P2[worker A]
-        P1 --> P3[worker B]
-        P2 --> P4[join]
-        P3 --> P4
-    end
-    subgraph Complex
-        direction LR
-        C1[root A] --> C3[stage]
-        C2[root B] --> C3
-        C3 --> C4[branch A]
-        C3 --> C5[branch B]
-        C4 --> C6[merge]
-        C5 --> C6
-    end
+    R[request] --> T[task] --> D[results to device]
 ```
 
-A monolithic application produces one task per request. A service graph produces one task per `<subtask>`, releases each stage only after the stages listed in its `depends_on` have returned their results, adds the results of a parent to the request of its children, gives every subtask its own latency bound and sizes, shares the application `latency` as the end-to-end deadline of the request, skips the stages declared `optional="true"` when their input fails, and fails the whole required subtree when a required parent fails. Graphs are declared in `applications.xml` with `<subtask name="detect" depends_on="capture" task_length="5000"/>`, and both styles can coexist in one scenario.
+**Sequential.** Each stage needs the results of the previous one, so the chain is the critical path.
+
+```mermaid
+flowchart LR
+    C[capture] --> D[detect] --> T[track] --> A[alert]
+```
+
+**Parallel (fork-join).** A root fans out to independent stages and a join waits for all of them.
+
+```mermaid
+flowchart LR
+    S[collect] --> P1[preprocess A]
+    S --> P2[preprocess B]
+    P1 --> F[fuse]
+    P2 --> F
+    F --> U[upload]
+```
+
+**Complex DAG.** Fan-out, fan-in, several roots, and diamonds in the same graph, plus disconnected components.
+
+```mermaid
+flowchart LR
+    R1[sensor feed] --> D[detect]
+    R2[metadata] --> D
+    D --> T[track]
+    D --> A[alert]
+    T --> M[merge]
+    A --> M
+    M --> U[upload]
+```
+
+A service graph produces one task per `<subtask>`, releases each stage only after the stages listed in its `depends_on` have returned their results, adds the results of a parent to the request of its children, gives every subtask its own latency bound and sizes, shares the application `latency` as the end-to-end deadline of the request, skips the stages declared `optional="true"` when their input fails, and fails the whole required subtree when a required parent fails. Graphs are declared in `applications.xml` with `<subtask name="detect" depends_on="capture" task_length="5000"/>`, and both styles can coexist in one scenario.
 
 The model still does not represent conditional branches, loops, or "any parent" joins. See [Simulation models](docs/models.md#task-graph-shapes) for the diagrams and their runtime consequences, and [Configuration](docs/configuration.md#service-graphs) for the XML attributes.
 
@@ -541,7 +551,7 @@ The development and maintenance of PureEdgeSim require considerable effort, and 
 
 - **Do not fork to implement your project.** You are not supposed to modify the codebase. Extend it by creating subclasses instead. A fork with personal changes will miss bug fixes and performance improvements from the main project.
 - **Report issues and ask questions** in the [issue tracker](https://github.com/CharafeddineMechalikh/PureEdgeSim/issues).
-- **Contribute improvements** through a pull request, including a test case when applicable.
+- **Contribute improvements** through a pull request, including a test case when applicable. [CONTRIBUTING.md](CONTRIBUTING.md) lists the build and test commands, the code conventions, and what a reviewable change contains.
 - **If PureEdgeSim helps your work**, please add a star to the repository and cite the papers above.
 
 ## License

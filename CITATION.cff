@@ -1,0 +1,62 @@
+cff-version: 1.2.0
+message: "If you use PureEdgeSim in your research, please cite the papers below rather than the repository itself."
+title: PureEdgeSim
+abstract: >-
+  PureEdgeSim is a discrete-event simulator for performance evaluation of cloud,
+  fog, edge, and mist computing environments. It models computing nodes, network
+  links, task generation including service graphs, mobility, energy depletion, and
+  the orchestration of tasks across tiers, and reports delay, CPU utilization,
+  network usage, energy consumption, and task failure reasons.
+type: software
+authors:
+  - family-names: Mechalikh
+    given-names: Charafeddine
+    email: charafeddine.mechalikh@gmail.com
+    affiliation: "LIPAH laboratory, Faculty of Sciences of Tunis, University of Tunis El Manar"
+version: "6.0"
+date-released: "2026-10-27"
+license: GPL-3.0-or-later
+repository-code: "https://github.com/CharafeddineMechalikh/PureEdgeSim"
+url: "https://charafeddinemechalikh.github.io/PureEdgeSim/docs/"
+keywords:
+  - edge computing
+  - mist computing
+  - cloud computing
+  - fog computing
+  - discrete-event simulation
+  - task orchestration
+  - offloading
+preferred-citation:
+  type: article
+  title: "PureEdgeSim: A simulation framework for performance evaluation of cloud, edge and mist computing environments"
+  authors:
+    - family-names: Mechalikh
+      given-names: Charafeddine
+    - family-names: Taktak
+      given-names: Hajer
+    - family-names: Moussa
+      given-names: Faouzi
+  journal: Computer Science and Information Systems
+  volume: 18
+  issue: 1
+  start: 43
+  end: 66
+  year: 2021
+  doi: 10.2298/CSIS200301042M
+references:
+  - type: article
+    title: "Quality matters: A comprehensive comparative study of edge computing simulators"
+    authors:
+      - family-names: Mechalikh
+        given-names: Charafeddine
+      - family-names: Silem
+        given-names: Abd El Heq
+      - family-names: Safavifar
+        given-names: Zahra
+      - family-names: Golpayegani
+        given-names: Fatemeh
+    journal: Simulation Modelling Practice and Theory
+    volume: 138
+    start: 103042
+    year: 2025
+    doi: 10.1016/j.simpat.2024.103042
