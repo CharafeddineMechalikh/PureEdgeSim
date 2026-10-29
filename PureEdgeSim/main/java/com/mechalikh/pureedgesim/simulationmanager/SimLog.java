@@ -178,7 +178,7 @@ public class SimLog {
 					+ "Average Cloud energy consumption (Wh/Data center),Edge energy consumption (Wh),Average Edge energy consumption (Wh/Data center),"
 					+ "Mist energy consumption (Wh),Average Mist energy consumption (Wh/Device),"
 					+ "WAN energy consumption (Wh), MAN energy consumption (Wh), LAN energy consumption (Wh),"
-					+ "WiFi energy consumption (Wh), LTE energy consumption (Wh), Ethernet energy consumption (Wh),"
+					+ "WiFi energy consumption (Wh), Cellular energy consumption (Wh), Ethernet energy consumption (Wh),"
 					+ "Dead devices count,Average remaining power (Wh),Average remaining power (%), First edge device death time (s),"
 					+ "List of remaining power (%) (only battery powered devices / 0 = dead),List of the time when each device died (s),"
 					+ "Tasks skipped because their optional input failed,Requests generated,Successful requests,Average request makespan (s)");
@@ -438,7 +438,7 @@ public class SimLog {
 				.map(NetworkLink::getEnergyModel)
 				.collect(Collectors.summingDouble(EnergyModelNetworkLink::getTotalEnergyConsumption));
 
-		double fourG = simulationManager.getDataCentersManager().getTopology().get4gLinks().stream()
+		double cellular = simulationManager.getDataCentersManager().getTopology().getCellularLinks().stream()
 				.map(NetworkLink::getEnergyModel)
 				.collect(Collectors.summingDouble(EnergyModelNetworkLink::getTotalEnergyConsumption));
 
@@ -522,7 +522,7 @@ public class SimLog {
 		print("Energy Consumption per technology                                       : WiFi="
 				+ padLeftSpaces(decimalFormat.format(wifi), 14) + " Wh");
 		print("                                                                      Cellular="
-				+ padLeftSpaces(decimalFormat.format(fourG), 14) + " Wh ");
+				+ padLeftSpaces(decimalFormat.format(cellular), 14) + " Wh ");
 		print("                                                                      Ethernet="
 				+ padLeftSpaces(decimalFormat.format(eth), 14) + " Wh ");
 
@@ -548,7 +548,7 @@ public class SimLog {
 				+ "," + decimalFormat.format(edgeEnConsumption) + "," + decimalFormat.format(averageEdgeEnConsumption)
 				+ "," + decimalFormat.format(mistEnConsumption) + "," + decimalFormat.format(averageMistEnConsumption)
 				+ "," + decimalFormat.format(wan) + "," + decimalFormat.format(man) + "," + decimalFormat.format(lan)
-				+ "," + decimalFormat.format(wifi) + "," + decimalFormat.format(fourG) + "," + decimalFormat.format(eth)
+				+ "," + decimalFormat.format(wifi) + "," + decimalFormat.format(cellular) + "," + decimalFormat.format(eth)
 				+ "," + decimalFormat.format(deadEdgeDevicesCount) + "," + decimalFormat.format(averageRemainingPowerWh)
 				+ "," + decimalFormat.format(averageRemainingPower) + "," + firstDeviceDeathTime + ","
 				+ remainingPower.toString().replace(",", "-") + "," + devicesDeathTime.toString().replace(",", "-")

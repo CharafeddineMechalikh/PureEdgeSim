@@ -26,7 +26,8 @@ import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 /**
- * A 4G LTE network link.
+ * A cellular downlink, from a base station to a device. Its technology is set by the
+ * {@code cellular_*} parameters.
  */
 public class NetworkLinkCellularDown extends NetworkLinkCellular {
 

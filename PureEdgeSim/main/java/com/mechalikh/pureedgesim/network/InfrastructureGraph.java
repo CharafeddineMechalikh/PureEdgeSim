@@ -192,8 +192,20 @@ public class InfrastructureGraph {
 	 *
 	 * @return the cellular links
 	 */
-	public List<NetworkLinkCellular> get4gLinks() {
+	public List<NetworkLinkCellular> getCellularLinks() {
 		return getEdgeByType(NetworkLinkCellular.class);
+	}
+
+	/**
+	 * Returns all cellular links in the topology.
+	 *
+	 * @return the cellular links
+	 * @deprecated the cellular link is not 4G by construction: its radio technology is
+	 *             set by the {@code cellular_*} parameters. Use {@link #getCellularLinks()}.
+	 */
+	@Deprecated
+	public List<NetworkLinkCellular> get4gLinks() {
+		return getCellularLinks();
 	}
 
 	/**

@@ -146,7 +146,7 @@ What it does not model, stated plainly: there is no pricing or cost model, which
 
 - **Realistic edge computing modeling** (and related computing paradigms)
   - Heterogeneous devices: sensors, smartphones, laptops, servers, battery-powered devices.
-  - Heterogeneous connectivity: Wi-Fi, 4G, 5G, Ethernet.
+  - Heterogeneous connectivity: Wi-Fi, cellular (3G, 4G or 5G, whichever the parameters describe), Ethernet.
   - Realistic computing infrastructure, tasks, and topology modeling.
   - Realistic network model: latency, bandwidth allocation, peer-to-peer communication, routing.
   - Nine mobility models: random waypoint, random walk, Gauss-Markov, Manhattan, fixed waypoints, circular, Lévy walk, Brownian, and reference point group movement, selected per device type from the scenario file.

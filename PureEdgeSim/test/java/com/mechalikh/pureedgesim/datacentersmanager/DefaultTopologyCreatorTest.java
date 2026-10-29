@@ -131,7 +131,7 @@ class DefaultTopologyCreatorTest extends DatacentersTestSupport {
 		creator.generateTopologyGraph();
 
 		// One WAN and one LAN connection in each direction for each device.
-		assertEquals(4, creator.getInfrastructureTopology().get4gLinks().size());
+		assertEquals(4, creator.getInfrastructureTopology().getCellularLinks().size());
 		assertEquals(4, creator.getInfrastructureTopology().getEthernetLinks().size());
 		assertTrue(creator.getInfrastructureTopology().getWifiLinks().size() >= 40);
 

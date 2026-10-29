@@ -170,7 +170,7 @@ Each node's value is `totalExecutedInstructions / (totalMipsCapacity * currentCl
 | 42 | MAN energy consumption (Wh) | Link energy for links typed MAN |
 | 43 | LAN energy consumption (Wh) | Link energy for links typed LAN |
 | 44 | WiFi energy consumption (Wh) | Link energy for WiFi link classes |
-| 45 | LTE energy consumption (Wh) | Link energy for cellular link classes |
+| 45 | Cellular energy consumption (Wh) | Link energy for cellular link classes, whatever radio technology the parameters describe |
 | 46 | Ethernet energy consumption (Wh) | Link energy for Ethernet link classes |
 
 The energy in columns 33 to 40 comes from the computing node energy models, including the wireless transmit and receive charges added to edge devices. The energy in columns 41 to 46 comes from the link energy models and is not part of columns 33 to 40.

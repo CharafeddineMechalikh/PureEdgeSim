@@ -59,7 +59,7 @@ public class ChartsGenerator {
 			"Average Cloud energy consumption (Wh/Data center)", "Edge energy consumption (Wh)",
 			"Average Edge energy consumption (Wh/Data center)", "Mist energy consumption (Wh)",
 			"Average Mist energy consumption (Wh/Device)", "WAN energy consumption (Wh)", "MAN energy consumption (Wh)",
-			"LAN energy consumption (Wh)", "WiFi energy consumption (Wh)", "LTE energy consumption (Wh)",
+			"LAN energy consumption (Wh)", "WiFi energy consumption (Wh)", "Cellular energy consumption (Wh)",
 			"Ethernet energy consumption (Wh)");
 
 	/** CSV columns plotted as CPU utilization charts. */

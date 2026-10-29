@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+*   The cellular link no longer claims to be LTE. Bandwidth, latency and energy per bit
+    come from the `cellular_*` settings, so the same link class models 3G, 4G, 5G or a
+    profile of your own; the Javadoc and the report now say cellular. The CSV column
+    `LTE energy consumption (Wh)` is now `Cellular energy consumption (Wh)`, in the same
+    position and with the same accounting, and `InfrastructureGraph.get4gLinks()` is now
+    `getCellularLinks()`, with the old name kept as a deprecated delegate. Column order
+    is unchanged, so readers that index by position keep working; readers that match the
+    header by name must update it.
+
 *   New `Example25` replays a recorded production workload instead of drawing one.
     `Example25TraceTaskGenerator` reads `trace/azure_llm_code_1h.csv`, the 8819 LLM
     inference requests of the Azure dataset published with the Splitwise paper (CC-BY-4.0,

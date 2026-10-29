@@ -173,7 +173,7 @@ class InfrastructureGraphTest extends AbstractTest {
 
 		assertEquals(3, graph.getWifiLinks().size());
 		assertEquals(1, graph.getEthernetLinks().size());
-		assertEquals(2, graph.get4gLinks().size());
+		assertEquals(2, graph.getCellularLinks().size());
 		assertEquals(1, graph.getWanUpLinks().size());
 		assertEquals(1, graph.getWanDownLinks().size());
 		assertEquals(2, graph.getWanLinks().size());
@@ -185,7 +185,7 @@ class InfrastructureGraphTest extends AbstractTest {
 	void getEdgeByClassReturnsEmptyListWhenNoMatch() {
 		assertTrue(graph.getWifiLinks().isEmpty());
 		assertTrue(graph.getEthernetLinks().isEmpty());
-		assertTrue(graph.get4gLinks().isEmpty());
+		assertTrue(graph.getCellularLinks().isEmpty());
 		assertTrue(graph.getWanLinks().isEmpty());
 		assertTrue(graph.getManLinks().isEmpty());
 		assertTrue(graph.getLanLinks().isEmpty());

@@ -25,7 +25,9 @@ import com.mechalikh.pureedgesim.scenariomanager.SimulationParameters;
 import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 
 /**
- * A 4G LTE network link.
+ * A mobile network link. The radio technology is whatever the {@code cellular_*}
+ * parameters describe, so the same class models 3G, 4G, 5G or a profile of the
+ * user's own choosing.
  */
 public abstract class NetworkLinkCellular extends NetworkLink {
 

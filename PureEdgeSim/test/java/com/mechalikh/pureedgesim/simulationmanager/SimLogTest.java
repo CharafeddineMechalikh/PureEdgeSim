@@ -61,7 +61,7 @@ class SimLogTest extends AbstractTest {
 		when(topology.getWanLinks()).thenReturn(Collections.emptyList());
 		when(topology.getManLinks()).thenReturn(Collections.emptyList());
 		when(topology.getLanLinks()).thenReturn(Collections.emptyList());
-		when(topology.get4gLinks()).thenReturn(Collections.emptyList());
+		when(topology.getCellularLinks()).thenReturn(Collections.emptyList());
 		when(topology.getEthernetLinks()).thenReturn(Collections.emptyList());
 		when(topology.getWifiLinks()).thenReturn(Collections.emptyList());
 	}
@@ -171,6 +171,10 @@ class SimLogTest extends AbstractTest {
 		assertTrue(csv.get(1).startsWith("ALL,TRADE_OFF,20,"));
 		assertTrue(csv.get(0).contains("Tasks not executed because a dependency failed"),
 				"the header must describe the dependency failures column");
+		assertTrue(csv.get(0).contains("Cellular energy consumption (Wh)"),
+				"the cellular column must not name a radio technology");
+		assertFalse(csv.get(0).contains("LTE energy consumption"),
+				"the radio technology is set by the parameters, not by the column name");
 		assertEquals("1", csv.get(1).split(",", -1)[14], "the dependency failures column follows the dead-device one");
 
 		assertEquals(1.5, log.totalExecutionTime, 1e-9);
