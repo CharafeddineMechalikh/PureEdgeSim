@@ -292,7 +292,7 @@ sim.launchSimulation();
 
 ## Use PureEdgeSim as a dependency
 
-PureEdgeSim is available on [Maven Central](https://search.maven.org/search?q=g:%22io.github.charafeddinemechalikh%22%20AND%20a:%22pureedgesim%22). Version `6.0` is the latest published artifact, under the group id `io.github.charafeddinemechalikh`. Releases up to `5.1.0` stay under the older group id `com.mechalikh`: that namespace was granted against `mechalikh.com` in 2021, the domain has since expired, and Central re-verifies a domain namespace only through its DNS records, so new releases use the GitHub one. The Java packages are unchanged, so only the dependency coordinates differ.
+PureEdgeSim is available on [Maven Central](https://search.maven.org/search?q=g:%22io.github.charafeddinemechalikh%22%20AND%20a:%22pureedgesim%22). Version `6.1` is the latest published artifact, under the group id `io.github.charafeddinemechalikh`. Releases up to `5.1.0` stay under the older group id `com.mechalikh`: that namespace was granted against `mechalikh.com` in 2021, the domain has since expired, and Central re-verifies a domain namespace only through its DNS records, so new releases use the GitHub one. The Java packages are unchanged, so only the dependency coordinates differ.
 
 Maven:
 
@@ -300,7 +300,7 @@ Maven:
 <dependency>
   <groupId>io.github.charafeddinemechalikh</groupId>
   <artifactId>pureedgesim</artifactId>
-  <version>6.0</version>
+  <version>6.1</version>
 </dependency>
 ```
 
@@ -308,7 +308,7 @@ Gradle:
 
 ```groovy
 dependencies {
-  implementation 'io.github.charafeddinemechalikh:pureedgesim:6.0'
+  implementation 'io.github.charafeddinemechalikh:pureedgesim:6.1'
 }
 ```
 
@@ -491,6 +491,7 @@ If your paper uses PureEdgeSim, feel free to open a pull request and add it to t
 
 The full release notes are maintained in [CHANGELOG.md](CHANGELOG.md).
 
+- **6.1**: two engine base classes a dependent simulator can now extend (`AbstractQueueElement` for queue ordering, extracted from `TaskAbstract`, and `LinkProfile` for bearer capacity and latency, extracted from `NetworkLink`, both behaviour-preserving), a jar manifest that lists its classpath relative to the jar instead of baking in an absolute Maven path, the cellular link renamed away from its LTE label, and five new examples (`Example25` to `Example29`, covering trace replay, adaptive orchestration under a crash, a saturated WAN uplink, battery-aware placement, and retry against a downed shared link).
 - **6.0**: service graphs gain realistic payloads, one end-to-end deadline per request, optional subtasks with `SKIPPED`, and request-level metrics; all twenty-four examples have a README, and `Example24` replans a service graph every 30 seconds.
 - **5.9**: nodes keep separate uplink and downlink (issue #47), the wireless energy model charges each direction correctly, the CSV network usage column includes MAN and WAN, tasks of dead devices are counted as not generated, device types are allocated without truncation, `settings/` and `output/` moved to the repository root, every run writes `run.properties` with a snapshot of its settings, node-generation errors stop the run with the file and element, and failing tests fail the build.
 - **5.8**: the quick start example `Example1` is compiled by the default build, and XChart is updated to 3.8.8, clearing four medium advisories.

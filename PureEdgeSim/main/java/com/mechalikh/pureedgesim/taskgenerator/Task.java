@@ -57,7 +57,12 @@ public interface Task extends QueueElement {
 		/** The destination did not have enough battery energy for the task. */
 		INSUFFICIENT_POWER,
 		/** A subtask this one depends on failed, so it could never be offloaded. */
-		FAILED_BECAUSE_DEPENDENCY_FAILED
+		FAILED_BECAUSE_DEPENDENCY_FAILED,
+		/**
+		 * The request crossed the network and its destination was unreachable when it
+		 * arrived: the link is up, the bytes were sent, and nothing acknowledged them.
+		 */
+		FAILED_DUE_TO_NETWORK_OUTAGE
 	}
 
 	/**

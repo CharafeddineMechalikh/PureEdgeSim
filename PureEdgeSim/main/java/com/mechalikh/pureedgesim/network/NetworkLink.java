@@ -38,10 +38,8 @@ import com.mechalikh.pureedgesim.simulationmanager.SimulationManager;
 public class NetworkLink extends SimEntity {
 	/** Event tag used to refresh the progress of the active transfers. */
 	public static final int UPDATE_PROGRESS = 1;
-	/** Link latency, in seconds per hop. */
-	protected double latency = 0;
-	/** Link capacity, in bits per second. */
-	protected double bandwidth = 0;
+	/** Raw link figures (capacity and latency), delegated to a {@link LinkProfile}. */
+	protected final LinkProfile profile = new LinkProfile();
 	/** Transfers currently using this link. */
 	protected List<TransferProgress> transferProgressList = new ArrayList<>();
 	/** Link source. */
@@ -104,7 +102,7 @@ public class NetworkLink extends SimEntity {
 	 * @return the latency, in seconds per hop.
 	 */
 	public double getLatency() {
-		return latency;
+		return profile.getLatency();
 	}
 
 	/**
@@ -114,8 +112,17 @@ public class NetworkLink extends SimEntity {
 	 * @return this link, for chaining.
 	 */
 	public NetworkLink setLatency(double latency) {
-		this.latency = latency;
+		profile.setLatency(latency);
 		return this;
+	}
+
+	/**
+	 * Returns the raw capacity of the link.
+	 *
+	 * @return the capacity, in bits per second.
+	 */
+	public double getBandwidth() {
+		return profile.getBandwidth();
 	}
 
 	/**
@@ -125,7 +132,7 @@ public class NetworkLink extends SimEntity {
 	 * @return this link, for chaining.
 	 */
 	public NetworkLink setBandwidth(double bandwidth) {
-		this.bandwidth = bandwidth;
+		profile.setBandwidth(bandwidth);
 		return this;
 	}
 
@@ -206,7 +213,7 @@ public class NetworkLink extends SimEntity {
 	 * @return the per-transfer bandwidth, in bits per second.
 	 */
 	protected double getBandwidth(double remainingTasksCount) {
-		return (bandwidth / (remainingTasksCount > 0 ? remainingTasksCount : 1));
+		return (getBandwidth() / (remainingTasksCount > 0 ? remainingTasksCount : 1));
 	}
 
 	/**
@@ -265,7 +272,7 @@ public class NetworkLink extends SimEntity {
 		this.transferProgressList.remove(transfer);
 
 		// Add the network link latency to the task network delay
-		transfer.getTask().addActualNetworkTime(latency);
+		transfer.getTask().addActualNetworkTime(getLatency());
 
 		// Remove the previous hop (data has been transferred one hop)
 		transfer.getVertexList().remove(0);
@@ -276,7 +283,7 @@ public class NetworkLink extends SimEntity {
 			// Update logger parameters
 			simulationManager.getSimulationLogger().updateNetworkUsage(transfer);
 
-			schedule(simulationManager.getNetworkModel(), latency, NetworkModel.TRANSFER_FINISHED, transfer);
+			schedule(simulationManager.getNetworkModel(), getLatency(), NetworkModel.TRANSFER_FINISHED, transfer);
 		} else {
 			// Still did not reach destination, send it to the next hop
 			transfer.setRemainingFileSize(transfer.getFileSize());
@@ -291,7 +298,7 @@ public class NetworkLink extends SimEntity {
 	 */
 	public double getUsedBandwidth() {
 		// Return bandwidth usage in bits per second
-		return Math.min(bandwidth, usedBandwidth);
+		return Math.min(getBandwidth(), usedBandwidth);
 	}
 
 	/**

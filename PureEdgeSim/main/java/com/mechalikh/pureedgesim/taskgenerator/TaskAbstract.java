@@ -17,30 +17,30 @@
  *     along with PureEdgeSim. If not, see <http://www.gnu.org/licenses/>.
  *     
  *     @author Charafeddine Mechalikh
- *     @since PureEdgeSim 5.0
+ *     @since PureEdgeSim 6.1
  **/
 package com.mechalikh.pureedgesim.taskgenerator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import com.mechalikh.pureedgesim.simulationengine.AbstractQueueElement;
 
 /**
  * 
  * This abstract class implements the {@link Task} interface and provides common
- * methods and fields for all types of tasks. It also implements the Comparable
- * interface to provide an ordering of tasks based on their offloading time and
- * serial number.
+ * methods and fields for all types of tasks. The ordering of tasks inside a
+ * queue, by offloading time and serial number, is inherited from
+ * {@link AbstractQueueElement}, with {@link #getTime()} as the time key.
  * 
  * <p>
  * The fields include the maximum allowed latency, actual network time,
- * execution finish time, execution start time, arrival time, length, ID, and
- * serial.
+ * execution finish time, execution start time, arrival time, length, and ID.
  * <p>
  * The methods include getter and setter methods for all fields, as well as
  * methods to add actual network time, get actual CPU time, get waiting time,
  * set arrival time,get total delay, set execution start time, set execution
- * finish time, compare tasks, check equality, and get the hash code.
+ * finish time, and get the hash code.
  * <p>
  * This class is abstract, meaning it cannot be instantiated directly but must
  * be extended by concrete task classes.
@@ -49,9 +49,9 @@ import java.util.Objects;
  * 
  * @see Task
  * 
- * @see Comparable
+ * @see AbstractQueueElement
  */
-public abstract class TaskAbstract implements Task, Comparable<Task> {
+public abstract class TaskAbstract extends AbstractQueueElement<Task> implements Task {
 
 	/**
 	 * 
@@ -88,11 +88,6 @@ public abstract class TaskAbstract implements Task, Comparable<Task> {
 	 * The unique identifier of this task
 	 */
 	protected int id;
-	/**
-	 * 
-	 * The serial number of this task
-	 */
-	protected long serial;
 
 	/**
 	 * The tasks that must complete before this one is offloaded; empty when the
@@ -319,84 +314,6 @@ public abstract class TaskAbstract implements Task, Comparable<Task> {
 	public Task setLength(double length) {
 		this.length = length;
 		return this;
-	}
-
-	/**
-	 * 
-	 * Sets the serial number of this task to the specified value.
-	 * 
-	 * @param l the serial number to set for this task
-	 */
-	public void setSerial(long l) {
-		this.serial = l;
-	}
-
-	/**
-	 * 
-	 * Compares this task with the specified task for order. Returns a negative
-	 * integer, zero, or a positive integer as this task is less than, equal to, or
-	 * greater than the specified task.
-	 * 
-	 * @param that the task to be compared
-	 * 
-	 * @return a negative integer, zero, or a positive integer as this task is less
-	 *         than, equal to, or greater than the specified task
-	 */
-	@Override
-	public int compareTo(final Task that) {
-		if (that.equals(null)) {
-			return 1;
-		}
-
-		if (this.equals(that)) {
-			return 0;
-		}
-
-		int res = Double.compare(this.getTime(), that.getTime());
-		if (res != 0) {
-			return res;
-		}
-
-		return Long.compare(serial, that.getSerial());
-	}
-
-	/**
-	 * 
-	 * Indicates whether some other object is "equal to" this one.
-	 * 
-	 * @param obj the object to compare to
-	 * @return true if this object is the same as the obj argument; false otherwise
-	 */
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null || getClass() != obj.getClass())
-			return false;
-		final Task that = (Task) obj;
-		return Double.compare(that.getTime(), getTime()) == 0 && getSerial() == that.getSerial();
-	}
-
-	/**
-	 * 
-	 * Returns a hash code value for the object. The hash code is generated based on
-	 * the time and serial number of the task.
-	 * 
-	 * @return the hash code value for the object.
-	 */
-	@Override
-	public int hashCode() {
-		return Objects.hash(getTime(), getSerial());
-	}
-
-	/**
-	 * 
-	 * Returns the serial number of the task.
-	 * 
-	 * @return the serial number of the task.
-	 */
-	public long getSerial() {
-		return this.serial;
 	}
 
 	/**

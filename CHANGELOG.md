@@ -1,6 +1,24 @@
 # Changelog
 
-## Unreleased
+## Version 6.1 Changelog (November 1st 2026)
+
+*   Two engine bases that a dependent simulator can now extend. `AbstractQueueElement`
+    (in `simulationengine`) holds the ordering a `FutureQueue` relies on, a time key
+    plus the insertion serial, extracted from `TaskAbstract`; `TaskAbstract` extends it,
+    and a task still orders itself by its offloading time, so queue order, equality and
+    hashes are unchanged. `LinkProfile` (in `network`) holds the two raw bearer figures
+    of a link, capacity in bits per second and latency in seconds per hop, extracted
+    from `NetworkLink`, which now delegates to it; bandwidth splitting, per-hop
+    latency and multi-hop routing stay in the entity. The Docket simulator builds its
+    request queue element, its access-link profile and its GPU power model on these
+    bases (`GpuPowerModel` extends the existing `EnergyModelComputingNode` without
+    behaviour changing here).
+
+*   The jar manifest lists its classpath relative to the jar, not with an absolute
+    `${user.home}/.m2/repository/` prefix. The old prefix baked this machine's path
+    into every artifact, and javac refuses to read the jar as a dependency on Windows
+    when it does (`unknown protocol: c`). `java -jar` from the repository root resolves
+    the same files, since the prefix was a Maven-local root either way.
 
 *   The cellular link no longer claims to be LTE. Bandwidth, latency and energy per bit
     come from the `cellular_*` settings, so the same link class models 3G, 4G, 5G or a
@@ -66,6 +84,18 @@
     at a cost of 83 requests, and `-Dexample28.perTask=false` reuses the framework's
     placement cache and kills 15 while taking 120. No framework class changed: the
     example uses `setCustomEdgeOrchestrator` and `setCustomSimulationManager`.
+*   New `Example29` puts a shared metropolitan uplink down for thirty seconds and
+    compares four retry clients against the gap: no retry (the framework default),
+    three attempts with exponential backoff and jitter, a ten-attempt storm without
+    backoff, and that storm on a healthy uplink as the control. Twenty phones send
+    one small request a minute over a one-megabit link; the fourth arm shows a
+    retrying client costs nothing while nothing fails, so every gap between the
+    first three is the outage and the backlog it leaves. Requests whose destination
+    is unreachable on arrival now report a new `Task.FailureReason.FAILED_DUE_TO_NETWORK_OUTAGE`,
+    distinct from the dependency and latency failures. The arm and the fault are
+    selected with `-Dexample29.policy` and `-Dexample29.outage`; each run is a
+    separate process. No framework class changed beyond the new failure reason: the
+    example uses `setCustomSimulationManager`.
 
 ## Version 6.0 Changelog (October 27th 2026)
 

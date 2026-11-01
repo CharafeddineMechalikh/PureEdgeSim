@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- One workload: a status check. Twenty five kilobytes up, five back, and
+		two billion instructions to compute, which is a fraction of a second on the
+		cloud. Nothing about it is expensive, and that is deliberate: on a healthy
+		uplink the request costs its transmission time and nothing else, so every
+		second of delay in these runs was made by the outage or by the traffic the
+		retries left behind.
+
+		Twenty seconds of budget is forty times the healthy round trip, so a
+		request can only miss it when the link is carrying far more than it should.
+		The arrivals are poisson, so the requests that meet the outage are the ones
+		that happened to arrive while it lasted, and not a synchronized burst. -->
+	<application name="Status check">
+		<type>Normal</type>
+		<rate>1</rate> <!-- one check per device per minute -->
+		<arrival>poisson</arrival>
+		<usage_percentage>100</usage_percentage>
+		<latency>20</latency> <!-- seconds of end to end budget -->
+		<container_size>50</container_size> <!-- kilobytes -->
+		<request_size>25</request_size> <!-- kilobytes, two hundred kilobits up -->
+		<results_size>5</results_size> <!-- kilobytes -->
+		<task_length>2000</task_length> <!-- million instructions -->
+	</application>
+</applications>

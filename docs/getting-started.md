@@ -230,7 +230,7 @@ You do not have to clone the repository. The simulator is on Maven Central, and 
 <dependency>
   <groupId>io.github.charafeddinemechalikh</groupId>
   <artifactId>pureedgesim</artifactId>
-  <version>6.0</version>
+  <version>6.1</version>
 </dependency>
 ```
 

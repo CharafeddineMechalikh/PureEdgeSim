@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.charafeddinemechalikh</groupId>
 	<artifactId>pureedgesim</artifactId>
-	<version>6.0</version>
+	<version>6.1</version>
 	<name>PureEdgeSim</name>
 	<url>https://github.com/CharafeddineMechalikh/PureEdgeSim</url>
 	<description>A simulator for edge computing environments</description>
@@ -383,6 +383,7 @@
 					<source>PureEdgeSim/examples/Example26</source>
 					<source>PureEdgeSim/examples/Example27</source>
 					<source>PureEdgeSim/examples/Example28</source>
+					<source>PureEdgeSim/examples/Example29</source>
 							</sources>
 						</configuration>
 					</execution>
@@ -408,7 +409,13 @@
 							<!-- Defines the root folder where the dependencies
 							are. In this case 
 								is the the root of the local maven repository. ! -->
-							<classpathPrefix>${user.home}/.m2/repository/</classpathPrefix>
+							<!-- Relative root, so the manifest never bakes this
+						machine's
+							absolute path into the artifact: an absolute
+							user.home prefix produced C:/ URLs that javac
+							rejects when the jar is used as a dependency,
+							and that resolve on no other machine anyway. -->
+							<classpathPrefix/>
 						</manifest>
 					</archive>
 				</configuration>

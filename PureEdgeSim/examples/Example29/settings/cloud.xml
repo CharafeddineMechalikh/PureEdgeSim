@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<cloud_data_centers>
+	<!-- One region, with capacity to spare: the requests are lost on the way to it
+		and in the queue in front of it, never inside it. The cloud is also the
+		orchestrator of the fleet, so the request that the uplink drops is the one
+		that carried the offloading decision. -->
+	<datacenter>
+		<idleConsumption>0</idleConsumption>
+		<maxConsumption>5776</maxConsumption>
+		<isOrchestrator>true</isOrchestrator>
+		<cores>200</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>1000000</storage>
+	</datacenter>
+</cloud_data_centers>
