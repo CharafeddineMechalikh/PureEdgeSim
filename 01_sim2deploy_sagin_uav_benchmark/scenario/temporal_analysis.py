@@ -283,9 +283,13 @@ def build() -> dict:
     factors = factor_table(frame)
     factors.to_csv(RESULTS / "tables" / "factor_effects.csv", index=False)
     outputs["factors_frame"] = factors
+    display = factors.rename(columns={"term": "Term", "sum_sq": "Sum of squares",
+                                      "mean_sq": "Mean square",
+                                      "partial_eta_sq": "Partial eta sq"})
+    display["p_value"] = display["p_value"].map(
+        lambda value: "$<0.001$" if value < 1e-3 else f"{value:.3f}")
     outputs["factors"] = tables.write(
-        factors.rename(columns={"term": "Term", "sum_sq": "Sum of squares",
-                               "mean_sq": "Mean square", "partial_eta_sq": "Partial eta sq"}),
+        display,
         RESULTS / "tables" / "factor_effects.tex",
         "Factorial analysis of the success ratio over the fully crossed "
         "algorithm x architecture x interval design (630 runs, balanced).",

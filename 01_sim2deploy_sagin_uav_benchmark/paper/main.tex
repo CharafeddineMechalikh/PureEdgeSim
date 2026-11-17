@@ -28,8 +28,8 @@
 
 \begin{document}
 
-\title{Temporal Resolution and Architectural Effects in Multi-Tier Edge
-Orchestration: A Common-Scenario Cross-Simulator Study and Calibration Framework}
+\title{Temporal Resolution and Architectural Effects in Edge Computing
+Simulations: A Common-Scenario Cross-Simulator Benchmark and Calibration Framework}
 
 \author{Anonymous Authors%
 \thanks{Manuscript prepared for review. Every table is generated from the
@@ -37,7 +37,7 @@ released artifact; the clock experiment of Section~\ref{sec:clock} is
 reproducible from the shipped settings.}}
 
 \markboth{IEEE Transactions on Mobile Computing (submitted)}%
-{What the Clock Does to Edge Benchmarks}
+{What the Clock Does to Edge Simulation}
 
 \maketitle
 
@@ -112,15 +112,16 @@ and \emph{application and infrastructure validation} (does it survive
 dependencies, realistic workloads and heterogeneous capacity?). They map to:
 
 \begin{description}
-\item[RQ1.] How does a simulator's temporal resolution change the measured
-  performance of multi-tier orchestration?
-\item[RQ2.] Does that effect differ between simulators with different temporal
-  semantics?
-\item[RQ3.] How do application dependencies, workload mix and infrastructure
-  heterogeneity change the effect?
-\item[RQ4.] Are algorithm rankings stable across simulators, architectures and
-  temporal configurations?
-\item[RQ5.] What common calibration procedure makes such results reproducible?
+\item[RQ1.] How does temporal resolution influence performance measurements in
+  edge-computing simulation scenarios?
+\item[RQ2.] To what extent do the observed effects depend on the temporal and
+  scheduling semantics of different edge-computing simulators?
+\item[RQ3.] How do application characteristics, workload composition, resource
+  heterogeneity and network conditions affect simulation outcomes?
+\item[RQ4.] How stable are the rankings of orchestration and placement algorithms
+  across simulation configurations and infrastructure scenarios?
+\item[RQ5.] What calibration and reproducibility procedures are necessary to make
+  results comparable across edge-computing simulators?
 \end{description}
 
 RQ1 and RQ4 are answered by the crossed PureEdgeSim grids; RQ2 by the
@@ -129,6 +130,14 @@ application model and the heterogeneity/trace grids; RQ5 by the measured
 latency-to-deadline ratio of Section~\ref{sec:calibration}. The Java/Python
 port audit is reported separately from cross-simulator evidence: the two ports
 are one framework, not two simulators.
+
+The scope is **edge-computing simulation**, not multi-tier orchestration as a
+research domain. The mist/edge/cloud infrastructure studied here is one
+deployment scenario; Section~\ref{sec:app-model} defines its application graph
+and Section~\ref{sec:infra-model} its topology. Nothing in the paper assumes that
+edge-computing scenarios in general contain all three classes of resource, and
+the deployment configurations of Section~\ref{sec:infra-model} are experimental
+factors rather than a taxonomy of the field.
 
 \subsection{The result, and what it was measuring}
 The benchmark crosses five factor families over $3{,}215$ seeded runs. Read at face
@@ -551,6 +560,28 @@ $80$ changes success by $0.035$ under \textsc{trade\_off} and $0.065$ under
 \textsc{round\_robin}. The canonical contrast is therefore
 $0.660-0.121=0.539$ at $40$ devices, \textsc{trade\_off}; the grid-pooled
 \textsc{all} mean is $0.648$ and we use it only where we say so.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Reading guide to the closely related architecture-effect values quoted
+in this paper. Each row is a different population or statistic; the values must
+not be interchanged.}
+\label{tab:effect-guide}
+\begin{tabular}{@{}llc@{}}
+\toprule
+Value & Population / statistic & Recomputed\\
+\midrule
+0.539 & canonical: 40 devices, \textsc{trade\_off}, 1 s tick & 0.5397\\
+0.540 & same effect rounded to three decimals in the paired-seed comparison & 0.5397\\
+0.528 & \emph{class share} of sensing requests, not an effect & 0.528\\
+0.648 & \textsc{all} pooled over the whole scale grid & 0.6485\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The differences are subsets and averaging methods, not inconsistencies; every
+value in this paper is tagged with the population it describes.
 
 \input{../results/tables/scale.tex}
 

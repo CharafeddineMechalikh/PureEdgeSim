@@ -168,10 +168,13 @@ def build() -> dict:
     interaction = interaction_table(frame)
     interaction.to_csv(RESULTS / "tables" / "hetero_interaction.csv", index=False)
     outputs["interaction_frame"] = interaction
+    display = interaction.rename(columns={"term": "Term", "sum_sq": "Sum of squares",
+                                          "mean_sq": "Mean square",
+                                          "partial_eta_sq": "Partial eta sq"})
+    display["p_value"] = display["p_value"].map(
+        lambda value: "$<0.001$" if value < 1e-3 else f"{value:.3f}")
     outputs["interaction"] = tables.write(
-        interaction.rename(columns={"term": "Term", "sum_sq": "Sum of squares",
-                                    "mean_sq": "Mean square",
-                                    "partial_eta_sq": "Partial eta sq"}),
+        display,
         RESULTS / "tables" / "hetero_interaction.tex",
         "Factorial analysis of the success ratio over the fully crossed "
         "infrastructure x architecture x interval design (1680 runs, balanced).",
