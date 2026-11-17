@@ -21,7 +21,7 @@ import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
 import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
-import org.fog.placement.ModulePlacementEdgewards;
+import org.fog.placement.ModulePlacementOnlyCloud;
 import org.fog.utils.GeoLocation;
 import org.fog.utils.JsonToTopology;
 
@@ -87,12 +87,12 @@ public class CommonMainApp {
                         cls + "_ACT", "svc"));
             }
 
+            physical.setActuators(actuators);
             Controller controller = new Controller("controller", physical.getFogDevices(),
                     physical.getSensors(), actuators);
             controller.submitApplication(app, 0,
-                    new ModulePlacementEdgewards(physical.getFogDevices(),
-                            loggingSensors, actuators, app,
-                            ModuleMapping.createModuleMapping()));
+                    new ModulePlacementOnlyCloud(physical.getFogDevices(),
+                            loggingSensors, actuators, app));
             CloudSim.startSimulation();
             CloudSim.stopSimulation();
             System.out.printf("[cbs-ifog] seed=%d duration=%.0f results=%s%n",
