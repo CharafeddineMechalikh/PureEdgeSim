@@ -194,7 +194,30 @@ tool use~\cite{yao2023react} and retrieval injects external
 context~\cite{lewis2020rag}. The edge literature has begun to quantify the
 consequences~\cite{chen2026agenticenergy,he2026workflow,liu2026aigc,chari2026ragam}.
 Our model is deliberately coarser---three scalars and a ladder---because the
-object of study is the \emph{decision structure}, not the serving stack.
+object of study is the \emph{decision structure}, not the serving stack. We
+return to this limitation in Section~\ref{sec:threats} and note that a workload
+with a fixed multiplier cannot represent the variable number of tool calls and
+verification stages that characterises a real agentic session.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Positioning against adjacent research directions. The final column is
+the distinction claimed by this paper; each row is a coarse characterisation of
+the cited direction, not a universal property of every paper in it.}
+\label{tab:p2-related}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Direction & Place / fidelity & Our distinction\\
+\midrule
+MEC offloading~\cite{mao2017survey} & yes / no & factorial attribution\\
+Workflow scheduling~\cite{he2026workflow} & yes / varies & no DAG here\\
+Mixed-criticality~\cite{liu1973scheduling} & varies / yes & quality proxy\\
+LLM serving~\cite{kwon2023vllm} & varies / varies & system ablation\\
+This paper & yes / yes & capacity regime\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Offloading and placement}
 Classical MEC offloading~\cite{mao2017survey,mach2017survey,chen2015game}
@@ -899,8 +922,44 @@ $0.038$; with the ladder it moves $61\%$ to the edge and serves $0.417$; the
 static and joint arms move $93\%$ to the edge and serve $0.518$. The placement
 gain is therefore a shift from an overloaded mist tier to the edge tier, not a
 choice involving the cloud. This is the capacity configuration under which a
-placement rule can be inert, and Section~\ref{sec:docket} shows what happens
-when it is changed.
+placement rule can be inert.
+
+\subsection{Capacity-dependent orchestration regimes}
+\label{sec:capacity}
+To map the boundary rather than infer it from two contrasting configurations, we
+scaled edge MIPS by $\{0.25,0.5,1,2,4\}$ against a fixed cloud
+($\rho=\mu_{\text{edge}}/\mu_{\text{cloud}}$) at $2\times$ and $3\times$ overhead
+($400$ runs). Table~\ref{tab:p2-capacity} and Figure~\ref{fig:capacity} report the
+result. Three regimes are visible:
+
+\begin{itemize}
+\item \textbf{Adequate edge} ($\rho\ge2$): all ladder-enabled policies reach
+  $0.99$--$1.00$; the joint scorer again adds nothing over static edge.
+\item \textbf{Balanced edge} ($\rho=1$): fidelity adaptation recovers $0.375$ and
+  static edge raises it to $0.498$ --- the principal configuration reported
+  throughout this paper.
+\item \textbf{Weak edge} ($\rho\le0.5$): the ladder's benefit shrinks
+  ($0.129$--$0.298$ for fidelity-only) and joint placement is \emph{not}
+  superior to static edge; at $\rho=0.25$ and $2\times$ it serves nothing while
+  static edge still serves $0.177$. With a $120$~ms WAN and a weak edge, routing
+  to the cloud pays a transfer cost that consumes the remaining deadline margin.
+\end{itemize}
+
+The last point qualifies the Docket result of Section~\ref{sec:docket}: a faster
+cloud helps only if the wide-area path is cheap enough relative to the deadline.
+Joint placement becomes valuable when the capacity gap exists \emph{and} the
+network path is affordable; a weak edge alone is not sufficient. This is the
+capacity-dependent regime map the paper's central claim rests on.
+
+\input{../results/tables/capacity.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f_capacity.pdf}
+\caption{Success against edge/cloud capacity ratio $\rho$ at $2\times$ and
+$3\times$ overhead, with 95\% confidence bands over ten seeds.}
+\label{fig:capacity}
+\end{figure}
 
 \subsection{Horizon and battery boundaries}
 \label{sec:boundaries}
@@ -1048,39 +1107,62 @@ are large enough to change a pick. Report quality-weighted success either way.
 \section{Threats to Validity}
 \label{sec:threats}
 
-\paragraph{Fidelity has no accuracy model in PureEdgeSim}
-A $0.1$ fidelity execution is treated as a success, and quality-weighted
-success is our accounting correction, not a measurement of answer quality. The
-cost-shape sweep (Section~\ref{sec:gamma}) shows that this omission changes the
-reported quality by up to $22$ points at fixed success, so the assumption is not
-harmless. Docket prices fidelity in generated tokens, but its decoder and
-capacities are synthetic. A measured quality--latency curve needs a real testbed
-and is left to future work.
+\paragraph{A. Fidelity and application quality.}
+PureEdgeSim does not model answer accuracy: a $0.1$ fidelity execution is a
+success, and fidelity-weighted success is an accounting proxy, not a measured
+quality. The cost-curve sweep (Section~\ref{sec:gamma}) shows that this omission
+changes reported quality by up to $22$ points at fixed success, so the assumption
+is not harmless. Docket prices fidelity in generated tokens, but its decoder and
+capacities are synthetic. Neither platform provides a calibrated $q(f)$; a
+quality--latency curve from a real serving deployment is the most valuable
+external-validity experiment still missing.
 
-\paragraph{The overhead model is a surrogate}
-Compute and payload are scaled linearly and fidelity scales compute only. Real
-prefill/decode asymmetry is represented only in the Docket check, and KV-cache
-growth and non-linear model-size scaling are not represented in the main grids.
-The multipliers are swept rather than fitted, so the claims are about the
-\emph{shape} of the response, not about a specific agent. The `cp\_split` grid
-shows the shape is dominated by one axis, but a bandwidth-constrained access
-network would change that.
+\paragraph{B. Agentic workload abstraction.}
+The principal workload represents reasoning, tool calls and retrieval through
+compute and payload multipliers plus a fixed control-message count. It does not
+generate a DAG of reasoning/retrieval/verification stages, conditional branches
+or variable execution paths. A real agent may require two stages for one request
+and seven for the next; a scalar multiplier cannot express that variance. We
+therefore claim only that the \emph{demand amplification} induced by agentic
+execution changes the orchestration decision, not that the workload is a faithful
+agent implementation. Short/medium/long workflow profiles remain future work.
 
-\paragraph{Placement is capacity-conditional, not universally inert}
-The zero placement gain is measured with an adequate edge tier and a cloud that
-is never chosen (Section~\ref{sec:tiers}). Section~\ref{sec:docket} reverses it
-with a weak edge and a fast cloud. The result is therefore scoped to the first
-regime, and the paper makes no claim about the second beyond the Docket
-measurement.
+\paragraph{C. Network modelling.}
+The realistic network model is disabled (Section~\ref{sec:exp}): the
+orchestrator's predicted network term is propagation-only, with no bandwidth
+sharing, and the simulator's execution engine charges sizes to links without an
+explicit contention model. The payload threshold effects of
+Section~\ref{sec:cpsplit} are therefore conditional on an uncongested network;
+we do not claim they persist under WAN contention or a shared uplink.
 
-\paragraph{Resolution and statistics}
-Ten seeds resolve about two points in the published grids; the factorial and
-component ablation use twenty and resolve $0.003$ at $2\times$. Comparisons are
-seed-matched Wilcoxon with paired bootstrap intervals and paired dominance; the
-Holm families are $40$ contrasts in Table~\ref{tab:p2-factorial-tests} and $24$
-in Table~\ref{tab:p2-tests}. Exact zero differences carry no test.
+\paragraph{D. Capacity configuration.}
+The exact-zero placement result is measured with an adequate edge tier and a
+cloud that receives no successful requests (Section~\ref{sec:tiers}). Docket
+reverses it with a weak edge and a much faster cloud (Section~\ref{sec:docket}),
+and the capacity-ratio experiment of Section~\ref{sec:capacity} begins to map
+that boundary. The conclusion is a regime statement, not a universal claim that
+placement never matters.
 
-% =========================================================================
+\paragraph{E. Statistical generalisability.}
+Ten seeds resolve roughly two points in the sensitivity grids; the principal
+factorial and component ablation use twenty and resolve $0.003$ at $2\times$
+with a two-sided formula. Comparisons are seed-matched Wilcoxon tests with
+paired bootstrap intervals; the Holm families are $40$ contrasts in
+Table~\ref{tab:p2-factorial-tests} and $24$ in Table~\ref{tab:p2-tests}. Exact
+zeros are supported by a TOST equivalence check with a stated one-point margin,
+which establishes practical equivalence only in the tested regime. The Docket
+experiment uses five seeds per cell and is exploratory.
+
+\paragraph{F. Simulator dependence and external validity.}
+Both platforms used here are simulators, and Docket is developed by the authors;
+it is a cross-simulator robustness check under a different serving model, not
+external validation against a deployed LLM-serving infrastructure. No real
+hardware measurements, real LLM outputs or production traces are used. The
+vendored PureEdgeSim battery accounting also depends on configured initial
+capacity in a way that prevents cross-battery energy comparison
+(Section~\ref{sec:boundaries}); we report that as a simulator artifact rather
+than an energy result.
+
 \section{Conclusion}
 \label{sec:concl}
 

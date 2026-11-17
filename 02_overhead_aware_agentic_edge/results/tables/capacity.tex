@@ -1,0 +1,23 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Success by edge/cloud capacity ratio $\rho$ at two overhead levels. The cloud MIPS are fixed; the edge tier is scaled.}
+\label{tab:p2-capacity}
+\begin{tabular}{lccccc}
+\toprule
+$\rho$ (edge/cloud MIPS) & Overhead & aware & aware\_nofid & edge & naive\_fid \\
+\midrule
+0.250 & 2.000 & 0.000 & 0.000 & 0.177 & 0.000 \\
+0.250 & 3.000 & 0.000 & 0.000 & 0.000 & 0.093 \\
+0.500 & 2.000 & 0.216 & 0.000 & 0.216 & 0.129 \\
+0.500 & 3.000 & 0.216 & 0.000 & 0.216 & 0.298 \\
+1.000 & 2.000 & 0.498 & 0.000 & 0.498 & 0.375 \\
+1.000 & 3.000 & 0.400 & 0.000 & 0.400 & 0.374 \\
+2.000 & 2.000 & 0.990 & 0.990 & 0.990 & 0.984 \\
+2.000 & 3.000 & 0.985 & 0.984 & 0.985 & 0.978 \\
+4.000 & 2.000 & 1.000 & 1.000 & 1.000 & 0.998 \\
+4.000 & 3.000 & 0.999 & 0.999 & 0.999 & 0.997 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright A small $\rho$ is a weak edge; a large $\rho$ is a strong edge. The comparison uses identical arrivals and workload.\par}
+\end{table*}

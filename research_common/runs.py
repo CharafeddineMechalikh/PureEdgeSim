@@ -167,6 +167,27 @@ def scale_application_rate(settings_dir: Path | str, factor: float,
 # --------------------------------------------------------------------------------------
 # Fault injection
 # --------------------------------------------------------------------------------------
+def set_tier_capacity(settings_dir: Path | str, edge_factor: float = 1.0,
+                      cloud_factor: float = 1.0) -> None:
+    """Scale the per-core MIPS of edge and cloud hosts by given factors.
+
+    Used by the capacity-ratio experiment: the logical fleet and workload stay
+    fixed while the relative tier capacity changes.
+    """
+    import xml.etree.ElementTree as ElementTree
+
+    directory = Path(settings_dir)
+    for filename, factor in (("edge_datacenters.xml", edge_factor),
+                             ("cloud.xml", cloud_factor)):
+        if factor == 1.0:
+            continue
+        path = directory / filename
+        tree = ElementTree.parse(path)
+        for node in tree.getroot().iter("mips"):
+            node.text = str(round(float((node.text or "0").strip() or 0) * factor, 6))
+        tree.write(path, encoding="utf-8", xml_declaration=False)
+
+
 def _select_devices(manager, selector: str, count: int):
     devices = [node for node in manager.edge_devices if node.is_alive()]
     if selector == "battery_first":

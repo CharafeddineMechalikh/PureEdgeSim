@@ -50,7 +50,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from research_common.paths import ensure_pureedgesim  # noqa: E402
-from research_common.runs import run_once, scale_application_rate, set_device_battery  # noqa: E402
+from research_common.runs import (run_once, scale_application_rate,  # noqa: E402
+                                  set_device_battery, set_tier_capacity)
 from research_common.sweep import default_workers, execute, expand_grid  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -145,6 +146,11 @@ def run_job(job: dict, out_dir: Path) -> dict:
             scale_application_rate(settings_dir, float(job["rate_factor"]))
         if job.get("battery_initial") is not None:
             set_device_battery(settings_dir, float(job["battery_initial"]))
+        if float(job.get("edge_capacity_factor", 1.0)) != 1.0 or \
+           float(job.get("cloud_capacity_factor", 1.0)) != 1.0:
+            set_tier_capacity(settings_dir,
+                              float(job.get("edge_capacity_factor", 1.0)),
+                              float(job.get("cloud_capacity_factor", 1.0)))
 
     # All non-naive arms run the agentic overhead model; they differ only in the
     # orchestrator, so the comparison isolates the placement rule.
@@ -262,6 +268,18 @@ def grids() -> dict[str, list[dict]]:
         job["fidelity"] = job["policy"] != "naive"
         cp_split.append(job)
 
+    # Capacity-ratio experiment (reviewer request): vary edge capacity against a
+    # fixed cloud, at two stress levels.
+    capacity = []
+    for job in expand_grid(
+            {**base, "experiment": "capacity", "compute_multiplier": 2.0,
+             "payload_multiplier": 2.0, "cloud_capacity_factor": 1.0},
+            {"policy": ("edge", "aware", "aware_nofid", "naive_fid"),
+             "edge_capacity_factor": (0.25, 0.5, 1.0, 2.0, 4.0),
+             "compute_multiplier": (2.0, 3.0), "seed": seeds}):
+        job["fidelity"] = job["policy"] != "aware_nofid"
+        capacity.append(job)
+
     # Refined compute/payload lattice around the 1.5x boundary (reviewer request).
     cp_fine = []
     for job in expand_grid(
@@ -335,7 +353,7 @@ def grids() -> dict[str, list[dict]]:
             "fidelity": fidelity, "energy": energy, "ablation": ablation,
             "factorial": factorial, "cp_split": cp_split, "fidelity_gamma": fidelity_gamma,
             "ablation2": ablation2, "tiers": tiers, "horizon": horizon,
-            "cp_fine": cp_fine}
+            "cp_fine": cp_fine, "capacity": capacity}
 
 
 # The published grids keep their original folder naming (job ids and resume keys
@@ -352,6 +370,7 @@ NAME_KEYS = {
                  ("container_penalty_s", "cache_aware"),
     "cp_split": COMPACT_KEYS,
     "cp_fine": COMPACT_KEYS,
+    "capacity": COMPACT_KEYS + ("edge_capacity_factor", "cloud_capacity_factor"),
     "fidelity_gamma": COMPACT_KEYS,
     "ablation2": COMPACT_KEYS,
     "tiers": COMPACT_KEYS,
