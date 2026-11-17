@@ -420,7 +420,7 @@ def build_tables(frame: pd.DataFrame) -> dict[str, Path]:
             scale_energy, RESULTS / "tables" / "energy_accounting.tex",
             "Energy accounting by component and both denominators, for the "
             "40-device cells of the scale grid (trade-off placement, 10 seeds).",
-            "tab:p1-energy", align="llcccccccc", wide=True, size=r"\scriptsize",
+            "tab:p1-energy", wide=True, size=r"\scriptsize",
             notes="Wh per success and Wh per generated share one numerator: "
                   "computing-node energy. Network energy is reported separately "
                   "by the simulator and is shown both apart and folded in, so the "

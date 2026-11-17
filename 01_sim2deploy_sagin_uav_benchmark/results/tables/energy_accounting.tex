@@ -3,7 +3,7 @@
 \scriptsize
 \caption{Energy accounting by component and both denominators, for the 40-device cells of the scale grid (trade-off placement, 10 seeds).}
 \label{tab:p1-energy}
-\begin{tabular}{llcccccccc}
+\begin{tabular}{lcccccccccccc}
 \toprule
 Architecture & Devices & Computing nodes & Cloud & Edge & Mist & WAN & LAN & WiFi & Network total & Wh per success & Wh per generated & Wh per success incl. network \\
 \midrule
@@ -21,5 +21,5 @@ EDGE\_ONLY & 60 & 32.284 & 0.000 & 27.579 & 4.704 & 0.000 & 1.416 & 1.416 & 2.83
 EDGE\_ONLY & 80 & 34.184 & 0.000 & 27.912 & 6.272 & 0.000 & 1.888 & 1.888 & 3.776 & 0.071 & 0.009 & 0.079 \\
 \bottomrule
 \end{tabular}
-\par\vspace{2pt}{\footnotesize\raggedright Wh per success and Wh per generated share one numerator: computing-node energy. Network energy is reported separately by the simulator and is shown both apart and folded in, so the boundary a claim uses is visible.\par}
+\par\vspace{2pt}{\footnotesize\raggedright Wh per success and Wh per generated share one numerator: computing-node energy. Network energy is reported separately by the simulator and is not mixed into either denominator.\par}
 \end{table*}
