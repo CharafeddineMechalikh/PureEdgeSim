@@ -58,12 +58,18 @@ Evidence already gathered:
 * `topologies/routerTopology` shows the JSON topology schema (nodes with
   `mips`, `ram`, `upBw`, `downBw`, `level`; links with `latency`).
 
-**Blocker for exact common-trace replay:** iFogSim2 sensors generate tuples from
-distributions (`DeterministicDistribution`, Gaussian, etc.) rather than consuming
-an explicit arrival timestamp list. Replaying the exact `trace_s*.csv` arrivals
-therefore needs a custom sensor/tuple generator in the platform, not only a
-config adapter. This is the concrete next implementation task; it has not been
-done, and no iFogSim2 result is reported.
+**Partial implementation done in this session:** `adapters/ifogsim2/` builds and
+replays exact trace arrivals: `TraceDistribution` reads `trace_s*.csv` and
+aggregates one arrival per workflow, `LoggingSensor` removes iFogSim2's default
+50 s transmission delay, and the application graph (3 tuple types, one `svc`
+module, 3 actuator types) is built from the specification. The adapter emits
+tuples at the correct shared-trace times.
+
+**Remaining blocker:** tuples are not being forwarded from the `svc` module to
+the actuators in this minimal topology (no `cbs-act` events), so end-to-end
+delay and success cannot yet be collected. This is a placement/mapping issue in
+iFogSim2's `ModulePlacementEdgewards` with a hand-built topology. No iFogSim2
+result is reported until it is resolved.
 
 ```powershell
 $cp = "build;jars\commons-math3-3.5\commons-math3-3.5.jar;" +

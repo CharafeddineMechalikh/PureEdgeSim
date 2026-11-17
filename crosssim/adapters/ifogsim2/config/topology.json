@@ -1,0 +1,71 @@
+{
+  "nodes": [
+    {
+      "name": "cloud",
+      "type": "FOG_DEVICE",
+      "level": 0,
+      "mips": 100000,
+      "ram": 64000,
+      "upBw": 50000000,
+      "downBw": 50000000,
+      "ratePerMips": 0.0
+    },
+    {
+      "name": "edge-0",
+      "type": "FOG_DEVICE",
+      "level": 1,
+      "mips": 80000,
+      "ram": 32000,
+      "upBw": 300000000,
+      "downBw": 300000000,
+      "ratePerMips": 0.0
+    },
+    {
+      "name": "edge-1",
+      "type": "FOG_DEVICE",
+      "level": 1,
+      "mips": 80000,
+      "ram": 32000,
+      "upBw": 300000000,
+      "downBw": 300000000,
+      "ratePerMips": 0.0
+    },
+    {
+      "name": "edge-2",
+      "type": "FOG_DEVICE",
+      "level": 1,
+      "mips": 80000,
+      "ram": 32000,
+      "upBw": 300000000,
+      "downBw": 300000000,
+      "ratePerMips": 0.0
+    }
+  ],
+  "links": [
+    {
+      "source": "edge-0",
+      "destination": "cloud",
+      "latency": 120.0
+    },
+    {
+      "source": "edge-1",
+      "destination": "cloud",
+      "latency": 120.0
+    },
+    {
+      "source": "edge-2",
+      "destination": "cloud",
+      "latency": 120.0
+    },
+    {
+      "source": "edge-0",
+      "destination": "edge-1",
+      "latency": 10.0
+    },
+    {
+      "source": "edge-0",
+      "destination": "edge-2",
+      "latency": 10.0
+    }
+  ]
+}
