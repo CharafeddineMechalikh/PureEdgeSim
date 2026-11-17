@@ -1,0 +1,19 @@
+\begin{table*}
+\centering
+\small
+\caption{Cross-layer ISCC-aware orchestration versus layer-agnostic baseline across multi-tier architectures (mean of 10 seeds).}
+\label{tab:p5-main}
+\begin{tabular}{llcccccc}
+\toprule
+Architecture & Policy & Req. succ. & Makespan (s) & p95 span (s) & Dep. fail. & Wh/req. & Co-loc. \\
+\midrule
+ALL & agnostic & 0.991 & 0.476 & 0.538 & 0.0065 & 0.000 & 0.00 \\
+ALL & iscc\_aware & 1.000 & 0.488 & 0.527 & 0.0000 & 0.000 & 0.93 \\
+EDGE\_AND\_CLOUD & agnostic & 0.987 & 0.521 & 0.521 & 0.0092 & 0.000 & 0.00 \\
+EDGE\_AND\_CLOUD & iscc\_aware & 1.000 & 0.521 & 0.521 & 0.0000 & 0.000 & 1.00 \\
+MIST\_AND\_EDGE & agnostic & 1.000 & 0.476 & 0.538 & 0.0000 & 0.000 & 0.00 \\
+MIST\_AND\_EDGE & iscc\_aware & 1.000 & 0.488 & 0.527 & 0.0000 & 0.000 & 0.93 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Req. succ. = fraction of 4-stage ISCC pipelines completing all stages within 0.80 s; Co-loc. = fraction of dependent stages co-located.\par}
+\end{table*}

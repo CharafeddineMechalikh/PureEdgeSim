@@ -1,0 +1,97 @@
+policy,failure_intensity,cause,fraction
+certified,0.0,Deadline,0.0
+certified,0.0,Mobility,0.0
+certified,0.0,Device death,0.0
+certified,0.0,Resources,0.0
+certified,0.0,Dependency,0.0
+certified,0.0,Rejected,0.2255532503457815
+certified,5.0,Deadline,0.0
+certified,5.0,Mobility,0.0
+certified,5.0,Device death,0.056189488243430154
+certified,5.0,Resources,0.0
+certified,5.0,Dependency,0.0
+certified,5.0,Rejected,0.21628630705394195
+certified,10.0,Deadline,0.0
+certified,10.0,Mobility,0.0
+certified,10.0,Device death,0.10580912863070539
+certified,10.0,Resources,0.0
+certified,10.0,Dependency,0.0
+certified,10.0,Rejected,0.20235131396957123
+certified,20.0,Deadline,0.0
+certified,20.0,Mobility,0.0
+certified,20.0,Device death,0.1538035961272476
+certified,20.0,Resources,0.0
+certified,20.0,Dependency,0.0
+certified,20.0,Rejected,0.21576763485477177
+certified_ft,0.0,Deadline,0.0
+certified_ft,0.0,Mobility,0.0
+certified_ft,0.0,Device death,0.0
+certified_ft,0.0,Resources,0.0
+certified_ft,0.0,Dependency,0.0
+certified_ft,0.0,Rejected,0.2255532503457815
+certified_ft,5.0,Deadline,0.0
+certified_ft,5.0,Mobility,0.0
+certified_ft,5.0,Device death,0.056189488243430154
+certified_ft,5.0,Resources,0.0
+certified_ft,5.0,Dependency,0.0
+certified_ft,5.0,Rejected,0.2162863070539419
+certified_ft,10.0,Deadline,0.0
+certified_ft,10.0,Mobility,0.0
+certified_ft,10.0,Device death,0.10580912863070539
+certified_ft,10.0,Resources,0.0
+certified_ft,10.0,Dependency,0.0
+certified_ft,10.0,Rejected,0.20235131396957123
+certified_ft,20.0,Deadline,0.0
+certified_ft,20.0,Mobility,0.0
+certified_ft,20.0,Device death,0.1538035961272476
+certified_ft,20.0,Resources,0.0
+certified_ft,20.0,Dependency,0.0
+certified_ft,20.0,Rejected,0.21576763485477177
+ft,0.0,Deadline,0.2077109266943292
+ft,0.0,Mobility,0.0
+ft,0.0,Device death,0.0
+ft,0.0,Resources,0.0
+ft,0.0,Dependency,0.0
+ft,0.0,Rejected,0.0
+ft,5.0,Deadline,0.19630013831258644
+ft,5.0,Mobility,0.0
+ft,5.0,Device death,0.056189488243430154
+ft,5.0,Resources,0.0
+ft,5.0,Dependency,0.0
+ft,5.0,Rejected,0.0
+ft,10.0,Deadline,0.18616874135546335
+ft,10.0,Mobility,0.0
+ft,10.0,Device death,0.10580912863070539
+ft,10.0,Resources,0.0
+ft,10.0,Dependency,0.0
+ft,10.0,Rejected,0.0
+ft,20.0,Deadline,0.21410788381742737
+ft,20.0,Mobility,0.0
+ft,20.0,Device death,0.15380359612724756
+ft,20.0,Resources,0.0
+ft,20.0,Dependency,0.0
+ft,20.0,Rejected,0.0
+naive,0.0,Deadline,0.1945712309820194
+naive,0.0,Mobility,0.0
+naive,0.0,Device death,0.0
+naive,0.0,Resources,0.0
+naive,0.0,Dependency,0.0
+naive,0.0,Rejected,0.0
+naive,5.0,Deadline,0.18544260027662515
+naive,5.0,Mobility,0.0
+naive,5.0,Device death,0.056708160442600276
+naive,5.0,Resources,0.0
+naive,5.0,Dependency,0.0
+naive,5.0,Rejected,0.0
+naive,10.0,Deadline,0.17555325034578145
+naive,10.0,Mobility,0.0
+naive,10.0,Device death,0.10663900414937759
+naive,10.0,Resources,0.0
+naive,10.0,Dependency,0.0
+naive,10.0,Rejected,0.0
+naive,20.0,Deadline,0.20629322268326417
+naive,20.0,Mobility,0.0
+naive,20.0,Device death,0.16037344398340245
+naive,20.0,Resources,0.0
+naive,20.0,Dependency,0.0
+naive,20.0,Rejected,0.0

@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<edge_devices>
+	<!-- Mobile UAV/UGV nodes generating tasks -->
+	<device arch="arm" os="linux" vmm="docker">
+		<connectivity>wifi</connectivity>
+		<mobility>true</mobility>
+		<speed>12</speed>
+		<minPauseDuration>10</minPauseDuration>
+		<maxPauseDuration>40</maxPauseDuration>
+		<minMobilityDuration>30</minMobilityDuration>
+		<maxMobilityDuration>120</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>40</percentage>
+		<batteryCapacity>60</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>1.2</idleConsumption>
+		<maxConsumption>18</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>4</cores>
+		<mips>30000</mips>
+		<ram>4096</ram>
+		<storage>64000</storage>
+	</device>
+	<!-- Mobile IoT/sensor field nodes -->
+	<device arch="arm" os="linux" vmm="docker">
+		<connectivity>wifi</connectivity>
+		<mobility>true</mobility>
+		<speed>1.5</speed>
+		<minPauseDuration>60</minPauseDuration>
+		<maxPauseDuration>200</maxPauseDuration>
+		<minMobilityDuration>20</minMobilityDuration>
+		<maxMobilityDuration>60</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>40</percentage>
+		<batteryCapacity>20</batteryCapacity>
+		<initialBatteryLevel>100</initialBatteryLevel>
+		<idleConsumption>0.3</idleConsumption>
+		<maxConsumption>6</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>2</cores>
+		<mips>12000</mips>
+		<ram>2048</ram>
+		<storage>16000</storage>
+	</device>
+	<!-- Fixed sensor (task source only) -->
+	<device arch="arm" os="linux" vmm="none">
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>20</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel>
+		<idleConsumption>0.2</idleConsumption>
+		<maxConsumption>0.5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>0</cores>
+		<mips>0</mips>
+		<ram>0</ram>
+		<storage>0</storage>
+	</device>
+</edge_devices>

@@ -1,0 +1,132 @@
+{
+  "_comment": "Single source of truth for the cross-simulator replication. Transcribed from the P1 scenario files: 01_sim2deploy_sagin_uav_benchmark/scenario/settings/*. Unit system: seconds, MI (million instructions), Mbps, Kbytes (as PureEdgeSim's ApplicationFileParser.java:114-127 documents).",
+
+  "simulation_time_s": 300,
+  "warmup_s": 0,
+  "seed_default": 42,
+  "seeds": [1, 2, 3, 4, 5],
+
+  "workload_classes": [
+    {
+      "id": "C1",
+      "name": "UAV_Sensing_Control",
+      "type": "Hard Real-time",
+      "rate_tasks_per_min_per_device": 15,
+      "device_share": 0.35,
+      "task_length_MI": 2000,
+      "deadline_s": 0.2,
+      "request_Kbytes": 50,
+      "result_Kbytes": 20,
+      "container_Mbytes": 200,
+      "source": "applications.xml:4-13"
+    },
+    {
+      "id": "C2",
+      "name": "UAV_Video_Analytics",
+      "type": "Soft Real-time",
+      "rate_tasks_per_min_per_device": 10,
+      "device_share": 0.35,
+      "task_length_MI": 12000,
+      "deadline_s": 0.8,
+      "request_Kbytes": 1500,
+      "result_Kbytes": 80,
+      "container_Mbytes": 1200,
+      "source": "applications.xml:14-23"
+    },
+    {
+      "id": "C3",
+      "name": "Mission_Data_Aggregation",
+      "type": "Non Real-time",
+      "rate_tasks_per_min_per_device": 4,
+      "device_share": 0.30,
+      "task_length_MI": 20000,
+      "deadline_s": 60.0,
+      "request_Kbytes": 900,
+      "result_Kbytes": 200,
+      "container_Mbytes": 800,
+      "source": "applications.xml:24-33"
+    }
+  ],
+
+  "expected_task_mix": {
+    "C1": 0.528, "C2": 0.352, "C3": 0.121,
+    "_derivation": "n_devices(class) * rate(class) / total; with 40 devices -> 14,14,12 x (15,10,4)/min = 210:140:48 of 398"
+  },
+
+  "fleet": {
+    "n_devices": 40,
+    "device_types": [
+      {"name": "uav",     "percentage": 40, "cores": 4, "mips": 30000, "ram_MB": 4096, "storage_MB": 64000, "mobility": true,  "speed_ms": 12.0},
+      {"name": "field",   "percentage": 40, "cores": 2, "mips": 12000, "ram_MB": 2048, "storage_MB": 16000, "mobility": true,  "speed_ms": 1.5},
+      {"name": "sensor",  "percentage": 20, "cores": 0, "mips": 0,     "ram_MB": 0,    "storage_MB": 0,     "mobility": false, "speed_ms": 0.0}
+    ],
+    "source": "edge_devices.xml"
+  },
+
+  "edge_tier": {
+    "n_datacenters": 3,
+    "cores": 16,
+    "mips": 80000,
+    "ram_MB": 32000,
+    "storage_MB": 500000,
+    "source": "edge_datacenters.xml"
+  },
+
+  "cloud_tier": {
+    "n_datacenters": 1,
+    "cores": 400,
+    "mips": 100000,
+    "ram_MB": 64000,
+    "storage_MB": 2000000,
+    "source": "cloud.xml"
+  },
+
+  "network": {
+    "wifi_bandwidth_Mbps": 300,
+    "wifi_latency_s": 0.01,
+    "wan_bandwidth_Mbps": 50,
+    "wan_latency_s": 0.12,
+    "man_bandwidth_Mbps": 1000,
+    "man_latency_s": 0.01,
+    "ethernet_bandwidth_Mbps": 1000,
+    "ethernet_latency_s": 0.002,
+    "edge_device_range_m": 80,
+    "edge_coverage_m": 350,
+    "area_m": [500, 500],
+    "source": "simulation_parameters.properties:20-58"
+  },
+
+  "architectures": {
+    "EDGE_ONLY":      {"tiers": ["edge"]},
+    "EDGE_AND_CLOUD": {"tiers": ["edge", "cloud"]},
+    "ALL":            {"tiers": ["device", "edge", "cloud"]}
+  },
+  "architecture_order": ["EDGE_ONLY", "EDGE_AND_CLOUD", "ALL"],
+
+  "orchestration": {
+    "policy": "CLOSEST_TIER_LEAST_LOADED",
+    "description": "Same fixed policy in every arm: use the local device tier if enabled, else the least loaded edge replica by last-known queue occupancy, else the cloud. Tier set is the only thing that changes across architectures.",
+    "tick_applies_to": "any task whose admitted destination is not the releasing device",
+    "source": "simulation_parameters.properties:68 orchestration_algorithms=TRADE_OFF,ROUND_ROBIN"
+  },
+
+  "temporal_settings": {
+    "default":   {"tick_s": 1.0,  "basis": "update_interval=1 (simulation_parameters.properties:5); ParametersParser.java:97 minimum 0.01"},
+    "fast":      {"tick_s": 0.2},
+    "faster":    {"tick_s": 0.05},
+    "continuous":{"tick_s": 0.0,  "basis": "event-driven limit; also the native YAFS/EdgeCloudSim default where no loop sits on the task path"}
+  },
+  "temporal_order": ["default", "fast", "faster", "continuous"],
+
+  "deadline_scaling": {
+    "x1":  1.0,
+    "x16": 16.0,
+    "source": "benchmark.py:264-268 deadline_factor grid (1.0,1.5,3.0,8.0,16.0); benchmark.py:57-65 scale_deadlines"
+  },
+
+  "metrics": {
+    "definitions_file": "definitions.md",
+    "success": "task completes within its class deadline, measured at result delivery back to the releasing device",
+    "recorded_timestamps": ["release_s", "decision_s", "dispatch_s", "exec_start_s", "complete_s"]
+  }
+}

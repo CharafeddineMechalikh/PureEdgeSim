@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Component ablation under stress. Removing the fidelity ladder removes the entire gain; removing the cache and energy terms changes nothing.}
+\label{tab:p2-ablation}
+\begin{tabular}{lcccc}
+\toprule
+Overhead & Arm & Success & Quality-wtd. & Mean fid. \\
+\midrule
+1.500 & edge + fidelity & 0.784 & 0.675 & 0.887 \\
+1.500 & naive + fidelity & 0.729 & 0.646 & 0.861 \\
+1.500 & aware $-$ fidelity & 0.571 & 0.571 & 1.000 \\
+1.500 & aware, flat & 0.784 & 0.675 & 0.887 \\
+1.500 & aware & 0.784 & 0.675 & 0.887 \\
+2.000 & edge + fidelity & 0.498 & 0.249 & 0.747 \\
+2.000 & naive + fidelity & 0.375 & 0.187 & 0.688 \\
+2.000 & aware $-$ fidelity & 0.000 & 0.000 & 1.000 \\
+2.000 & aware, flat & 0.498 & 0.249 & 0.747 \\
+2.000 & aware & 0.498 & 0.249 & 0.747 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright aware\_nofid disables the ladder; aware\_flat sets the container penalty and the energy weight to zero. All arms use the same agentic workload and the same seeds.\par}
+\end{table}

@@ -1,0 +1,17 @@
+{
+  "match": true,
+  "values": [
+    {
+      "Number of generated tasks": 995,
+      "Tasks successfully executed": 120,
+      "Energy consumption of computing nodes (Wh)": 28.4835,
+      "Average execution delay (s)": 0.0961
+    },
+    {
+      "Number of generated tasks": 995,
+      "Tasks successfully executed": 120,
+      "Energy consumption of computing nodes (Wh)": 28.4835,
+      "Average execution delay (s)": 0.0961
+    }
+  ]
+}

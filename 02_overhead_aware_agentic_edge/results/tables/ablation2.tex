@@ -1,0 +1,18 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Component ablation with a live cache (hit ratio 0.5): each arm removes one term from the joint objective.}
+\label{tab:p2-ablation2}
+\begin{tabular}{lccccc}
+\toprule
+Arm & 1.5$\times$ & 2$\times$ & 3$\times$ & Quality at $3\times$ & Cache picks \\
+\midrule
+joint$+$fid. & 0.851 & 0.662 & 0.400 & 0.150 & 0.000 \\
+--energy & 0.851 & 0.662 & 0.400 & 0.150 & 0.000 \\
+--container & 0.851 & 0.662 & 0.400 & 0.150 & 0.000 \\
+--cache & 0.851 & 0.663 & 0.408 & 0.151 & 0.000 \\
+--all three & 0.851 & 0.662 & 0.408 & 0.151 & 0.000 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright No arm differs from the full mechanism by more than a point, so the cache, energy and container terms are inert in this workload. The cache-arm column records how often the cache term changed the pick: zero.\par}
+\end{table*}

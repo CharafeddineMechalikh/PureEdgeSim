@@ -1,0 +1,22 @@
+\begin{table*}
+\centering
+\scriptsize
+\caption{Rank agreement between temporal configurations (Kendall tau, Spearman rho).}
+\label{tab:p1-ranking-stability}
+\begin{tabular}{lcccccccc}
+\toprule
+Architecture & Comparison & Ranking defined & Kendall tau & tau p-value & Spearman rho & Algorithms moving & Best at first & Best at second \\
+\midrule
+ALL & 1 s vs 0.2 s & yes & 0.720 & 0.028 & 0.852 & 5.000 & round\_robin & random \\
+ALL & 0.2 s vs 0.05 s & yes & 0.238 & 0.562 & 0.393 & 4.000 & random & mct \\
+ALL & 1 s vs 0.05 s & yes & 0.103 & 0.754 & 0.148 & 7.000 & round\_robin & mct \\
+EDGE\_AND\_CLOUD & 1 s vs 0.2 s & no (all tied) & -- & -- & -- & 6.000 & random & mct \\
+EDGE\_AND\_CLOUD & 0.2 s vs 0.05 s & yes & 1.000 & 0.000 & 1.000 & 0.000 & mct & mct \\
+EDGE\_AND\_CLOUD & 1 s vs 0.05 s & no (all tied) & -- & -- & -- & 6.000 & random & mct \\
+EDGE\_ONLY & 1 s vs 0.2 s & no (all tied) & -- & -- & -- & 0.000 & random & random \\
+EDGE\_ONLY & 0.2 s vs 0.05 s & no (all tied) & -- & -- & -- & 0.000 & random & random \\
+EDGE\_ONLY & 1 s vs 0.05 s & no (all tied) & -- & -- & -- & 0.000 & random & random \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright A tau below one means the simulator's temporal configuration changes the ordering of the algorithms; the last two columns give the winner at each end of the comparison. Where every algorithm produces the same outcome there is no ordering to agree on, and the correlation is left undefined rather than reported as one.\par}
+\end{table*}

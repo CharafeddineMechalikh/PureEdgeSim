@@ -1,0 +1,113 @@
+Scenario: EDGE_ONLY / TRADE_OFF / 50 devices
+  Generated tasks      : 2892
+  Successful tasks     : 1812
+  Failed (delay)       : 1080
+  Failed (death)       : 0
+  Failed (mobility)    : 0
+  Failed (dependency)  : 0
+  Skipped (optional)   : 0
+  Not executed         : 0
+  Average delay (s)    : 0.1106
+  Average CPU (%)      : 0.3827
+  Energy (Wh)          : 17.1277
+  Dead devices         : 0
+
+Requests
+  Generated            : 2892
+  Successful           : 1812
+  Average makespan (s) : 0.1147
+
+Scenario: EDGE_ONLY / ROUND_ROBIN / 50 devices
+  Generated tasks      : 2892
+  Successful tasks     : 1812
+  Failed (delay)       : 1080
+  Failed (death)       : 0
+  Failed (mobility)    : 0
+  Failed (dependency)  : 0
+  Skipped (optional)   : 0
+  Not executed         : 0
+  Average delay (s)    : 0.1106
+  Average CPU (%)      : 0.3827
+  Energy (Wh)          : 17.1277
+  Dead devices         : 0
+
+Requests
+  Generated            : 2892
+  Successful           : 1812
+  Average makespan (s) : 0.1141
+
+Scenario: EDGE_AND_CLOUD / TRADE_OFF / 50 devices
+  Generated tasks      : 2892
+  Successful tasks     : 1794
+  Failed (delay)       : 1098
+  Failed (death)       : 0
+  Failed (mobility)    : 0
+  Failed (dependency)  : 0
+  Skipped (optional)   : 0
+  Not executed         : 0
+  Average delay (s)    : 0.1106
+  Average CPU (%)      : 0.3185
+  Energy (Wh)          : 17.3455
+  Dead devices         : 0
+
+Requests
+  Generated            : 2892
+  Successful           : 1794
+  Average makespan (s) : 0.1124
+
+Scenario: EDGE_AND_CLOUD / ROUND_ROBIN / 50 devices
+  Generated tasks      : 2892
+  Successful tasks     : 1783
+  Failed (delay)       : 1109
+  Failed (death)       : 0
+  Failed (mobility)    : 0
+  Failed (dependency)  : 0
+  Skipped (optional)   : 0
+  Not executed         : 0
+  Average delay (s)    : 0.1106
+  Average CPU (%)      : 0.3031
+  Energy (Wh)          : 17.398
+  Dead devices         : 0
+
+Requests
+  Generated            : 2892
+  Successful           : 1783
+  Average makespan (s) : 0.1127
+
+Scenario: ALL / TRADE_OFF / 50 devices
+  Generated tasks      : 2892
+  Successful tasks     : 1578
+  Failed (delay)       : 1314
+  Failed (death)       : 0
+  Failed (mobility)    : 0
+  Failed (dependency)  : 0
+  Skipped (optional)   : 0
+  Not executed         : 0
+  Average delay (s)    : 0.132
+  Average CPU (%)      : 0.5393
+  Energy (Wh)          : 16.7149
+  Dead devices         : 0
+
+Requests
+  Generated            : 2892
+  Successful           : 1578
+  Average makespan (s) : 0.1428
+
+Scenario: ALL / ROUND_ROBIN / 50 devices
+  Generated tasks      : 2892
+  Successful tasks     : 1735
+  Failed (delay)       : 1157
+  Failed (death)       : 0
+  Failed (mobility)    : 0
+  Failed (dependency)  : 0
+  Skipped (optional)   : 0
+  Not executed         : 0
+  Average delay (s)    : 0.1238
+  Average CPU (%)      : 0.4323
+  Energy (Wh)          : 16.7549
+  Dead devices         : 0
+
+Requests
+  Generated            : 2892
+  Successful           : 1735
+  Average makespan (s) : 0.1228

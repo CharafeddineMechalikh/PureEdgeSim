@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<applications>
+	<application name="Edge_Inference">
+		<type>Soft Real-time</type>
+		<rate>20</rate>
+		<usage_percentage>50</usage_percentage>
+		<latency>0.5</latency>
+		<container_size>500</container_size>
+		<request_size>200</request_size>
+		<results_size>50</results_size>
+		<task_length>4000</task_length>
+	</application>
+	<application name="Control_Update">
+		<type>Hard Real-time</type>
+		<rate>15</rate>
+		<usage_percentage>50</usage_percentage>
+		<latency>0.1</latency>
+		<container_size>100</container_size>
+		<request_size>30</request_size>
+		<results_size>20</results_size>
+		<task_length>1200</task_length>
+	</application>
+</applications>

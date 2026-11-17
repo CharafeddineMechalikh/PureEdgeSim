@@ -1,0 +1,29 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Marginal decomposition of the joint gain. Each row adds one factor to the row above; the share is of the total gain at that level.}
+\label{tab:p2-partition}
+\begin{tabular}{llccc}
+\toprule
+Overhead & Arm & Success & $\Delta$ (pp) & Share \\
+\midrule
+1$\times$ & naive placement, no ladder & 0.972 & -- & -- \\
+1$\times$ & + fidelity ladder & 0.972 & +0.0 & 0\% \\
+1$\times$ & + static edge placement & 0.986 & +1.4 & 100\% \\
+1$\times$ & + joint scorer (replaces edge) & 0.986 & +0.0 & 0\% \\
+1.5$\times$ & naive placement, no ladder & 0.569 & -- & -- \\
+1.5$\times$ & + fidelity ladder & 0.728 & +15.9 & 75\% \\
+1.5$\times$ & + static edge placement & 0.782 & +5.4 & 25\% \\
+1.5$\times$ & + joint scorer (replaces edge) & 0.782 & +0.0 & 0\% \\
+2$\times$ & naive placement, no ladder & 0.000 & -- & -- \\
+2$\times$ & + fidelity ladder & 0.375 & +37.5 & 76\% \\
+2$\times$ & + static edge placement & 0.496 & +12.1 & 24\% \\
+2$\times$ & + joint scorer (replaces edge) & 0.496 & +0.0 & 0\% \\
+3$\times$ & naive placement, no ladder & 0.000 & -- & -- \\
+3$\times$ & + fidelity ladder & 0.373 & +37.3 & 93\% \\
+3$\times$ & + static edge placement & 0.401 & +2.8 & 7\% \\
+3$\times$ & + joint scorer (replaces edge) & 0.401 & +0.0 & 0\% \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright At $1.5\times$ and above the ladder is worth 75--93\% of the joint gain, the static edge tier most of the remainder, and the joint scorer nothing once the edge tier is available. At nominal overhead no arm is stressed, so the shares are meaningless there and the row is reported for completeness.\par}
+\end{table}

@@ -1,0 +1,37 @@
+Scenario: EDGE_AND_CLOUD / TRADE_OFF / 30 devices
+  Generated tasks      : 2100
+  Successful tasks     : 2009
+  Failed (delay)       : 91
+  Failed (death)       : 0
+  Failed (mobility)    : 0
+  Failed (dependency)  : 0
+  Skipped (optional)   : 0
+  Not executed         : 0
+  Average delay (s)    : 0.3214
+  Average CPU (%)      : 1.4857
+  Energy (Wh)          : 15.1184
+  Dead devices         : 0
+
+Requests
+  Generated            : 2100
+  Successful           : 2009
+  Average makespan (s) : 0.3377
+
+Scenario: ALL / TRADE_OFF / 30 devices
+  Generated tasks      : 2100
+  Successful tasks     : 2083
+  Failed (delay)       : 17
+  Failed (death)       : 0
+  Failed (mobility)    : 0
+  Failed (dependency)  : 0
+  Skipped (optional)   : 0
+  Not executed         : 0
+  Average delay (s)    : 0.3619
+  Average CPU (%)      : 1.8339
+  Energy (Wh)          : 14.3174
+  Dead devices         : 0
+
+Requests
+  Generated            : 2100
+  Successful           : 2083
+  Average makespan (s) : 0.368

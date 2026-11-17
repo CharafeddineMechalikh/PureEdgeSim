@@ -1,0 +1,21 @@
+\begin{table*}
+\centering
+\scriptsize
+\caption{Which algorithm wins depends on both the control interval and the infrastructure profile (ALL architecture, 40 devices, 10 seeds).}
+\label{tab:p1-hetero-ranking}
+\begin{tabular}{lllcccccc}
+\toprule
+Profile & Interval (s) & Winner & Winner success & Runner-up & Gap to runner-up (pp) & Worst & Worst success & Spread (pp) \\
+\midrule
+uniform & 1.000 & round\_robin & 0.691 & random & 1.553 & mct & 0.121 & 57.055 \\
+uniform & 0.050 & mct & 0.987 & trade\_off & 0.407 & minmin & 0.121 & 86.613 \\
+edge\_weak & 1.000 & round\_robin & 0.691 & random & 1.704 & mct & 0.121 & 57.055 \\
+edge\_weak & 0.050 & qos & 0.975 & trade\_off & 1.055 & mct & 0.472 & 50.271 \\
+edge\_strong & 1.000 & round\_robin & 0.691 & random & 2.060 & leastloaded & 0.014 & 67.754 \\
+edge\_strong & 0.050 & trade\_off & 0.991 & minmin & 0.402 & leastloaded & 0.776 & 21.427 \\
+split\_task & 1.000 & round\_robin & 0.691 & random & 1.729 & mct & 0.121 & 57.055 \\
+split\_task & 0.050 & mct & 0.987 & qos & 1.307 & leastloaded & 0.329 & 65.764 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Spread is the distance between the best and worst algorithm in the same cell; it measures how much the choice is worth there.\par}
+\end{table*}

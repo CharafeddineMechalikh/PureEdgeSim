@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Class-mix sweep: success against the application mix (40 devices, mean of 10 seeds).}
+\label{tab:p1-mix}
+\begin{tabular}{llcccc}
+\toprule
+Mix & Weights & Agg. share & EDGE\_ONLY & ALL & Effect \\
+\midrule
+m1 & 0.80/0.10/0.10 & 0.030 & 0.030 & 0.726 & 0.696 \\
+m2 & 0.60/0.20/0.20 & 0.068 & 0.068 & 0.710 & 0.643 \\
+m3 & 0.35/0.35/0.30 & 0.121 & 0.121 & 0.660 & 0.540 \\
+m4 & 0.20/0.40/0.40 & 0.186 & 0.186 & 0.614 & 0.428 \\
+m5 & 0.10/0.20/0.70 & 0.444 & 0.444 & 0.755 & 0.311 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright EDGE\_ONLY tracks the aggregation share of the mix, which is the share whose deadline exceeds the control interval.\par}
+\end{table}

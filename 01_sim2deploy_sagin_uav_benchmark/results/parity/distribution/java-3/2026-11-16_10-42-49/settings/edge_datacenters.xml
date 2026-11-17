@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<edge_datacenters>
+	<!-- Ground MEC aggregation points -->
+	<datacenter name="G-MEC-1">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>300</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>125</x_pos>
+			<y_pos>125</y_pos>
+		</location>
+		<cores>16</cores>
+		<mips>80000</mips>
+		<ram>32000</ram>
+		<storage>500000</storage>
+	</datacenter>
+	<datacenter name="G-MEC-2">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>300</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>375</x_pos>
+			<y_pos>125</y_pos>
+		</location>
+		<cores>16</cores>
+		<mips>80000</mips>
+		<ram>32000</ram>
+		<storage>500000</storage>
+	</datacenter>
+	<datacenter name="G-MEC-3">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>300</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>250</x_pos>
+			<y_pos>375</y_pos>
+		</location>
+		<cores>16</cores>
+		<mips>80000</mips>
+		<ram>32000</ram>
+		<storage>500000</storage>
+	</datacenter>
+	<network_links>
+		<link>
+			<from>G-MEC-1</from>
+			<to>G-MEC-2</to>
+		</link>
+		<link>
+			<from>G-MEC-2</from>
+			<to>G-MEC-3</to>
+		</link>
+		<link>
+			<from>G-MEC-1</from>
+			<to>G-MEC-3</to>
+		</link>
+	</network_links>
+</edge_datacenters>

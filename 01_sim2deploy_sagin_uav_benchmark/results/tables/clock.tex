@@ -1,0 +1,22 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Control-interval sweep: the same architectures at three simulator update intervals (40 devices, trade-off placement, mean of 10 seeds).}
+\label{tab:p1-clock}
+\begin{tabular}{llccc}
+\toprule
+Interval & Architecture & Success & Delay (s) & p95 (s) \\
+\midrule
+0.050 & ALL & 0.983 & 0.215 & 0.657 \\
+0.050 & EDGE\_AND\_CLOUD & 0.979 & 0.166 & 0.315 \\
+0.050 & EDGE\_ONLY & 0.987 & 0.138 & 0.299 \\
+0.200 & ALL & 0.879 & 0.270 & 0.851 \\
+0.200 & EDGE\_AND\_CLOUD & 0.460 & 0.222 & 0.585 \\
+0.200 & EDGE\_ONLY & 0.464 & 0.136 & 0.299 \\
+1.000 & ALL & 0.660 & 0.342 & 1.140 \\
+1.000 & EDGE\_AND\_CLOUD & 0.121 & 0.350 & 1.372 \\
+1.000 & EDGE\_ONLY & 0.121 & 0.137 & 0.299 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright At 1 s every infrastructure hand-off costs a full tick, which is longer than the 0.2 s and 0.8 s deadlines. At 50 ms the architecture effect disappears.\par}
+\end{table*}

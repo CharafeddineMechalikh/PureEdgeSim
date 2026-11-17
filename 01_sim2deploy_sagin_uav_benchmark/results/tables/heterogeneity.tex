@@ -1,0 +1,21 @@
+\begin{table*}
+\centering
+\scriptsize
+\caption{Architecture effect (all tiers minus edge only) under four infrastructure profiles and two control intervals, 40 devices, seven algorithms, 10 seeds.}
+\label{tab:p1-heterogeneity}
+\begin{tabular}{lcccccccc}
+\toprule
+Profile & What it means & Interval (s) & All tiers & Edge only & Effect (pp) & 95\% CI (pp) & Seeds & Sign \\
+\midrule
+uniform & ample edge, ample cloud & 0.050 & 0.820 & 0.987 & -16.670 & [-17.2, -16.2] & 10 & penalty \\
+uniform & ample edge, ample cloud & 1.000 & 0.427 & 0.121 & 30.634 & [+29.0, +32.3] & 10 & benefit \\
+edge\_weak & weak edge, fast powerful cloud & 0.050 & 0.750 & 0.094 & 65.687 & [+64.9, +66.3] & 10 & benefit \\
+edge\_weak & weak edge, fast powerful cloud & 1.000 & 0.425 & 0.090 & 33.556 & [+31.9, +35.2] & 10 & benefit \\
+edge\_strong & powerful edge, slow distant cloud & 0.050 & 0.951 & 0.987 & -3.595 & [-4.8, -2.6] & 10 & penalty \\
+edge\_strong & powerful edge, slow distant cloud & 1.000 & 0.404 & 0.121 & 28.345 & [+26.8, +29.8] & 10 & benefit \\
+split\_task & light work favours edge, heavy work favours cloud & 0.050 & 0.791 & 0.987 & -19.598 & [-20.0, -19.2] & 10 & penalty \\
+split\_task & light work favours edge, heavy work favours cloud & 1.000 & 0.425 & 0.121 & 30.421 & [+28.8, +32.0] & 10 & benefit \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright A positive effect at the 1 s default with a negative effect at 50 ms under the same profile is the definition of a clock artefact: the topology did not change between the two rows. Confidence intervals resample seeds.\par}
+\end{table*}

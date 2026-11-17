@@ -1,0 +1,17 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{The complete placement $\times$ fidelity factorial ($6$ arms, $20$ seeds). Cells are success ratio with quality-weighted success in parentheses.}
+\label{tab:p2-factorial}
+\begin{tabular}{lcccccc}
+\toprule
+Overhead & naive & naive$+$fid. & edge & edge$+$fid. & joint & joint$+$fid. \\
+\midrule
+1$\times$ & 0.972 (0.972) & 0.972 (0.972) & 0.986 (0.986) & 0.986 (0.986) & 0.986 (0.986) & 0.986 (0.986) \\
+1.5$\times$ & 0.569 (0.569) & 0.728 (0.646) & 0.571 (0.571) & 0.782 (0.674) & 0.571 (0.571) & 0.782 (0.674) \\
+2$\times$ & 0.000 (0.000) & 0.375 (0.187) & 0.000 (0.000) & 0.496 (0.248) & 0.000 (0.000) & 0.496 (0.248) \\
+3$\times$ & 0.000 (0.000) & 0.374 (0.071) & 0.000 (0.000) & 0.401 (0.100) & 0.000 (0.000) & 0.401 (0.100) \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Placement has three levels (simulator default, static edge tier, joint scorer) and the ladder has two. Every arm runs the same workload; only these two factors move.\par}
+\end{table*}

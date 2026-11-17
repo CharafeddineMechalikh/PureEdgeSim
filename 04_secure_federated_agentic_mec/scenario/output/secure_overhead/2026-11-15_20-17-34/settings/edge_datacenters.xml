@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<edge_datacenters>
+	<datacenter name="dc1">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>250</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>100</x_pos>
+			<y_pos>100</y_pos>
+		</location>
+		<cores>10</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<network_links>
+		<!-- To create a topology add links here. See example 3 -->
+	</network_links>
+</edge_datacenters>

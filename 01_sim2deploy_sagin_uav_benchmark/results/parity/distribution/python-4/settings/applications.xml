@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- UAV sensing / mission tasks (proxy workloads for SAGIN-integrated edge) -->
+	<application name="UAV_Sensing_Control">
+		<type>Hard Real-time</type>
+		<rate>15</rate>
+		<usage_percentage>35</usage_percentage>
+		<latency>0.2</latency>
+		<container_size>200</container_size>
+		<request_size>50</request_size>
+		<results_size>20</results_size>
+		<task_length>2000</task_length>
+	</application>
+	<application name="UAV_Video_Analytics">
+		<type>Soft Real-time</type>
+		<rate>10</rate>
+		<usage_percentage>35</usage_percentage>
+		<latency>0.8</latency>
+		<container_size>1200</container_size>
+		<request_size>1500</request_size>
+		<results_size>80</results_size>
+		<task_length>12000</task_length>
+	</application>
+	<application name="Mission_Data_Aggregation">
+		<type>Non Real-time</type>
+		<rate>4</rate>
+		<usage_percentage>30</usage_percentage>
+		<latency>60</latency>
+		<container_size>800</container_size>
+		<request_size>900</request_size>
+		<results_size>200</results_size>
+		<task_length>20000</task_length>
+	</application>
+</applications>

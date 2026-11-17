@@ -1,0 +1,23 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'serif','fontSize':'15px'}}}%%
+flowchart TD
+    CAND["Candidate set V<br/>live nodes only"]:::fac
+    EST["Estimate T̂(v), σ(v)<br/>for every v ∈ V"]:::core
+    FEAS["Feasible set F<br/>T̂(1 + zσ) ≤ (1 − m)D"]:::core
+    Q{"F ≠ ∅ ?"}:::dec
+    PICK["v* = argmin T̂(v)<br/>over F"]:::out
+    REJ["Reject (enforce)<br/>or best effort (shadow)"]:::warn
+    RUN["Execute, observe outcome<br/>record TP / FP / TN / FN"]:::obs
+
+    CAND --> EST --> FEAS --> Q
+    Q -->|yes| PICK
+    Q -->|no| REJ
+    PICK --> RUN
+    REJ --> RUN
+    RUN -.->|"audit feeds calibration"| EST
+
+    classDef fac fill:#FFF3E0,stroke:#E65100,stroke-width:1.2px,color:#BF360C
+    classDef core fill:#E8F5E9,stroke:#2E7D32,stroke-width:1.6px,color:#1B5E20
+    classDef dec fill:#FFFDE7,stroke:#F9A825,stroke-width:1.6px,color:#F57F17
+    classDef out fill:#E3F2FD,stroke:#1565C0,stroke-width:1.2px,color:#0D47A1
+    classDef warn fill:#FFEBEE,stroke:#C62828,stroke-width:1.2px,color:#B71C1C
+    classDef obs fill:#F3E5F5,stroke:#6A1B9A,stroke-width:1px,color:#4A148C

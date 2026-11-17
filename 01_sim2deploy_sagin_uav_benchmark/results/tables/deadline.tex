@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Deadline-scaling sweep at the default control interval (40 devices, trade-off placement, mean of 10 seeds).}
+\label{tab:p1-deadline}
+\begin{tabular}{lccc}
+\toprule
+Deadline x & EDGE\_ONLY & ALL & Effect \\
+\midrule
+1.000 & 0.121 & 0.660 & 0.540 \\
+1.500 & 0.121 & 0.757 & 0.636 \\
+3.000 & 0.456 & 0.862 & 0.406 \\
+8.000 & 0.472 & 0.905 & 0.433 \\
+16 & 0.972 & 0.983 & 0.011 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Scaling the deadlines by 16 removes the architecture effect. The threshold is about two control ticks per class, because a task waits one tick for dispatch and another for its result.\par}
+\end{table}

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<applications>
+	<application name="Federated_Update">
+		<type>Soft Real-time</type>
+		<rate>10</rate>
+		<usage_percentage>50</usage_percentage>
+		<latency>1.0</latency>
+		<container_size>800</container_size>
+		<request_size>500</request_size>
+		<results_size>120</results_size>
+		<task_length>8000</task_length>
+	</application>
+	<application name="Agentic_Coordination">
+		<type>Soft Real-time</type>
+		<rate>12</rate>
+		<usage_percentage>50</usage_percentage>
+		<latency>0.6</latency>
+		<container_size>600</container_size>
+		<request_size>300</request_size>
+		<results_size>80</results_size>
+		<task_length>5000</task_length>
+	</application>
+</applications>

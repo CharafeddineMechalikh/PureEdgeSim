@@ -1,0 +1,18 @@
+\begin{table*}
+\centering
+\small
+\caption{Per-stage mean delay decomposition across architectures and policies.}
+\label{tab:p5-stage-breakdown}
+\begin{tabular}{llcccc}
+\toprule
+Architecture & Policy & sense (s) & encode\_comm (s) & edge\_infer (s) & actuate (s) \\
+\midrule
+ALL & agnostic & 0.050 & 0.046 & 0.091 & 0.021 \\
+ALL & iscc\_aware & 0.035 & 0.047 & 0.086 & 0.021 \\
+EDGE\_AND\_CLOUD & agnostic & 0.057 & 0.045 & 0.085 & 0.021 \\
+EDGE\_AND\_CLOUD & iscc\_aware & 0.036 & 0.045 & 0.086 & 0.021 \\
+MIST\_AND\_EDGE & agnostic & 0.035 & 0.047 & 0.092 & 0.021 \\
+MIST\_AND\_EDGE & iscc\_aware & 0.035 & 0.047 & 0.086 & 0.021 \\
+\bottomrule
+\end{tabular}
+\end{table*}

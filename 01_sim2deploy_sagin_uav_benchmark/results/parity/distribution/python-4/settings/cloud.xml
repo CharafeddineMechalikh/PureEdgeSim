@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<cloud_data_centers>
+	<!-- Remote cloud / satellite-backhauled compute proxy -->
+	<datacenter>
+		<idleConsumption>0</idleConsumption>
+		<maxConsumption>5776</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<cores>400</cores>
+		<mips>100000</mips>
+		<ram>64000</ram>
+		<storage>2000000</storage>
+	</datacenter>
+</cloud_data_centers>

@@ -1,0 +1,75 @@
+{
+  "criteria": {
+    "one_command_reproduction": {
+      "passed": true,
+      "detail": "README documents the single benchmark command."
+    },
+    "seed_reproducibility": {
+      "passed": true,
+      "detail": "Two runs of the same seed produced identical aggregates."
+    },
+    "workload_parity": {
+      "passed": true,
+      "detail": "Java and Python generate identical task counts for the same seed."
+    },
+    "distributional_parity": {
+      "passed": true,
+      "detail": "Success-ratio distributions do not differ (Mann--Whitney, alpha=0.05)."
+    },
+    "experimental_breadth": {
+      "passed": true,
+      "detail": "3 architectures x 2 algorithms x 4 scales."
+    },
+    "statistical_support": {
+      "passed": true,
+      "detail": "10 seeds; Holm-adjusted architecture test significant: True."
+    },
+    "artifact_completeness": {
+      "passed": true,
+      "detail": "Settings, raw runs, tables, figures, data dictionary, manifest."
+    },
+    "claim_traceability": {
+      "passed": true,
+      "detail": "See results/claim_traceability.md."
+    },
+    "threats_to_validity": {
+      "passed": true,
+      "detail": "Paper has an explicit threats-to-validity section."
+    },
+    "clock_sensitivity": {
+      "passed": true,
+      "detail": "Success rises by more than 30 points when the control interval is reduced from 1 s to 50 ms."
+    },
+    "ranking_stability_measured": {
+      "passed": true,
+      "detail": "4 cross-interval rank comparisons computed."
+    },
+    "factor_effects_measured": {
+      "passed": true,
+      "detail": "Three-way ANOVA over the balanced 630-run design."
+    },
+    "decision_latency_decomposed": {
+      "passed": true,
+      "detail": "Release / decision / dispatch / execution separated per class and algorithm."
+    },
+    "temporal_fidelity_measured": {
+      "passed": true,
+      "detail": "15 (class, ratio) cells resolved per class."
+    },
+    "decision_overhead_measured": {
+      "passed": true,
+      "detail": "Per-decision wall-clock cost tabulated."
+    },
+    "host_selection_reported": {
+      "passed": true,
+      "detail": "Mist / edge / cloud shares per algorithm tabulated."
+    },
+    "algorithm_ranking_is_configuration_dependent": {
+      "passed": true,
+      "detail": "Weakest cross-interval Kendall tau = 0.103 (< 0.9 means the ordering of algorithms is not configuration-free)."
+    }
+  },
+  "passed": 17,
+  "total": 17,
+  "all_passed": true
+}

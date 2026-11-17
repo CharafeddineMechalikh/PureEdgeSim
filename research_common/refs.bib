@@ -1,0 +1,719 @@
+% =====================================================================
+% refs.bib -- shared bibliography for the five 2026 edge-computing papers
+%
+% Part A: the 32 primary 2026 papers that form the survey corpus.
+%         Metadata (authors, title, arXiv id) was read from the arXiv API
+%         manifest in research_edge_2026/notes/manifest.json -- not retyped
+%         from memory.
+% Part B: canonical, well-established literature (standards, surveys,
+%         foundational papers) used for background and comparison.
+% =====================================================================
+
+% ---------------- Part A: 2026 corpus (verified metadata) -------------
+
+@misc{sun2026sagin,
+  author       = {Minghao Sun and Jinghuai Xiong and Xiaoli Chu and Zitian Zhang},
+  title        = {Mobility-Aware Task Offloading in Mobile Edge Computing-Empowered Space-Air-Ground Integrated Internet-of-Things Networks},
+  year         = {2026},
+  eprint       = {2611.14102},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.NI}
+}
+
+@misc{vankenhove2026wasm,
+  author       = {Michiel Van Kenhove and Emiel Sucaet and Jos{\'e} Santos and Filip De Turck and Bruno Volckaert and Merlijn Sebrechts},
+  title        = {Reducing Cold-Start Latency on the {WebAssembly} Edge via Locality and Network-Aware Scheduling},
+  year         = {2026},
+  eprint       = {2611.12620},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.DC}
+}
+
+@misc{li2026multiuav,
+  author       = {Bin Li and Shiyu Sun and Lei Liu and Zesong Fei},
+  title        = {Two-Timescale Trajectory Control, Task Reassignment and Resource Scheduling for Multi-{UAV} Cooperative Mobile Edge Computing},
+  year         = {2026},
+  eprint       = {2611.10673},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.NI}
+}
+
+@misc{sammartino2026qfe,
+  author       = {Vincenzo Sammartino},
+  title        = {{Q-FE}: A Quantum-Native {6G} Far-Edge Architecture Securing Industrial {IoT} Digital Twins via {CSIDH-PQC} and Asynchronous Federated Learning},
+  year         = {2026},
+  eprint       = {2606.03611},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.CR}
+}
+
+@misc{indulekha2026iscc,
+  author       = {Indulekha K. P. and T. G. Venkatesh},
+  title        = {Integrated Sensing, Communication, and Computing for {NR-V2X}: A Cross-Layer Resource Allocation Framework Using Multi-Agent Reinforcement Learning},
+  year         = {2026},
+  eprint       = {2605.24972},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.NI}
+}
+
+@misc{zhang2026agentic,
+  author       = {Hanwen Zhang and Dusit Niyato and Wei Zhang and Xin Lou and Malcolm Yoke Hean Low},
+  title        = {An Agentic {AI} Framework with Large Language Models and Chain-of-Thought for {UAV}-Assisted Logistics Scheduling with Mobile Edge Computing},
+  year         = {2026},
+  eprint       = {2605.13221},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.AI}
+}
+
+@misc{wang2026marine,
+  author       = {Zhen Wang and Bin Lin and Qiang Ye and Haixia Peng},
+  title        = {Two-Tier Task Offloading for Satellite-Assisted Marine Networks: A Hybrid {Stackelberg}-Bargaining Game Approach},
+  year         = {2026},
+  eprint       = {2611.13019},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.NI}
+}
+
+@misc{yahya2026freshness,
+  author       = {Mariam Yahya and Setareh Maghsudi},
+  title        = {Distributed Linear Bandits for Freshness-Aware Preprocessing in {MEC}-Enabled Digital Twin Networks},
+  year         = {2026},
+  eprint       = {2611.05115},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.LG}
+}
+
+@misc{jiao2026hiea,
+  author       = {Yaxuan Jiao and Jiaxuan Lv and Jyoti Sahni and Wuyungerile Li and Winston K. G. Seah},
+  title        = {Hierarchical Intelligent Evolutionary Optimization for {UAV}-Assisted {NOMA-MEC} Systems},
+  year         = {2026},
+  eprint       = {2611.04474},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.NI}
+}
+
+@misc{he2026workflow,
+  author       = {Xingqiu He and Chaoqun You and Feng Wang and Zihan Chen and Shuai Wang and Jihong Park},
+  title        = {Workflow-Aware Communication and Computation Scheduling for Mobile Edge {AI} Agents},
+  year         = {2026},
+  eprint       = {2610.29337},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.DC}
+}
+
+@misc{wang2026craft,
+  author       = {Zhiyu Wang and Muhammed F. Esgin and Mohammad Goudarzi},
+  title        = {Constrained Federated Reinforcement Learning for Secure Offloading in Vehicular Edge Computing},
+  year         = {2026},
+  eprint       = {2610.27651},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.LG}
+}
+
+@misc{gao2026faulttolerant,
+  author       = {Chuanchao Gao and Yiyang Gao and Michael Yuhas and Arvind Easwaran},
+  title        = {Fault-Tolerant Offloading Framework for Real-Time Applications in Mobile Edge Computing},
+  year         = {2026},
+  eprint       = {2610.26142},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.DC}
+}
+
+@misc{abolhasani2026pass,
+  author       = {Sepehr Abolhasani and Saba Asaad and S. Mohammad Razavizadeh and Jiguang He},
+  title        = {Latency-Aware Uplink {NOMA-MEC} with {PASS}: A Feasibility-First Resource Allocation Framework},
+  year         = {2026},
+  eprint       = {2610.17949},
+  archivePrefix= {arXiv},
+  primaryClass = {eess.SP}
+}
+
+@misc{he2026reuse,
+  author       = {Xingqiu He and Chaoqun You and Peng Wang and Xiaoyu Liu and Tony Q. S. Quek},
+  title        = {Online Adaptive Computation Reuse in Collaborative Edge Computing: A Two-Timescale Approach},
+  year         = {2026},
+  eprint       = {2610.11224},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.DC}
+}
+
+@misc{liao2026operable,
+  author       = {Qiao Liao and Zhiyong Feng and Bin Wu and Guodong Fan},
+  title        = {The Operable {Pareto} Front: Distilling Offline Search into Run-Time Control for Multi-Objective {UAV} Edge-Computing Scheduling},
+  year         = {2026},
+  eprint       = {2609.17992},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.LG}
+}
+
+@misc{li2026semantic,
+  author       = {Bin Li and Yuchen Ou and Yinqiu Liu and Abbas Jamalipour},
+  title        = {Collaborative Computation and Migration in Multi-{UAV} Networks with Semantic Communication},
+  year         = {2026},
+  eprint       = {2609.14476},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.NI}
+}
+
+@misc{zhang2026trajectory,
+  author       = {Tiankui Zhang and Wenlong Xu and Tianyi Shi and Xiaoxia Xu and Arumugam Nallanathan},
+  title        = {Distributed Trajectory Planning and Resource Allocation for Dynamic Multi-{UAV} Collaborative Computing},
+  year         = {2026},
+  eprint       = {2608.23123},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.NI}
+}
+
+@misc{dong2026digitaltides,
+  author       = {Wen-Yu Dong and Song Zhao and Rui-Si Han and Qi Bi and Sheng Chen},
+  title        = {Digital Tides: A Fluid-Dynamic Framework for Flux-Aware Infrastructure Provisioning in {UAV} Logistics Networks},
+  year         = {2026},
+  eprint       = {2608.19638},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.NI}
+}
+
+@misc{zakerian2026llm,
+  author       = {Reza Zakerian},
+  title        = {When Do {LLM} Agents Help? Deadline-Aware Mixed-Criticality Task Scheduling at the Autonomous-Vehicle Edge},
+  year         = {2026},
+  eprint       = {2608.19557},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.DC}
+}
+
+@misc{liu2026iscc,
+  author       = {Peng Liu and Zesong Fei and Xinyi Wang and Qiao Qi and Zhaohui Yang and Meng Hua and Arumugam Nallanathan},
+  title        = {Integrated Sensing, Communication, and Computing in Multi-Tier Systems: Joint Hybrid Beamforming Design and Computation Resource Allocation},
+  year         = {2026},
+  eprint       = {2608.14086},
+  archivePrefix= {arXiv},
+  primaryClass = {eess.SP}
+}
+
+@misc{xu2026paretoRL,
+  author       = {Wenhan Xu and Jiashuo Jiang and Danny H. K. Tsang},
+  title        = {Pareto-Aware Hierarchical Reinforcement Learning for Online Resource Allocation in {RIS}-Assisted Large-Scale {IoT} Systems},
+  year         = {2026},
+  eprint       = {2608.13032},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.LG}
+}
+
+@misc{chen2026movable,
+  author       = {Jiang Chen and Chunjie Wang and Xuhui Zhang and Yanyan Shen and Kejiang Ye and Chengzhong Xu},
+  title        = {Movable-Antenna Assisted Energy Minimization in {UAV}-Enabled Mobile Edge Computing Systems},
+  year         = {2026},
+  eprint       = {2607.23214},
+  archivePrefix= {arXiv},
+  primaryClass = {eess.SP}
+}
+
+@misc{luong2026diffusion,
+  author       = {Nguyen Cong Luong and Zeping Sui and Jie Cao and Min Xu and Nguyen Duc Hai and Zhihao Dong and Nguyen Duc Duy Anh and Qiushi Zhao and Nguyen Quoc Khanh and Zhe Fu and Shaohan Feng and Bo Ma},
+  title        = {From Denoising to Decision Making: A Survey on Diffusion Model-Enabled Deep Reinforcement Learning for Wireless Networks},
+  year         = {2026},
+  eprint       = {2605.25531},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.LG}
+}
+
+@misc{liu2026aigc,
+  author       = {Huaizhe Liu and Xinyi Zhuang and Jiaqi Wu and Yuan Luo and Bin Cao and Lin Gao},
+  title        = {Joint Communication and Computation Scheduling for {MEC}-Enabled {AIGC} Services: A Game-Theoretic Stochastic Learning Approach},
+  year         = {2026},
+  eprint       = {2605.22277},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.NI}
+}
+
+@misc{chen2026agenticenergy,
+  author       = {Xiaojing Chen and Haiqi Yu and Wei Ni and Dusit Niyato and Ruichen Zhang and Xin Wang and Shunqing Zhang and Shugong Xu},
+  title        = {Networking-Aware Energy Efficiency in Agentic {AI} Inference: A Survey},
+  year         = {2026},
+  eprint       = {2604.07857},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.NI}
+}
+
+@misc{kumar2026multistage,
+  author       = {Niraj Kumar and Anant Gautam},
+  title        = {Adapting Multi-Stage Distributed Real-Time Systems Design to Vehicular Edge Computing},
+  year         = {2026},
+  eprint       = {2611.12370},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.DC}
+}
+
+@misc{savvidis2026cv,
+  author       = {Panagiotis Savvidis and George A. Papakostas},
+  title        = {Edge Computing for Computer Vision in {IoT}: Feasibility and Directions},
+  year         = {2026},
+  eprint       = {2611.11218},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.CV}
+}
+
+@misc{wang2026aerialmarine,
+  author       = {Zhen Wang and Bin Lin and Qiang Ye},
+  title        = {Computation-Efficient Aerial-Marine Integrated Networks for Search and Rescue via Cooperative {HAPS}, {UAVs}, and {MASSs}},
+  year         = {2026},
+  eprint       = {2611.09205},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.NI}
+}
+
+@misc{wang2026movablemec,
+  author       = {Hao Wang and Chunjie Wang and Lingtong Ma and Wenchao Liu and Kan Yu and Jinke Ren and Yanyan Shen and Xuhui Zhang},
+  title        = {Joint Flexible Beamforming, Resource Allocation, and Task Buffering for Movable-Antenna Enabled {MEC} Systems},
+  year         = {2026},
+  eprint       = {2611.07656},
+  archivePrefix= {arXiv},
+  primaryClass = {eess.SP}
+}
+
+@misc{chari2026ragam,
+  author       = {Shreya K. Chari and John S. Vardakas and Kostas Ramantas and Christos Verikoukis},
+  title        = {{RAGAM-AI}: A Hybrid Reinforcement Learning based Agentic Approach powered by Generative {AI} for Edge Resource Management},
+  year         = {2026},
+  eprint       = {2611.06554},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.NI}
+}
+
+@misc{liu2026fluid,
+  author       = {Wenchao Liu and Weijie Yuan and Jun Wu and Jinke Ren and Xuhui Zhang and Changsheng You},
+  title        = {Fluid Antennas Enabled {UAV} Communication Systems: Fundamentals, Challenges, and Future Directions},
+  year         = {2026},
+  eprint       = {2610.35047},
+  archivePrefix= {arXiv},
+  primaryClass = {eess.SP}
+}
+
+@misc{gaba2026secureagentic,
+  author       = {Satyam Gaba and Devanshu Motwani and Siva Sai and Vineet Suri and Vikas Ranjan and Vinay Chamola},
+  title        = {Secure Agentic {AI} and Multimodal Intelligence in {6G} Communication Systems},
+  year         = {2026},
+  eprint       = {2610.30436},
+  archivePrefix= {arXiv},
+  primaryClass = {cs.CR}
+}
+
+% ---------------- Part B: canonical literature ------------------------
+
+@article{satyanarayanan2017,
+  author  = {M. Satyanarayanan},
+  title   = {The Emergence of Edge Computing},
+  journal = {Computer},
+  volume  = {50},
+  number  = {1},
+  pages   = {30--39},
+  year    = {2017}
+}
+
+@article{satyanarayanan2009,
+  author  = {M. Satyanarayanan and P. Bahl and R. Caceres and N. Davies},
+  title   = {The Case for {VM}-Based Cloudlets in Mobile Computing},
+  journal = {IEEE Pervasive Computing},
+  volume  = {8},
+  number  = {4},
+  pages   = {14--23},
+  year    = {2009}
+}
+
+@article{mao2017survey,
+  author  = {Y. Mao and C. You and J. Zhang and K. Huang and K. B. Letaief},
+  title   = {A Survey on Mobile Edge Computing: The Communication Perspective},
+  journal = {IEEE Communications Surveys \& Tutorials},
+  volume  = {19},
+  number  = {4},
+  pages   = {2322--2358},
+  year    = {2017}
+}
+
+@article{mach2017survey,
+  author  = {P. Mach and Z. Becvar},
+  title   = {Mobile Edge Computing: A Survey on Architecture and Computation Offloading},
+  journal = {IEEE Communications Surveys \& Tutorials},
+  volume  = {19},
+  number  = {3},
+  pages   = {1628--1656},
+  year    = {2017}
+}
+
+@article{shi2016edge,
+  author  = {W. Shi and J. Cao and Q. Zhang and Y. Li and L. Xu},
+  title   = {Edge Computing: Vision and Challenges},
+  journal = {IEEE Internet of Things Journal},
+  volume  = {3},
+  number  = {5},
+  pages   = {637--646},
+  year    = {2016}
+}
+
+@article{calheiros2011cloudsim,
+  author  = {R. N. Calheiros and R. Ranjan and A. Beloglazov and C. A. F. De Rose and R. Buyya},
+  title   = {{CloudSim}: A Toolkit for Modeling and Simulation of Cloud Computing Environments and Evaluation of Resource Provisioning Algorithms},
+  journal = {Software: Practice and Experience},
+  volume  = {41},
+  number  = {1},
+  pages   = {23--50},
+  year    = {2011}
+}
+
+@article{mechalikh2021pureedgesim,
+  author  = {C. Mechalikh and H. Taktak and F. Moussa},
+  title   = {{PureEdgeSim}: A Simulation Framework for Performance Evaluation of Cloud, Edge and Mist Computing Environments},
+  journal = {Computer Science and Information Systems},
+  volume  = {18},
+  number  = {1},
+  year    = {2021}
+}
+
+@article{liu1973scheduling,
+  author  = {C. L. Liu and J. W. Layland},
+  title   = {Scheduling Algorithms for Multiprogramming in a Hard-Real-Time Environment},
+  journal = {Journal of the ACM},
+  volume  = {20},
+  number  = {1},
+  pages   = {46--61},
+  year    = {1973}
+}
+
+@article{dean2013tail,
+  author  = {J. Dean and L. A. Barroso},
+  title   = {The Tail at Scale},
+  journal = {Communications of the ACM},
+  volume  = {56},
+  number  = {2},
+  pages   = {74--80},
+  year    = {2013}
+}
+
+@article{avizienis2004dependable,
+  author  = {A. Avizienis and J.-C. Laprie and B. Randell and C. Landwehr},
+  title   = {Basic Concepts and Taxonomy of Dependable and Secure Computing},
+  journal = {IEEE Transactions on Dependable and Secure Computing},
+  volume  = {1},
+  number  = {1},
+  pages   = {11--33},
+  year    = {2004}
+}
+
+@inproceedings{huang2017gray,
+  author    = {P. Huang and C. Guo and L. Zhou and J. R. Lorch and Y. Dang and M. Chintalapati and R. Yao},
+  title     = {Gray Failure: The Achilles' Heel of Cloud-Scale Systems},
+  booktitle = {Proc. Workshop on Hot Topics in Operating Systems (HotOS)},
+  year      = {2017}
+}
+
+@inproceedings{bonawitz2017secagg,
+  author    = {K. Bonawitz and V. Ivanov and B. Kreuter and A. Marcedone and H. B. McMahan and S. Patel and D. Ramage and A. Segal and K. Seth},
+  title     = {Practical Secure Aggregation for Privacy-Preserving Machine Learning},
+  booktitle = {Proc. ACM SIGSAC Conf. Computer and Communications Security (CCS)},
+  pages     = {1175--1191},
+  year      = {2017}
+}
+
+@inproceedings{cheon2017ckks,
+  author    = {J. H. Cheon and A. Kim and M. Kim and Y. Song},
+  title     = {Homomorphic Encryption for Arithmetic of Approximate Numbers},
+  booktitle = {Advances in Cryptology -- ASIACRYPT},
+  series    = {LNCS},
+  volume    = {10624},
+  pages     = {409--437},
+  year      = {2017}
+}
+
+@techreport{fips203,
+  author      = {{National Institute of Standards and Technology}},
+  title       = {Module-Lattice-Based Key-Encapsulation Mechanism Standard},
+  institution = {U.S. Department of Commerce},
+  number      = {FIPS 203},
+  year        = {2024}
+}
+
+@techreport{fips204,
+  author      = {{National Institute of Standards and Technology}},
+  title       = {Module-Lattice-Based Digital Signature Standard},
+  institution = {U.S. Department of Commerce},
+  number      = {FIPS 204},
+  year        = {2024}
+}
+
+@inproceedings{mcmahan2017fl,
+  author    = {B. McMahan and E. Moore and D. Ramage and S. Hampson and B. Ag{\"u}era y Arcas},
+  title     = {Communication-Efficient Learning of Deep Networks from Decentralized Data},
+  booktitle = {Proc. Int. Conf. Artificial Intelligence and Statistics (AISTATS)},
+  series    = {PMLR},
+  volume    = {54},
+  pages     = {1273--1282},
+  year      = {2017}
+}
+
+@inproceedings{blanchard2017byzantine,
+  author    = {P. Blanchard and E. M. El Mhamdi and R. Guerraoui and J. Stainer},
+  title     = {Machine Learning with Adversaries: {Byzantine} Tolerant Gradient Descent},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2017}
+}
+
+@inproceedings{shokri2017membership,
+  author    = {R. Shokri and M. Stronati and C. Song and V. Shmatikov},
+  title     = {Membership Inference Attacks Against Machine Learning Models},
+  booktitle = {Proc. IEEE Symp. Security and Privacy (S\&P)},
+  pages     = {3--18},
+  year      = {2017}
+}
+
+@inproceedings{biggio2012poisoning,
+  author    = {B. Biggio and B. Nelson and P. Laskov},
+  title     = {Poisoning Attacks against Support Vector Machines},
+  booktitle = {Proc. Int. Conf. Machine Learning (ICML)},
+  year      = {2012}
+}
+
+@article{kairouz2021fl,
+  author  = {P. Kairouz and H. B. McMahan and B. Avent and A. Bellet and M. Bennis and A. N. Bhagoji and others},
+  title   = {Advances and Open Problems in Federated Learning},
+  journal = {Foundations and Trends in Machine Learning},
+  volume  = {14},
+  number  = {1--2},
+  pages   = {1--210},
+  year    = {2021}
+}
+
+@article{gunduz2023semantic,
+  author  = {D. G{\"u}nd{\"u}z and Z. Qin and I. E. Aguerri and H. S. Dhillon and Z. Yang and A. Yener and K. K. Wong and C.-B. Chae},
+  title   = {Beyond Transmitting Bits: Context, Semantics, and Task-Oriented Communications},
+  journal = {IEEE Journal on Selected Areas in Communications},
+  volume  = {41},
+  number  = {1},
+  pages   = {5--41},
+  year    = {2023}
+}
+
+@article{bourtsoulatze2019jscc,
+  author  = {E. Bourtsoulatze and D. B. Kurka and D. G{\"u}nd{\"u}z},
+  title   = {Deep Joint Source-Channel Coding for Wireless Image Transmission},
+  journal = {IEEE Transactions on Cognitive Communications and Networking},
+  volume  = {5},
+  number  = {3},
+  pages   = {567--579},
+  year    = {2019}
+}
+
+@article{liu2020jrc,
+  author  = {F. Liu and C. Masouros and A. P. Petropulu and H. Griffiths and L. Hanzo},
+  title   = {Joint Radar and Communication Design: Applications, State-of-the-Art, and the Road Ahead},
+  journal = {IEEE Transactions on Communications},
+  volume  = {68},
+  number  = {6},
+  pages   = {3834--3862},
+  year    = {2020}
+}
+
+@article{mozaffari2019uav,
+  author  = {M. Mozaffari and W. Saad and M. Bennis and Y.-H. Nam and M. Debbah},
+  title   = {A Tutorial on {UAVs} for Wireless Networks: Applications, Challenges, and Open Problems},
+  journal = {IEEE Communications Surveys \& Tutorials},
+  volume  = {21},
+  number  = {3},
+  pages   = {2334--2360},
+  year    = {2019}
+}
+
+@article{zeng2019uavenergy,
+  author  = {Y. Zeng and J. Xu and R. Zhang},
+  title   = {Energy Minimization for Wireless Communication With Rotary-Wing {UAV}},
+  journal = {IEEE Transactions on Wireless Communications},
+  volume  = {18},
+  number  = {4},
+  pages   = {2329--2345},
+  year    = {2019}
+}
+
+@inproceedings{lewis2020rag,
+  author    = {P. Lewis and E. Perez and A. Piktus and F. Petroni and V. Karpukhin and N. Goyal and H. K{\"u}ttler and M. Lewis and W.-t. Yih and T. Rockt{\"a}schel and S. Riedel and D. Kiela},
+  title     = {Retrieval-Augmented Generation for Knowledge-Intensive {NLP} Tasks},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2020}
+}
+
+@inproceedings{brown2020gpt3,
+  author    = {T. Brown and B. Mann and N. Ryder and M. Subbiah and J. Kaplan and P. Dhariwal and others},
+  title     = {Language Models are Few-Shot Learners},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2020}
+}
+
+@inproceedings{yao2023react,
+  author    = {S. Yao and J. Zhao and D. Yu and N. Du and I. Shafran and K. Narasimhan and Y. Cao},
+  title     = {{ReAct}: Synergizing Reasoning and Acting in Language Models},
+  booktitle = {Proc. Int. Conf. Learning Representations (ICLR)},
+  year      = {2023}
+}
+
+@inproceedings{pope2023transformer,
+  author    = {R. Pope and S. Douglas and A. Chowdhery and J. Devlin and J. Bradbury and J. Heek and K. Xiao and S. Agrawal and J. Dean},
+  title     = {Efficiently Scaling Transformer Inference},
+  booktitle = {Proc. Machine Learning and Systems (MLSys)},
+  year      = {2023}
+}
+
+@inproceedings{kwon2023vllm,
+  author    = {W. Kwon and Z. Li and S. Zhuang and Y. Sheng and L. Zheng and C. H. Yu and J. E. Gonzalez and H. Zhang and I. Stoica},
+  title     = {Efficient Memory Management for Large Language Model Serving with {PagedAttention}},
+  booktitle = {Proc. ACM Symp. Operating Systems Principles (SOSP)},
+  year      = {2023}
+}
+
+@article{chen2015game,
+  author  = {X. Chen},
+  title   = {Decentralized Computation Offloading Game for Mobile Cloud Computing},
+  journal = {IEEE Transactions on Parallel and Distributed Systems},
+  volume  = {26},
+  number  = {4},
+  pages   = {974--983},
+  year    = {2015}
+}
+
+@article{collberg2016repeatability,
+  author  = {C. Collberg and T. A. Proebsting},
+  title   = {Repeatability in Computer Systems Research},
+  journal = {Communications of the ACM},
+  volume  = {59},
+  number  = {3},
+  pages   = {62--69},
+  year    = {2016}
+}
+
+@article{peng2011reproducible,
+  author  = {R. D. Peng},
+  title   = {Reproducible Research in Computational Science},
+  journal = {Science},
+  volume  = {334},
+  number  = {6060},
+  pages   = {1226--1227},
+  year    = {2011}
+}
+
+@inproceedings{breslau1999caching,
+  author    = {L. Breslau and P. Cao and L. Fan and G. Phillips and S. Shenker},
+  title     = {Web Caching and {Zipf}-like Distributions: Evidence and Implications},
+  booktitle = {Proc. IEEE INFOCOM},
+  pages     = {126--134},
+  year      = {1999}
+}
+
+@book{kleinrock1975queueing,
+  author    = {L. Kleinrock},
+  title     = {Queueing Systems, Volume 1: Theory},
+  publisher = {Wiley},
+  year      = {1975}
+}
+
+@article{little1961proof,
+  author  = {J. D. C. Little},
+  title   = {A Proof for the Queuing Formula: {L} = $\lambda${W}},
+  journal = {Operations Research},
+  volume  = {9},
+  number  = {3},
+  pages   = {383--387},
+  year    = {1961}
+}
+
+@inproceedings{hoefler2015benchmarking,
+  author    = {T. Hoefler and R. Belli},
+  title     = {Scientific Benchmarking of Parallel Computing Systems},
+  booktitle = {Proc. Int. Conf. High Performance Computing, Networking, Storage and Analysis (SC)},
+  pages     = {73:1--73:12},
+  year      = {2015}
+}
+
+@article{gupta2017ifogsim,
+  author  = {H. Gupta and A. Vahid Dastjerdi and S. K. Ghosh and R. Buyya},
+  title   = {{iFogSim}: A Toolkit for Modeling and Simulation of Resource Management Techniques in the {Internet of Things}, Edge and Fog Computing Environments},
+  journal = {Software: Practice and Experience},
+  volume  = {47},
+  number  = {9},
+  pages   = {1275--1296},
+  year    = {2017}
+}
+
+@article{sonmez2018edgecloudsim,
+  author  = {C. Sonmez and A. Ozgovde and C. Ersoy},
+  title   = {{EdgeCloudSim}: An Environment for Performance Evaluation of Edge Computing Systems},
+  journal = {Transactions on Emerging Telecommunications Technologies},
+  volume  = {29},
+  number  = {11},
+  year    = {2018}
+}
+
+@article{lera2019yafs,
+  author  = {I. Lera and C. Guerrero and C. Juiz},
+  title   = {{YAFS}: A Simulator for {IoT} Scenarios in Fog Computing},
+  journal = {IEEE Access},
+  volume  = {7},
+  pages   = {91745--91758},
+  year    = {2019}
+}
+
+@article{sargent2013verification,
+  author  = {R. G. Sargent},
+  title   = {Verification and Validation of Simulation Models},
+  journal = {Journal of Simulation},
+  volume  = {7},
+  number  = {1},
+  pages   = {12--24},
+  year    = {2013}
+}
+
+@inproceedings{patel2024splitwise,
+  author    = {P. Patel and E. Choukse and C. Zhang and A. Shah and B. Goiri and S. Maleki and R. Bianchini},
+  title     = {{Splitwise}: Efficient Generative {LLM} Inference Using Phase Splitting},
+  booktitle = {Proc. ACM/IEEE Int. Symp. Computer Architecture (ISCA)},
+  year      = {2024}
+}
+
+@inproceedings{shahrad2020serverless,
+  author    = {M. Shahrad and R. Fonseca and I. Goiri and G. Chaudhry and P. Batum and J. Cooke and E. Laureano and C. Tresness and M. Russinovich and R. Bianchini},
+  title     = {Serverless in the Wild: Characterizing and Optimizing the Serverless Workload at a Large Cloud Provider},
+  booktitle = {Proc. USENIX Annual Technical Conference (ATC)},
+  year      = {2020}
+}
+
+
+@article{mahmud2022ifogsim2,
+  author  = {R. Mahmud and S. Pallewatta and M. Goudarzi and R. Buyya},
+  title   = {{iFogSim2}: An Extended {iFogSim} Simulator for Mobility, Clustering, and Microservice Management in Edge and Fog Computing Environments},
+  journal = {Journal of Systems and Software},
+  volume  = {190},
+  pages   = {111351},
+  year    = {2022}
+}
+
+@inproceedings{reddi2020mlperf,
+  author    = {V. J. Reddi and C. Cheng and D. Kanter and P. Mattson and G. Schmuelling and C.-J. Wu and B. Anderson and M. Breughe and M. Charlebois and W. Chou and others},
+  title     = {{MLPerf} Inference Benchmark},
+  booktitle = {Proc. ACM/IEEE Int. Symp. Computer Architecture (ISCA)},
+  pages     = {446--459},
+  year      = {2020}
+}
+
+@inproceedings{kasture2016tailbench,
+  author    = {H. Kasture and D. Sanchez},
+  title     = {{TailBench}: A Benchmark Suite and Evaluation Methodology for Latency-Critical Applications},
+  booktitle = {Proc. IEEE Int. Symp. Workload Characterization (IISWC)},
+  year      = {2016}
+}
+
+@article{glasserman1992common,
+  author  = {P. Glasserman and D. D. Yao},
+  title   = {Some Guidelines and Guarantees for Common Random Numbers},
+  journal = {Management Science},
+  volume  = {38},
+  number  = {6},
+  pages   = {884--908},
+  year    = {1992}
+}

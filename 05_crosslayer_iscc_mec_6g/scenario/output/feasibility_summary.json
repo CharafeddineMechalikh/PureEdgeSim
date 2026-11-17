@@ -1,0 +1,44 @@
+{
+  "scenario": "crosslayer_iscc_mec_6g",
+  "rows": [
+    {
+      "architecture": "MIST_AND_EDGE",
+      "generated": 2440,
+      "success": 2440,
+      "not_executed": 0,
+      "failed_dep": 0,
+      "failed_delay": 0,
+      "avg_delay": 0.0507,
+      "gen_req": 760,
+      "succ_req": 760,
+      "avg_req_delay": 0.1915,
+      "energy_wh": 12.4753
+    },
+    {
+      "architecture": "EDGE_AND_CLOUD",
+      "generated": 2440,
+      "success": 2396,
+      "not_executed": 0,
+      "failed_dep": 33,
+      "failed_delay": 11,
+      "avg_delay": 0.0426,
+      "gen_req": 760,
+      "succ_req": 749,
+      "avg_req_delay": 0.1774,
+      "energy_wh": 12.6201
+    },
+    {
+      "architecture": "ALL",
+      "generated": 2440,
+      "success": 2416,
+      "not_executed": 0,
+      "failed_dep": 18,
+      "failed_delay": 6,
+      "avg_delay": 0.0523,
+      "gen_req": 760,
+      "succ_req": 754,
+      "avg_req_delay": 0.2001,
+      "energy_wh": 12.2407
+    }
+  ]
+}

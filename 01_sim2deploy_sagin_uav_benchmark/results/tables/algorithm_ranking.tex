@@ -1,0 +1,76 @@
+\begin{table*}
+\centering
+\scriptsize
+\caption{Success ratio per algorithm, architecture and control interval, with the seed-level spread and the difference the design can resolve.}
+\label{tab:p1-algo-ranking}
+\begin{tabular}{lcccccc}
+\toprule
+Architecture & Interval (s) & Algorithm & Success & Seed SD & 95\% CI & Resolvable diff. \\
+\midrule
+ALL & 1.000 & random & 0.676 & 0.060 & [0.640, 0.710] & 0.019 \\
+ALL & 1.000 & round\_robin & 0.691 & 0.059 & [0.656, 0.725] & 0.019 \\
+ALL & 1.000 & trade\_off & 0.660 & 0.059 & [0.627, 0.696] & 0.019 \\
+ALL & 1.000 & minmin & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+ALL & 1.000 & leastloaded & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+ALL & 1.000 & mct & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+ALL & 1.000 & qos & 0.600 & 0.034 & [0.580, 0.620] & 0.019 \\
+ALL & 0.200 & random & 0.882 & 0.043 & [0.857, 0.907] & 0.019 \\
+ALL & 0.200 & round\_robin & 0.863 & 0.050 & [0.834, 0.892] & 0.019 \\
+ALL & 0.200 & trade\_off & 0.879 & 0.041 & [0.855, 0.903] & 0.019 \\
+ALL & 0.200 & minmin & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+ALL & 0.200 & leastloaded & 0.401 & 0.018 & [0.389, 0.410] & 0.019 \\
+ALL & 0.200 & mct & 0.464 & 0.002 & [0.463, 0.466] & 0.019 \\
+ALL & 0.200 & qos & 0.814 & 0.038 & [0.792, 0.837] & 0.019 \\
+ALL & 0.050 & random & 0.966 & 0.009 & [0.961, 0.971] & 0.019 \\
+ALL & 0.050 & round\_robin & 0.969 & 0.005 & [0.966, 0.972] & 0.019 \\
+ALL & 0.050 & trade\_off & 0.983 & 0.003 & [0.981, 0.985] & 0.019 \\
+ALL & 0.050 & minmin & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+ALL & 0.050 & leastloaded & 0.734 & 0.061 & [0.697, 0.767] & 0.019 \\
+ALL & 0.050 & mct & 0.987 & 0.004 & [0.984, 0.989] & 0.019 \\
+ALL & 0.050 & qos & 0.981 & 0.006 & [0.978, 0.984] & 0.019 \\
+EDGE\_AND\_CLOUD & 1.000 & random & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_AND\_CLOUD & 1.000 & round\_robin & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_AND\_CLOUD & 1.000 & trade\_off & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_AND\_CLOUD & 1.000 & minmin & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_AND\_CLOUD & 1.000 & leastloaded & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_AND\_CLOUD & 1.000 & mct & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_AND\_CLOUD & 1.000 & qos & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.200 & random & 0.449 & 0.008 & [0.444, 0.454] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.200 & round\_robin & 0.459 & 0.003 & [0.457, 0.461] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.200 & trade\_off & 0.460 & 0.003 & [0.459, 0.462] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.200 & minmin & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.200 & leastloaded & 0.401 & 0.018 & [0.389, 0.410] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.200 & mct & 0.464 & 0.002 & [0.463, 0.466] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.200 & qos & 0.461 & 0.003 & [0.460, 0.463] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.050 & random & 0.959 & 0.007 & [0.955, 0.963] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.050 & round\_robin & 0.977 & 0.005 & [0.974, 0.980] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.050 & trade\_off & 0.979 & 0.005 & [0.976, 0.982] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.050 & minmin & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.050 & leastloaded & 0.734 & 0.061 & [0.696, 0.767] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.050 & mct & 0.987 & 0.004 & [0.985, 0.989] & 0.019 \\
+EDGE\_AND\_CLOUD & 0.050 & qos & 0.982 & 0.004 & [0.980, 0.985] & 0.019 \\
+EDGE\_ONLY & 1.000 & random & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_ONLY & 1.000 & round\_robin & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_ONLY & 1.000 & trade\_off & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_ONLY & 1.000 & minmin & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_ONLY & 1.000 & leastloaded & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_ONLY & 1.000 & mct & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_ONLY & 1.000 & qos & 0.121 & 0.000 & [0.121, 0.121] & 0.019 \\
+EDGE\_ONLY & 0.200 & random & 0.464 & 0.002 & [0.463, 0.466] & 0.019 \\
+EDGE\_ONLY & 0.200 & round\_robin & 0.464 & 0.002 & [0.463, 0.466] & 0.019 \\
+EDGE\_ONLY & 0.200 & trade\_off & 0.464 & 0.002 & [0.463, 0.466] & 0.019 \\
+EDGE\_ONLY & 0.200 & minmin & 0.464 & 0.002 & [0.463, 0.466] & 0.019 \\
+EDGE\_ONLY & 0.200 & leastloaded & 0.464 & 0.002 & [0.463, 0.466] & 0.019 \\
+EDGE\_ONLY & 0.200 & mct & 0.464 & 0.002 & [0.463, 0.466] & 0.019 \\
+EDGE\_ONLY & 0.200 & qos & 0.464 & 0.002 & [0.463, 0.466] & 0.019 \\
+EDGE\_ONLY & 0.050 & random & 0.987 & 0.004 & [0.984, 0.989] & 0.019 \\
+EDGE\_ONLY & 0.050 & round\_robin & 0.987 & 0.004 & [0.985, 0.989] & 0.019 \\
+EDGE\_ONLY & 0.050 & trade\_off & 0.987 & 0.004 & [0.984, 0.989] & 0.019 \\
+EDGE\_ONLY & 0.050 & minmin & 0.987 & 0.004 & [0.985, 0.989] & 0.019 \\
+EDGE\_ONLY & 0.050 & leastloaded & 0.987 & 0.004 & [0.985, 0.989] & 0.019 \\
+EDGE\_ONLY & 0.050 & mct & 0.987 & 0.004 & [0.984, 0.989] & 0.019 \\
+EDGE\_ONLY & 0.050 & qos & 0.987 & 0.004 & [0.985, 0.989] & 0.019 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Detectable difference is 2.8 times the pooled between-seed standard deviation divided by the square root of the seed count; differences smaller than this are not resolvable with ten seeds and are not interpreted.\par}
+\end{table*}

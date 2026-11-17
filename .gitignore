@@ -31,3 +31,23 @@ Desktop.ini
 cp.txt
 hs_err_pid*
 test-output/
+
+#Research (generated, excluded)
+research_edge_2026/
+_deps_pureedgesim_python/
+crosssim/vendor/
+crosssim/results/yafs/ev_*.csv
+crosssim/results/yafs/tasks_df*.csv
+crosssim/ecs/out*/
+crosssim/ecs/log_*.txt
+**/results/runs/
+**/_*/
+**/results/all_runs.csv
+**/results/task_*.csv
+__pycache__/
+*.pyc
+**/paper/main.aux
+**/paper/main.bbl
+**/paper/main.blg
+**/paper/main.log
+**/paper/main.out

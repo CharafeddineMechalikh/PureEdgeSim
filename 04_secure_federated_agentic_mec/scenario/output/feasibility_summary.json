@@ -1,0 +1,53 @@
+{
+  "scenario": "secure_federated_agentic_mec",
+  "rows": [
+    {
+      "case": "baseline",
+      "architecture": "EDGE_AND_CLOUD",
+      "generated": 1490,
+      "success": 1473,
+      "not_executed": 0,
+      "failed_delay": 17,
+      "avg_delay": 0.1577,
+      "network_s": 31.5943,
+      "wan": 27.504,
+      "energy_wh": 13.1338
+    },
+    {
+      "case": "baseline",
+      "architecture": "ALL",
+      "generated": 1490,
+      "success": 1478,
+      "not_executed": 0,
+      "failed_delay": 12,
+      "avg_delay": 0.1789,
+      "network_s": 17.4873,
+      "wan": 14.224,
+      "energy_wh": 12.7983
+    },
+    {
+      "case": "secure_overhead",
+      "architecture": "EDGE_AND_CLOUD",
+      "generated": 1490,
+      "success": 1472,
+      "not_executed": 0,
+      "failed_delay": 18,
+      "avg_delay": 0.2795,
+      "network_s": 17.4277,
+      "wan": 7.776,
+      "energy_wh": 14.3179
+    },
+    {
+      "case": "secure_overhead",
+      "architecture": "ALL",
+      "generated": 1490,
+      "success": 1476,
+      "not_executed": 0,
+      "failed_delay": 14,
+      "avg_delay": 0.317,
+      "network_s": 13.6852,
+      "wan": 6.24,
+      "energy_wh": 13.7504
+    }
+  ]
+}

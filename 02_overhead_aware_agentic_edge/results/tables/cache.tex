@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Cache hit ratio against success, with and without the ladder.}
+\label{tab:p2-cache}
+\begin{tabular}{llcc}
+\toprule
+Cache hit ratio & Ladder & 1$\times$ & 3$\times$ \\
+\midrule
+0.0 & off & 0.990 & 0.000 \\
+0.0 & on & 0.990 & 0.400 \\
+0.5 & off & 0.990 & 0.000 \\
+0.5 & on & 0.990 & 0.400 \\
+0.9 & off & 0.990 & 0.000 \\
+0.9 & on & 0.990 & 0.433 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright A hit removes context bytes from the request, so it can only help where bytes bind. Without the ladder success is zero at $3\times$ regardless of the hit ratio; with it, the top hit ratio buys 3.3 points.\par}
+\end{table}

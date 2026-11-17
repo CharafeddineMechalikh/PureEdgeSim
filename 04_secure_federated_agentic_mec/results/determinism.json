@@ -1,0 +1,17 @@
+{
+  "match": true,
+  "values": [
+    {
+      "Tasks successfully executed": 1490,
+      "Average execution delay (s)": 0.2201,
+      "Energy consumption of computing nodes (Wh)": 13.5313,
+      "security_composite_attack_rate": 0.12624327766561683
+    },
+    {
+      "Tasks successfully executed": 1490,
+      "Average execution delay (s)": 0.2201,
+      "Energy consumption of computing nodes (Wh)": 13.5313,
+      "security_composite_attack_rate": 0.12624327766561683
+    }
+  ]
+}

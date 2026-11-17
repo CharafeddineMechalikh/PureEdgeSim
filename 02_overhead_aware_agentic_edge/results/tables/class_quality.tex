@@ -1,0 +1,25 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Success and executed fidelity by application class under stress (mean of 10 seeds).}
+\label{tab:p2-classes}
+\begin{tabular}{llccc}
+\toprule
+Overhead & Policy & Class & Success & Mean fid. \\
+\midrule
+1.500 & aware & Control reasoning & 0.495 & 0.744 \\
+1.500 & aware & RAG inference & 1.000 & 0.995 \\
+1.500 & edge & Control reasoning & 0.495 & 0.744 \\
+1.500 & edge & RAG inference & 1.000 & 0.995 \\
+1.500 & naive & Control reasoning & 0.000 & 1.000 \\
+1.500 & naive & RAG inference & 0.995 & 1.000 \\
+2.000 & aware & Control reasoning & 0.495 & 0.744 \\
+2.000 & aware & RAG inference & 0.500 & 0.750 \\
+2.000 & edge & Control reasoning & 0.495 & 0.744 \\
+2.000 & edge & RAG inference & 0.500 & 0.750 \\
+2.000 & naive & Control reasoning & 0.000 & 1.000 \\
+2.000 & naive & RAG inference & 0.000 & 1.000 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright At 1.5x the hard class is the binding one (0.495) while the RAG class is served fully; at 2x both sit near 0.5. Neither class is silently collapsed, so the aggregate does not hide a single failing class.\par}
+\end{table}

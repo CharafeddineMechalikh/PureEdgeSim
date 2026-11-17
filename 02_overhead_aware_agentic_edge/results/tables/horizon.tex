@@ -1,0 +1,16 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Horizon sensitivity: 5, 15 and 30 simulated minutes with a 60 s warm-up excluded from the request-level metrics.}
+\label{tab:p2-horizon}
+\begin{tabular}{lccccc}
+\toprule
+Horizon (min) & naive & edge$+$fid. & joint$+$fid. & Requests & Mean delay (s) \\
+\midrule
+5 & 0.489 & 0.744 & 0.744 & 2,100 & 0.432 \\
+15 & 0.486 & 0.737 & 0.737 & 6,300 & 0.434 \\
+30 & 0.489 & 0.740 & 0.740 & 12,600 & 0.433 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright The success ratio is stable to within one point, so the result is not a start-up transient and not a steady-state artefact of a single horizon.\par}
+\end{table*}

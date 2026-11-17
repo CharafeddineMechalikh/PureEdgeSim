@@ -1,0 +1,39 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'serif','fontSize':'15px'}}}%%
+flowchart LR
+    subgraph DEV["Edge devices (50)"]
+        D1["Emergency control<br/>60 ms"]:::hard
+        D2["V2X safety<br/>120 ms"]:::hard
+        D3["Telemetry<br/>1 s"]:::soft
+        MOB["Mobility and<br/>battery state"]:::state
+    end
+
+    ORCH["Orchestrator<br/>certificate + retry"]:::core
+
+    subgraph INFRA["Infrastructure"]
+        DC1["Edge site 1<br/>10 cores"]:::edge
+        DC2["Edge site 2<br/>10 cores"]:::edge
+        CL["Cloud<br/>200 cores"]:::cloud
+    end
+
+    INJ["Fault injectors<br/>kill / link / battery / outage"]:::warn
+    OBS["Observers<br/>task and certificate records"]:::obs
+
+    D1 -->|offload| ORCH
+    D2 --> ORCH
+    D3 --> ORCH
+    ORCH -->|WiFi| DC1
+    ORCH -->|WiFi| DC2
+    ORCH -->|WAN| CL
+    DC1 <-->|MAN| DC2
+    INJ -.->|"alters liveness"| INFRA
+    MOB -.-> ORCH
+    OBS -.-> ORCH
+
+    classDef hard fill:#FFEBEE,stroke:#C62828,stroke-width:1.2px,color:#B71C1C
+    classDef soft fill:#FFF8E1,stroke:#F9A825,stroke-width:1.2px,color:#E65100
+    classDef state fill:#ECEFF1,stroke:#546E7A,stroke-width:1px,color:#263238
+    classDef core fill:#E8F5E9,stroke:#2E7D32,stroke-width:1.6px,color:#1B5E20
+    classDef edge fill:#E3F2FD,stroke:#1565C0,stroke-width:1.2px,color:#0D47A1
+    classDef cloud fill:#F3E5F5,stroke:#6A1B9A,stroke-width:1.2px,color:#4A148C
+    classDef warn fill:#FFF3E0,stroke:#E65100,stroke-width:1.2px,color:#BF360C
+    classDef obs fill:#F1F8E9,stroke:#558B2F,stroke-width:1px,color:#33691E

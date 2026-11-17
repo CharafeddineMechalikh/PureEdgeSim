@@ -1,0 +1,56 @@
+Scenario: MIST_AND_EDGE / TRADE_OFF / 30 devices
+  Generated tasks      : 0
+  Successful tasks     : 0
+  Failed (delay)       : 0
+  Failed (death)       : 0
+  Failed (mobility)    : 0
+  Failed (dependency)  : 0
+  Skipped (optional)   : 0
+  Not executed         : 0
+  Average delay (s)    : 0.0
+  Average CPU (%)      : 0.0
+  Energy (Wh)          : 0.1388
+  Dead devices         : 0
+
+Requests
+  Generated            : 0
+  Successful           : 0
+  Average makespan (s) : 0.0
+
+Scenario: EDGE_AND_CLOUD / TRADE_OFF / 30 devices
+  Generated tasks      : 0
+  Successful tasks     : 0
+  Failed (delay)       : 0
+  Failed (death)       : 0
+  Failed (mobility)    : 0
+  Failed (dependency)  : 0
+  Skipped (optional)   : 0
+  Not executed         : 0
+  Average delay (s)    : 0.0
+  Average CPU (%)      : 0.0
+  Energy (Wh)          : 0.1388
+  Dead devices         : 0
+
+Requests
+  Generated            : 0
+  Successful           : 0
+  Average makespan (s) : 0.0
+
+Scenario: ALL / TRADE_OFF / 30 devices
+  Generated tasks      : 0
+  Successful tasks     : 0
+  Failed (delay)       : 0
+  Failed (death)       : 0
+  Failed (mobility)    : 0
+  Failed (dependency)  : 0
+  Skipped (optional)   : 0
+  Not executed         : 0
+  Average delay (s)    : 0.0
+  Average CPU (%)      : 0.0
+  Energy (Wh)          : 0.1388
+  Dead devices         : 0
+
+Requests
+  Generated            : 0
+  Successful           : 0
+  Average makespan (s) : 0.0

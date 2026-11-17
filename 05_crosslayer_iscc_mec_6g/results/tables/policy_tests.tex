@@ -1,0 +1,17 @@
+\begin{table*}
+\centering
+\small
+\caption{Cross-layer ISCC-aware vs layer-agnostic orchestration across multi-tier settings (Mann--Whitney $U$).}
+\label{tab:p5-tests}
+\begin{tabular}{lcccccc}
+\toprule
+Metric & Control & Treatment & Difference & 95\% CI & Cliff's $\delta$ \\
+\midrule
+Request success ratio & 0.989 & 1.000 & 0.011$^{***}$ & [0.010, 0.013] & 1.00 \\
+Mean request makespan (s) & 0.498 & 0.504 & 0.006 & [-0.008, 0.021] & 0.27 \\
+Dependency failure rate & 0.008 & 0.000 & -0.008$^{***}$ & [-0.009, -0.007] & -1.00 \\
+Energy per request (Wh) & 0.000 & 0.000 & 0.000 & [0.000, 0.000] & 0.00 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Holm--Bonferroni adjusted: $^{*}p<0.05$, $^{**}p<0.01$, $^{***}p<0.001$. CI = bootstrap 95\% confidence interval of the difference.\par}
+\end{table*}

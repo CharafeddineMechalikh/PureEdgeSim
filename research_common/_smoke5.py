@@ -1,0 +1,29 @@
+import importlib.util
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def main() -> None:
+    sys.path.insert(0, str(ROOT))
+    from research_common.sweep import execute
+
+    spec = importlib.util.spec_from_file_location(
+        "p2exp", ROOT / "02_overhead_aware_agentic_edge/scenario/experiment.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    jobs = [job for job in mod.grids()["multiplier"]
+            if job["compute_multiplier"] == 2.0 and job["seed"] == 1]
+    result = execute(jobs, f"{Path(mod.__file__).resolve()}:run_job",
+                     ROOT / "02_overhead_aware_agentic_edge/results/_smoke3",
+                     prefix="mult", workers=2, name_keys=("policy", "compute_multiplier"))
+    cols = ["policy", "success_ratio", "task_delay_mean_s", "energy_per_success_wh", "network_usage_s"]
+    print(result.frame[cols].to_string())
+    for col in ("overhead_mean_fidelity", "overhead_low_fidelity_rate"):
+        if col in result.frame:
+            print(col, result.frame[col].tolist())
+
+
+if __name__ == "__main__":
+    main()

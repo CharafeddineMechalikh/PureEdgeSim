@@ -1,0 +1,13 @@
+Depth,Stage,Depends on,Compute (MI),Input (KB),Output (KB)
+2 stages,1. sense,(root),2000,1200,250
+2 stages,2. edge_infer,sense,4000,250,30
+4 stages,1. sense,(root),800,1200,400
+4 stages,2. encode_comm,sense,1200,400,250
+4 stages,3. edge_infer,encode_comm,3500,250,80
+4 stages,4. actuate,edge_infer,500,80,30
+6 stages,1. sense,(root),500,1200,600
+6 stages,2. preproc_filter,sense,500,600,400
+6 stages,3. encode_comm,preproc_filter,800,400,250
+6 stages,4. feature_align,encode_comm,1200,250,180
+6 stages,5. edge_infer,feature_align,2500,180,80
+6 stages,6. actuate,edge_infer,500,80,30

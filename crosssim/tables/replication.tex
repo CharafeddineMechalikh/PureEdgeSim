@@ -1,0 +1,36 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Independent replication in YAFS~3.1 of the temporal-resolution experiment. The control loop is the same logical parameter as in PureEdgeSim; ``event-driven'' means the placement is made at release with no periodic tick. Three seeds per cell.}
+\label{tab:crosssim-replication}
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+DF & Setting & Arch. & Success & p95 (s) & Dec. (s)\\
+\midrule
+1 & 1 s & all tiers & 0.698 & 1.67 & 0.40\\
+1 & 1 s & edge+cloud & 0.117 & 1.38 & 1.04\\
+1 & 1 s & edge only & 0.117 & 1.38 & 1.04\\
+1 & 200 ms & all tiers & 1.000 & 0.53 & 0.10\\
+1 & 200 ms & edge+cloud & 0.469 & 0.55 & 0.24\\
+1 & 200 ms & edge only & 0.469 & 0.55 & 0.24\\
+1 & 50 ms & all tiers & 1.000 & 0.40 & 0.04\\
+1 & 50 ms & edge+cloud & 1.000 & 0.36 & 0.09\\
+1 & 50 ms & edge only & 1.000 & 0.36 & 0.09\\
+1 & event-driven & all tiers & 1.000 & 0.40 & 0.02\\
+1 & event-driven & edge+cloud & 1.000 & 0.31 & 0.04\\
+1 & event-driven & edge only & 1.000 & 0.31 & 0.04\\
+16 & 1 s & all tiers & 1.000 & 1.33 & 0.08\\
+16 & 1 s & edge+cloud & 1.000 & 1.31 & 1.04\\
+16 & 1 s & edge only & 1.000 & 1.31 & 1.04\\
+16 & 200 ms & all tiers & 1.000 & 1.00 & 0.02\\
+16 & 200 ms & edge+cloud & 1.000 & 0.51 & 0.24\\
+16 & 200 ms & edge only & 1.000 & 0.51 & 0.24\\
+16 & 50 ms & all tiers & 1.000 & 1.00 & 0.01\\
+16 & 50 ms & edge+cloud & 1.000 & 0.36 & 0.09\\
+16 & 50 ms & edge only & 1.000 & 0.36 & 0.09\\
+16 & event-driven & all tiers & 1.000 & 1.00 & 0.00\\
+16 & event-driven & edge+cloud & 1.000 & 0.31 & 0.04\\
+16 & event-driven & edge only & 1.000 & 0.31 & 0.04\\
+\bottomrule
+\end{tabular}
+\end{table}

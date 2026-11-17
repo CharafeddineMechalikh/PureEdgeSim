@@ -1,0 +1,14 @@
+{
+  "version": "6.1.0",
+  "git_commit": "df426da1505b11a09d24dc76c11870fc146b943e",
+  "random_seed": 42,
+  "parallelism": false,
+  "output_folder": "D:\\Charef\\doctorat\\Work folder\\PureEdgeSim\\01_sim2deploy_sagin_uav_benchmark\\scenario\\output\\2026-11-15_20-10-39",
+  "settings": {
+    "simulation_parameters.properties": "D:\\Charef\\doctorat\\Work folder\\PureEdgeSim\\01_sim2deploy_sagin_uav_benchmark\\scenario\\settings\\simulation_parameters.properties",
+    "applications.xml": "D:\\Charef\\doctorat\\Work folder\\PureEdgeSim\\01_sim2deploy_sagin_uav_benchmark\\scenario\\settings\\applications.xml",
+    "edge_datacenters.xml": "D:\\Charef\\doctorat\\Work folder\\PureEdgeSim\\01_sim2deploy_sagin_uav_benchmark\\scenario\\settings\\edge_datacenters.xml",
+    "edge_devices.xml": "D:\\Charef\\doctorat\\Work folder\\PureEdgeSim\\01_sim2deploy_sagin_uav_benchmark\\scenario\\settings\\edge_devices.xml",
+    "cloud.xml": "D:\\Charef\\doctorat\\Work folder\\PureEdgeSim\\01_sim2deploy_sagin_uav_benchmark\\scenario\\settings\\cloud.xml"
+  }
+}

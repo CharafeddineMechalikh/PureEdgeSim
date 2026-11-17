@@ -1,0 +1,8 @@
+Term,df,$F$ (Success),$p$ (Success),$\eta^2_p$ (Success),$F$ (Quality),$p$ (Quality),$\eta^2_p$ (Quality)
+placement,2,872.1,$<0.001$,0.793,430.3,$<0.001$,0.654
+fidelity ladder,1,154246.4,$<0.001$,0.997,29442.2,$<0.001$,0.985
+overhead,3,322477.7,$<0.001$,1.000,541643.1,$<0.001$,1.000
+placement$\times$fidelity ladder,2,635.1,$<0.001$,0.736,255.0,$<0.001$,0.528
+placement$\times$overhead,6,122.0,$<0.001$,0.616,18.7,$<0.001$,0.197
+fidelity ladder$\times$overhead,3,24238.2,$<0.001$,0.994,6100.0,$<0.001$,0.976
+placement$\times$fidelity ladder$\times$overhead,6,170.8,$<0.001$,0.692,47.7,$<0.001$,0.386

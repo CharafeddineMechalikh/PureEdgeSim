@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<edge_datacenters>
+	<datacenter name="dc1">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>250</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>100</x_pos>
+			<y_pos>100</y_pos>
+		</location>
+		<cores>10</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<datacenter name="dc2">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>250</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>45</x_pos>
+			<y_pos>155</y_pos>
+		</location>
+		<cores>10</cores>
+		<mips>40000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<network_links>
+		<!-- Metropolitan-area link between the two edge sites, so that tasks can
+		     fail over from one site to the other when a site goes down. -->
+		<link>
+			<from>dc1</from>
+			<to>dc2</to>
+		</link>
+	</network_links>
+</edge_datacenters>

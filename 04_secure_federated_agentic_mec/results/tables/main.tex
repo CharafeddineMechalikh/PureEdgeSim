@@ -1,0 +1,25 @@
+\begin{table*}
+\centering
+\small
+\caption{Performance and security outcomes across security levels, adaptive policy, and architectures (mean of 10 seeds, threat = 0.20).}
+\label{tab:p4-main}
+\begin{tabular}{llccccccc}
+\toprule
+Architecture & Policy & Success & Delay (s) & Delay ovh. & Wh/succ. & Byte amp. & Attack rate & Prot. utility \\
+\midrule
+ALL & adaptive & 1.000 & 0.234 & +3.7\% & 0.009 & 1.23x & 0.126 & 0.874 \\
+ALL & level0 & 0.992 & 0.226 & +0.0\% & 0.009 & 1.00x & 0.415 & 0.580 \\
+ALL & level1 & 0.993 & 0.270 & +19.8\% & 0.009 & 1.05x & 0.315 & 0.680 \\
+ALL & level2 & 0.992 & 0.276 & +22.4\% & 0.009 & 1.23x & 0.164 & 0.829 \\
+ALL & level3 & 0.989 & 0.369 & +63.6\% & 0.009 & 1.66x & 0.059 & 0.931 \\
+ALL & level4 & 0.988 & 0.469 & +107.9\% & 0.010 & 2.06x & 0.019 & 0.970 \\
+EDGE\_AND\_CLOUD & adaptive & 1.000 & 0.238 & +10.1\% & 0.009 & 1.23x & 0.125 & 0.875 \\
+EDGE\_AND\_CLOUD & level0 & 0.989 & 0.216 & +0.0\% & 0.009 & 1.00x & 0.415 & 0.578 \\
+EDGE\_AND\_CLOUD & level1 & 0.989 & 0.237 & +9.4\% & 0.009 & 1.05x & 0.315 & 0.677 \\
+EDGE\_AND\_CLOUD & level2 & 0.988 & 0.248 & +14.4\% & 0.009 & 1.23x & 0.164 & 0.826 \\
+EDGE\_AND\_CLOUD & level3 & 0.988 & 0.337 & +55.5\% & 0.010 & 1.66x & 0.059 & 0.930 \\
+EDGE\_AND\_CLOUD & level4 & 0.986 & 0.428 & +97.6\% & 0.010 & 2.06x & 0.018 & 0.968 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Delay ovh. is relative to L0 (none); Prot. utility = success ratio $\times$ (1 $-$ composite attack rate).\par}
+\end{table*}

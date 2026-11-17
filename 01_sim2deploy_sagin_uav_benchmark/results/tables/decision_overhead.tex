@@ -1,0 +1,20 @@
+\begin{table*}
+\centering
+\scriptsize
+\caption{Cost of deciding: wall-clock per run, per-decision time inside the simulation loop, and the resulting share of runtime spent deciding.}
+\label{tab:p1-decision-overhead}
+\begin{tabular}{lcccccc}
+\toprule
+Algorithm & Decisions & Wall/run (s) & Penalty (\%) & Latency (s) & Cost/dec. (ms) & Decision cost share (\%) \\
+\midrule
+random & 179,100 & 12.866 & -1.607 & 0.578 & 0.179 & 0.585 \\
+round\_robin & 179,100 & 12.161 & -6.999 & 0.466 & 0.170 & 0.622 \\
+trade\_off & 179,100 & 13.076 & 0.000 & 0.478 & 0.243 & 0.886 \\
+minmin & 179,100 & 12.614 & -3.531 & 1.247 & 0.150 & 1.958 \\
+leastloaded & 179,100 & 12.038 & -7.933 & 1.132 & 0.207 & 2.019 \\
+mct & 179,100 & 11.527 & -11.842 & 0.427 & 0.373 & 2.967 \\
+qos & 179,100 & 12.142 & -7.143 & 0.674 & 0.518 & 2.716 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Decision cost is the CPU time of the decision routine itself, separated from the simulated scheduling delay; the two must not be confused when ranking algorithms.\par}
+\end{table*}

@@ -1,0 +1,22 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Factorial analysis of the success ratio over the fully crossed algorithm x architecture x interval design (630 runs, balanced).}
+\label{tab:p1-factor-effects}
+\begin{tabular}{lcccccc}
+\toprule
+Term & df & Sum of squares & Mean square & F & p\_value & Partial eta sq \\
+\midrule
+architecture & 2.000 & 3.382 & 1.691 & 3843.853 & 0.000 & 0.931 \\
+policy & 6.000 & 10.512 & 1.752 & 3982.420 & 0.000 & 0.977 \\
+update\_interval & 2.000 & 45.088 & 22.544 & 51,242 & 0.000 & 0.994 \\
+architecture x update\_interval & 4.000 & 4.276 & 1.069 & 2429.876 & 0.000 & 0.945 \\
+policy x architecture & 12 & 7.802 & 0.650 & 1477.837 & 0.000 & 0.969 \\
+policy x update\_interval & 12 & 2.801 & 0.233 & 530.481 & 0.000 & 0.918 \\
+policy x architecture x update\_interval & 24 & 2.748 & 0.115 & 260.296 & 0.000 & 0.917 \\
+Residual & 567 & 0.249 & 0.000 & -- & -- & -- \\
+Total & 629 & 76.860 & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright The design is perfectly balanced, so each term's sum of squares is the unique ANOVA sum of squares and does not depend on the order of entry. The significant three-way interaction is the formal statement that algorithm comparisons are not configuration-free.\par}
+\end{table*}

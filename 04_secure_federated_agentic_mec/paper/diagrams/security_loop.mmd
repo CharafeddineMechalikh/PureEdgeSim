@@ -1,0 +1,18 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'serif','fontSize':'15px'}}}%%
+flowchart LR
+    T["Task<br/>+ deadline D"]:::inp
+    CTX["Context<br/>tier, path, threat τ"]:::fac
+    SET["Admissible levels<br/>L(v, τ)"]:::core
+    LV["L0 · L1 · L2 · L3 · L4<br/>cost and defence profile"]:::lvl
+    SC["Score each (v, ℓ)<br/>delay, energy, residual risk"]:::core
+    PK["Place with level ℓ*"]:::out
+
+    T --> CTX --> SET --> LV --> SC
+    SC --> PK
+    PK -.->|"next task"| T
+
+    classDef inp fill:#E3F2FD,stroke:#1565C0,stroke-width:1.2px,color:#0D47A1
+    classDef fac fill:#FFF3E0,stroke:#E65100,stroke-width:1.2px,color:#BF360C
+    classDef core fill:#E8F5E9,stroke:#2E7D32,stroke-width:1.6px,color:#1B5E20
+    classDef lvl fill:#FFFDE7,stroke:#F9A825,stroke-width:1.2px,color:#F57F17
+    classDef out fill:#F3E5F5,stroke:#6A1B9A,stroke-width:1.2px,color:#4A148C

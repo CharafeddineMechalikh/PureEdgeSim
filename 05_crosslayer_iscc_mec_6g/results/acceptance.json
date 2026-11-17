@@ -1,0 +1,39 @@
+{
+  "criteria": {
+    "service_graph_execution": {
+      "passed": true,
+      "detail": "All runs executed the multi-stage ISCC DAG (840 requests/run)."
+    },
+    "iscc_aware_gain": {
+      "passed": true,
+      "detail": "Makespan reduced by -1.3%; request success gain +0.011."
+    },
+    "dependency_failures": {
+      "passed": true,
+      "detail": "Dependency failure rate reduced by 100.0% vs layer-agnostic baseline."
+    },
+    "sensitivity_coverage": {
+      "passed": true,
+      "detail": "4 compression ratios, 3 bandwidth levels, 3 pipeline depths."
+    },
+    "stage_accounting": {
+      "passed": true,
+      "detail": "Per-stage delay, CPU, wait, and network breakdown exported."
+    },
+    "reproducibility": {
+      "passed": true,
+      "detail": "Two runs of the same seed produced identical results."
+    },
+    "assumption_transparency": {
+      "passed": true,
+      "detail": "Paper documents PHY and semantic rate-distortion abstractions."
+    },
+    "artifact": {
+      "passed": true,
+      "detail": "Tables, figures, raw runs, data dictionary, and manifest present."
+    }
+  },
+  "passed": 8,
+  "total": 8,
+  "all_passed": true
+}

@@ -1,0 +1,17 @@
+{
+  "match": true,
+  "values": [
+    {
+      "Tasks successfully executed": 3660,
+      "iscc_pipeline_request_success_ratio": 1.0,
+      "iscc_pipeline_makespan_mean_s": 0.4818617748917614,
+      "iscc_dependency_failure_rate": 0.0
+    },
+    {
+      "Tasks successfully executed": 3660,
+      "iscc_pipeline_request_success_ratio": 1.0,
+      "iscc_pipeline_makespan_mean_s": 0.4818617748917614,
+      "iscc_dependency_failure_rate": 0.0
+    }
+  ]
+}

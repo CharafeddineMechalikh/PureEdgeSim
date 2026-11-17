@@ -1,0 +1,22 @@
+\begin{table*}
+\centering
+\scriptsize
+\caption{Delay budget by class and destination at the default 1 s control interval (ALL architecture, 40 devices, 10 seeds). Lag is execution start minus release.}
+\label{tab:p1-budget}
+\begin{tabular}{llccccccc}
+\toprule
+Class & Destination & n & Success & Lag (s) & CPU (s) & Net (s) & Deadline (s) & Started \\
+\midrule
+Aggregation & cloud & 22.286 & 1.000 & 2.120 & 0.200 & 0.880 & 60 & 0.093 \\
+Aggregation & edge DC & 64.700 & 1.000 & 1.279 & 0.250 & 0.057 & 60 & 0.270 \\
+Aggregation & mist & 153.800 & 1.000 & 0.209 & 1.069 & 0.010 & 60 & 0.641 \\
+Sensing & cloud & 42.200 & 0.000 & 2.120 & 0.020 & 0.505 & 0.200 & 0.040 \\
+Sensing & edge DC & 69.700 & 0.000 & 1.010 & 0.025 & 0.022 & 0.200 & 0.066 \\
+Sensing & mist & 938.100 & 0.870 & 0.131 & 0.110 & 0.003 & 0.200 & 0.893 \\
+Video & cloud & 36.400 & 0.000 & 2.120 & 0.120 & 1.025 & 0.800 & 0.052 \\
+Video & edge DC & 123.800 & 0.000 & 1.010 & 0.150 & 0.062 & 0.800 & 0.177 \\
+Video & mist & 539.800 & 0.481 & 0.475 & 0.486 & 0.029 & 0.800 & 0.771 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Lag is release to execution start, averaged only over tasks that actually began: tasks killed before dispatch have no start timestamp and are excluded (the Started column gives the retained share). Every infrastructure placement waits roughly one control tick before execution; mist placements start at release.\par}
+\end{table*}

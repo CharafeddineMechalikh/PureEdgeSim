@@ -1,0 +1,103 @@
+{
+  "criteria": {
+    "policy_gain": {
+      "passed": true,
+      "detail": "At 2x overhead aware beats naive by +0.498."
+    },
+    "edge_baseline_run": {
+      "passed": true,
+      "detail": "Edge-only baseline success at 2x is 0.498."
+    },
+    "fidelity_is_necessary": {
+      "passed": true,
+      "detail": "Removing fidelity drops success from 0.498 to 0.000."
+    },
+    "no_hidden_component": {
+      "passed": true,
+      "detail": "aware=0.498, aware_flat=0.498, edge=0.498."
+    },
+    "quality_reported": {
+      "passed": true,
+      "detail": "Quality-weighted success at 2x is 0.249 vs raw 0.498."
+    },
+    "envelope_coverage": {
+      "passed": true,
+      "detail": "4 overhead levels x 4 arrival rates."
+    },
+    "reproducibility": {
+      "passed": true,
+      "detail": "Two runs of the same seed produced identical aggregates."
+    },
+    "assumption_transparency": {
+      "passed": true,
+      "detail": "Paper states that fidelity is free in the simulator."
+    },
+    "artifact": {
+      "passed": true,
+      "detail": "Tables, figures, raw runs and manifest present."
+    },
+    "placement_by_fidelity_factorial": {
+      "passed": true,
+      "detail": "6 arms x 4 overhead levels x 20 seeds."
+    },
+    "fidelity_dominates_placement": {
+      "passed": true,
+      "detail": "At 2x the ladder is worth +49.6 pp and the placement change +12.1 pp."
+    },
+    "joint_scorer_adds_nothing": {
+      "passed": true,
+      "detail": "Joint scorer minus edge tier at 2x: +0.00 pp."
+    },
+    "factor_anova_reported": {
+      "passed": true,
+      "detail": "Three-way ANOVA with partial eta-squared, both responses."
+    },
+    "compute_payload_split": {
+      "passed": true,
+      "detail": "4 x 4 compute-by-payload lattice, 480 runs."
+    },
+    "nonlinear_fidelity_cost": {
+      "passed": true,
+      "detail": "Linear plus three exponentiated cost envelopes, 120 runs."
+    },
+    "component_terms_are_null": {
+      "passed": true,
+      "detail": "Largest spread across the ablation2 arms at 1.5x and 2x: 0.00 pp."
+    },
+    "cache_ablation_reported": {
+      "passed": true,
+      "detail": "Hit-ratio ladder with and without the fidelity ladder."
+    },
+    "host_selection_reported": {
+      "passed": true,
+      "detail": "All three tiers eligible; mean cloud share 0.0%."
+    },
+    "horizon_stable": {
+      "passed": true,
+      "detail": "Success varies by 0.6 pp across 5/15/30 minutes."
+    },
+    "per_class_reported": {
+      "passed": true,
+      "detail": "Both application classes resolved inside the factorial."
+    },
+    "objective_terms_decomposed": {
+      "passed": true,
+      "detail": "Delay, energy, container and score-spread terms in ms."
+    },
+    "decision_procedure_reported": {
+      "passed": true,
+      "detail": "Decisions, feasible share, fallback and overhead per request."
+    },
+    "workload_reconciled": {
+      "passed": true,
+      "detail": "results/WORKLOAD.md reconciles every task count in the paper."
+    },
+    "power_analysis": {
+      "passed": true,
+      "detail": "results/POWER.md gives the minimum detectable effect at 10 and 20 seeds."
+    }
+  },
+  "passed": 24,
+  "total": 24,
+  "all_passed": true
+}

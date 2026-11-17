@@ -1,0 +1,5 @@
+{
+  "recovery_latency_p50_s": 0.0687499999999659,
+  "recovery_latency_p95_s": 0.113749999999996,
+  "recovery_latency_n": 175
+}

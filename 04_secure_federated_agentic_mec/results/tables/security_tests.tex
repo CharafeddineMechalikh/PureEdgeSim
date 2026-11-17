@@ -1,0 +1,21 @@
+\begin{table*}
+\centering
+\small
+\caption{Non-parametric comparisons of adaptive security against unprotected (L0) and static max-security (L4) baselines (10 seeds, Mann--Whitney $U$).}
+\label{tab:p4-tests}
+\begin{tabular}{lcccccc}
+\toprule
+Metric & Control & Treatment & Difference & 95\% CI & Cliff's $\delta$ \\
+\midrule
+task\_delay\_mean\_s (vs L0) & 0.226 & 0.234 & 0.008 & [0.000, 0.017] & 0.32 \\
+task\_delay\_mean\_s (vs L4) & 0.469 & 0.234 & -0.235$^{**}$ & [-0.243, -0.228] & -1.00 \\
+energy\_per\_success\_wh (vs L0) & 0.009 & 0.009 & 0.000$^{**}$ & [0.000, 0.000] & 1.00 \\
+energy\_per\_success\_wh (vs L4) & 0.010 & 0.009 & -0.001$^{**}$ & [-0.001, -0.001] & -1.00 \\
+security\_composite\_attack\_rate (vs L0) & 0.415 & 0.126 & -0.289$^{**}$ & [-0.290, -0.288] & -1.00 \\
+security\_composite\_attack\_rate (vs L4) & 0.019 & 0.126 & 0.108$^{**}$ & [0.107, 0.108] & 1.00 \\
+protected\_utility (vs L0) & 0.580 & 0.874 & 0.294$^{**}$ & [0.293, 0.294] & 1.00 \\
+protected\_utility (vs L4) & 0.970 & 0.874 & -0.096$^{**}$ & [-0.098, -0.094] & -1.00 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Holm--Bonferroni adjusted: $^{*}p<0.05$, $^{**}p<0.01$, $^{***}p<0.001$. CI = bootstrap 95\% confidence interval of the difference.\par}
+\end{table*}

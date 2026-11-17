@@ -1,0 +1,1060 @@
+% =========================================================================
+%  P1 -- Reproducible benchmark, clock calibration, cross-port audit
+%  IEEEtran journal manuscript.  Result tables are \input.
+% =========================================================================
+\documentclass[journal,10pt]{IEEEtran}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{xcolor}
+\usepackage{balance}
+
+\graphicspath{{../results/figures/}{diagrams/}}
+
+\newtheorem{proposition}{Proposition}
+\newcommand{\bigO}{\ensuremath{\mathcal{O}}}
+
+\hyphenation{Pure-Edge-Sim re-pro-duc-i-bil-i-ty bench-mark bench-marks}
+
+\begin{document}
+
+\title{The Architecture Effect Was the Clock: A Calibrated Benchmark and
+Cross-Port Audit for Multi-Tier Edge Orchestration}
+
+\author{Anonymous Authors%
+\thanks{Manuscript prepared for review. Every table is generated from the
+released artifact; the clock experiment of Section~\ref{sec:clock} is
+reproducible from the shipped settings.}}
+
+\markboth{IEEE Transactions on Mobile Computing (submitted)}%
+{The Architecture Effect Was the Clock}
+
+\maketitle
+
+\begin{abstract}
+A crossed benchmark of $3{,}215$ seeded executions reports what looks like a
+clean architectural result: edge-only placement succeeds on $0.121$ of requests
+and a full mist/edge/cloud deployment on $0.660$, a difference eight times
+larger than quadrupling the fleet. This paper shows that this number is an
+artefact of the simulator's control interval. Class decomposition first shows
+that the edge-only ratio equals the share of requests whose deadline exceeds one
+second: infrastructure placements wait $1.01$--$2.12$~s before execution because
+the orchestrator runs on a $1$~s tick, so every $0.2$~s and $0.8$~s task fails
+there, while the $60$~s class survives. Adding the mist tier helps only because
+peer devices start work at release. A controlled sweep of the interval confirms
+the mechanism: at $1$~s the architecture effect is $0.539$, at $0.2$~s it is
+$0.415$, and at $50$~ms it is $-0.004$. Scaling every deadline by $16$ returns
+the effect to $0.011$, and varying the class mix moves edge-only success to the
+aggregation share exactly ($0.030$, $0.068$, $0.121$, $0.186$, $0.444$). The
+scheduling lag tracks the interval ($1.01$, $0.21$, $0.06$~s), so the causal
+chain is measured rather than inferred.
+
+The artefact had hidden the real question, which is when the architectural
+choice is genuine. Crossing four infrastructure profiles with seven
+orchestration algorithms and two control intervals ($1{,}680$ runs) answers it:
+at $1$~s the effect is $+28$ to $+34$ points under \emph{every} profile,
+including one where the cloud is slow and distant, whereas at $50$~ms its sign is
+predicted by the profile: $+65.7$ points when the edge is weak and the cloud
+fast, $-3.6$ to $-19.6$ when the edge is already adequate. The same design shows
+that algorithm rankings are not configuration-free: the weakest cross-interval
+rank agreement is Kendall $\tau=0.103$, the winner changes with the
+infrastructure, and least-loaded placement moves from first to last. We replace
+the ``interval $\le D/10$'' rule of thumb with a measured calibration: success is
+stable while the decision latency stays below half the deadline and collapses
+once it exceeds it. Deciding costs $0.15$--$0.52$~ms per task, $0.6$--$3.0\%$ of
+runtime, so the wait is the clock and not the algorithm. Four trace arms and an
+independent simulator replication bound how far the synthetic conclusions
+travel; energy per success is shown to be denominator-driven, and a Java/Python
+audit at version parity localises the residual divergence to wide-area
+accounting.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Benchmarking, simulation calibration, control interval, edge orchestration,
+reproducibility, workload feasibility, simulator portability.
+\end{IEEEkeywords}
+
+% =========================================================================
+\section{Introduction}
+\label{sec:intro}
+
+A reader of the 2026 edge-computing literature is asked to compare mechanisms
+evaluated under incomparable conditions: different topologies, different link
+rates, different workload generators, and different simulator
+configurations. Nothing in a typical results section lets the reader decide
+whether a reported difference is the mechanism, the architecture, the workload,
+or the simulator's configuration.
+
+The obvious remedy is a crossed benchmark: hold the simulator fixed, vary the
+factors papers argue about, and let effect sizes speak. This paper reports such
+a benchmark, the conclusion it produced, and the experiment that overturned it.
+
+\subsection{The result, and what it was measuring}
+The benchmark crosses five factor families over $845$ seeded runs. Read at face
+value, it says that \emph{architecture dominates scale}. At $40$ devices with
+the simulator's default trade-off policy, edge-only placement succeeds on
+$0.121$ of requests and a full mist/edge/cloud deployment on $0.660$; a
+four-fold increase in fleet size moves success by at most $0.065$. The
+architecture effect is $0.539$, between eight and fifteen times the scale
+effect.
+
+Decomposing by class shows that edge-only succeeds on exactly one class: the
+$60$~s aggregation jobs, which are $0.121$ of the request mix and succeed on
+$0.975$ of attempts. The $0.2$~s sensing and $0.8$~s video classes succeed on
+$0.000$ under both lower architectures. Recomposing,
+$0.121\times0.975+0.528\times0.779+0.352\times0.374=0.661$, which matches the
+pooled $0.660$. The ``architecture gain'' is the share of the workload that can
+use the mist tier.
+
+The natural reading is a feasibility boundary: hard classes fit on mist peers
+but not on infrastructure. That reading is wrong, and the delay records say so.
+Under the full architecture, a sensing task placed on an edge data centre runs
+in $0.025$~s, well inside its $0.2$~s deadline, and still fails. What it cannot
+absorb is the wait: execution starts $1.01$~s after release on an edge site and
+$2.12$~s after release in the cloud, because the orchestrator is invoked on a
+one-second tick. The $60$~s class tolerates that wait; the other two do not.
+
+The control interval, not the architecture, sets the result. We test this
+directly by sweeping the interval with everything else fixed. At $1$~s the
+effect is $0.539$; at $0.2$~s it is $0.415$; at $50$~ms it is $-0.004$, with
+edge-only at $0.987$ and the full architecture at $0.983$. The scheduling lag
+tracks the interval ($1.01$, $0.21$, $0.06$~s), and success tracks the lag.
+The effect is a simulation artefact, and it is monotone in the parameter that
+causes it.
+
+\subsection{Why this is worth reporting}
+The failure mode is silent. The simulator runs, the tables are produced, the
+differences are large and statistically clean, and the conclusion is plausible
+enough to publish. Nothing in the output says ``the clock is the treatment''.
+Our own first draft reported the effect as a finding; the correction came from
+asking why a task that finishes in $0.025$~s misses a $0.2$~s deadline.
+
+The lesson generalises beyond this simulator. Any discrete-event evaluation of
+sub-second services has a control interval, and that interval must be an order
+of magnitude below the tightest deadline before placement or policy differences
+can be attributed to the mechanism under test. We state this as a calibration
+rule with a checklist
+(Section~\ref{sec:calibration}), and we show what survives once it is applied.
+
+\subsection{Contributions}
+\begin{enumerate}
+\item A $3{,}215$-run crossed benchmark with fixed statistics and an artifact
+  from which every table is generated (Sections~\ref{sec:design},
+  \ref{sec:method}).
+\item A class decomposition that reduces the pooled architecture effect to the
+  share of requests with deadlines below the control interval
+  (Section~\ref{sec:decompose}).
+\item A controlled interval sweep, a deadline-scaled sweep and a class-mix
+  sweep that turn the explanation into a measured causal chain and show the
+  effect vanishing at $50$~ms (Sections~\ref{sec:clock}--\ref{sec:mix}).
+\item A crossed algorithm $\times$ architecture $\times$ interval design
+  ($630$ runs) showing that algorithm rankings do not survive a change of
+  temporal configuration, quantified with Kendall $\tau$ and a factorial ANOVA
+  (Section~\ref{sec:algos}).
+\item An infrastructure-heterogeneity experiment ($1{,}680$ runs) that
+  separates the artefact from the phenomenon: the architecture effect changes
+  sign with the clock and is predicted by the capacity gap between tiers
+  (Section~\ref{sec:hetero}).
+\item A calibration procedure in which the ``$D/10$'' rule is replaced by a
+  measured relation between orchestration decision latency and deadline, with
+  the latency decomposed into release, decision, dispatch and execution
+  (Section~\ref{sec:calibration}).
+\item A four-arm workload-realism study and an independent-simulator
+  replication that bound the external validity of the synthetic conclusions
+  (Sections~\ref{sec:trace}--\ref{sec:crosssim}).
+\item Four results that survive the correction: the energy denominator effect,
+  the conditional mobility effect, the measured cost of deciding, and a
+  three-level cross-port audit that localises a real divergence to WAN
+  accounting (Sections~\ref{sec:energy}--\ref{sec:parity}).
+\end{enumerate}
+
+% =========================================================================
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Edge orchestration}
+The architectural question---which tiers should participate---is as old as edge
+computing~\cite{satyanarayanan2017,shi2016edge}, and MEC
+surveys~\cite{mao2017survey,mach2017survey} already note that the answer depends
+on the workload mix. Game-theoretic offloading~\cite{chen2015game} and
+Pareto-aware reinforcement learning~\cite{xu2026paretoRL} optimise the choice of
+tier; our benchmark asks how much the \emph{available set} matters before any
+optimiser is applied, and finds that in a mis-calibrated simulator it matters
+for a reason unrelated to optimisation.
+
+\subsection{Benchmarking methodology}
+The pitfalls of systems benchmarking are well documented: Hoefler and Belli
+catalogue twelve ways in which performance comparisons mislead, including
+inappropriate simulators and hidden configuration
+effects~\cite{hoefler2015benchmarking}, and benchmark suites such as
+TailBench~\cite{kasture2016tailbench} and MLPerf~\cite{reddi2020mlperf} exist
+precisely because a poorly chosen workload can dominate the measured difference.
+When seeds are reused across arms, common random numbers reduce variance but
+also change the correct analysis~\cite{glasserman1992common}, which is why we
+report seed-matched tests alongside the pooled ones. Simulation model verification and
+validation has its own literature, which insists that a model be shown to
+represent the system before its outputs are interpreted~\cite{sargent2013verification}.
+Our contribution is an instance of both: a configuration parameter that is
+usually left at its default silently defines the treatment, and the model's
+output is interpretable only after the parameter is calibrated against the
+deadlines it is supposed to resolve.
+
+\subsection{Simulator ecosystem}
+CloudSim~\cite{calheiros2011cloudsim} established the discrete-event pattern;
+PureEdgeSim~\cite{mechalikh2021pureedgesim} extends it with mist nodes, mobility
+and per-link energy. The wider ecosystem---iFogSim~\cite{gupta2017ifogsim} and its mobility/microservice
+extension~\cite{mahmud2022ifogsim2},
+EdgeCloudSim~\cite{sonmez2018edgecloudsim},
+YAFS~\cite{lera2019yafs}---shares the same discrete-event structure and
+therefore the same class of calibration hazard: each has an update or scheduling
+interval whose default is chosen for second-scale workloads. Our result should
+be read as a warning for all of them, not only for the one we ran.
+
+\subsection{Trace-driven evaluation}
+Trace replay has a long tradition in caching and
+storage~\cite{breslau1999caching}, and the LLM serving
+literature now provides production traces and phase-level
+models~\cite{patel2024splitwise,shahrad2020serverless}. Replaying such a trace
+is only meaningful if the mapping from trace units to simulated work is stated;
+we give ours explicitly and treat the result as a calibration check rather than
+as a workload claim.
+
+% =========================================================================
+\section{Benchmark Design}
+\label{sec:design}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{pipeline.png}
+\caption{Benchmark pipeline. Factor families (orange) are crossed; the
+simulator and the metric definitions are held fixed; every run emits one row
+and every table in this paper is generated from those rows.}
+\label{fig:pipeline}
+\end{figure*}
+
+\subsection{Simulator and infrastructure}
+The benchmark runs on the Python port of PureEdgeSim 6.1.0 (the port maintained
+with the simulator, not a third-party rewrite), an event-driven simulator of
+cloud/edge/mist hierarchies. Table~\ref{tab:p1-infra} lists the infrastructure.
+Three edge data centres provide $80{,}000$~MIPS across $16$ cores each and the
+cloud provides $100{,}000$~MIPS across $400$ cores; the task records show that a
+task is charged the node's aggregate throughput rather than a single core, which
+is why we report measured lags and delays instead of a per-core bound.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Infrastructure and links (from \texttt{settings/*.xml}). Device
+percentages are of the fleet; sensors have no compute and must offload.}
+\label{tab:p1-infra}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Tier & Count & Cores & MIPS\\
+\midrule
+Edge device, class A & 40\% & 4 & 30{,}000\\
+Edge device, class B & 40\% & 2 & 12{,}000\\
+Sensor (no compute) & 20\% & 0 & 0\\
+Edge data centre & 3 & 16 & 80{,}000\\
+Cloud data centre & 1 & 400 & 100{,}000\\
+\midrule
+\multicolumn{4}{@{}l}{WiFi 300 Mb/s, 10 ms; WAN 50 Mb/s, 120 ms; MAN 1 Gb/s}\\
+\multicolumn{4}{@{}l}{Realistic network model on; placement cache at default}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three configuration choices are part of the protocol because they change
+results and are usually left implicit: the realistic network model is enabled;
+the per-device placement cache is left at its default, which is what a
+reproducer would obtain; and the control interval is the object of study in
+Section~\ref{sec:clock} rather than a hidden constant.
+
+\subsection{Workload}
+Three classes proxy a multi-tier deployment (Table~\ref{tab:p1-workload}). They
+span three orders of magnitude in deadline, which is what makes the workload
+sensitive to the control interval: two of the three deadlines are shorter than
+the simulator's default tick.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Workload classes (per generating device), from
+\texttt{applications.xml}. ``Share'' is the resulting fraction of generated
+requests.}
+\label{tab:p1-workload}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+ & Sensing & Video & Aggregation\\
+\midrule
+Class & hard RT & soft RT & non RT\\
+Rate (req/min) & 15 & 10 & 4\\
+Deadline (s) & 0.20 & 0.80 & 60.0\\
+Length (MI) & 2{,}000 & 12{,}000 & 20{,}000\\
+Container (kB) & 200 & 1{,}200 & 800\\
+Result (kB) & 20 & 60 & 100\\
+Device share & 35\% & 35\% & 30\%\\
+Share of requests & 0.528 & 0.352 & 0.121\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Factors}
+\emph{Architecture} $\in$ \{\textsc{edge\_only}, \textsc{edge\_and\_cloud},
+\textsc{all}\}: the set of tiers eligible to host a task.
+\emph{Algorithm} $\in$ \{\textsc{trade\_off}, \textsc{round\_robin}\}.
+\emph{Scale} $\in$ $\{20,40,60,80\}$ devices from the same fleet definition.
+\emph{Mobility} $\in$ \{random-waypoint, Gauss--Markov, waypoint, group\}.
+\emph{Network} $\in$ WAN latency $\{0.03,0.12,0.30\}$~s $\times$ WiFi bandwidth
+$\{50,300,1300\}$~Mbps.
+\emph{Control interval} $\in$ $\{1.0, 0.2, 0.05\}$~s, added after the main grid
+and analysed in Section~\ref{sec:clock}.
+
+\subsection{Generators}
+The synthetic generator draws inter-arrival times from
+Table~\ref{tab:p1-workload}. The trace generator replays a public Azure LLM code
+trace, taking every record with arrival below the $300$~s horizon ($781$
+requests) and mapping it linearly to a task:
+\begin{equation}
+\begin{aligned}
+w &= 500+2c+8g &&\text{(MI)},\\
+b_{\text{req}} &= 0.5+0.002c &&\text{(kB)},\\
+b_{\text{res}} &= 0.1+0.004g &&\text{(kB)},
+\end{aligned}
+\label{eq:trace}
+\end{equation}
+with deadline $\max(0.5,\,2+5\times10^{-4}c)$ seconds, where $c$ and $g$ are the
+context and generated token counts. Classes are assigned round-robin, so the
+trace arm is class-balanced rather than mix-preserving; this is a limitation of
+the comparison, not a property of the trace.
+
+\subsection{Determinism}
+Every run is seeded. A determinism check re-ran one configuration and compared
+four aggregates; the values were identical. Across architectures the device list
+is unchanged, so the generator's random stream is identical; across fleet sizes
+it is not, which is a caveat on cross-scale comparisons.
+
+% =========================================================================
+\section{Methodology}
+\label{sec:method}
+
+\subsection{Grids}
+Table~\ref{tab:p1-grids} lists the grids: $3{,}215$ runs of five simulated
+minutes, ten seeds per cell (five for the network grid).
+
+\begin{table}[t]
+\centering
+\small
+\caption{Benchmark grids and run counts.}
+\label{tab:p1-grids}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Grid & Factors & Cells & Runs\\
+\midrule
+scale & arch $\times$ alg $\times$ devices & $3\times2\times4$ & 240\\
+mobility & model $\times$ arch & $4\times3$ & 120\\
+trace & workload $\times$ arch & $4\times3$ & 120\\
+network & WAN $\times$ WiFi $\times$ arch & $3\times3\times3$ & 135\\
+clock & arch $\times$ interval & $3\times3$ & 90\\
+deadline & arch $\times$ deadline mult. & $2\times5$ & 100\\
+mix & arch $\times$ class mix & $2\times5$ & 100\\
+algo & alg $\times$ arch $\times$ interval & $7\times4\times3$ & 630\\
+hetero & profile $\times$ alg $\times$ interval & $4\times7\times6$ & 1680\\
+\midrule
+\multicolumn{3}{@{}l}{Total} & 3215\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The \texttt{algo} grid crosses seven orchestration algorithms with four
+architecture levels and three control intervals. The four architecture levels
+are the three substantive configurations plus a pooled \textsc{all} level that
+is the same runs read without the mist/edge/cloud split, so the design is
+balanced at $7\times3\times3\times10$ substantive runs. The \texttt{hetero} grid
+crosses four capacity profiles with the same seven algorithms, three
+architectures and two intervals. Both are analysed with a factorial model rather
+than one contrast at a time, because the review question is precisely whether
+the effects interact.
+
+\subsection{Metrics}
+\emph{Success ratio} is successful tasks divided by generated tasks; a task
+succeeds only if it executes and its result returns before its own latency
+bound. \emph{p95 delay} is the $95$th percentile of delivery delay over
+\emph{successful} tasks, which makes it a survivorship statistic: a policy that
+refuses hard tasks will appear to have a short tail, and we therefore read p95
+only alongside success and the per-class budget of
+Table~\ref{tab:p1-budget}. \emph{Energy per success} divides computing-node
+energy by successful tasks; network energy is reported separately by the
+simulator and excluded, and we state that boundary because including it would
+change the comparison. \emph{Energy per generated task} divides the same
+numerator by generated tasks and exists because the first metric is
+denominator-driven. \emph{WAN usage} is cumulative wide-area link occupancy.
+\emph{Runtime} is harness wall-clock time.
+
+\subsection{Statistics}
+Each arm has ten seeded runs. We report means with bootstrap $95\%$ confidence
+intervals of the difference, Mann--Whitney $U$ tests with Holm--Bonferroni
+correction, and Cliff's $\delta$. Two caveats are stated rather than buried.
+First, Mann--Whitney assumes independent samples; the seeds are reused across
+arms but the test treats arms as independent, which is conservative when the
+pairing is positive. Second, when a control arm has zero variance---as
+\textsc{edge\_only} does for success at a fixed interval---Cliff's $\delta$ is
+trivially $\pm1$ and the bootstrap interval reflects treatment variance only; we
+print the value but do not interpret it.
+
+\subsection{Artifact}
+The artifact contains the settings, job dictionaries, one CSV per run, the
+per-task records, aggregate tables, the \LaTeX{} tables used here, figures, a
+data dictionary and a manifest. This manuscript \verb|\input|s the shipped
+tables.
+
+% =========================================================================
+\section{Results}
+\label{sec:results}
+
+\subsection{The headline}
+Table~\ref{tab:p1-scale} reports the scale grid. At $40$ devices with
+\textsc{trade\_off}, \textsc{edge\_only} and \textsc{edge\_and\_cloud} both
+succeed on $0.121$ and \textsc{all} on $0.660$. Increasing the fleet from $20$ to
+$80$ changes success by $0.035$ under \textsc{trade\_off} and $0.065$ under
+\textsc{round\_robin}. The canonical contrast is therefore
+$0.660-0.121=0.539$ at $40$ devices, \textsc{trade\_off}; the grid-pooled
+\textsc{all} mean is $0.648$ and we use it only where we say so.
+
+\input{../results/tables/scale.tex}
+
+\begin{figure*}[t]
+\centering
+\begin{subfigure}[b]{0.48\textwidth}
+  \includegraphics[width=\linewidth]{f1_success_vs_devices.pdf}
+  \caption{Success ratio versus fleet size.}
+  \label{fig:p1-scale}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.48\textwidth}
+  \includegraphics[width=\linewidth]{f2_p95_delay_vs_devices.pdf}
+  \caption{p95 delivery delay versus fleet size.}
+\end{subfigure}
+\caption{Scale behaviour with $95\%$ bootstrap confidence bands. The two lower
+architectures are flat at $0.121$ because the control interval, not the load,
+sets their success.}
+\label{fig:scalefig}
+\end{figure*}
+
+\subsection{Decomposition by class}
+\label{sec:decompose}
+Table~\ref{tab:p1-classes} decomposes the $40$-device \textsc{trade\_off} runs by
+application class. Aggregation is $0.121$ of the mix and succeeds on $0.975$
+under \textsc{all} and $1.000$ under the two lower architectures. Sensing
+($0.528$) succeeds on $0.779$ under \textsc{all} and $0.000$ elsewhere; video
+($0.352$) on $0.374$ and $0.000$. The recomposition
+$0.121\times0.975+0.528\times0.779+0.352\times0.374=0.661$ matches the pooled
+$0.660$ to within rounding, which confirms that the pooled ratio is a weighted
+average of class outcomes and nothing else.
+
+\input{../results/tables/class_breakdown.tex}
+
+The first reading of this table is a feasibility boundary. Table~\ref{tab:p1-budget}
+shows why that reading is wrong. It reports, for each class and destination, the
+observed scheduling lag (execution start minus release), the CPU and network
+time, and the success ratio. Infrastructure placements wait $1.01$~s on an edge
+site and $2.12$~s in the cloud; mist placements start $0.13$--$0.48$~s after
+release. The compute time of a sensing task is $0.025$~s on an edge site, an
+order of magnitude inside its $0.2$~s deadline, and it still fails, because the
+lag alone is five deadlines long.
+
+\input{../results/tables/delay_budget.tex}
+
+The lag is not a property of the tier; it is a property of the control loop. The
+orchestrator is invoked on the simulator's update tick, so a task released
+between ticks waits for the next one. At the default interval of one second the
+wait is one tick on average and two in the worst case. Every class whose
+deadline is shorter than a tick fails on every tier that requires an
+orchestration decision, and the only reason the mist tier escapes is that a peer
+device is scheduled directly rather than through the orchestrator's queue.
+
+\subsection{The clock experiment}
+\label{sec:clock}
+If the lag is the cause, then changing the interval must change the effect, and
+it must do so monotonically. Table~\ref{tab:p1-clock} and Fig.~\ref{fig:clock}
+report the sweep. With everything else fixed, the architecture effect
+(\textsc{all} minus \textsc{edge\_only}) is $0.539$ at $1$~s, $0.415$ at
+$0.2$~s, and $-0.004$ at $0.05$~s. At the finest interval, edge-only serves
+$0.987$ of requests and the full architecture $0.983$: adding tiers is, if
+anything, slightly harmful.
+
+The lag tracks the interval ($1.01$, $0.21$, $0.06$~s on edge sites) and success
+tracks the lag across all three levels, so the causal chain is measured at every
+link rather than inferred at one. The intermediate point is informative: at
+$0.2$~s, equal to the tightest deadline, the effect is still $0.415$ because a
+task that waits a full tick misses by exactly its budget; the effect disappears
+only when the interval is well below the deadline, not when it equals it.
+
+\input{../results/tables/clock.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f10_clock.pdf}
+\caption{Success against the control interval for the three architectures
+(log scale). The architecture gap closes monotonically as the interval falls
+below the deadlines, and is gone at $50$~ms.}
+\label{fig:clock}
+\end{figure}
+
+\subsection{Deadline scaling: the effect disappears}
+Table~\ref{tab:p1-deadline} and Fig.~\ref{fig:deadline} scale every deadline by
+a factor and repeat the canonical contrast. The effect falls from $0.540$ at
+$1\times$ to $0.406$ at $3\times$ and $0.011$ at $16\times$, where edge-only
+serves $0.972$ and the full architecture $0.983$. The recovery is class by
+class: video recovers between $1.5\times$ and $3\times$, when its deadline
+($1.2$--$2.4$~s) clears the roughly $2.2$~s that an infrastructure placement
+spends waiting, and aggregation was never sensitive. Sensing needs
+$16\times$ because a task pays two ticks---one for dispatch and one for the
+result to return.
+
+This is the validation the diagnosis requires. The effect is not merely
+correlated with the interval; it disappears when the deadline is made long
+enough to tolerate the interval, at the point the two-tick budget predicts.
+
+\input{../results/tables/deadline.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f11_deadline.pdf}
+\caption{Success against the deadline multiplier. The architecture gap closes
+once every deadline exceeds the roughly two-tick infrastructure budget.}
+\label{fig:deadline}
+\end{figure}
+
+\subsection{Class mix: the identity holds across workloads}
+\label{sec:mix}
+Table~\ref{tab:p1-mix} changes the application mix while holding everything else
+fixed. The edge-only success ratio tracks the aggregation share exactly: at
+weights $0.80/0.10/0.10$ the aggregation share is $0.030$ and edge-only
+succeeds on $0.030$; at $0.10/0.20/0.70$ the share is $0.444$ and edge-only
+succeeds on $0.444$. The pooled ratio is the weighted average of class
+outcomes, and the architecture effect moves with the mix because the mix moves
+the share of requests that can tolerate the interval.
+
+The fill architecture is less sensitive ($0.614$--$0.755$) because it serves
+all three classes, with the residual variation coming from queueing and from the
+changing arrival composition.
+
+\input{../results/tables/mix.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f12_mix.pdf}
+\caption{Success against the class mix. Edge-only tracks the aggregation share;
+the full architecture is comparatively flat because it serves every class.}
+\label{fig:mix}
+\end{figure}
+
+\subsection{From a rule of thumb to a measured calibration}
+\label{sec:calibration}
+The interval sweep suggests a rule (``keep the tick an order of magnitude below
+the tightest deadline''), but a rule that cannot be measured cannot be audited.
+Table~\ref{tab:p1-latency} therefore decomposes the wait into the four stages a
+request passes through, and Table~\ref{tab:p1-temporal-fidelity} replaces the
+rule with a measured curve.
+
+The decomposition is blunt about where the clock lives. At the $1$~s default,
+release-to-decision and decision-to-dispatch are both $0$: in this harness a
+task is decided at release, and the decision itself is immediate. The entire
+wait appears between dispatch and execution start, and it is a whole number of
+intervals: $1.01$~s under earliest-finish, $2.12$~s under least-loaded,
+$5.07$~s for the video class under min-min, which selects a cloud host and pays
+the wide-area path as well. At $50$~ms the same quantity is $0.059$~s. The
+decomposition therefore says something stronger than the aggregate: the delay
+is not a scheduling policy's queueing behaviour, it is the resolution at which
+the placement became visible to the executor.
+
+Deciding is not what costs time. Table~\ref{tab:p1-decision-overhead} times the decision
+routine itself across $179{,}100$ calls per algorithm: $0.150$~ms per decision
+for min-min, $0.243$~ms for trade-off, $0.518$~ms for the tabular Q-learner, or
+$0.6$--$3.0\%$ of the simulation's wall clock. The most expensive algorithm is
+still three orders of magnitude faster than the tick it runs inside.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f11_temporal_fidelity.pdf}
+\caption{Success against the ratio $\rho=L_{\text{decision}}/D$ of orchestration
+latency to deadline, resolved per class. Success is stable up to
+$\rho\approx0.5$ and collapses once $\rho>1$.}
+\label{fig:calibration}
+\end{figure}
+
+Table~\ref{tab:p1-temporal-fidelity} and Fig.~\ref{fig:calibration} bin every
+(class, interval, architecture, algorithm) cell by $\rho$. For the sensing class
+success is $0.916$ for $\rho\in[0.25,0.5]$, $0.576$ for $\rho\in[0.5,1]$ and
+$0.020$ once $\rho>1$; video is $0.961$ for $\rho\in[0.05,0.1]$, $0.517$ for
+$\rho\in[0.5,1]$ and $0.022$ for $\rho\in[1,2]$. The aggregation class, whose
+deadline is $60$~s, never leaves the stable region ($1.000$ at $\rho<0.1$).
+
+Two consequences follow. First, the $D/10$ rule is sufficient but not necessary:
+the data place the stability boundary at $\rho\approx1/2$ and show no further
+improvement below $\rho\approx0.05$. Second, and more useful, $\rho$ is
+\emph{measurable} on any simulator that timestamps release, decision, dispatch
+and execution. We therefore recommend reporting $\rho$ rather than asserting a
+constant: a reader can check whether a comparison ran in the stable region
+without rerunning the sweep. The three checks of our earlier draft survive, but
+the budget check becomes ``compute $\rho$ from a pilot'' rather than ``divide
+the deadline by ten''.
+
+\input{../results/tables/latency_decomposition.tex}
+\input{../results/tables/temporal_fidelity.tex}
+\input{../results/tables/decision_overhead.tex}
+
+\subsection{Algorithms are not configuration-free}
+\label{sec:algos}
+The clock experiment used a single placement algorithm, so it cannot say whether
+the choice of algorithm is itself stable. Table~\ref{tab:p1-algo-ranking}
+crosses seven algorithms with three architectures and three intervals ($630$
+runs). At the $1$~s default the ordering is round-robin $0.691$, random $0.676$,
+trade-off $0.660$, Q-learning $0.600$, and min-min, least-loaded and
+earliest-finish all at $0.121$. At $50$~ms it is earliest-finish $0.987$,
+trade-off $0.983$, Q-learning $0.981$, round-robin $0.969$, random $0.966$,
+least-loaded $0.734$, min-min $0.121$. Round-robin falls from first to fourth;
+earliest-finish rises from last to first.
+
+Table~\ref{tab:p1-ranking-stability} quantifies the inversion: over the pooled
+architecture the Kendall $\tau$ between the $1$~s and $50$~ms orderings is
+$0.103$ ($p=0.75$), with four of seven ranks moving and the winner changing from
+round-robin to earliest-finish. Between $1$~s and $0.2$~s the orderings still
+agree ($\tau=0.72$), so the collapse is not gradual: it happens where the tick
+crosses the deadlines. Where every algorithm produces the same outcome---as all
+seven do under edge-only---there is no ordering to agree on, and the table says
+so rather than reporting a correlation of one.
+
+\input{../results/tables/algorithm_ranking.tex}
+\input{../results/tables/ranking_stability.tex}
+
+The factorial model makes the same point without ranking.
+Table~\ref{tab:p1-factor-effects} gives the three-way ANOVA over the balanced
+design: the algorithm main effect has partial $\eta^2=0.977$, the interval
+$0.994$, and---the term that matters---the algorithm $\times$ architecture
+$\times$ interval interaction has $\eta^2=0.917$
+($F(24,567)=260.3$, $p<10^{-287}$). An interaction of that size means the
+effect of choosing an algorithm cannot be summarised without stating the
+temporal and architectural configuration in which it was measured.
+
+\input{../results/tables/factor_effects.tex}
+
+Table~\ref{tab:p1-host-selection} shows the mechanism at the placement level. At
+$1$~s the algorithms that score well are those that keep work on the mist tier
+($0.61$--$0.67$ of generated tasks), where execution starts at release;
+least-loaded and min-min send everything to the cloud and score exactly the
+$0.121$ aggregation share. At $50$~ms the same algorithms spread work across
+mist and edge, and the ordering is decided by queueing instead. The
+architectural and algorithmic effects are thus two readings of one quantity:
+how long a task waits before it starts.
+
+\input{../results/tables/host_selection.tex}
+
+\subsection{When the architecture effect is real}
+\label{sec:hetero}
+Everything so far holds capacity fixed while varying which tiers are eligible,
+so at $50$~ms adding a cloud tier can only add a queue. That is a statement
+about a homogeneous fleet, not about edge computing, and it is the question the
+artefact had obscured. Table~\ref{tab:p1-heterogeneity} crosses the architecture
+contrast with four capacity profiles---ample/ample, weak edge with a fast
+powerful cloud, powerful edge with a slow distant cloud, and a split profile---
+seven algorithms, and both intervals ($1{,}680$ runs).
+
+The result is the paper's sharpest. At $1$~s the effect is positive under
+\emph{every} profile: $+30.6$ points (uniform), $+33.6$ (weak edge), $+28.3$
+(strong edge), $+30.4$ (split). The spread across profiles is $5.3$ points: the
+artefact is blind to the infrastructure, which is what one expects of a clock.
+At $50$~ms the effect is $+65.7$ points when the edge is weak and the cloud fast,
+$-3.6$ when the edge is strong and the cloud distant, $-16.7$ when both tiers are
+ample, and $-19.6$ under the split profile. The spread is $85.4$ points, and its
+sign is predicted by the capacity gap.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f16_heterogeneity.pdf}
+\caption{Architecture effect (all tiers minus edge only) by infrastructure
+profile and control interval. At $1$~s the effect is uniformly positive; at
+$50$~ms its sign and size follow the capacity gap.}
+\label{fig:hetero}
+\end{figure}
+
+Table~\ref{tab:p1-hetero-affinity} explains the sign. Under the weak-edge
+profile at $50$~ms, $23.3\%$ of generated tasks are served by the cloud; under
+the other three profiles the cloud share is $0.5$--$2.2\%$, because the cloud is
+either slower than the edge or behind a $120$--$300$~ms wide-area path that the
+$0.2$~s class cannot afford. An architecture effect exists exactly where an
+alternative host is both reachable and better, which is the textbook condition
+and not a coincidence of the simulator.
+
+\input{../results/tables/heterogeneity.tex}
+\input{../results/tables/hetero_affinity.tex}
+
+Two things follow that a single-interval study could not report. First, the
+clock does not merely manufacture an effect; it can also \emph{understate} a real
+one. Under the weak-edge profile the true benefit is $65.7$ points, while the
+$1$~s measurement reports $33.6$: about half the phenomenon is hidden by the
+artefact that also creates a spurious one elsewhere. Second, the ranking of
+algorithms moves with the infrastructure as well as the clock.
+Table~\ref{tab:p1-hetero-ranking} shows four different winners across the eight
+(profile, interval) cells, and least-loaded placement scoring $0.014$ under the
+strong-edge profile at $1$~s against $0.776$ at $50$~ms---a factor of $56$ for
+one algorithm under one profile.
+
+\input{../results/tables/hetero_ranking.tex}
+
+The factorial model separates the three factors.
+Table~\ref{tab:p1-hetero-interaction} gives the profile $\times$ interval
+interaction at $\eta^2=0.256$ ($F(3,1656)=189.5$, $p<10^{-105}$) and the
+three-way profile $\times$ architecture $\times$ interval interaction at
+$\eta^2=0.138$ ($F(6,1656)=44.1$, $p<10^{-50}$). The architectural effect is
+therefore a function of the infrastructure and the clock jointly, and a study
+that fixes either one reports a number that does not generalise to the other.
+
+\input{../results/tables/hetero_interaction.tex}
+
+\subsection{Failure composition}
+Table~\ref{tab:p1-causes} gives the numeric decomposition. Deadline failures
+account for $0.348$ of generated tasks under \textsc{all} and $0.879$ under the
+two lower architectures; every other cause is below $0.004$. There is no
+resource, dependency or destination failure to speak of: the failures are
+latency, and the latency is the lag.
+
+\input{../results/tables/failure_causes.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f3_failure_causes.pdf}
+\caption{Failure composition by architecture as a share of generated tasks.
+Deadline failures dominate everywhere.}
+\label{fig:causes}
+\end{figure}
+
+\subsection{What survives: scale}
+The scale result is unaffected by the clock correction because the interval is
+held constant within the grid. It says that with this workload and this
+infrastructure, quadrupling the fleet reduces the success ratio by at most
+$0.065$ and raises p95 delay by $0.24$~s under \textsc{trade\_off}. Per-tier utilisation explains the
+magnitude, and it is lower than a capacity story would suggest: across the four
+fleet sizes the cloud sits at $0.01\%$, the edge tier rises from $0.16\%$ to
+$0.26\%$, and the mist tier from $1.48\%$ to $2.24\%$. The deployment is not
+CPU-bound at any scale; the decline in the ratio comes from the class
+composition interacting with the interval, which is why we treat the scale
+magnitude as indicative rather than as a capacity result.
+
+\input{../results/tables/architecture_tests.tex}
+
+Table~\ref{tab:p1-paired} repeats the canonical contrast as a seed-matched
+test: the success difference is $+0.540$ with dominance $+1.00$ and the p95
+difference is $+0.841$ with the same dominance, so every one of the ten seeds
+shows both effects. The pooled table above is kept for comparability with the
+rest of the grid, but the paired test is the one the design supports.
+
+\input{../results/tables/paired_tests.tex}
+
+\subsection{Energy per success is denominator-driven}
+\label{sec:energy}
+\textsc{all} reports $0.024$~Wh per successful task against $0.131$ for
+\textsc{edge\_only}, which at face value says that adding tiers is an energy
+optimisation. It is not: the metric divides a similar energy budget by a success
+count that differs by a factor of five. Fig.~\ref{fig:energy}(b) plots energy per
+\emph{generated} task, where the three architectures lie within about one
+percent of one another; the apparent advantage disappears when the denominator
+is fixed. A metric that improves when a system drops work is not a metric of
+efficiency, and we recommend reporting both.
+
+Fig.~\ref{fig:energy}(a) also shows that WAN usage is not monotone in fleet size:
+under \textsc{trade\_off} it rises from $9.6$ to $14.4$~s and then falls to
+$13.6$~s at $80$ devices, and under \textsc{round\_robin} it peaks at $40$
+devices and falls by $29\%$ thereafter. Placement, not scale, decides how much
+traffic crosses the WAN.
+
+\begin{figure*}[t]
+\centering
+\begin{subfigure}[b]{0.32\textwidth}
+  \includegraphics[width=\linewidth]{f4_energy_per_success.pdf}
+  \caption{Wh per successful task.}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.32\textwidth}
+  \includegraphics[width=\linewidth]{f4b_energy_per_task.pdf}
+  \caption{Wh per generated task.}
+\end{subfigure}\hfill
+\begin{subfigure}[b]{0.32\textwidth}
+  \includegraphics[width=\linewidth]{f5_wan_usage.pdf}
+  \caption{WAN usage.}
+\end{subfigure}
+\caption{Energy and traffic. (a) The per-success metric ranks architectures by
+their success denominator; (b) with a fixed denominator the architectures are
+within about one percent; (c) WAN usage is not monotone in fleet size.}
+\label{fig:energy}
+\end{figure*}
+
+\subsection{Mobility sensitivity is conditional on the mist tier}
+Table~\ref{tab:p1-mobility} crosses four mobility models with the three
+architectures. The \textsc{all} success ratio ranges from $0.596$ (fixed
+waypoints) to $0.660$ (random waypoint); both lower architectures report
+$0.121$ for every model, because the hosts whose mobility would matter are not
+eligible. The ordering is not the intuitive one, and we report it as an
+observation without a demonstrated mechanism. The practical implication is that
+a mobility model chosen for realism can be less demanding than a simpler one, so
+a robustness claim needs more than one model.
+
+\input{../results/tables/mobility.tex}
+
+\subsection{Workload realism: four arms, one factor at a time}
+\label{sec:trace}
+The trace comparison in our earlier draft changed four things at once and we
+said so. We have since run the matching arms, so the confounds can be separated
+instead of acknowledged. Four workloads are compared: the synthetic one; the
+native trace replay; a \emph{rate-matched} replay that takes the trace's first
+$1{,}990$ requests and rescales their arrivals onto the horizon, so the offered
+load equals the synthetic arm; and a \emph{deadline-matched} replay that keeps
+the trace's arrivals and sizes but imposes the synthetic per-class deadlines.
+
+\input{../results/tables/trace.tex}
+
+The result is unambiguous (Table~\ref{tab:p1-trace}). Matching the load moves
+\textsc{all} from $0.921$ to $0.948$ ($+2.7$ points) and leaves
+\textsc{edge\_only} at $0.908$: offered load is not the explanation. Imposing
+the synthetic deadlines moves \textsc{all} from $0.921$ to $0.560$
+($-36.1$ points) and \textsc{edge\_only} from $0.885$ to $0.333$. It is the
+deadline distribution, and only the deadline distribution, that produces the
+original gap.
+
+The four arms also show that the \emph{sign} of the architecture effect is
+workload-dependent. In the native and rate-matched replays the effect is
+$-0.051$ and $-0.052$: the full architecture is worse, because with $2$--$5$~s
+bounds the edge tier is sufficient and the cloud is a slower option the policy
+sometimes chooses. In the deadline-matched arm the effect is $+0.227$: with
+$0.2$~s and $0.8$~s bounds, the same clock that dominated the synthetic arm
+dominates here too. A single trace-versus-synthetic comparison could not have
+said either of these things.
+
+Table~\ref{tab:p1-trace-classes} resolves the native trace by class: every class
+is served at $0.82$--$0.93$ under every architecture, confirming that no single
+class carries the aggregate and that the trace deadlines sit above the control
+interval. The p95 delay falls from $0.94$~s to $0.41$~s when the trace replaces
+the synthetic workload, and stays at $0.41$~s when the load is matched.
+
+\input{../results/tables/trace_classes.tex}
+
+\subsection{Network sensitivity}
+Fig.~\ref{fig:sens} sweeps WAN latency and WiFi bandwidth over an order of
+magnitude. The pooled success ratio is invariant, while p95 delay grows with WAN
+latency and shrinks with WiFi bandwidth. The invariance is a consequence of the
+calibration: with a one-second interval, the failing classes fail on the lag,
+and a faster link cannot remove a wait that happens before transmission. This is
+the same lesson in a different metric---an uncalibrated benchmark reports
+``network does not matter'' when it means ``the clock dominates the network''.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f8_sensitivity.pdf}
+\caption{p95 delivery delay over the network grid for \textsc{all}. Success is
+invariant; delay responds.}
+\label{fig:sens}
+\end{figure}
+
+\subsection{Benchmark cost}
+Fig.~\ref{fig:runtime} reports wall-clock runtime against fleet size, from about
+$1.7$~s per run at $20$ devices to $5.4$~s at $80$. The whole benchmark,
+including the clock sweep, is under an hour of wall-clock time, which is what
+made the correction experiment affordable and is itself an argument for
+publishing the protocol rather than the result.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f9_runtime.pdf}
+\caption{Wall-clock runtime per run against fleet size.}
+\label{fig:runtime}
+\end{figure}
+
+\subsection{Cross-port audit}
+\label{sec:parity}
+Both implementations are at version 6.1: the Python port reports $6.1.0$ and the
+Java arm runs \texttt{pureedgesim-6.1.jar}. The audit is therefore not a version
+comparison.
+
+We distinguish three properties. \emph{Workload parity} is equality of generated
+task counts; in our audit both ports generate $1{,}990$, which is arithmetic
+($9.95$ requests per minute per device $\times$ $40$ devices $\times$ five
+minutes) rather than evidence, and we do not count it as a result.
+\emph{Distributional parity} is a Mann--Whitney test on per-seed success over
+five seeds; it does not reject ($p=0.42$), but five seeds give a minimum
+attainable two-sided $p$ of $0.0079$ and little power, so we call the test
+inconclusive rather than passed. \emph{Structural parity} requires agreement on
+where work runs. We define it as a total-variation distance between the two
+ports' outcome vectors (the shares of generated tasks that succeed, fail on
+delay, and fail on mobility) with a threshold of $0.05$ declared before the
+comparison. The observed distance is $0.129$, so structural parity fails.
+
+The failure is localised but not attributed. Java succeeds on $1{,}210$ tasks
+($60.8\%$), Python on $1{,}466$ ($73.7\%$); the five-seed mean gap is $4.7$
+percentage points, while the single-seed gap in Table~\ref{tab:p1-parity} is
+$12.9$ points. Delay failures differ by a relative $0.296$, mobility failures by
+$0.902$, and WAN time by $0.945$. Mobility divergence is upstream of placement
+and can itself change WAN usage, so we cannot claim that WAN accounting is the
+sole cause; what we can say is that the ports disagree on the destination mix
+and that the disagreement is largest in mobility and WAN terms. Isolating it
+requires replaying an identical mobility and placement trace in both ports,
+which we have not done.
+
+\input{../results/tables/parity.tex}
+
+\subsection{An independent simulator, with different semantics}
+\label{sec:crosssim}
+A port and a reimplementation share modelling assumptions, so the audit above
+cannot establish that the phenomenon generalises. We therefore repeated the
+temporal-resolution experiment in YAFS~3.1, a SimPy-based discrete-event
+simulator with its own resource model, network stack and placement API
+(commit \texttt{98425c1}, sources unmodified). The scenario is declared once, in
+\texttt{crosssim/scenario.json}, and read by the driver; the three classes, the
+fleet, the tiers and the three architectures are the same numbers as here.
+
+\input{../../crosssim/tables/replication.tex}
+
+Table~\ref{tab:crosssim-replication} reports the result. At a 1 s tick the architecture
+effect is $+58.2$ points, against $+53.9$ here; at 200 ms it is still $+53.1$;
+at 50 ms and in the event-driven configuration it is exactly $0.0$; and scaling
+every deadline by 16 while keeping the 1 s tick also gives $0.0$. The measured
+decision latency falls from $1.040$~s to $0.090$~s as the tick tightens and the
+success ratio follows it, as in the reference platform. The agreement in
+magnitude is not calibration---the two models charge tasks to cores differently
+and the YAFS driver uses a simpler selection rule---but the shape, the critical
+value and the deadline-scaled null are the same.
+
+The third platform is a negative result that sharpens the claim. EdgeCloudSim
+builds and runs in this environment (its shipped tutorial completes $25{,}290$
+of $25{,}367$ tasks), but its placement is a synchronous per-task function,
+\texttt{getDeviceToOffload(Task)} and \texttt{getVmToOffload(Task,int)}
+(\texttt{BasicEdgeOrchestrator.java:89,115}), with no global period to vary. It
+therefore cannot exhibit the artefact even in principle. The mechanism is not a
+property of edge simulators as a class; it is a property of simulators that
+schedule globally and periodically. The semantics that distinguish the three
+platforms, with source locations, are tabulated in
+\texttt{crosssim/SIMULATOR\_SEMANTICS.md}, and the biases introduced by the port
+are listed in \texttt{crosssim/PORTING\_NOTES.md}---all four of them operate
+against the observed effect.
+
+% =========================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+\emph{Why the arithmetic did not catch this.} The per-class table was fully
+consistent with a feasibility story: one class succeeds, two do not, and the
+pooled ratio is their weighted average. Consistency is not causation, and the
+discriminating measurement was the delay budget---a task that meets its compute
+deadline and fails anyway. Benchmarks should report that budget by default,
+because it is the one table that separates ``cannot'' from ``did not get the
+chance''.
+
+\emph{What a calibrated benchmark would have said---and what it would have
+missed.} At $50$~ms on a homogeneous fleet the three architectures are within
+$0.4$ points, and the honest reading is that architecture does not matter: the
+edge tier alone serves $98.7\%$ of requests. That was our earlier conclusion,
+and the heterogeneity experiment shows it was too strong. On a fleet whose edge
+is weak and whose cloud is fast, the same calibrated benchmark reports $+65.7$
+points: the architecture matters a great deal, and the mis-calibrated run
+reported only half of it ($+33.6$). The clock is therefore not simply an
+optimistic bias that manufactures effects; it is noise on the sign and the size
+of an effect that is real in some regimes.
+
+\emph{What survives.} The energy denominator effect is independent of the
+interval because it is a property of the metric. The conditional mobility effect
+is independent because it is about eligibility. The port divergence is
+independent because it is about two implementations of the same model. The
+algorithmic ranking does not survive a change of either factor, and reporting it
+without the configuration is a mistake the factorial model makes visible.
+
+\emph{The design lesson.} A factor study of orchestration needs three things
+simultaneously: a temporal resolution below the deadlines, a capacity profile
+that leaves the optimiser something to exploit, and a model that includes the
+interaction. Any two of the three produce a confident and wrong answer, and our
+first two drafts are the demonstration.
+
+% =========================================================================
+\section{Threats to Validity}
+\label{sec:threats}
+
+\paragraph{Construct validity}
+Success counts tasks, not user outcomes, and the classes are proxies. The clock
+finding depends on the port invoking the orchestrator on the update tick; a port
+that scheduled placements asynchronously would not show the same lag, which is
+precisely why the lag should be measured rather than assumed.
+
+\paragraph{Internal validity}
+The placement cache is left at its default, so a device's application can be
+pinned to its first destination. This is deliberate (it is what a reproducer
+would obtain) but it means the destination mix is partly a caching artefact.
+The clock comparison holds the cache fixed across intervals, so the causal
+inference about the interval is unaffected.
+
+\paragraph{External validity}
+The topology is $500\times500$~m with three edge sites and one cloud; there is no
+satellite backhaul, no aerial base station and no UAV energy model. The paper is
+about multi-tier edge orchestration and its calibration, not about SAGIN, and
+the title says so. The replication in Section~\ref{sec:crosssim} covers one
+independent platform (YAFS) and one platform that cannot exhibit the artefact by
+construction (EdgeCloudSim); iFogSim2 was not ported, and its placement is
+likewise non-periodic by inspection of its API. Absolute success ratios are not
+expected to transfer between platforms, and we only claim the effect of the
+clock.
+
+\paragraph{Conclusion validity}
+Ten seeds per cell support the large effects and not differences below about two
+percentage points; the network grid uses five seeds, adequate for an invariance
+that is exact at the printed precision. The parity audit uses five seeds and one
+configuration: it establishes that a divergence exists, not its distribution.
+
+\paragraph{Reproducibility}
+The determinism check passes exactly. The simulator version is pinned and
+recorded, but floating-point agreement at the last digit depends on the Python
+and NumPy versions, which the manifest also records.
+
+% =========================================================================
+\section{Conclusion}
+\label{sec:concl}
+
+We ran a $3{,}215$-run crossed benchmark for multi-tier edge orchestration and
+found that its headline result---architecture beats scale by an order of
+magnitude---was produced by the simulator's one-second control interval. The
+class decomposition showed that edge-only placement succeeds only on the
+requests whose deadline exceeds a tick; the delay budget showed that tasks which
+finish in $0.025$~s still fail because execution starts $1.01$~s after release;
+and a three-level interval sweep showed the effect collapsing monotonically from
+$0.539$ to $-0.004$ as the interval fell below the deadlines. Two further
+sweeps, on the deadlines and on the class mix, closed the argument, and an
+independent discrete-event platform reproduced the same shape at the same
+critical value.
+
+The methodological contribution is a measured calibration rather than a rule of
+thumb: report the ratio of orchestration decision latency to deadline, and
+compare only where that ratio is below one half. Deciding costs
+$0.15$--$0.52$~ms, so the ratio is a property of the simulator, not of the
+algorithm. The substantive contribution is the regime map the artefact had
+hidden: on a homogeneous fleet, calibrated, the architecture does not matter;
+on a fleet whose edge cannot meet the deadlines, it is worth $65.7$ points, and
+the uncalibrated run reports half of that. Algorithm rankings behave the same
+way---seven algorithms, four winners across eight (profile, interval) cells, and
+least-loaded placement moving by a factor of $56$.
+
+What remains open is the port. Structural parity fails, the divergence is
+localised to mobility and wide-area accounting but not attributed, and closing
+it needs a trace replayed identically in both implementations. We report it as a
+measured defect rather than a hypothesis, because a benchmark that cannot say
+where its two ports disagree cannot claim to be a benchmark of the model rather
+than of the port.
+
+\balance
+\bibliographystyle{IEEEtran}
+\bibliography{../../research_common/refs}
+
+\end{document}

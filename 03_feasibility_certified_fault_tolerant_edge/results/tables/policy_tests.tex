@@ -1,0 +1,25 @@
+\begin{table*}
+\centering
+\small
+\caption{Certified admission versus naive placement (paired seeds, Mann--Whitney $U$).}
+\label{tab:p3-tests}
+\begin{tabular}{lcccccc}
+\toprule
+Metric & Control & Treatment & Difference & 95\% CI & Cliff's $\delta$ \\
+\midrule
+Success & 0.805 & 0.774 & -0.031 & [-0.075, 0.011] & -0.42 \\
+p95 delay (s) & 0.493 & 0.239 & -0.254$^{**}$ & [-0.314, -0.191] & -1.00 \\
+Wh/success & 0.012 & 0.012 & 0.000 & [-0.000, 0.001] & 0.42 \\
+Deadline failure rate & 0.195 & 0.000 & -0.195$^{***}$ & [-0.227, -0.163] & -1.00 \\
+Success & 0.718 & 0.692 & -0.026 & [-0.071, 0.014] & -0.27 \\
+p95 delay (s) & 0.505 & 0.239 & -0.265$^{**}$ & [-0.335, -0.195] & -1.00 \\
+Wh/success & 0.015 & 0.016 & 0.001 & [-0.004, 0.006] & 0.20 \\
+Deadline failure rate & 0.176 & 0.000 & -0.176$^{***}$ & [-0.203, -0.150] & -1.00 \\
+Success & 0.633 & 0.630 & -0.003 & [-0.037, 0.028] & -0.08 \\
+p95 delay (s) & 0.565 & 0.239 & -0.326$^{**}$ & [-0.383, -0.256] & -1.00 \\
+Wh/success & 0.018 & 0.018 & -0.000 & [-0.005, 0.005] & -0.02 \\
+Deadline failure rate & 0.206 & 0.000 & -0.206$^{***}$ & [-0.228, -0.185] & -1.00 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Holm--Bonferroni adjusted: $^{*}p<0.05$, $^{**}p<0.01$, $^{***}p<0.001$. CI = bootstrap 95\% confidence interval of the difference.\par}
+\end{table*}

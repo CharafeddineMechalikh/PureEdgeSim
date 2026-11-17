@@ -1,0 +1,32 @@
+{
+  "match": true,
+  "values": [
+    {
+      "Tasks successfully executed": 2082,
+      "Energy consumption of computing nodes (Wh)": 15.1806,
+      "Average execution delay (s)": 0.3327
+    },
+    {
+      "Tasks successfully executed": 2082,
+      "Energy consumption of computing nodes (Wh)": 15.1806,
+      "Average execution delay (s)": 0.3327
+    }
+  ],
+  "job": {
+    "architecture": "EDGE_AND_CLOUD",
+    "algorithm": "TRADE_OFF",
+    "devices": 30,
+    "seed": 3,
+    "compute_multiplier": 1.0,
+    "payload_multiplier": 1.0,
+    "control_messages": 3,
+    "cache_hit_ratio": 0.0,
+    "fidelity": true,
+    "rate_factor": 1.0,
+    "battery_initial": null,
+    "energy_weight": 0.02,
+    "deadline_margin": 0.15,
+    "experiment": "main",
+    "policy": "edge"
+  }
+}

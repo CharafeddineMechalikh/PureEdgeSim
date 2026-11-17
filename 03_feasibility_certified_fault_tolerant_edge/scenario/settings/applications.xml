@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- Mission-critical services with strict deadlines (feasibility certification stress) -->
+	<application name="Emergency_Control">
+		<type>Hard Real-time</type>
+		<rate>18</rate>
+		<usage_percentage>30</usage_percentage>
+		<latency>0.06</latency>
+		<container_size>150</container_size>
+		<request_size>40</request_size>
+		<results_size>20</results_size>
+		<task_length>1500</task_length>
+	</application>
+	<application name="V2X_Safety_Stream">
+		<type>Hard Real-time</type>
+		<rate>12</rate>
+		<usage_percentage>40</usage_percentage>
+		<latency>0.12</latency>
+		<container_size>400</container_size>
+		<request_size>300</request_size>
+		<results_size>60</results_size>
+		<task_length>5000</task_length>
+	</application>
+	<application name="Telemetry_Analytics">
+		<type>Soft Real-time</type>
+		<rate>8</rate>
+		<usage_percentage>30</usage_percentage>
+		<latency>1.0</latency>
+		<container_size>800</container_size>
+		<request_size>600</request_size>
+		<results_size>100</results_size>
+		<task_length>9000</task_length>
+	</application>
+</applications>

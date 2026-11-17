@@ -1,0 +1,15 @@
+\begin{table*}
+\centering
+\scriptsize
+\caption{What each decision procedure actually does, averaged over seeds and overhead levels.}
+\label{tab:p2-decisions}
+\begin{tabular}{lccccccc}
+\toprule
+Arm & Decisions/run & Feasible & Fallback & Mean fid. & Low-fid. & kMI/req & KB/req \\
+\midrule
+edge$+$fid. & 709.638 & 0.960 & 0.040 & 0.554 & 0.750 & 5.767 & 374.846 \\
+joint$+$fid. & 709.638 & 1.000 & 0.000 & 0.558 & 0.750 & 5.767 & 374.846 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Feasible is the share of decisions for which the predicted completion met the target; fallback is the share that could not and used the first admissible node. Per-request overhead is measured on the generated tasks, not on the decision log.\par}
+\end{table*}

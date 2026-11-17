@@ -1,0 +1,21 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Where trade-off placement sends work under each profile, as a share of generated tasks (ALL architecture, 10 seeds).}
+\label{tab:p1-hetero-affinity}
+\begin{tabular}{llcccc}
+\toprule
+Profile & Interval (s) & Mist share & Edge share & Cloud share & Success \\
+\midrule
+edge\_strong & 0.050 & 0.107 & 0.879 & 0.005 & 0.991 \\
+edge\_strong & 1.000 & 0.536 & 0.085 & 0.002 & 0.622 \\
+edge\_weak & 0.050 & 0.731 & 0.001 & 0.233 & 0.965 \\
+edge\_weak & 1.000 & 0.609 & 0.002 & 0.037 & 0.648 \\
+split\_task & 0.050 & 0.418 & 0.338 & 0.215 & 0.972 \\
+split\_task & 1.000 & 0.588 & 0.016 & 0.047 & 0.650 \\
+uniform & 0.050 & 0.449 & 0.516 & 0.018 & 0.983 \\
+uniform & 1.000 & 0.620 & 0.033 & 0.008 & 0.660 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright The cloud share is what an adaptive orchestrator can exploit; under the weak-edge profile it is both reachable and fast, which is why the effect is positive there at 50 ms.\par}
+\end{table*}

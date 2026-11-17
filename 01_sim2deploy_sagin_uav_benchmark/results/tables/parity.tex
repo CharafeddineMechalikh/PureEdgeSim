@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Cross-port audit for one seed (40 devices, ALL architecture); both ports are at version 6.1 (Python 6.1.0, Java pureedgesim-6.1.jar). Relative difference is $|J-P|/\max(|J|,|P|)$; the two ports use different RNG streams.}
+\label{tab:p1-parity}
+\begin{tabular}{lccc}
+\toprule
+Metric & Java & Python & Rel. diff. \\
+\midrule
+Generated tasks & 1,990 & 1,990 & 0.000 \\
+Successful tasks & 1,210 & 1,466 & 0.175 \\
+Delay failures & 739 & 520 & 0.296 \\
+Mobility failures & 41 & 4.000 & 0.902 \\
+Energy (Wh) & 30.287 & 30.144 & 0.005 \\
+Mean delay (s) & 0.292 & 0.286 & 0.020 \\
+WAN time (s) & 208 & 11.336 & 0.945 \\
+Traffic (MB) & -- & 780 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}

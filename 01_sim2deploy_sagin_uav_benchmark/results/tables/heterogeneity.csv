@@ -1,0 +1,9 @@
+Profile,What it means,Interval (s),All tiers,Edge only,Effect (pp),95% CI (pp),Seeds,Sign
+uniform,"ample edge, ample cloud",0.05,0.8200358937544868,0.9867336683417086,-16.669777458722184,"[-17.2, -16.2]",10,penalty
+uniform,"ample edge, ample cloud",1.0,0.42694185211773145,0.12060301507537681,30.633883704235465,"[+29.0, +32.3]",10,benefit
+edge_weak,"weak edge, fast powerful cloud",0.05,0.7504881550610194,0.09361809045226129,65.6870064608758,"[+64.9, +66.3]",10,benefit
+edge_weak,"weak edge, fast powerful cloud",1.0,0.4251040918880114,0.0895477386934673,33.55563531945441,"[+31.9, +35.2]",10,benefit
+edge_strong,"powerful edge, slow distant cloud",0.05,0.9507824838478104,0.9867336683417086,-3.595118449389808,"[-4.8, -2.6]",10,penalty
+edge_strong,"powerful edge, slow distant cloud",1.0,0.4040488155061019,0.12060301507537681,28.344580043072508,"[+26.8, +29.8]",10,benefit
+split_task,"light work favours edge, heavy work favours cloud",0.05,0.7906532663316582,0.9866331658291457,-19.597989949748744,"[-20.0, -19.2]",10,penalty
+split_task,"light work favours edge, heavy work favours cloud",1.0,0.42481694185211777,0.12060301507537681,30.421392677674085,"[+28.8, +32.0]",10,benefit

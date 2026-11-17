@@ -1,0 +1,16 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Battery boundary: initial device energy against success, energy per successful request and device deaths.}
+\label{tab:p2-energy}
+\begin{tabular}{lccccc}
+\toprule
+Initial battery (Wh) & Success (naive) & mWh/succ. (naive) & Success (joint$+$fid.) & mWh/succ. (joint$+$fid.) & Deaths \\
+\midrule
+20 & 0.977 & 117.003 & 0.990 & 115.490 & 0.000 \\
+50 & 0.977 & 75.906 & 0.990 & 74.920 & 0.000 \\
+100 & 0.977 & 7.412 & 0.990 & 7.303 & 0.000 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright No device dies at any level, so the battery is not a binding constraint in this scenario and the energy term of the objective cannot earn its keep.\par}
+\end{table*}

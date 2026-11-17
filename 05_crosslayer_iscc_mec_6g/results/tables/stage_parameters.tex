@@ -1,0 +1,24 @@
+\begin{table*}
+\centering
+\small
+\caption{ISCC service-graph stage specifications across pipeline depths (end-to-end deadline $D_{\text{req}} = 0.80$ s, total work $6{,}000$ MI).}
+\label{tab:p5-stages}
+\begin{tabular}{lllccc}
+\toprule
+Depth & Stage & Depends on & Compute (MI) & Input (KB) & Output (KB) \\
+\midrule
+2 stages & 1. sense & (root) & 2,000 & 1,200 & 250 \\
+2 stages & 2. edge\_infer & sense & 4,000 & 250 & 30 \\
+4 stages & 1. sense & (root) & 800 & 1,200 & 400 \\
+4 stages & 2. encode\_comm & sense & 1,200 & 400 & 250 \\
+4 stages & 3. edge\_infer & encode\_comm & 3,500 & 250 & 80 \\
+4 stages & 4. actuate & edge\_infer & 500 & 80 & 30 \\
+6 stages & 1. sense & (root) & 500 & 1,200 & 600 \\
+6 stages & 2. preproc\_filter & sense & 500 & 600 & 400 \\
+6 stages & 3. encode\_comm & preproc\_filter & 800 & 400 & 250 \\
+6 stages & 4. feature\_align & encode\_comm & 1,200 & 250 & 180 \\
+6 stages & 5. edge\_infer & feature\_align & 2,500 & 180 & 80 \\
+6 stages & 6. actuate & edge\_infer & 500 & 80 & 30 \\
+\bottomrule
+\end{tabular}
+\end{table*}

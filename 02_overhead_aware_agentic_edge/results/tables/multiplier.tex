@@ -1,0 +1,25 @@
+\begin{table*}
+\centering
+\scriptsize
+\caption{Overhead scaling: success, fidelity-weighted success, delay and WAN usage for the three primary policies (mean of 10 seeds).}
+\label{tab:p2-multiplier}
+\begin{tabular}{lccccccc}
+\toprule
+Overhead & Policy & Success & Fid.-wtd. & Mean delay (s) & mWh/succ. & MB/req. & WAN (s) \\
+\midrule
+1.000 & naive & 0.977 & 0.977 & 0.362 & 7.412 & 0.962 & 8.268 \\
+1.000 & edge+fidelity & 0.990 & 0.990 & 0.350 & 7.303 & 0.962 & 0.000 \\
+1.000 & aware & 0.990 & 0.990 & 0.350 & 7.303 & 0.962 & 0.000 \\
+1.500 & naive & 0.569 & 0.569 & 0.675 & 14.657 & 1.390 & 99.216 \\
+1.500 & edge+fidelity & 0.784 & 0.675 & 0.486 & 10.276 & 1.390 & 0.000 \\
+1.500 & aware & 0.784 & 0.675 & 0.486 & 10.276 & 1.390 & 0.000 \\
+2.000 & naive & 0.000 & 0.000 & 1.950 & -- & 1.819 & 625.589 \\
+2.000 & edge+fidelity & 0.498 & 0.249 & 0.513 & 16.925 & 1.819 & 0.000 \\
+2.000 & aware & 0.498 & 0.249 & 0.513 & 16.925 & 1.819 & 0.000 \\
+3.000 & naive & 0.000 & 0.000 & 2.834 & -- & 2.676 & 921.685 \\
+3.000 & edge+fidelity & 0.400 & 0.100 & 1.903 & 23.088 & 2.676 & 477.715 \\
+3.000 & aware & 0.400 & 0.100 & 1.916 & 23.346 & 2.676 & 477.715 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright The edge-only policy carries the same fidelity ladder as the aware orchestrator; its rows are the test of whether joint selection adds anything.\par}
+\end{table*}

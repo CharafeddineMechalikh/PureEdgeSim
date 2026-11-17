@@ -1,0 +1,19 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'serif','fontSize':'15px'}}}%%
+flowchart TD
+    REQ["User request<br/>nominal w, b"]:::inp
+    OV["Agentic overhead<br/>c, p, m, cache h"]:::fac
+    EFF["Effective demand<br/>w̃, b̃"]:::core
+    LAD["Fidelity ladder<br/>f ∈ {1, 0.5, 0.25, 0.1}"]:::fac
+    CAND["Candidates V<br/>tier capacity, queue, path"]:::fac
+    COST["Score J(v, f)<br/>delay + energy + risk<br/>subject to deadline"]:::core
+    DEC["Placement and fidelity<br/>(v*, f*)"]:::out
+
+    REQ --> OV --> EFF --> LAD --> COST
+    CAND --> COST
+    COST --> DEC
+    DEC -.->|"next task"| REQ
+
+    classDef inp fill:#E3F2FD,stroke:#1565C0,stroke-width:1.2px,color:#0D47A1
+    classDef fac fill:#FFF3E0,stroke:#E65100,stroke-width:1.2px,color:#BF360C
+    classDef core fill:#E8F5E9,stroke:#2E7D32,stroke-width:1.6px,color:#1B5E20
+    classDef out fill:#F3E5F5,stroke:#6A1B9A,stroke-width:1.2px,color:#4A148C

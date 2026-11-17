@@ -1,0 +1,17 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Compute and payload overhead separated: a $4\times4$ lattice, each cell showing aware / naive success.}
+\label{tab:p2-cpsplit}
+\begin{tabular}{lccccc}
+\toprule
+Compute & 1$\times$ & 1.5$\times$ & 2$\times$ & 3$\times$ \\
+\midrule
+1$\times$ & 0.990 / 0.977 & 0.990 / 0.977 & 0.990 / 0.977 & 0.990 / 0.977 \\
+1.5$\times$ & 0.985 / 0.971 & 0.784 / 0.569 & 0.784 / 0.569 & 0.784 / 0.569 \\
+2$\times$ & 0.498 / 0.000 & 0.498 / 0.000 & 0.498 / 0.000 & 0.498 / 0.000 \\
+3$\times$ & 0.400 / 0.000 & 0.400 / 0.000 & 0.400 / 0.000 & 0.400 / 0.000 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright The compute axis carries the whole effect. The payload axis is flat except in one cell, where it moves the request across a deadline; bytes alone do not decide feasibility.\par}
+\end{table*}

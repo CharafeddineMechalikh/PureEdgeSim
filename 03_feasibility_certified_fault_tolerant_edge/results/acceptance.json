@@ -1,0 +1,51 @@
+{
+  "criteria": {
+    "certificate_precision": {
+      "passed": true,
+      "detail": "Default operating point precision 1.000."
+    },
+    "false_rejection": {
+      "passed": true,
+      "detail": "Default operating point false rejection 0.019."
+    },
+    "violation_reduction": {
+      "passed": true,
+      "detail": "Deadline failures among attempted tasks reduced by 100.0%; service-rate gap -0.003."
+    },
+    "overhead": {
+      "passed": true,
+      "detail": "Energy per success ratio 1.038; delay ratio 0.478."
+    },
+    "failure_resilience": {
+      "passed": true,
+      "detail": "Certified success at 20\\% failures is 81.4% of its failure-free value."
+    },
+    "recovery": {
+      "passed": true,
+      "detail": "FT recovered 95.1% of retried tasks."
+    },
+    "recovery_latency": {
+      "passed": true,
+      "detail": "p95 recovered-task latency 0.114 s versus 2x critical deadline 0.120 s."
+    },
+    "statistical_support": {
+      "passed": true,
+      "detail": "10 seeds x 4 intensities."
+    },
+    "formal_grounding": {
+      "passed": true,
+      "detail": "Paper states the certificate proposition and its assumptions."
+    },
+    "reproducibility": {
+      "passed": true,
+      "detail": "Two runs of the same seed produced identical aggregates."
+    },
+    "artifact": {
+      "passed": true,
+      "detail": "Tables, figures, raw runs and manifest present."
+    }
+  },
+  "passed": 11,
+  "total": 11,
+  "all_passed": true
+}

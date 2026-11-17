@@ -1,0 +1,25 @@
+\begin{table*}
+\centering
+\scriptsize
+\caption{Host selection when all three tiers are eligible, as the share of successful requests served by each tier.}
+\label{tab:p2-tiers}
+\begin{tabular}{lcccccc}
+\toprule
+Overhead & Placement & Mist & Edge & Cloud & Success & Mean fid. \\
+\midrule
+1$\times$ & naive & 0.161 & 0.839 & 0.000 & 0.971 & 1.000 \\
+1$\times$ & naive$+$fid. & 0.161 & 0.839 & 0.000 & 0.971 & 1.000 \\
+1$\times$ & edge$+$fid. & 0.024 & 0.976 & 0.000 & 0.991 & 1.000 \\
+1$\times$ & joint$+$fid. & 0.024 & 0.976 & 0.000 & 0.991 & 1.000 \\
+2$\times$ & naive & 1.000 & 0.000 & 0.000 & 0.038 & 1.000 \\
+2$\times$ & naive$+$fid. & 0.390 & 0.610 & 0.000 & 0.417 & 0.709 \\
+2$\times$ & edge$+$fid. & 0.071 & 0.929 & 0.000 & 0.518 & 0.757 \\
+2$\times$ & joint$+$fid. & 0.071 & 0.929 & 0.000 & 0.518 & 0.757 \\
+3$\times$ & naive & 1.000 & 0.000 & 0.000 & 0.038 & 1.000 \\
+3$\times$ & naive$+$fid. & 0.412 & 0.588 & 0.000 & 0.431 & 0.554 \\
+3$\times$ & edge$+$fid. & 0.203 & 0.797 & 0.000 & 0.443 & 0.564 \\
+3$\times$ & joint$+$fid. & 0.160 & 0.840 & 0.000 & 0.437 & 0.573 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Cloud share is zero at every level and every arm: the cloud is reachable and never chosen, which is why the placement factor has nothing to exploit.\par}
+\end{table*}

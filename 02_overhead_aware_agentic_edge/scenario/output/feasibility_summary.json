@@ -1,0 +1,65 @@
+{
+  "scenario": "overhead_aware_agentic_edge",
+  "rows": [
+    {
+      "case": "baseline",
+      "architecture": "EDGE_AND_CLOUD",
+      "generated": 2100,
+      "success": 2078,
+      "not_executed": 0,
+      "failed_delay": 22,
+      "avg_delay": 0.07,
+      "cloud_tasks": 0,
+      "edge_tasks": 2078,
+      "mist_tasks": 0,
+      "energy_wh": 11.8781,
+      "network_s": 3.2185,
+      "wan_s": 1.08
+    },
+    {
+      "case": "baseline",
+      "architecture": "ALL",
+      "generated": 2100,
+      "success": 2089,
+      "not_executed": 0,
+      "failed_delay": 11,
+      "avg_delay": 0.0854,
+      "cloud_tasks": 0,
+      "edge_tasks": 1490,
+      "mist_tasks": 599,
+      "energy_wh": 11.6916,
+      "network_s": 2.1717,
+      "wan_s": 0.46
+    },
+    {
+      "case": "agentic_overhead",
+      "architecture": "EDGE_AND_CLOUD",
+      "generated": 2100,
+      "success": 2009,
+      "not_executed": 0,
+      "failed_delay": 91,
+      "avg_delay": 0.3214,
+      "cloud_tasks": 0,
+      "edge_tasks": 2009,
+      "mist_tasks": 0,
+      "energy_wh": 15.1184,
+      "network_s": 24.149,
+      "wan_s": 11.736
+    },
+    {
+      "case": "agentic_overhead",
+      "architecture": "ALL",
+      "generated": 2100,
+      "success": 2083,
+      "not_executed": 0,
+      "failed_delay": 17,
+      "avg_delay": 0.3619,
+      "cloud_tasks": 0,
+      "edge_tasks": 1584,
+      "mist_tasks": 499,
+      "energy_wh": 14.3174,
+      "network_s": 13.1097,
+      "wan_s": 3.028
+    }
+  ]
+}

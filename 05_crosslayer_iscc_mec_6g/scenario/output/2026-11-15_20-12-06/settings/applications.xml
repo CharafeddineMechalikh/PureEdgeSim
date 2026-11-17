@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- Cross-layer ISCC-MEC abstraction as a service graph:
+	     sensing/acquisition -> semantic/comm preprocessing -> edge compute/inference -> actuation/report -->
+	<application name="ISCC_Sensing_Analytics">
+		<type>Soft Real-time</type>
+		<rate>8</rate>
+		<usage_percentage>60</usage_percentage>
+		<latency>0.8</latency>
+		<container_size>1200</container_size>
+		<request_size>800</request_size>
+		<results_size>60</results_size>
+		<task_length>6000</task_length>
+		<subtask name="sense" task_length="800" request_size="1200" results_size="400"/>
+		<subtask name="encode_comm" depends_on="sense" task_length="1200" request_size="400" results_size="250"/>
+		<subtask name="edge_infer" depends_on="encode_comm" task_length="3500" request_size="250" results_size="80"/>
+		<subtask name="actuate" depends_on="edge_infer" task_length="500" request_size="80" results_size="30"/>
+	</application>
+	<application name="Background_Telemetry">
+		<type>Non Real-time</type>
+		<rate>4</rate>
+		<usage_percentage>40</usage_percentage>
+		<latency>30</latency>
+		<container_size>400</container_size>
+		<request_size>300</request_size>
+		<results_size>100</results_size>
+		<task_length>4000</task_length>
+	</application>
+</applications>

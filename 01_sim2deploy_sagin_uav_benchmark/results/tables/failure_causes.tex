@@ -1,0 +1,16 @@
+\begin{table*}
+\centering
+\small
+\caption{Failure-rate decomposition by architecture as a fraction of generated tasks.}
+\label{tab:p1-causes}
+\begin{tabular}{lccccccc}
+\toprule
+Architecture & Deadline & Mobility & Device death & Resources & Dependency & No destination & Unresolved \\
+\midrule
+ALL & 0.348 & 0.003 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 \\
+EDGE\_AND\_CLOUD & 0.879 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 \\
+EDGE\_ONLY & 0.879 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Each row is the mean over the ten seeds of that architecture in the scale grid. Columns plus the success ratio leave an Unresolved remainder for tasks still in flight at the horizon.\par}
+\end{table*}

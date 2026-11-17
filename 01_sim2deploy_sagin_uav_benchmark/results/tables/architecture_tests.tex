@@ -1,0 +1,17 @@
+\begin{table*}
+\centering
+\small
+\caption{Architecture effect against edge-only placement (10 seeds, Mann--Whitney $U$).}
+\label{tab:p1-tests}
+\begin{tabular}{lcccccc}
+\toprule
+Metric & Control & Treatment & Difference & 95\% CI & Cliff's $\delta$ \\
+\midrule
+Success & 0.121 & 0.648 & 0.528$^{***}$ & [0.515, 0.541] & 1.00 \\
+p95 delay (s) & 0.299 & 1.349 & 1.050$^{***}$ & [0.983, 1.113] & 1.00 \\
+Wh/success & 0.131 & 0.024 & -0.107$^{***}$ & [-0.121, -0.093] & -1.00 \\
+WAN (s) & 0.000 & 9.028 & 9.028$^{***}$ & [8.038, 10.010] & 1.00 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Holm--Bonferroni adjusted: $^{*}p<0.05$, $^{**}p<0.01$, $^{***}p<0.001$. CI = bootstrap 95\% confidence interval of the difference.\par}
+\end{table*}

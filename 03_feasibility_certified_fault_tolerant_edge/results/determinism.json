@@ -1,0 +1,22 @@
+{
+  "match": true,
+  "values": [
+    {
+      "Tasks successfully executed": 1806,
+      "Number of generated tasks": 2892,
+      "Average execution delay (s)": 0.1377,
+      "Tasks failed (delay)": 760
+    },
+    {
+      "Tasks successfully executed": 1806,
+      "Number of generated tasks": 2892,
+      "Average execution delay (s)": 0.1377,
+      "Tasks failed (delay)": 760
+    }
+  ],
+  "job": {
+    "seed": 1,
+    "failure_intensity": 10.0,
+    "policy": "naive"
+  }
+}

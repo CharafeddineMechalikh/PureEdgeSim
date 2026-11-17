@@ -1,0 +1,19 @@
+platform,property,value,source
+PureEdgeSim-6.1,execution_model,hybrid event loop with periodic orchestrator,pureedgesim core
+PureEdgeSim-6.1,placement_trigger,every update_interval seconds (default 1 s),settings/parameters.properties
+PureEdgeSim-6.1,time_resolution_parameter,update_interval,pureedgesim
+PureEdgeSim-6.1,task_model,Poisson arrivals per device class,_deps_pureedgesim_python
+PureEdgeSim-6.1,deadline_semantics,checked at result delivery,pureedgesim
+YAFS-3.1,execution_model,pure discrete event (SimPy),vendor/YAFS/src/yafs/core.py:1148
+YAFS-3.1,placement_trigger,per message via Selection.get_path,vendor/YAFS/src/yafs/selection.py:1
+YAFS-3.1,time_resolution_parameter,none built in; replication adds tick,vendor/YAFS/src/yafs/core.py:1148
+YAFS-3.1,resource_model,one DES server per core; instructions/IPT,vendor/YAFS/src/yafs/core.py:443
+YAFS-3.1,network_model,propagation + bytes/(BW*1e6),vendor/YAFS/src/yafs/core.py:292
+YAFS-3.1,seeding,random.seed per run,crosssim/yafs_impl/run_yafs.py:164
+EdgeCloudSim,execution_model,pure discrete event (CloudSim),vendor/EdgeCloudSim
+EdgeCloudSim,placement_trigger,per task at generation,vendor/EdgeCloudSim/src/edu/boun/edgecloudsim/edge_orchestrator/BasicEdgeOrchestrator.java:89
+EdgeCloudSim,time_resolution_parameter,none (no global loop),vendor/EdgeCloudSim/src/edu/boun/edgecloudsim/edge_orchestrator/BasicEdgeOrchestrator.java:89
+EdgeCloudSim,deadline_semantics,application max delay at completion,vendor/EdgeCloudSim
+iFogSim2,execution_model,pure discrete event (CloudSim),upstream repository
+iFogSim2,placement_trigger,module placement (one-shot) plus app mapping,upstream repository
+iFogSim2,time_resolution_parameter,none (placement not periodic),upstream repository

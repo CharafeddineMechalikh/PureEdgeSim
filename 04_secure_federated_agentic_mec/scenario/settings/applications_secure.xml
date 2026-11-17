@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- Secure profile: PQC/HE/signature and secure aggregation overhead approximated -->
+	<application name="Federated_Update_Secure">
+		<type>Soft Real-time</type>
+		<rate>10</rate>
+		<usage_percentage>50</usage_percentage>
+		<latency>1.2</latency>
+		<container_size>1400</container_size>
+		<request_size>1100</request_size>
+		<results_size>220</results_size>
+		<task_length>14000</task_length>
+	</application>
+	<application name="Agentic_Coordination_Secure">
+		<type>Soft Real-time</type>
+		<rate>12</rate>
+		<usage_percentage>50</usage_percentage>
+		<latency>0.8</latency>
+		<container_size>1100</container_size>
+		<request_size>700</request_size>
+		<results_size>140</results_size>
+		<task_length>9000</task_length>
+	</application>
+</applications>

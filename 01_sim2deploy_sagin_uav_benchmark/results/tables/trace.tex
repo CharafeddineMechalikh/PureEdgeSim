@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Workload realism, one factor at a time: success ratio by architecture for the synthetic workload, the native trace replay, a rate-matched replay (same offered load) and a deadline-matched replay (same deadlines).}
+\label{tab:p1-trace}
+\begin{tabular}{lccc}
+\toprule
+workload & ALL & EDGE\_AND\_CLOUD & EDGE\_ONLY \\
+\midrule
+synthetic & 0.660 & 0.121 & 0.121 \\
+trace & 0.921 & 0.834 & 0.885 \\
+trace\_deadline & 0.560 & 0.333 & 0.333 \\
+trace\_rate & 0.948 & 0.856 & 0.908 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright All four arms use the same 1 s control interval, so the differences are workload properties, not temporal ones. The native trace contributes 781 requests inside the horizon; the rate-matched arm resamples 1,990 onto the same horizon, which is what rules load out.\par}
+\end{table}

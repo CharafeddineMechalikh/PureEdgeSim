@@ -1,0 +1,19 @@
+\begin{table*}
+\centering
+\small
+\caption{Nominal overhead (1x): every policy reaches high success, and the fidelity-weighted column is the same as the raw column because no policy sheds work yet.}
+\label{tab:p2-main}
+\begin{tabular}{lcccccc}
+\toprule
+Architecture & Policy & Success & Fid.-wtd. success & Mean delay (s) & p95 delay (s) & WAN (s) \\
+\midrule
+ALL & naive & 0.971 & 0.971 & 0.388 & 0.742 & 5.248 \\
+ALL & edge+fidelity & 0.991 & 0.991 & 0.346 & 0.480 & 0.000 \\
+ALL & aware & 0.991 & 0.991 & 0.346 & 0.480 & 0.000 \\
+EDGE\_AND\_CLOUD & naive & 0.977 & 0.977 & 0.362 & 0.480 & 8.268 \\
+EDGE\_AND\_CLOUD & edge+fidelity & 0.990 & 0.990 & 0.350 & 0.480 & 0.000 \\
+EDGE\_AND\_CLOUD & aware & 0.990 & 0.990 & 0.350 & 0.480 & 0.000 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright ALL architecture, 30 devices, 2,100 requests per run, mean of 10 seeds. Fid.-wtd. success is the mean of success x fidelity over requests.\par}
+\end{table*}

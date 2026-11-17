@@ -1,0 +1,37 @@
+\begin{table*}
+\centering
+\small
+\caption{Benchmark outcomes across architecture, algorithm and scale (mean of 10 seeds).}
+\label{tab:p1-scale}
+\begin{tabular}{llcccccc}
+\toprule
+Architecture & Algorithm & Devices & Success & p95 delay (s) & Wh/success & WAN (s) & n \\
+\midrule
+ALL & ROUND ROBIN & 20 & 0.691 & 1.485 & 0.042 & 4.565 & 10 \\
+ALL & ROUND ROBIN & 40 & 0.691 & 1.382 & 0.022 & 7.178 & 10 \\
+ALL & ROUND ROBIN & 60 & 0.632 & 1.610 & 0.017 & 5.340 & 10 \\
+ALL & ROUND ROBIN & 80 & 0.626 & 1.611 & 0.014 & 5.075 & 10 \\
+ALL & TRADE OFF & 20 & 0.652 & 1.068 & 0.044 & 9.573 & 10 \\
+ALL & TRADE OFF & 40 & 0.660 & 1.140 & 0.023 & 12.475 & 10 \\
+ALL & TRADE OFF & 60 & 0.619 & 1.196 & 0.017 & 14.404 & 10 \\
+ALL & TRADE OFF & 80 & 0.617 & 1.303 & 0.014 & 13.613 & 10 \\
+EDGE\_AND\_CLOUD & ROUND ROBIN & 20 & 0.121 & 1.264 & 0.237 & 30.761 & 10 \\
+EDGE\_AND\_CLOUD & ROUND ROBIN & 40 & 0.121 & 1.468 & 0.127 & 60.764 & 10 \\
+EDGE\_AND\_CLOUD & ROUND ROBIN & 60 & 0.121 & 1.747 & 0.090 & 91.492 & 10 \\
+EDGE\_AND\_CLOUD & ROUND ROBIN & 80 & 0.121 & 2.231 & 0.071 & 126.540 & 10 \\
+EDGE\_AND\_CLOUD & TRADE OFF & 20 & 0.121 & 1.193 & 0.237 & 27.307 & 10 \\
+EDGE\_AND\_CLOUD & TRADE OFF & 40 & 0.121 & 1.372 & 0.127 & 56.988 & 10 \\
+EDGE\_AND\_CLOUD & TRADE OFF & 60 & 0.121 & 1.612 & 0.090 & 83.685 & 10 \\
+EDGE\_AND\_CLOUD & TRADE OFF & 80 & 0.121 & 1.937 & 0.071 & 113.228 & 10 \\
+EDGE\_ONLY & ROUND ROBIN & 20 & 0.121 & 0.299 & 0.237 & 0.000 & 10 \\
+EDGE\_ONLY & ROUND ROBIN & 40 & 0.121 & 0.299 & 0.127 & 0.000 & 10 \\
+EDGE\_ONLY & ROUND ROBIN & 60 & 0.121 & 0.299 & 0.090 & 0.000 & 10 \\
+EDGE\_ONLY & ROUND ROBIN & 80 & 0.121 & 0.299 & 0.071 & 0.000 & 10 \\
+EDGE\_ONLY & TRADE OFF & 20 & 0.121 & 0.299 & 0.237 & 0.000 & 10 \\
+EDGE\_ONLY & TRADE OFF & 40 & 0.121 & 0.299 & 0.127 & 0.000 & 10 \\
+EDGE\_ONLY & TRADE OFF & 60 & 0.121 & 0.299 & 0.090 & 0.000 & 10 \\
+EDGE\_ONLY & TRADE OFF & 80 & 0.121 & 0.299 & 0.071 & 0.000 & 10 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright All runs: 5 simulated minutes, realistic network model, 95\% bootstrap CIs in Fig.~\ref{fig:p1-scale}.\par}
+\end{table*}

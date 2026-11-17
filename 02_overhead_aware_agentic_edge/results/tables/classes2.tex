@@ -1,0 +1,37 @@
+\begin{table*}
+\centering
+\scriptsize
+\caption{Per-class success and executed fidelity inside the factorial (mean over seeds).}
+\label{tab:p2-classes2}
+\begin{tabular}{lccccc}
+\toprule
+Overhead & Arm & RAG (0.8 s) success & RAG (0.8 s) fid. & Control (0.25 s) success & Control (0.25 s) fid. \\
+\midrule
+1$\times$ & naive & 0.992 & 1.000 & 0.944 & 1.000 \\
+1$\times$ & naive$+$fid. & 0.992 & 1.000 & 0.944 & 1.000 \\
+1$\times$ & edge & 1.000 & 1.000 & 0.968 & 1.000 \\
+1$\times$ & edge$+$fid. & 1.000 & 1.000 & 0.968 & 1.000 \\
+1$\times$ & joint & 1.000 & 1.000 & 0.968 & 1.000 \\
+1$\times$ & joint$+$fid. & 1.000 & 1.000 & 0.968 & 1.000 \\
+1.5$\times$ & naive & 0.995 & 1.000 & 0.000 & 1.000 \\
+1.5$\times$ & naive$+$fid. & 0.996 & 0.993 & 0.371 & 0.685 \\
+1.5$\times$ & edge & 1.000 & 1.000 & 0.000 & 1.000 \\
+1.5$\times$ & edge$+$fid. & 1.000 & 0.995 & 0.491 & 0.742 \\
+1.5$\times$ & joint & 1.000 & 1.000 & 0.000 & 1.000 \\
+1.5$\times$ & joint$+$fid. & 1.000 & 0.995 & 0.491 & 0.742 \\
+2$\times$ & naive & 0.000 & 1.000 & 0.000 & 1.000 \\
+2$\times$ & naive$+$fid. & 0.375 & 0.688 & 0.374 & 0.687 \\
+2$\times$ & edge & 0.000 & 1.000 & 0.000 & 1.000 \\
+2$\times$ & edge$+$fid. & 0.500 & 0.750 & 0.491 & 0.742 \\
+2$\times$ & joint & 0.000 & 1.000 & 0.000 & 1.000 \\
+2$\times$ & joint$+$fid. & 0.500 & 0.750 & 0.491 & 0.742 \\
+3$\times$ & naive & 0.000 & 1.000 & 0.000 & 1.000 \\
+3$\times$ & naive$+$fid. & 0.365 & 0.528 & 0.385 & 0.456 \\
+3$\times$ & edge & 0.000 & 1.000 & 0.000 & 1.000 \\
+3$\times$ & edge$+$fid. & 0.396 & 0.537 & 0.409 & 0.530 \\
+3$\times$ & joint & 0.000 & 1.000 & 0.000 & 1.000 \\
+3$\times$ & joint$+$fid. & 0.396 & 0.554 & 0.409 & 0.530 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright The control class has the tighter deadline (0.25 s) and is the one the ladder has to shed work for.\par}
+\end{table*}

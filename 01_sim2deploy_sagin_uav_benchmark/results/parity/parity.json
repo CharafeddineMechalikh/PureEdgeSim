@@ -1,0 +1,58 @@
+{
+  "available": true,
+  "structural_match": false,
+  "workload_match": true,
+  "success_gap_pp": 4.703517587939698,
+  "max_seed_gap_pp": 12.864321608040207,
+  "java_success_mean": 0.6186934673366834,
+  "python_success_mean": 0.6657286432160804,
+  "max_relative_difference": 0.9454999999999999,
+  "relative_differences": {
+    "generated": 0.0,
+    "success": 0.17462482946793997,
+    "delay_failures": 0.2963464140730717,
+    "mobility_failures": 0.9024390243902439,
+    "energy": 0.004731402912140522,
+    "avg_delay": 0.019527235354573427,
+    "wan": 0.9454999999999999,
+    "traffic": NaN
+  },
+  "distribution_p_value": 0.42063492063492064,
+  "distribution_effect_size": -0.36,
+  "java_row": {
+    "generated": 1990,
+    "success": 1210,
+    "delay_failures": 739,
+    "mobility_failures": 41,
+    "energy": 30.287,
+    "avg_delay": 0.2919,
+    "wan": 208.0,
+    "traffic": null,
+    "csv": "D:\\Charef\\doctorat\\Work folder\\PureEdgeSim\\01_sim2deploy_sagin_uav_benchmark\\results\\parity\\java\\2026-11-16_10-41-48\\Sequential_simulation.csv"
+  },
+  "python_row": {
+    "generated": 1990,
+    "success": 1466,
+    "delay_failures": 520,
+    "mobility_failures": 4,
+    "energy": 30.1437,
+    "avg_delay": 0.2862,
+    "wan": 11.336,
+    "traffic": 780.0
+  },
+  "java_success_ratio": [
+    0.6080402010050251,
+    0.6010050251256281,
+    0.6251256281407035,
+    0.7321608040201005,
+    0.5271356783919598
+  ],
+  "python_success_ratio": [
+    0.7366834170854272,
+    0.6060301507537689,
+    0.6351758793969849,
+    0.7628140703517587,
+    0.5879396984924623
+  ],
+  "note": "Workload parity means both ports generate the same number of tasks for a seed. Distributional parity is a five-seed Mann--Whitney test of the success ratio at alpha=0.05. Structural parity additionally requires a mean success gap <= 5 pp and identical non-zero failure categories. Exact numeric equality is not expected: the ports use different RNG streams, and tier usage diverges materially (WAN time in particular), so per-seed gaps of up to 13 pp occur."
+}

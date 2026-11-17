@@ -1,0 +1,27 @@
+\begin{table*}[t]
+\centering
+\footnotesize
+\caption{Calibrated post-quantum and privacy-preserving security profiles.
+Compute and payload are a multiplier plus a fixed per-message cost; container is
+a multiplier on the application image; defence gives the integrity,
+confidentiality and privacy factors of Section~\ref{sec:model}. Sources are
+given per row.}
+\label{tab:p4-crypto}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}l l l l c c l@{}}
+\toprule
+Level & Compute & Payload & Container & Handshake (s) & Defence (I/C/P) & Source\\
+\midrule
+L0 & 1.00x + 0 MI & 1.00x + 0.0 kB & 1.00x & 0.000 & 0.00/0.00/0.00 & ---\\
+L1 & 1.08x + 450 MI & 1.04x + 5.2 kB & 1.05x & 0.002 & 0.55/0.05/0.10 & \cite{fips204,wang2026craft}\\
+L2 & 1.24x + 1150 MI & 1.22x + 12.0 kB & 1.15x & 0.006 & 0.72/0.92/0.45 & \cite{fips203,fips204,sammartino2026qfe}\\
+L3 & 1.55x + 2600 MI & 1.65x + 28.0 kB & 1.32x & 0.014 & 0.85/0.97/0.86 & \cite{cheon2017ckks,wang2026craft}\\
+L4 & 1.85x + 4200 MI & 2.05x + 45.0 kB & 1.55x & 0.022 & 0.96/0.99/0.95 & \cite{bonawitz2017secagg,sammartino2026qfe}\\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright
+I/C/P = integrity (poisoning), confidentiality (eavesdropping) and privacy
+(membership-inference) defence factors. L1 is ML-DSA-65; L2 is ML-KEM-768 with
+ML-DSA-65 or CSIDH-512 framing; L3 adds CKKS approximate HE at $N=2^{13}$; L4
+adds pairwise-masked secure aggregation with norm and cosine clipping.\par}
+\end{table*}

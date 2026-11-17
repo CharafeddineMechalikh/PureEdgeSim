@@ -1,0 +1,13 @@
+Overhead,Policy,Class,Success,Mean fid.
+1.5,aware,Control reasoning,0.495,0.7435555555555555
+1.5,aware,RAG inference,1.0,0.9949999999999999
+1.5,edge,Control reasoning,0.495,0.7435555555555555
+1.5,edge,RAG inference,1.0,0.9949999999999999
+1.5,naive,Control reasoning,0.0,1.0
+1.5,naive,RAG inference,0.9949166666666667,1.0
+2.0,aware,Control reasoning,0.495,0.7435555555555555
+2.0,aware,RAG inference,0.4996666666666666,0.7501666666666666
+2.0,edge,Control reasoning,0.495,0.7435555555555555
+2.0,edge,RAG inference,0.4996666666666666,0.7501666666666666
+2.0,naive,Control reasoning,0.0,1.0
+2.0,naive,RAG inference,0.0,1.0

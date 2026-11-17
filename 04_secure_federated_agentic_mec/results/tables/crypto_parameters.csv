@@ -1,0 +1,6 @@
+level,compute,payload,container,handshake_s,integrity,confidentiality,privacy,source
+0,1.00x + 0 MI,1.00x + 0.0 kB,1.00x,0.0,0.0,0.0,0.0,Baseline (no cryptography)
+1,1.08x + 450 MI,1.04x + 5.2 kB,1.05x,0.002,0.55,0.05,0.1,"NIST FIPS 204 (2024); Wang et al. (arXiv:2610.27651, 2026)"
+2,1.24x + 1150 MI,1.22x + 12.0 kB,1.15x,0.006,0.72,0.92,0.45,"NIST FIPS 203/204 (2024); Sammartino (arXiv:2606.03611, 2026)"
+3,1.55x + 2600 MI,1.65x + 28.0 kB,1.32x,0.014,0.85,0.97,0.86,"Cheon et al. (ASIACRYPT 2017); Wang et al. CRAFT (arXiv:2610.27651, 2026)"
+4,1.85x + 4200 MI,2.05x + 45.0 kB,1.55x,0.022,0.96,0.99,0.95,"Bonawitz et al. (ACM CCS 2017); Sammartino (arXiv:2606.03611, 2026)"

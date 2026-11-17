@@ -1,0 +1,39 @@
+{
+  "criteria": {
+    "security_levels_runnable": {
+      "passed": true,
+      "detail": "Executed policies: ['adaptive', 'level0', 'level1', 'level2', 'level3', 'level4']."
+    },
+    "adaptive_performance": {
+      "passed": true,
+      "detail": "Adaptive preserves 100.8% of baseline throughput while cutting L4 delay to 49.9%."
+    },
+    "attack_reduction": {
+      "passed": true,
+      "detail": "Adaptive reduces composite attack success by 69.6% vs L0."
+    },
+    "parameter_credibility": {
+      "passed": true,
+      "detail": "L4 delay overhead +107.9%, byte amplification 2.06x."
+    },
+    "provenance": {
+      "passed": true,
+      "detail": "Cryptographic parameter table with NIST FIPS 203/204, CKKS, and SecAgg sources generated."
+    },
+    "statistical_support": {
+      "passed": true,
+      "detail": "10 seeds per configuration with 95% bootstrap CIs."
+    },
+    "reproducibility": {
+      "passed": true,
+      "detail": "Two runs of the same seed produced identical outputs."
+    },
+    "honest_claims": {
+      "passed": true,
+      "detail": "Paper explicitly separates modeled cryptographic overhead from formal security proofs."
+    }
+  },
+  "passed": 8,
+  "total": 8,
+  "all_passed": true
+}

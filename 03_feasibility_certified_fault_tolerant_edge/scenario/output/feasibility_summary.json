@@ -1,0 +1,83 @@
+{
+  "scenario": "feasibility_certified_fault_tolerant_edge",
+  "rows": [
+    {
+      "architecture": "EDGE_ONLY",
+      "algorithm": "TRADE_OFF",
+      "generated": 2892,
+      "success": 1812,
+      "not_executed": 0,
+      "failed_delay": 1080,
+      "failed_mob": 0,
+      "failed_dead": 0,
+      "failed_dep": 0,
+      "avg_delay": 0.1106,
+      "energy_wh": 17.1277
+    },
+    {
+      "architecture": "EDGE_ONLY",
+      "algorithm": "ROUND_ROBIN",
+      "generated": 2892,
+      "success": 1812,
+      "not_executed": 0,
+      "failed_delay": 1080,
+      "failed_mob": 0,
+      "failed_dead": 0,
+      "failed_dep": 0,
+      "avg_delay": 0.1106,
+      "energy_wh": 17.1277
+    },
+    {
+      "architecture": "EDGE_AND_CLOUD",
+      "algorithm": "TRADE_OFF",
+      "generated": 2892,
+      "success": 1794,
+      "not_executed": 0,
+      "failed_delay": 1098,
+      "failed_mob": 0,
+      "failed_dead": 0,
+      "failed_dep": 0,
+      "avg_delay": 0.1106,
+      "energy_wh": 17.3455
+    },
+    {
+      "architecture": "EDGE_AND_CLOUD",
+      "algorithm": "ROUND_ROBIN",
+      "generated": 2892,
+      "success": 1783,
+      "not_executed": 0,
+      "failed_delay": 1109,
+      "failed_mob": 0,
+      "failed_dead": 0,
+      "failed_dep": 0,
+      "avg_delay": 0.1106,
+      "energy_wh": 17.398
+    },
+    {
+      "architecture": "ALL",
+      "algorithm": "TRADE_OFF",
+      "generated": 2892,
+      "success": 1578,
+      "not_executed": 0,
+      "failed_delay": 1314,
+      "failed_mob": 0,
+      "failed_dead": 0,
+      "failed_dep": 0,
+      "avg_delay": 0.132,
+      "energy_wh": 16.7149
+    },
+    {
+      "architecture": "ALL",
+      "algorithm": "ROUND_ROBIN",
+      "generated": 2892,
+      "success": 1735,
+      "not_executed": 0,
+      "failed_delay": 1157,
+      "failed_mob": 0,
+      "failed_dead": 0,
+      "failed_dep": 0,
+      "avg_delay": 0.1238,
+      "energy_wh": 16.7549
+    }
+  ]
+}

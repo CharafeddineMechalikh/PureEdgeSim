@@ -1,0 +1,21 @@
+\begin{table*}
+\centering
+\scriptsize
+\caption{Mean contribution of each objective term to the chosen node's score, in milliseconds of predicted completion time.}
+\label{tab:p2-objective}
+\begin{tabular}{lccccccc}
+\toprule
+Overhead & Placement & Delay & Energy & Container & Spread & Energy share & Flips \\
+\midrule
+1$\times$ & edge$+$fid. & 243.123 & 0.155 & 20.000 & 114.883 & 0.001 & 0.000 \\
+1$\times$ & joint$+$fid. & 243.123 & 0.155 & 20.000 & 114.883 & 0.001 & 0.000 \\
+1.5$\times$ & edge$+$fid. & 128.797 & 0.082 & 20.000 & 114.938 & 0.001 & 0.000 \\
+1.5$\times$ & joint$+$fid. & 128.797 & 0.082 & 20.000 & 114.938 & 0.001 & 0.000 \\
+2$\times$ & edge$+$fid. & 329.759 & 0.210 & 20.000 & 114.842 & 0.001 & 0.000 \\
+2$\times$ & joint$+$fid. & 329.759 & 0.210 & 20.000 & 114.842 & 0.001 & 0.000 \\
+3$\times$ & edge$+$fid. & 256.054 & 0.115 & 20.000 & 171.717 & 0.000 & 0.000 \\
+3$\times$ & joint$+$fid. & 277.374 & 0.118 & 20.000 & 171.727 & 0.000 & 0.000 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright A term that never exceeds the spread of the score cannot change a decision; the flip column counts the decisions the whole objective changed relative to the delay-only rule.\par}
+\end{table*}
