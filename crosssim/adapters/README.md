@@ -51,7 +51,19 @@ Evidence already gathered:
 
 * vendored at commit `5f68d39`; 445 Java sources; prebuilt classes in `build/`;
   dependency jars in `jars/` (including `jars/commons-math3-3.5/commons-math3-3.5.jar`).
-* Compiling a shipped example succeeds:
+* Compiling a shipped example succeeds (command below).
+* Native support confirmed by source: `AppEdge.java` (DAG edges),
+  `MicroserviceFogDevice.java`, `MobilityController.java`, `NetworkTopology.java`,
+  `PowerModel*.java`, `ModulePlacement*.java` (one-shot, **not** periodic).
+* `topologies/routerTopology` shows the JSON topology schema (nodes with
+  `mips`, `ram`, `upBw`, `downBw`, `level`; links with `latency`).
+
+**Blocker for exact common-trace replay:** iFogSim2 sensors generate tuples from
+distributions (`DeterministicDistribution`, Gaussian, etc.) rather than consuming
+an explicit arrival timestamp list. Replaying the exact `trace_s*.csv` arrivals
+therefore needs a custom sensor/tuple generator in the platform, not only a
+config adapter. This is the concrete next implementation task; it has not been
+done, and no iFogSim2 result is reported.
 
 ```powershell
 $cp = "build;jars\commons-math3-3.5\commons-math3-3.5.jar;" +

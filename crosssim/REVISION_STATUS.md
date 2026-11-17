@@ -55,13 +55,16 @@ generator). Tables: `crosssim/tables/common_level_b.tex`,
 * Simulator × interval, × architecture, × workload, × infrastructure interactions.
 * Cross-port audit kept explicitly separate from cross-simulator validation.
 
-## Phase 4 — manuscript restructure (not started)
+## Phase 4 — manuscript restructure (in progress)
 
-* Title/abstract rewritten only after results exist.
-* ~9 grouped figures, 10–12 main tables; detail to supplementary material.
-* Discussion organised around temporal artefacts, application characteristics,
-  infrastructure/deployment, simulator differences, practical recommendations.
-* Conclusion answering RQ1–RQ5 with explicit generalisation boundaries.
+Done: title and scope updated; RQ1–RQ5 added to the introduction; six model
+figures (application, topology, deployments, framework, calibration workflow,
+orchestrator) inserted; a common-scenario cross-simulator results subsection
+added with `common_level_b.tex`; abstract, contributions, discussion, threats and
+conclusion revised to answer the RQs and to scope the iFogSim2/workflow limits.
+
+Pending: table rationalisation from 28 to ~10–12 main tables with supplementary
+material; workflow-arm execution; iFogSim2 adapter.
 
 ## Honest statement
 
