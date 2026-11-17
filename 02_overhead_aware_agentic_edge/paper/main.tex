@@ -745,6 +745,17 @@ functional. Table~\ref{tab:p2-ablation2} says they do not: all five arms score
 $0.851$ at $1.5\times$, $0.662$ at $2\times$, and $0.400$--$0.408$ at $3\times$.
 The largest spread anywhere below saturation is $0.8$ points.
 
+Because those ablations remove a term entirely, we also swept the two scalar
+weights over a wide range at $2\times$ overhead ($100$ runs).
+Table~\ref{tab:p2-weights} shows success and the number of decisions are exactly
+flat for $\lambda\in[0,2]$ and $\beta\in[0,2]$ --- a hundred-fold range. This is
+direct evidence that the terms cannot reorder the candidate hosts in this
+configuration, rather than an inference from a single parameter choice. It is
+still a statement about this workload and tier capacities: a different energy
+model or a cold-start regime could make either weight decisive.
+
+\input{../results/tables/weights.tex}
+
 \input{../results/tables/ablation2.tex}
 
 The mechanism is visible in two counters. The cache term changes the selected

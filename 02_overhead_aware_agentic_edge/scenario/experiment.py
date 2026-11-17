@@ -268,6 +268,26 @@ def grids() -> dict[str, list[dict]]:
         job["fidelity"] = job["policy"] != "naive"
         cp_split.append(job)
 
+    # Objective-weight sensitivity (reviewer request): vary the energy weight,
+    # container penalty and cache-awareness switch one at a time.
+    weights = []
+    for job in expand_grid(
+            {**base, "experiment": "weights", "compute_multiplier": 2.0,
+             "payload_multiplier": 2.0, "policy": "aware", "fidelity": True},
+            {"energy_weight": (0.0, 0.02, 0.1, 0.5, 1.0, 2.0),
+             "seed": seeds}):
+        job["container_penalty_s"] = 0.02
+        job["cache_aware"] = True
+        weights.append(job)
+    for value in (0.0, 0.1, 0.5, 2.0):
+        for seed in seeds:
+            job = {"experiment": "weights", "policy": "aware", "fidelity": True,
+                   "compute_multiplier": 2.0, "payload_multiplier": 2.0,
+                   "energy_weight": 0.02, "container_penalty_s": value,
+                   "cache_aware": True, "seed": seed,
+                   "architecture": "EDGE_AND_CLOUD", "devices": 30}
+            weights.append(job)
+
     # Capacity-ratio experiment (reviewer request): vary edge capacity against a
     # fixed cloud, at two stress levels.
     capacity = []
@@ -353,7 +373,7 @@ def grids() -> dict[str, list[dict]]:
             "fidelity": fidelity, "energy": energy, "ablation": ablation,
             "factorial": factorial, "cp_split": cp_split, "fidelity_gamma": fidelity_gamma,
             "ablation2": ablation2, "tiers": tiers, "horizon": horizon,
-            "cp_fine": cp_fine, "capacity": capacity}
+            "cp_fine": cp_fine, "capacity": capacity, "weights": weights}
 
 
 # The published grids keep their original folder naming (job ids and resume keys
@@ -371,6 +391,7 @@ NAME_KEYS = {
     "cp_split": COMPACT_KEYS,
     "cp_fine": COMPACT_KEYS,
     "capacity": COMPACT_KEYS + ("edge_capacity_factor", "cloud_capacity_factor"),
+    "weights": COMPACT_KEYS + ("energy_weight", "container_penalty_s"),
     "fidelity_gamma": COMPACT_KEYS,
     "ablation2": COMPACT_KEYS,
     "tiers": COMPACT_KEYS,
