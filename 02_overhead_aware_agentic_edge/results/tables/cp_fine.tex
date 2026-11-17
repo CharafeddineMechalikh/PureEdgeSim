@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Refined compute/payload feasibility map (aware policy, 10 seeds). Success changes only where a deadline boundary is crossed.}
+\label{tab:p2-cp-fine}
+\begin{tabular}{lccccc}
+\toprule
+Compute & 1$\times$ & 1.25$\times$ & 1.5$\times$ & 1.75$\times$ & 2$\times$ \\
+\midrule
+1.300 & 0.990 & 0.990 & 0.990 & 0.990 & 0.990 \\
+1.400 & 0.990 & 0.990 & 0.990 & 0.990 & 0.990 \\
+1.500 & 0.985 & 0.985 & 0.784 & 0.784 & 0.784 \\
+1.600 & 0.784 & 0.784 & 0.784 & 0.784 & 0.784 \\
+1.700 & 0.775 & 0.775 & 0.775 & 0.498 & 0.498 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Payload has no effect in most cells, but at 1.5x compute it moves success from 0.985 to 0.784 between p=1.25 and p=1.5; at 1.7x compute it drops from 0.775 to 0.498 between p=1.75 and p=2.0. This is a boundary-crossing interaction, not evidence that bytes are irrelevant in general.\par}
+\end{table}

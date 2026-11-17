@@ -173,6 +173,44 @@ instantiation (separate model).
   20 cells × 5 seeds; it reverses the placement null in the weak-edge regime and
   therefore bounds the claim instead of pretending to replicate it.
 
-Manuscript retitled to *When Does Joint Orchestration Matter?*; all new exhibits
-are `\input` from `results/tables/`. Build audit: 14 pages, no errors, no
-undefined references or citations. Acceptance: 24/24.
+Manuscript retitled to *When Does Joint Placement--Fidelity Optimization Matter?
+A Factorial Study of Agentic Edge Computing*. Build audit: 15 pages, no errors,
+no undefined references. Acceptance: 24/24.
+
+---
+
+## Round 3 — TMC pre-submission review (Phase 1 applied)
+
+**Scientific correctness first, as the reviewer required:**
+
+1. **Fidelity-selection inconsistency resolved.** The paper previously printed
+   a joint minimization over $(v,f)$ which, as the reviewer showed, would always
+   choose the lowest feasible fidelity. The implementation is a two-stage
+   lexicographic policy: select the highest fidelity for which some host meets
+   the deadline (Eq.~\ref{eq:fidelity-selection}), then rank hosts by
+   Eq.~\ref{eq:host-selection}. $f$ (selected level), $C(f)$ (executed cost
+   fraction) and $q(f)$ (retained quality, not modelled) are now separate;
+   $C(f)$ enters the feasibility test, which explains the cost-curve result.
+   Algorithm 1 now states the implemented procedure verbatim.
+2. **Numerical reconciliation.** `scenario/consistency_check.py` verifies every
+   headline against the raw CSVs. The 20-seed factorial ($0.496$ at $2\times$)
+   is authoritative; the 10-seed scaling grid ($0.498$) is labelled wherever it
+   appears. A dedicated authoritative-results table was added.
+3. **Statistics.** Two-sided power formula stated explicitly
+   ($2.80\times0.005/\sqrt{20}=0.0031$); TOST equivalence with a stated 1-point
+   margin added for the exact zero; partial $\eta^2$ separated from the marginal
+   decomposition.
+4. **Compute/payload.** The claim was weakened to "dominant in most cells, with
+   payload effects near boundaries" and a 250-run refined $5\times5$ lattice
+   (`cp_fine`) was executed; it shows threshold effects at $c=1.5$ and $c=1.7$.
+5. **Energy/payload calculations.** The battery-dependent mist-energy
+   accumulator in the vendored simulator is documented as an accounting
+   artifact; cross-battery energy-per-success is no longer interpreted.
+6. **Network model.** The communication term is defined as propagation-only in
+   the orchestrator's prediction, with the bandwidth-contention boundary stated.
+7. **RQs, title, terminology and overclaims** revised per the reviewer; RQ1--RQ5
+   are now answered explicitly in the conclusion.
+
+Still open (Phase 2/3 of the review): capacity-ratio sweep, realistic agentic
+workflow profiles, network-constrained experiments, real serving measurements,
+and full quality--computation calibration.

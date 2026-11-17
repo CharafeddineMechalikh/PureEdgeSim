@@ -262,6 +262,17 @@ def grids() -> dict[str, list[dict]]:
         job["fidelity"] = job["policy"] != "naive"
         cp_split.append(job)
 
+    # Refined compute/payload lattice around the 1.5x boundary (reviewer request).
+    cp_fine = []
+    for job in expand_grid(
+            {**base, "experiment": "cp_fine"},
+            {"policy": ("aware",),
+             "compute_multiplier": (1.3, 1.4, 1.5, 1.6, 1.7),
+             "payload_multiplier": (1.0, 1.25, 1.5, 1.75, 2.0),
+             "seed": seeds}):
+        job["fidelity"] = True
+        cp_fine.append(job)
+
     # 3. Nonlinear fidelity cost.  ``linear`` is the published C(f) = f; the
     # envelope arms use C(f) = 0.05 + 0.95 * f**gamma, i.e. a floor of 5 % of the
     # nominal work (the fixed cost of loading the model and emitting a token) and a
@@ -323,7 +334,8 @@ def grids() -> dict[str, list[dict]]:
     return {"main": main, "multiplier": multiplier, "rate": rate, "cache": cache,
             "fidelity": fidelity, "energy": energy, "ablation": ablation,
             "factorial": factorial, "cp_split": cp_split, "fidelity_gamma": fidelity_gamma,
-            "ablation2": ablation2, "tiers": tiers, "horizon": horizon}
+            "ablation2": ablation2, "tiers": tiers, "horizon": horizon,
+            "cp_fine": cp_fine}
 
 
 # The published grids keep their original folder naming (job ids and resume keys
@@ -339,6 +351,7 @@ NAME_KEYS = {
     "factorial": PUBLISHED_KEYS[:4] + ("payload_multiplier",) + PUBLISHED_KEYS[4:] +
                  ("container_penalty_s", "cache_aware"),
     "cp_split": COMPACT_KEYS,
+    "cp_fine": COMPACT_KEYS,
     "fidelity_gamma": COMPACT_KEYS,
     "ablation2": COMPACT_KEYS,
     "tiers": COMPACT_KEYS,

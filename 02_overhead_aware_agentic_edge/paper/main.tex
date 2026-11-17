@@ -28,8 +28,8 @@
 
 \begin{document}
 
-\title{When Does Joint Orchestration Matter? A Component Ablation of
-Fidelity Adaptation and Placement in Agentic Edge Computing}
+\title{When Does Joint Placement--Fidelity Optimization Matter? A Factorial
+Study of Agentic Edge Computing}
 
 \author{Anonymous Authors%
 \thanks{Manuscript prepared for review. Every table is generated from the
@@ -44,27 +44,37 @@ main result.}}
 Agentic services built on large language models execute chains of reasoning,
 tool calls and retrieval whose effective demand can exceed the nominal request
 several times over. A natural response is a joint orchestrator that selects, per
-task, both a fidelity level and a host. We ask when that joint design actually
-helps, using $2{,}620$ seeded runs of a three-tier edge deployment and a
-complete $3\times2$ placement-by-fidelity factorial. At $2\times$ overhead the
-unprotected policy serves nothing; adding only the fidelity ladder reaches
-$0.375$; adding a static edge tier reaches $0.496$; and the joint scorer reaches
-$0.496$ as well. The ladder supplies $76\%$ of the gain, the static tier $24\%$,
-and the adaptive scorer nothing. A three-way ANOVA gives partial
+task, both a reasoning-budget level and a host. We ask when that joint design
+actually helps, using $2{,}620$ seeded runs and a complete $3\times2$
+placement-by-fidelity factorial (20 seeds per cell, the authoritative result
+set). At $2\times$ overhead the unprotected policy serves nothing; adding only
+the fidelity ladder reaches $0.375$; adding a static edge tier reaches $0.496$;
+and the joint scorer reaches $0.496$ as well. Under the sequential marginal
+decomposition used here the ladder accounts for $76\%$ of the gain and the
+static tier for $24\%$, while the joint scorer adds nothing --- a result specific
+to the evaluated capacity configuration, not a universal attribution. The
+implemented policy is a two-stage procedure: keep the highest fidelity for which
+some host is deadline-feasible, then rank hosts by delay, energy and placement
+penalties; this preserves quality implicitly and explains why the scheduler does
+not always choose the cheapest level. A three-way ANOVA gives partial
 $\eta^2=0.997$ for the ladder against $0.793$ for placement, with a large
-placement $\times$ ladder interaction ($\eta^2=0.736$): placement matters only
-when the ladder has made a request feasible. Separating the two overhead axes
-shows that compute, not payload, sets the boundary; replacing the linear
-fidelity cost with convex or concave envelopes leaves success unchanged but
-moves executed quality from $0.46$ to $0.68$ at $3\times$. With a real cache and
-energy term present, removing either changes nothing, and the cloud receives
-$0\%$ of successful requests. Quality-weighted success is $0.248$ at $2\times$
-against a raw $0.496$. Finally, an ablation in our LLM-serving simulator
-(Docket) reverses the placement null when the edge tier is weak, locating the
-boundary of the result. The contribution is a regime map and a measurement
-protocol: report the factorial, price fidelity, and state the tier capacity
-before claiming that joint orchestration is necessary.
+placement $\times$ ladder interaction ($\eta^2=0.736$). Compute overhead is the
+dominant source of infeasibility in most tested cells, although payload can
+cause substantial deadline violations near a feasibility boundary. Changing the
+assumed fidelity-cost curve leaves success approximately unchanged but moves
+executed fidelity from $0.46$ to $0.68$ at $3\times$; these are modelled
+quantities, not measured answer accuracy. Under the simulated cache-hit model the
+cache, energy and container terms do not change decisions, and the cloud
+receives no successful requests in the principal configuration. Fidelity-weighted
+success is $0.248$ at $2\times$ against a raw $0.496$. A second, author-developed
+serving simulator (Docket) shows that placement becomes essential when the edge
+tier is weak and the cloud much faster. The contribution is a capacity-dependent
+interpretation --- the value of joint orchestration depends on the available
+capacity gap --- together with a measurement protocol: report the crossed
+factorial, separate computational cost from retained quality, and state tier
+capacities before claiming that joint orchestration is necessary.
 \end{abstract}
+
 
 \begin{IEEEkeywords}
 Agentic edge computing, LLM serving, fidelity scaling, component ablation,
@@ -87,10 +97,28 @@ and proposes orchestration schemes to absorb it.
 
 The design space has two independent knobs. The first is \emph{where} a request
 runs: the placement decision. The second is \emph{how much} of the request runs:
-a fidelity or reasoning-budget reduction that lowers compute and can bring an
-otherwise infeasible request inside its deadline. A joint orchestrator uses both,
-scoring candidate (host, fidelity) pairs. The natural question, and the one this
-paper answers, is what each knob contributes.
+a reasoning-budget reduction that lowers compute and can bring an otherwise
+infeasible request inside its deadline. The natural question is what each knob
+contributes, and under which infrastructure conditions their combination becomes
+necessary.
+
+\subsection{Research questions}
+We separate five questions so that the experiments can answer them individually:
+\begin{description}
+\item[RQ1.] What are the individual contributions of fidelity adaptation and
+  placement to deadline success?
+\item[RQ2.] Is there an interaction between placement and fidelity adaptation?
+\item[RQ3.] Under what capacity conditions does joint placement become beneficial?
+\item[RQ4.] How does the assumed fidelity-cost relationship affect delivered
+  fidelity-weighted service?
+\item[RQ5.] Which overhead component determines the feasibility boundary, and
+  with what statistical confidence?
+\end{description}
+RQ1--RQ2 are answered by the crossed factorial and ANOVA, RQ3 by host-selection
+and the second simulator, RQ4 by the cost-curve sweep, and RQ5 by the
+compute/payload lattice and the paired statistical analysis. The contribution is
+experimental: we establish the conditions under which additional orchestration
+complexity is justified, rather than propose a novel scheduling algorithm.
 
 \subsection{The result}
 We implement six policies on the Python port of PureEdgeSim and evaluate them
@@ -121,9 +149,10 @@ takes for granted.
 \subsection{The metric problem}
 The second result is about measurement. Raw success counts a request served at
 $10\%$ fidelity the same as one served at full fidelity. When we weight each
-success by the fidelity it was executed at, the stressed-regime gains shrink by
-a factor of two to four: $0.498\to0.249$ at $2\times$ and $0.400\to0.100$ at
-$3\times$, with a mean fidelity of $0.747$ and $0.540$ respectively. Most of the
+success by the fidelity it was executed at, the stressed-regime gains in the
+10-seed scaling grid shrink by a factor of two to four: $0.498\to0.249$ at
+$2\times$ and $0.400\to0.100$ at $3\times$, with a mean fidelity of $0.747$ and
+$0.540$; the authoritative 20-seed factorial gives $0.496\to0.248$ at $2\times$. Most of the
 ``robustness'' is the heavy classes being shrunk until they fit. Any paper that
 reports raw success for a fidelity-enabled policy is reporting an upper bound on
 its own benefit, and we recommend the weighted metric as the primary one.
@@ -214,101 +243,183 @@ surrogate whose parameters are swept, and Section~\ref{sec:threats} records the
 directions in which a real stack would differ (prefill/decode asymmetry,
 KV-cache growth, non-linear fidelity scaling).
 
-\subsection{Fidelity ladder and its cost}
-The orchestrator may execute a request at one of four levels
-$f\in\{1.0,0.5,0.25,0.1\}$, scaling compute by $f$. Lower fidelity is faster
-and, in a deployment, less accurate. The baseline uses the linear surrogate
-$C(f)=f$; to test whether that choice is innocuous we sweep the family
+\subsection{Fidelity ladder, cost and quality}
+The orchestrator may execute a request at one of four \emph{reasoning-budget
+levels} $f\in\{1.0,0.5,0.25,0.1\}$. Three distinct quantities must be separated:
+\begin{description}
+\item[$f$] the selected level, i.e.\ the share of the requested reasoning trace
+  that the implementation elects to keep;
+\item[$C(f)$] the \emph{computational cost fraction} actually executed, which is
+  not generally equal to $f$;
+\item[$q(f)$] the \emph{retained application quality}, which is not modelled by
+  PureEdgeSim at all.
+\end{description}
+The executed instruction count is
 \begin{equation}
-C(f)=c_{\min}+(1-c_{\min})f^{\gamma},\qquad c_{\min}=0.05,
-\label{eq:gamma}
+  \tilde w_i(f) \;=\; \tilde w_i\, C(f),\qquad
+  C(f)=c_{\min}+(c_{\max}-c_{\min})\,f^{\gamma},
+  \label{eq:cost-curve}
 \end{equation}
-with $\gamma\in\{0.5,1,2\}$ plus the unshifted linear law. The floor $c_{\min}$
-is the fixed cost of loading a model and emitting at least one token, so the
-family changes only the \emph{shape}. Crucially, the simulator still does not map
-$f$ to answer accuracy: quality-weighted success is our accounting correction,
-and Section~\ref{sec:docket} uses a serving simulator with an explicit
-generated-token ratio to price it differently.
+with the baseline linear law $C(f)=f$ obtained from $c_{\min}=0,c_{\max}=1,\gamma=1$.
+The nonlinear family of Eq.~\eqref{eq:cost-curve} keeps $c_{\min}=0.05,c_{\max}=1$ and
+varies $\gamma\in\{0.5,1,2\}$, so it changes only the shape of the cost, not its
+range. Because $C(f)$ scales the work \emph{before} the feasibility test but
+$q(f)$ never enters the decision, changing $\gamma$ changes the executed work
+and the delivered fidelity-weighted success while leaving deadline success
+approximately unchanged --- exactly the behaviour reported in
+Section~\ref{sec:gamma}. Treating $f$, $C(f)$ and $q(f)$ as one quantity, as an
+earlier version of this paper did, makes that result appear contradictory.
 
-\paragraph{Why the two overhead axes are separate.}
-Equation~\eqref{eq:compute} charges the multiplier $c$ against the request's own
-context, whereas \eqref{eq:payload} charges $p$ against the bytes on the wire;
-only the former affects execution time when the network is not congested. We
-therefore move them independently in the `cp\_split` grid rather than assuming
-$p=c$.
+We stress that $q(f)$ is absent from the model: the simulator records
+\texttt{research\_fidelity} $=f$, not an answer-accuracy measurement. The metric
+we report is therefore \emph{fidelity-weighted success},
+$\mathrm{FWS}=N^{-1}\sum_i I_i^{\mathrm{success}} f_i$, and it is a proxy for
+delivered service, \emph{not} a measurement of LLM answer quality. A calibrated
+$q(f)$ would require real serving measurements; Section~\ref{sec:docket} uses a
+generated-token ratio as a step in that direction.
 
-\subsection{Objective}
-For a candidate node $v$, fidelity $f$ and task $i$,
+\subsection{Two-stage placement and fidelity policy}
+The implementation is a \emph{sequential lexicographic} policy, not a single
+joint minimization over $(v,f)$. At each decision it fixes the fidelity first
+and only then ranks hosts. This ordering is the implicit quality-preservation
+mechanism: the highest feasible level is always preferred, so a request is
+degraded only when the workload cannot otherwise meet its deadline.
+
+For an effective work $\tilde w_i$, a candidate host $v$ and a level $f$, the
+predicted quantities are
+\begin{align}
+  \hat D_i(v,f) &= \frac{\tilde w_i\,C(f)}{\mu_v}+Q_v+L_i(v),
+  \label{eq:delay}\\
+  \hat E_i(v,f) &= e_v\!\left(\hat D_i(v,f)\right),
+\end{align}
+where $\mu_v$ is the node's per-core MIPS, $Q_v$ the predicted queueing delay,
+$L_i(v)$ the network delay, and $e_v$ the energy evaluated over the predicted
+busy time.
+
+\textbf{Stage 1 --- fidelity selection (quality first).}
+With target $D_i^{\star}=(1-\delta)D_i$ and levels ordered from high to low,
 \begin{equation}
-\hat D_i(v,f)=\frac{f\tilde w_i}{\mu_v}+Q_v+L_i(v), \qquad
-\hat E_i(v,f)=e_v\bigl(\hat D_i(v,f)\bigr),
-\label{eq:objective}
+  f^{\star}=\max\Bigl\{f\in F:\ \min_{v\in V}\hat D_i(v,f)\le D_i^{\star}\Bigr\}.
+  \label{eq:fidelity-selection}
 \end{equation}
-where $\mu_v$ is the node throughput a task receives, $Q_v$ the queue delay,
-$L_i(v)$ the network delay, and $e_v$ the energy model evaluated over the
-predicted busy time (queueing included, which is deliberate: the node is busy
-for the whole interval). The score is
-\begin{equation}
-J_i(v,f)=\hat D_i(v,f)+\lambda\hat E_i(v,f)+\beta\,\mathbb{1}[c_v\not\ni i]
-\label{eq:cost}
-\end{equation}
-subject to $\hat D_i(v,f)\le(1-\delta)D_i$, where $\lambda=0.02$~Wh$^{-1}$
-converts energy to seconds, $\delta=0.15$ is the deadline margin, and
-$\beta=0.02$~s is the container penalty: the modelled cost of pulling an
-application image that the node does not hold. $\beta$ is a calibration, not a
-measurement; at $300$~Mb/s a $900$~kB image costs about $24$~ms, which is the
-order of magnitude it represents.
+The maximum in Eq.~\eqref{eq:fidelity-selection} is the quality-preservation
+term: it is equivalent to adding a lexicographic preference for larger $f$
+rather than a weighted penalty $\alpha(1-q(f))$, because no calibrated $q(f)$
+exists in this simulator. If no level is feasible, the policy falls back to
+$f_{\min}$ and the minimum-delay host.
 
-If no pair satisfies the deadline constraint, the orchestrator chooses the pair
-with the smallest predicted delay and accepts that the deadline will be missed.
-This fallback ignores $J$, so under overload the policy degrades to minimum-delay
-placement; that is a designed mode, and it is the mode that governs the $4\times$
-arrival-rate cells.
+\textbf{Stage 2 --- host selection at fixed $f^{\star}$.}
+With the fidelity fixed, the host minimizes
+\begin{equation}
+\begin{aligned}
+  v^{\star}=\arg\min_{v\in V}\Big[&
+    \hat D_i(v,f^{\star})+\lambda\hat E_i(v,f^{\star})\\
+    &+\beta\,\mathbb{1}[c_v\not\ni i]
+    +\kappa\,\mathbb{1}[\text{context moved}]\Big],
+\end{aligned}
+\label{eq:host-selection}
+\end{equation}
+where $\lambda=0.02$~Wh$^{-1}$ converts energy to seconds, $\delta=0.15$ is the
+deadline margin, $\beta=0.02$~s is the container-pull penalty and $\kappa$ prices
+moving a cache-hit request away from its cached context. In the fallback mode
+the last three terms are dropped and the minimum-delay host is used.
+
+Equation~\eqref{eq:host-selection} replaces the earlier joint objective. Had the
+policy actually minimized delay plus energy over $(v,f)$ as previously printed,
+reducing $f$ would always lower both terms whenever the container term is
+constant, and $f_{\min}$ would be selected systematically. The observed mean
+fidelities of $0.747$ at $2\times$ and approximately $0.540$ at $3\times$ are
+only consistent with the sequential policy above. Algorithm~\ref{alg:aware}
+states the implemented procedure verbatim.
+
+\begin{algorithm}[t]
+\caption{Sequential fidelity-then-host selection (implemented policy)}
+\label{alg:aware}
+\begin{algorithmic}[1]
+\Require task $i$, hosts $V$, levels $F$ ordered high to low, config
+\Ensure $(v^\ast,f^\ast)$
+\State $\tilde w_i,\tilde b_i \gets$ Eqs.~\eqref{eq:compute}--\eqref{eq:payload}
+\If{fidelity ladder disabled}
+  \State $f^\ast\gets 1$; $\text{feasible}\gets \min_v \hat D_i(v,1)\le D_i^\star$
+  \State \Return $\arg\min_v \hat D_i(v,1)$
+\EndIf
+\ForAll{$f\in F$}
+  \If{$\min_v \hat D_i(v,f)\le D_i^\star$} $f^\ast\gets f$; \textbf{break} \EndIf
+\EndFor
+\If{no $f$ feasible} $f^\ast\gets f_{\min}$;
+  \Return $\arg\min_v \hat D_i(v,f^\ast)$ \Comment{fallback: delay only}
+\EndIf
+\State $v^\ast\gets\arg\min_v\bigl[\hat D_i(v,f^\ast)+\lambda\hat E_i(v,f^\ast)
+  +\beta\mathbb{1}[c_v\not\ni i]+\kappa\mathbb{1}[\text{context moved}]\bigr]$
+\State \Return $(v^\ast,f^\ast)$
+\end{algorithmic}
+\end{algorithm}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.62\textwidth]{overhead_loop.png}
-\caption{Decision loop of the joint policy. The nominal request is inflated
-before any estimate is made; fidelity and placement are then chosen together.
-The ablation in Section~\ref{sec:ablation} asks which of these stages matters.}
+\caption{Decision loop of the implemented policy. Effective demand is computed
+first, fidelity is fixed by Eq.~\eqref{eq:fidelity-selection}, and only then is
+the host ranked by Eq.~\eqref{eq:host-selection}. The static edge baseline skips
+Stage~2 and uses a fixed host.}
 \label{fig:model}
 \end{figure*}
 
+\paragraph{Parameter provenance.}
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Model parameters and their provenance. All are design assumptions or
+calibrations, not measurements from a deployed system.}
+\label{tab:p2-params}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Parameter & Value & Source\\
+\midrule
+control messages $m$ & 3 & assumption\\
+per-message compute $w_c$ & 150~MI & assumption\\
+per-message payload $b_c$ & 0.5~kB & assumption\\
+compute cache saving $s_c$ & 0.25 & assumption\\
+payload cache saving $s_b$ & 0.70 & assumption\\
+deadline margin $\delta$ & 0.15 & assumption\\
+energy weight $\lambda$ & 0.02~Wh$^{-1}$ & calibration\\
+container penalty $\beta$ & 0.02~s & calibration\\
+fidelity levels $F$ & $\{1,0.5,0.25,0.1\}$ & design choice\\
+cost curve $c_{\min},c_{\max}$ & 0, 1 (baseline) & design choice\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Complexity}
-Per task the orchestrator evaluates $|V|\times|F|$ pairs with $|F|=4$ and
-$|V|\le33$, so at most $132$ estimates, each $\bigO(1)$ with cached queue and
-route state. The cost is four times the default policy's and is not measurable
-in wall-clock terms at this scale.
+Stage 1 evaluates at most $|V|$ predictions for each of $|F|$ levels ($4\times33=
+132$ worst case); Stage 2 evaluates a single ranking over $|V|$. Each prediction
+is $\bigO(1)$ with cached queue and route state, so the policy is at most four
+times the default policy's decision cost. Measured decision time is
+$0.150$--$0.518$~ms per call, three orders of magnitude below the deadlines it
+serves; we report it as a descriptive measurement rather than an estimate of a
+population mean.
 
-\begin{algorithm}[t]
-\caption{Joint placement and fidelity selection}
-\label{alg:aware}
-\begin{algorithmic}[1]
-\Require task $i$, candidates $V$, levels $F$, config $(c,p,m,\lambda,\beta,\delta)$
-\Ensure pair $(v^\ast,f^\ast)$
-\State $\tilde w_i\gets$ Eq.~\eqref{eq:compute};\quad $\tilde b_i\gets$ Eq.~\eqref{eq:payload}
-\State $best\gets\bot$;\quad $fallback\gets\bot$
-\ForAll{$v\in V$, $f\in F$}
-  \State $\hat D\gets f\tilde w_i/\mu_v+Q_v+L_i(v)$
-  \State $J\gets\hat D+\lambda e_v(\hat D)+\beta\,\mathbb{1}[c_v\not\ni i]$
-  \If{$\hat D\le(1-\delta)D_i$ \textbf{and} $J<J(best)$} $best\gets(v,f)$ \EndIf
-  \If{$fallback=\bot$ \textbf{or} $\hat D<\hat D(fallback)$} $fallback\gets(v,f)$ \EndIf
-\EndFor
-\State \Return $best$ if $best\neq\bot$, else $fallback$
-\end{algorithmic}
-\end{algorithm}
-
-% =========================================================================
 \section{Experimental Methodology}
 \label{sec:exp}
 
 \subsection{Simulator, workload and policies}
 Runs use the Python port of PureEdgeSim 6.1.0~\cite{mechalikh2021pureedgesim}
-with the realistic network model disabled (transfer time is the sum of link
-delays) and the default one-second control interval. Two application classes
-share the fleet (Table~\ref{tab:p2-workload}): a soft real-time RAG inference
-class and a hard real-time control-reasoning class. All policies run the same
-agentic workload; the earlier draft's baseline profile switch was removed.
+with the default one-second control interval. All policies run the same agentic
+workload; the earlier draft's baseline profile switch was removed.
+
+\paragraph{Communication model and its boundary.}
+The realistic network model is disabled. The communication term in the
+orchestrator's own prediction, Eq.~\eqref{eq:delay}, is
+$L_i(v)=\sum_{\ell\in\pi(v)}d_\ell$, the sum of per-link propagation delays on
+the route; it contains no explicit bandwidth-sharing term. The simulator's
+execution engine still charges request/result sizes to the links, which is why
+the payload sweep in Section~\ref{sec:cpsplit} can move success near a deadline
+boundary, but we have not isolated transmission from queueing in that effect.
+This abstraction is deliberate --- it separates placement and fidelity from
+network contention --- and it bounds the compute-versus-payload conclusion to an
+uncongested network. The simulator modifications are confined to
+\texttt{scenario/model.py} (task generator, overhead-aware orchestrator, cache
+and decision logging); the network model itself is untouched.
 
 \begin{table}[t]
 \centering
@@ -407,6 +518,38 @@ identical successes, energy and mean delay.
 % =========================================================================
 \section{Results}
 \label{sec:res}
+
+\subsection{Authoritative results and grid provenance}
+The principal factorial (20 seeds, $480$ runs) is the authoritative source for
+every headline number. Table~\ref{tab:p2-authoritative} restates it. Other grids
+use ten seeds and a different policy set; their small numerical differences are
+sampling and population differences, not inconsistencies, and are labelled
+wherever they appear.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Authoritative principal factorial: success ratio by overhead and arm,
+20 seeds per cell. `f+' denotes the enabled fidelity ladder. The 10-seed
+overhead-scaling grid reports $0.990/0.784/0.498/0.400$ for the same
+`joint+f' arm at $1/1.5/2/3\times$; we quote the factorial values everywhere in
+this paper.}
+\label{tab:p2-authoritative}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Overhead & default & default+f & edge & edge+f (=joint+f)\\
+\midrule
+$1\times$   & 0.972 & 0.972 & 0.986 & 0.986\\
+$1.5\times$ & 0.569 & 0.728 & 0.571 & 0.782\\
+$2\times$   & 0.000 & 0.375 & 0.000 & 0.496\\
+$3\times$   & 0.000 & 0.374 & 0.000 & 0.401\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The machine-generated audit \texttt{scenario/consistency\_check.py} verifies
+these values against \texttt{results/runs/factorial/raw\_runs.csv}; it is part of
+the released artifact.
 
 \subsection{Nominal overhead: everything works}
 \input{../results/tables/main.tex}
@@ -519,7 +662,7 @@ nothing on any seed at any level. Zero differences carry no test, which is why
 their confidence intervals are blank rather than degenerate.
 
 % -------------------------------------------------------------------------
-\subsection{The ablation: fidelity is necessary and sufficient}
+\subsection{Fidelity adaptation and static placement under stress}
 \label{sec:ablation}
 \input{../results/tables/ablation.tex}
 
@@ -679,25 +822,46 @@ The result is asymmetric. Holding payload at $1\times$, raising compute from
 $1\times$ to $3\times$ takes aware success from $0.990$ to $0.400$ and naive
 from $0.977$ to $0.000$. Holding compute fixed and raising payload from $1\times$
 to $3\times$ changes \emph{nothing} at $1\times$, $2\times$ or $3\times$ compute,
-and moves the $1.5\times$ cell by one step ($0.985$ to $0.784$) because that is
-where the request first crosses its deadline. Bytes are not the scarce resource
-in this network: the Wi-Fi access link is $1{,}300$~Mb/s and the WAN is charged
-on a small request. Any mechanism aimed at payload compression would be aimed at
-the wrong axis here.
+but moves the $1.5\times$ cell by one step ($0.985$ to $0.784$) because that is
+where the request first crosses its deadline. Compute is therefore the dominant
+source of infeasibility in most cells, but payload is not irrelevant: near a
+deadline boundary a 20-point success change is attributable to bytes alone.
+Consequently we do not claim that bytes are never scarce, only that they are not
+the binding constraint in the evaluated, uncongested network.
+
+To determine whether that step is a threshold phenomenon or a smooth interaction,
+we ran a refined $5\times5$ lattice around the boundary ($250$ runs,
+$c\in\{1.3,\ldots,1.7\}$, $p\in\{1,1.25,\ldots,2\}$).
+Table~\ref{tab:p2-cp-fine} and Figure~\ref{fig:cpfine} show discrete jumps at
+specific boundary crossings --- between $p=1.25$ and $1.5$ at $c=1.5$, and
+between $p=1.75$ and $2.0$ at $c=1.7$ --- while payload has no effect elsewhere.
+The interaction is threshold-like: once the feasible region is exhausted, a
+small additional payload crosses the deadline. A bandwidth-constrained network,
+which we did not model, could make payload matter throughout.
+
+\input{../results/tables/cp_fine.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f_cp_fine.pdf}
+\caption{Refined compute/payload feasibility map (aware policy, 10 seeds).
+Blank-free cells show a threshold structure rather than a smooth gradient.}
+\label{fig:cpfine}
+\end{figure}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{f10_cp_split.pdf}
 \caption{Success against compute multiplier for four independent payload
-multipliers. The four curves coincide except at one cell: compute sets the
-feasibility boundary.}
+multipliers. Curves coincide except at boundary cells; see the refined map in
+Figure~\ref{fig:cpfine}.}
 \label{fig:cpsplit}
 \end{figure}
 
 \subsection{The cost shape changes quality, not success}
 \label{sec:gamma}
 A linear fidelity cost is an assumption, not a fact. We replace it with the
-family of Eq.~\eqref{eq:gamma} and run the joint policy at three overhead levels
+family of Eq.~\eqref{eq:cost-curve} and run the joint policy at three overhead levels
 ($120$ runs). Table~\ref{tab:p2-gamma} reports success and mean executed fidelity
 in each cell.
 
@@ -754,19 +918,32 @@ Table~\ref{tab:p2-energy} reports no device deaths in any cell and success of
 $0.977$ (naive) and $0.990$ (joint) at every battery level. The energy term in
 the objective therefore has no boundary to react to in this scenario, which is
 consistent with the $0.06\%$ score share measured in Section~\ref{sec:ablation2}.
+We do \emph{not} interpret the energy-per-success column across battery levels:
+the vendored simulator's mist-energy accumulator depends on the configured
+initial battery (228, 144 and 3.4~Wh at 20, 50 and 100~Wh respectively) even
+though no device dies and the work performed is identical. That is an accounting
+property of the simulator, not an energy-efficiency result, and we report it as
+such rather than treating the metric as comparable across battery settings.
 
 \input{../results/tables/energy.tex}
 
 \subsection{Power and the exact null}
 \label{sec:power}
-The paired standard deviation of the ladder effect is $0.005$ at $2\times$, so
-twenty seeds give a minimum detectable paired difference of $0.003$ at
-$\alpha=0.05$ and $80\%$ power. Seven seeds would suffice for a one-point
-effect. The extra ten seeds in the two null-bearing grids are therefore not
-needed for power; they exist so that the exact zero between the joint and static
-policies cannot be dismissed as a small-sample failure to detect. The full
-calculation and the per-claim interpretation are in
-\texttt{results/POWER.md}.
+For a two-sided paired test at $\alpha=0.05$ and $80\%$ power the minimum
+detectable paired difference is
+$\mathrm{MDE}=(z_{0.975}+z_{0.80})\,s_d/\sqrt{n}
+=2.80\times0.005/\sqrt{20}=0.0031$. Seven seeds would suffice for a one-point
+effect. We therefore report $0.003$ as the resolution, not as a one-sided claim.
+
+The exact zero between the joint and static policies is evidence of identical
+outcomes in the tested configuration, not proof of general equivalence. We add a
+two one-sided tests (TOST) equivalence check with a practical margin of
+$\Delta=0.01$ (one percentage point): the paired difference is exactly zero on
+all twenty seeds, giving a bootstrap confidence interval of $[0,0]$, entirely
+inside $[-\Delta,\Delta]$. This supports \emph{practical equivalence in the
+evaluated regime} under a stated margin; it does not establish equivalence under
+other capacities or objectives. The full calculation and per-claim interpretation
+are in \texttt{results/POWER.md}.
 
 \subsection{Statistical summary}
 \input{../results/tables/policy_tests.tex}
@@ -907,26 +1084,31 @@ in Table~\ref{tab:p2-tests}. Exact zero differences carry no test.
 \section{Conclusion}
 \label{sec:concl}
 
-We built a joint overhead-aware orchestrator for agentic edge services, crossed
-its two decisions in a $480$-run factorial, and then removed its remaining
-components one at a time. At $2\times$ overhead the gain partitions into $76\%$
-fidelity shedding, $24\%$ static edge placement and $0\%$ joint scoring; the
-ladder's partial $\eta^2$ is $0.997$ against $0.793$ for placement, and the two
-factors interact at $\eta^2=0.736$. Compute, not payload, sets the feasibility
-boundary; the shape of the fidelity cost changes delivered quality by $22$ points
-without changing success; cache, energy and container terms cannot reorder a
-pick and never do; and the cloud receives no work. Raw success overstates the
-delivered service by a factor of two to four once fidelity is priced. An
-ablation in a second, serving-level simulator reverses the placement null when
-the edge tier is weak, which tells us the result is a regime and not a law.
+RQ1 is answered by the factorial: at $2\times$ overhead the sequential marginal
+decomposition assigns $76\%$ of the gain to fidelity adaptation, $24\%$ to static
+edge placement and $0\%$ to the joint scorer in the evaluated configuration; the
+ladder's partial $\eta^2$ is $0.997$ against $0.793$ for placement. RQ2 is
+answered by the large placement $\times$ ladder interaction ($\eta^2=0.736$):
+placement contributes only when fidelity has made a request feasible. RQ3 has a
+capacity-dependent answer: in the principal configuration the edge tier already
+has enough capacity after adaptation, so the cloud receives no successful
+requests and a second, author-developed serving simulator shows placement
+becoming essential when the edge is weak and the cloud much faster. RQ4 is
+answered by the cost-curve sweep --- the assumed $C(f)$ changes executed
+fidelity by about $22$ points while leaving success approximately unchanged ---
+and RQ5 by the compute/payload lattices, where compute dominates in most cells
+but payload triggers threshold effects at specific deadline boundaries. The
+utility of joint placement--fidelity optimization is therefore not intrinsic to
+the algorithm; it depends on workload demand, tier capacity and the
+quality--computation trade-off.
 
 The recommendation for the field is procedural. Report the crossed factorial
-with the ladder-only and strong static arms; price fidelity with a weighted
-metric and a cost curve; decompose the objective into magnitudes that can be
-compared with its spread; state the tier capacities that made the placement
-decision possible or impossible. Each of those costs one grid, and each would
-have changed the story this paper tells---which is exactly why they are worth
-requiring.
+with ladder-only and strong static arms and a stated decomposition order;
+separate computational cost $C(f)$ from retained quality $q(f)$ and label
+fidelity-weighted success as a proxy; report uncertainty, matched-seed tests and
+a practical equivalence margin for exact zeros; and state tier capacities before
+claiming that joint orchestration is necessary. Each costs one grid, and each
+would have changed the story this paper tells.
 
 \balance
 \bibliographystyle{IEEEtran}
