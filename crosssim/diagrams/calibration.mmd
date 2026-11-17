@@ -1,0 +1,16 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'serif','fontSize':'14px','lineColor':'#333333'}}}%%
+flowchart LR
+    D["1. Define application<br/>deadlines and DAG"] --> T["2. Configure simulator<br/>temporal resolution"]
+    T --> M["3. Measure timestamps<br/>release · decision · dispatch · execution"]
+    M --> R["4. Compute ρ = decision<br/>latency / deadline"]
+    R --> Q{"ρ ≤ 0.5?"}
+    Q -->|yes| OK["Experiment is<br/>temporally calibrated"]
+    Q -->|no| FIX["Refine the tick or<br/>scale the deadlines"]
+    FIX --> T
+
+    classDef inp fill:#eef5ff,stroke:#356
+    classDef ok fill:#e6f4e6,stroke:#383
+    classDef bad fill:#f4e6e6,stroke:#833
+    class D,T,M,R inp
+    class OK ok
+    class FIX bad

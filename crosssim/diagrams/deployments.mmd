@@ -1,0 +1,24 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'serif','fontSize':'14px','lineColor':'#333333'}}}%%
+flowchart LR
+    subgraph A["(a) EDGE_ONLY"]
+        A1["Mist<br/>EXCLUDED"]:::off
+        A2["Edge<br/>ELIGIBLE"]:::on
+        A3["Cloud<br/>EXCLUDED"]:::off
+    end
+    subgraph B["(b) EDGE_AND_CLOUD"]
+        B1["Mist<br/>EXCLUDED"]:::off
+        B2["Edge<br/>ELIGIBLE"]:::on
+        B3["Cloud<br/>ELIGIBLE"]:::on
+    end
+    subgraph C["(c) ALL"]
+        C1["Mist<br/>ELIGIBLE"]:::on
+        C2["Edge<br/>ELIGIBLE"]:::on
+        C3["Cloud<br/>ELIGIBLE"]:::on
+    end
+    subgraph D["(d) CLOUD_ONLY — reference"]
+        D1["Mist<br/>EXCLUDED"]:::off
+        D2["Edge<br/>EXCLUDED"]:::off
+        D3["Cloud<br/>ELIGIBLE"]:::on
+    end
+    classDef on fill:#e6f4e6,stroke:#383,color:#131
+    classDef off fill:#f4e6e6,stroke:#833,color:#313

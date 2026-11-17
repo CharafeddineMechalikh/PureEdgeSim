@@ -1,0 +1,26 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'serif','fontSize':'14px','lineColor':'#333333'}}}%%
+flowchart TB
+    subgraph EDGE["Edge / global control plane"]
+        MON["State monitor<br/>queue · CPU · links"]
+        ORCH["Global orchestrator<br/>triggered every Δ seconds"]
+        PLAN["Placement planner<br/>(host, fidelity) per task"]
+    end
+    subgraph DEV["Device plane"]
+        GEN["Task / workflow generator"]
+        Q["Local waiting queue"]
+        EXEC["Executor<br/>release → decision → dispatch → start"]
+    end
+
+    MON -->|"state at tick"| ORCH
+    ORCH -->|"decision for all waiting tasks"| PLAN
+    PLAN -->|"destination"| Q
+    GEN -->|"release"| Q
+    Q -->|"dispatch at next tick"| EXEC
+    EXEC -->|"result"| GEN
+
+    ORCH -.->|"network cost of<br/>state collection"| MON
+
+    classDef cp fill:#eef5ff,stroke:#356
+    classDef dp fill:#f7f3e8,stroke:#775
+    class MON,ORCH,PLAN cp
+    class GEN,Q,EXEC dp

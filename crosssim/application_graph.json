@@ -1,0 +1,46 @@
+{
+  "id": "uav_surveillance_v1",
+  "name": "UAV-assisted surveillance and telemetry aggregation",
+  "unit_system": {"time": "s", "compute": "MI", "data": "KB"},
+  "services": [
+    {"id": "S1", "name": "Data acquisition", "mi": {"C1": 500, "C2": 500, "C3": 500},
+     "input_kb": {"C1": 0, "C2": 0, "C3": 0},
+     "output_kb": {"C1": 50, "C2": 1500, "C3": 900},
+     "allowed_tiers": ["device", "edge"]},
+    {"id": "S2", "name": "Preprocess / decode", "mi": {"C1": 600, "C2": 3000},
+     "input_kb": {"C1": 50, "C2": 1500},
+     "output_kb": {"C1": 80, "C2": 400},
+     "allowed_tiers": ["device", "edge"]},
+    {"id": "S3", "name": "Feature extraction / inference", "mi": {"C2": 7000},
+     "input_kb": {"C2": 400}, "output_kb": {"C2": 120},
+     "allowed_tiers": ["edge", "cloud"]},
+    {"id": "S4", "name": "Event detection / decision", "mi": {"C1": 900, "C2": 1000},
+     "input_kb": {"C1": 80, "C2": 120}, "output_kb": {"C1": 20, "C2": 40},
+     "allowed_tiers": ["device", "edge", "cloud"]},
+    {"id": "S5", "name": "Aggregation and notification", "mi": {"C2": 500, "C3": 19500},
+     "input_kb": {"C2": 40, "C3": 20}, "output_kb": {"C2": 200, "C3": 200},
+     "allowed_tiers": ["edge", "cloud"]}
+  ],
+  "edges": [
+    {"from": "S1", "to": "S2", "classes": ["C1", "C2"]},
+    {"from": "S2", "to": "S4", "classes": ["C1"]},
+    {"from": "S2", "to": "S3", "classes": ["C2"]},
+    {"from": "S3", "to": "S4", "classes": ["C2"]},
+    {"from": "S4", "to": "S5", "classes": ["C2"]},
+    {"from": "S1", "to": "S5", "classes": ["C3"]}
+  ],
+  "workflows": [
+    {"class": "C1", "name": "control loop", "path": ["S1", "S2", "S4"],
+     "deadline_s": 0.2, "total_mi": 2000, "rate_per_min_per_device": 15},
+    {"class": "C2", "name": "video analytics", "path": ["S1", "S2", "S3", "S4", "S5"],
+     "deadline_s": 0.8, "total_mi": 12000, "rate_per_min_per_device": 10},
+    {"class": "C3", "name": "mission aggregation", "path": ["S1", "S5"],
+     "deadline_s": 60.0, "total_mi": 20000, "rate_per_min_per_device": 4}
+  ],
+  "checks": {
+    "C1_mi_sum": 2000,
+    "C2_mi_sum": 12000,
+    "C3_mi_sum": 20000,
+    "note": "Mi sums are asserted by common_trace.py at generation time."
+  }
+}

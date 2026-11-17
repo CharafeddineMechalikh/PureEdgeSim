@@ -1,0 +1,28 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'serif','fontSize':'14px','lineColor':'#333333'}}}%%
+flowchart TB
+    SPEC["Common specification<br/>application graph · workload trace<br/>infrastructure · deployment · metrics"]:::spec
+    SPEC --> TR["Shared trace<br/>common_trace.py<br/>arrivals · sizes · deadlines · DAG"]
+
+    TR --> P1["Adapter: PureEdgeSim<br/>Python + Java ports"]
+    TR --> IF["Adapter: iFogSim2<br/>AppEdge DAG · CloudSim"]
+    TR --> EC["Adapter: EdgeCloudSim<br/>per-task orchestrator"]
+    TR --> YA["Adapter: YAFS 3.1<br/>Selection + periodic tick"]
+
+    P1 --> CHECK["Scenario-equivalence checks<br/> arrivals · tasks · DAG edges · capacities"]
+    IF --> CHECK
+    EC --> CHECK
+    YA --> CHECK
+
+    CHECK --> T["Level B: temporal calibration<br/>tick × deadline × simulator"]
+    CHECK --> C["Level C: behavioural comparison<br/>architecture × algorithm × infrastructure"]
+
+    T --> MET["Common metrics<br/>task + workflow completion<br/>delay · dependency · energy · utilisation"]
+    C --> MET
+    MET --> AN["Cross-factor analysis<br/>simulator × interval × architecture"]
+
+    classDef spec fill:#eef5ff,stroke:#356
+    classDef ad fill:#f7f3e8,stroke:#775
+    classDef out fill:#f0f7ee,stroke:#474
+    class SPEC,TR spec
+    class P1,IF,EC,YA ad
+    class CHECK,T,C,MET,AN out

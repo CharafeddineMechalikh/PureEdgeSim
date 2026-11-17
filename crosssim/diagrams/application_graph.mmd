@@ -1,0 +1,28 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'serif','fontSize':'14px','lineColor':'#333333'}}}%%
+flowchart LR
+    S1["S1 Data acquisition<br/>500 MI<br/>device / edge"]
+    S2["S2 Preprocess / decode<br/>C1 600 · C2 3000 MI<br/>device / edge"]
+    S3["S3 Feature extraction<br/>7000 MI<br/>edge / cloud"]
+    S4["S4 Event detection<br/>C1 900 · C2 1000 MI<br/>any tier"]
+    S5["S5 Aggregation &amp; notification<br/>C2 500 · C3 19500 MI<br/>edge / cloud"]
+
+    S1 -->|"C1: 50 KB"| S2
+    S1 -->|"C2: 1500 KB"| S2
+    S2 -->|"C1: 80 KB"| S4
+    S2 -->|"C2: 400 KB"| S3
+    S3 -->|"C2: 120 KB"| S4
+    S4 -->|"C2: 40 KB"| S5
+    S1 -->|"C3: 900 KB"| S5
+
+    C1["C1 control loop<br/>0.20 s · 2000 MI"]
+    C2["C2 video analytics<br/>0.80 s · 12000 MI"]
+    C3["C3 aggregation<br/>60 s · 20000 MI"]
+    C1 -.-> S1
+    C2 -.-> S1
+    C3 -.-> S1
+
+    classDef inp fill:#eef5ff,stroke:#356
+    classDef svc fill:#f7f3e8,stroke:#775
+    classDef cls fill:#f0f7ee,stroke:#474
+    class C1,C2,C3 inp
+    class S1,S2,S3,S4,S5 svc

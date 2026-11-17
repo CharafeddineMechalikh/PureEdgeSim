@@ -1,0 +1,16 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Common-scenario temporal calibration (Level B): deadline success by simulator, deployment architecture and temporal setting.}
+\label{tab:common-level-b}
+\begin{tabular}{lccccc}
+\toprule
+platform & architecture & 1 s & 200 ms & 50 ms & event-driven \\
+\midrule
+YAFS-3.1 & ALL & 0.868 & 0.999 & 0.999 & 0.999 \\
+YAFS-3.1 & EDGE\_AND\_CLOUD & 0.392 & 0.859 & 1.000 & 1.000 \\
+YAFS-3.1 & EDGE\_ONLY & 0.392 & 0.859 & 1.000 & 1.000 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Each cell is the mean of seed-level success ratios over the shared P1-CBS trace. Only adapters that have been executed appear; a blank cell is not a zero.\par}
+\end{table*}

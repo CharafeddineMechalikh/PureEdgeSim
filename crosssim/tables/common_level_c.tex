@@ -1,0 +1,16 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Common-scenario behavioural comparison (Level C) at the 1 s default control interval.}
+\label{tab:common-level-c}
+\begin{tabular}{lcccccc}
+\toprule
+platform & architecture & success & orch\_latency\_s & delay\_p95\_s & jobs & seeds \\
+\midrule
+YAFS-3.1 & ALL & 0.868 & 0.215 & 1.235 & 9,925 & 5.000 \\
+YAFS-3.1 & EDGE\_AND\_CLOUD & 0.392 & 0.541 & 1.143 & 9,925 & 5.000 \\
+YAFS-3.1 & EDGE\_ONLY & 0.392 & 0.541 & 1.143 & 9,925 & 5.000 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright The reference workload, infrastructure and deployment sets are identical by specification; simulator-internal event semantics are deliberately allowed to differ.\par}
+\end{table*}

@@ -1,0 +1,36 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'serif','fontSize':'14px','lineColor':'#333333'}}}%%
+flowchart LR
+    subgraph DEV["Device / mist tier — 40 devices"]
+        UAV["16 UAV<br/>4 cores · 30000 MIPS<br/>12 m/s"]
+        FLD["16 field units<br/>2 cores · 12000 MIPS<br/>1.5 m/s"]
+        SEN["8 sensors<br/>no compute<br/>stationary"]
+    end
+    subgraph EDGE["Edge tier — 3 data centres"]
+        E1["EDGE-1<br/>16 cores · 80000 MIPS"]
+        E2["EDGE-2<br/>16 cores · 80000 MIPS"]
+        E3["EDGE-3<br/>16 cores · 80000 MIPS"]
+    end
+    ORCH["Global orchestrator<br/>at EDGE-1<br/>period = update interval"]
+    subgraph CLOUD["Cloud tier"]
+        CL["CLOUD-1<br/>400 cores · 100000 MIPS"]
+    end
+
+    UAV -->|"Wi-Fi 300 Mb/s · 10 ms"| E1
+    UAV -->|"Wi-Fi 300 Mb/s · 10 ms"| E2
+    FLD -->|"Wi-Fi 300 Mb/s · 10 ms"| E2
+    FLD -->|"Wi-Fi 300 Mb/s · 10 ms"| E3
+    SEN -->|"mist, 80 m range"| UAV
+    E1 ---|"MAN 1000 Mb/s · 10 ms"| E2
+    E2 ---|"MAN 1000 Mb/s · 10 ms"| E3
+    E2 -->|"WAN 50 Mb/s · 120 ms"| CL
+    ORCH -.-> E1
+    ORCH -.-> E2
+    ORCH -.-> E3
+    ORCH -.-> CL
+
+    classDef dev fill:#eef5ff,stroke:#356
+    classDef edge fill:#f7f3e8,stroke:#775
+    classDef cloud fill:#f0f7ee,stroke:#474
+    class UAV,FLD,SEN dev
+    class E1,E2,E3,ORCH edge
+    class CL cloud
