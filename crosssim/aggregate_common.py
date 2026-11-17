@@ -43,13 +43,18 @@ def load() -> pd.DataFrame:
     if not frames:
         return pd.DataFrame()
     frame = pd.concat(frames, ignore_index=True)
+    # EdgeCloudSim has no global periodic tick; NaN is recorded as 0 (event-driven
+    # limit) with the platform's capability limitation documented in CAPABILITIES.md.
+    frame["tick_s"] = frame["tick_s"].fillna(0.0)
     # A smoke run may have appended a cell before the full grid; keep one row
     # per (platform, architecture, tick, seed, workflow).
     subset = ["platform", "architecture", "tick_s", "seed", "workflow_id"]
     return frame.drop_duplicates(subset=subset).reset_index(drop=True)
 
 
-def tick_label(value: float) -> str:
+def tick_label(value) -> str:
+    if pd.isna(value):
+        return "event-driven"
     return {1.0: "1 s", 0.2: "200 ms", 0.05: "50 ms", 0.0: "event-driven"}.get(
         float(value), f"{value:g} s")
 

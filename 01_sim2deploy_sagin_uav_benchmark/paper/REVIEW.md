@@ -263,5 +263,26 @@ simulator; the analytical port microbenchmark needs per-task Java records.
 | Real architecture effect under heterogeneity | `tables/heterogeneity.tex`, `hetero_interaction.tex`, 1,680 runs | At 50 ms: +65.7 pp with weak edge/fast cloud, −3.6 to −19.6 otherwise; at 1 s uniformly +28 to +34. The clock both manufactures an effect and understates a real one. |
 | Trace confounds | `tables/trace.tex`, four arms, 120 runs | Load irrelevant (+2.7 pp rate-matched), deadline distribution decisive (−36.1 pp deadline-matched); architecture effect changes sign between native trace and deadline-matched arm. |
 
-Manuscript retitled to *The Architecture Effect Was the Clock*. Build audit:
-18 pages, no errors, no undefined references or citations. Acceptance: 17/17.
+Manuscript retitled to *Temporal Resolution and Architectural Effects in
+Multi-Tier Edge Orchestration: A Common-Scenario Cross-Simulator Study and
+Calibration Framework*. Build audit: 20 pages, no errors, no undefined
+references or citations. Acceptance: 17/17.
+
+---
+
+## Round 5 — 12-section report (in progress)
+
+| Requirement | Artifact | Status |
+|---|---|---|
+| Common experimental baseline + capability matrix | `crosssim/SPEC.md`, `CAPABILITIES.md/.csv` | done |
+| Application graph with dependencies | `application_graph.json`, 6 diagrams, `common_trace.py` | done (specified + trace generated) |
+| Dependency experiment executed | workflow arm | **specified, not yet run** |
+| Topology + deployment figures | `diagrams/infrastructure.png`, `deployments.png` | done |
+| Four simulators experimentally evaluated | `adapters/yafs`, `adapters/edgecloudsim` | **3 platforms done; iFogSim2 adapter pending** |
+| Level B temporal calibration on all four | `tables/common_level_b.tex` | YAFS + EdgeCloudSim done |
+| Simulator × factor interactions | `results/common_summary.csv` | partial (2 platforms) |
+| Manuscript restructured around RQs, ~9 figures / 10–12 tables | `paper/main.tex` | figure set added; table rationalisation pending |
+
+Headline: on the shared trace YAFS reproduces the artefact (+47.6 pp at 1 s,
+0.0 at 50 ms); EdgeCloudSim, with no global periodic loop, serves every class.
+The paper makes no claim for iFogSim2 because its adapter was not executed.

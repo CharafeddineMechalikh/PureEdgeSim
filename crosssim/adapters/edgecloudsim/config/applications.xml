@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<applications>
+	<application name="C1">
+		<usage_percentage>35</usage_percentage>
+		<prob_cloud_selection>0</prob_cloud_selection>
+		<poisson_interarrival>4.000</poisson_interarrival>
+		<delay_sensitivity>1</delay_sensitivity>
+		<active_period>300</active_period>
+		<idle_period>0</idle_period>
+		<data_upload>50</data_upload>
+		<data_download>20</data_download>
+		<task_length>2000</task_length>
+		<required_core>1</required_core>
+		<vm_utilization_on_edge>16.667</vm_utilization_on_edge>
+		<vm_utilization_on_cloud>1.667</vm_utilization_on_cloud>
+		<vm_utilization_on_mobile>0</vm_utilization_on_mobile>
+	</application>
+	<application name="C2">
+		<usage_percentage>35</usage_percentage>
+		<prob_cloud_selection>0</prob_cloud_selection>
+		<poisson_interarrival>6.000</poisson_interarrival>
+		<delay_sensitivity>1</delay_sensitivity>
+		<active_period>300</active_period>
+		<idle_period>0</idle_period>
+		<data_upload>1500</data_upload>
+		<data_download>80</data_download>
+		<task_length>12000</task_length>
+		<required_core>1</required_core>
+		<vm_utilization_on_edge>100.000</vm_utilization_on_edge>
+		<vm_utilization_on_cloud>10.000</vm_utilization_on_cloud>
+		<vm_utilization_on_mobile>0</vm_utilization_on_mobile>
+	</application>
+	<application name="C3">
+		<usage_percentage>30</usage_percentage>
+		<prob_cloud_selection>0</prob_cloud_selection>
+		<poisson_interarrival>15.000</poisson_interarrival>
+		<delay_sensitivity>1</delay_sensitivity>
+		<active_period>300</active_period>
+		<idle_period>0</idle_period>
+		<data_upload>900</data_upload>
+		<data_download>200</data_download>
+		<task_length>20000</task_length>
+		<required_core>1</required_core>
+		<vm_utilization_on_edge>100.000</vm_utilization_on_edge>
+		<vm_utilization_on_cloud>16.667</vm_utilization_on_cloud>
+		<vm_utilization_on_mobile>0</vm_utilization_on_mobile>
+	</application>
+</applications>

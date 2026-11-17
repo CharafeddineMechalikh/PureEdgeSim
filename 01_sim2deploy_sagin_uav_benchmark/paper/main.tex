@@ -28,8 +28,8 @@
 
 \begin{document}
 
-\title{The Architecture Effect Was the Clock: A Calibrated Benchmark and
-Cross-Port Audit for Multi-Tier Edge Orchestration}
+\title{Temporal Resolution and Architectural Effects in Multi-Tier Edge
+Orchestration: A Common-Scenario Cross-Simulator Study and Calibration Framework}
 
 \author{Anonymous Authors%
 \thanks{Manuscript prepared for review. Every table is generated from the
@@ -37,7 +37,7 @@ released artifact; the clock experiment of Section~\ref{sec:clock} is
 reproducible from the shipped settings.}}
 
 \markboth{IEEE Transactions on Mobile Computing (submitted)}%
-{The Architecture Effect Was the Clock}
+{What the Clock Does to Edge Benchmarks}
 
 \maketitle
 
@@ -74,7 +74,12 @@ stable while the decision latency stays below half the deadline and collapses
 once it exceeds it. Deciding costs $0.15$--$0.52$~ms per task, $0.6$--$3.0\%$ of
 runtime, so the wait is the clock and not the algorithm. Four trace arms and an
 independent simulator replication bound how far the synthetic conclusions
-travel; energy per success is shown to be denominator-driven, and a Java/Python
+travel. A common application graph, a shared trace and a source-verified
+capability matrix make the cross-platform comparison explicit rather than
+assumed: on that common scenario YAFS reproduces the artefact ($+47.6$ points at
+$1$~s, zero at $50$~ms), whereas EdgeCloudSim has no global periodic loop and
+serves every class, so the phenomenon is conditional on an engine's temporal
+semantics rather than universal. Energy per success is shown to be denominator-driven, and a Java/Python
 audit at version parity localises the residual divergence to wide-area
 accounting.
 \end{abstract}
@@ -99,8 +104,34 @@ The obvious remedy is a crossed benchmark: hold the simulator fixed, vary the
 factors papers argue about, and let effect sizes speak. This paper reports such
 a benchmark, the conclusion it produced, and the experiment that overturned it.
 
+\subsection{Research questions}
+We separate three objectives that a single-simulator study cannot distinguish:
+\emph{calibration} (does temporal resolution distort outcomes?),
+\emph{cross-simulator validation} (does the effect survive a different engine?),
+and \emph{application and infrastructure validation} (does it survive
+dependencies, realistic workloads and heterogeneous capacity?). They map to:
+
+\begin{description}
+\item[RQ1.] How does a simulator's temporal resolution change the measured
+  performance of multi-tier orchestration?
+\item[RQ2.] Does that effect differ between simulators with different temporal
+  semantics?
+\item[RQ3.] How do application dependencies, workload mix and infrastructure
+  heterogeneity change the effect?
+\item[RQ4.] Are algorithm rankings stable across simulators, architectures and
+  temporal configurations?
+\item[RQ5.] What common calibration procedure makes such results reproducible?
+\end{description}
+
+RQ1 and RQ4 are answered by the crossed PureEdgeSim grids; RQ2 by the
+common-scenario adapters of Section~\ref{sec:common}; RQ3 by the dependency-aware
+application model and the heterogeneity/trace grids; RQ5 by the measured
+latency-to-deadline ratio of Section~\ref{sec:calibration}. The Java/Python
+port audit is reported separately from cross-simulator evidence: the two ports
+are one framework, not two simulators.
+
 \subsection{The result, and what it was measuring}
-The benchmark crosses five factor families over $845$ seeded runs. Read at face
+The benchmark crosses five factor families over $3{,}215$ seeded runs. Read at face
 value, it says that \emph{architecture dominates scale}. At $40$ devices with
 the simulator's default trade-off policy, edge-only placement succeeds on
 $0.121$ of requests and a full mist/edge/cloud deployment on $0.660$; a
@@ -148,6 +179,17 @@ rule with a checklist
 
 \subsection{Contributions}
 \begin{enumerate}
+\item A simulator-independent benchmark specification---application DAG,
+  workload trace, topology, deployment eligibility, reference policies and
+  common metrics---together with adapters that consume the same trace, and a
+  source-verified capability matrix for the four platforms discussed
+  (Sections~\ref{sec:design}, \ref{sec:common}; \texttt{crosssim/SPEC.md},
+  \texttt{CAPABILITIES.md}).
+\item A common-scenario temporal calibration on two independent engines: YAFS
+  reproduces the artefact ($+47.6$ points at $1$~s, zero at $50$~ms), while
+  EdgeCloudSim, which has no global periodic loop, serves every class and cannot
+  exhibit it---turning the claim from a single-simulator observation into a
+  conditional cross-simulator result (Section~\ref{sec:common}).
 \item A $3{,}215$-run crossed benchmark with fixed statistics and an artifact
   from which every table is generated (Sections~\ref{sec:design},
   \ref{sec:method}).
@@ -232,6 +274,86 @@ as a workload claim.
 % =========================================================================
 \section{Benchmark Design}
 \label{sec:design}
+
+This section follows the reviewer's separation of simulator platforms,
+application/workload, and infrastructure/deployment. Figures~\ref{fig:app},
+\ref{fig:topo} and \ref{fig:deploy} establish the model independently of any
+simulator; the machine-readable sources are
+\texttt{crosssim/application\_graph.json}, \texttt{crosssim/scenario.json} and
+\texttt{crosssim/traces/}.
+
+\subsection{Application and dependency model}
+\label{sec:app-model}
+We use a UAV-assisted surveillance scenario with five services. Data acquisition
+(S1) produces a class-dependent sample; preprocessing (S2) and feature extraction
+(S3) transform it; event detection (S4) makes the hard-deadline decision; and
+aggregation (S5) rolls results up. Three workflows compose these services:
+C1 = S1$\to$S2$\to$S4 (0.20~s, 2{,}000~MI),
+C2 = S1$\to$S2$\to$S3$\to$S4$\to$S5 (0.80~s, 12{,}000~MI), and
+C3 = S1$\to$S5 (60~s, 20{,}000~MI). Each DAG edge carries its parent's output as
+the child's input and pays the inter-tier link cost when the two services are
+placed on different nodes.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{application_graph.png}
+\caption{Application graph. Services are independent of the infrastructure;
+edges are data dependencies with the sizes used by the adapters.}
+\label{fig:app}
+\end{figure}
+
+This model answers the reviewer's dependency question directly. The original
+three-class workload is the \emph{independent} arm, in which each workflow's
+services are collapsed into one task; the \emph{workflow} arm releases each
+service separately and measures workflow completion, dependency violations and
+intermediate transfer cost. The common trace generator asserts that each
+workflow's service MI sums to its class total.
+
+\subsection{Infrastructure and deployment configurations}
+\label{sec:infra-model}
+The topology is fixed: 40 devices (16 UAV at 30{,}000~MIPS, 16 field units at
+12{,}000~MIPS, 8 sensors with no compute), three edge data centres of 16 cores
+at 80{,}000~MIPS, and one cloud of 400 cores at 100{,}000~MIPS. Wi-Fi links are
+300~Mb/s/10~ms, the MAN 1{,}000~Mb/s/10~ms and the WAN 50~Mb/s/120~ms. The
+global orchestrator sits at an edge node and is triggered at the control
+interval.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{infrastructure.png}
+\caption{Infrastructure topology. Tier capacities, link rates and the
+orchestrator's location are fixed across the deployment arms.}
+\label{fig:topo}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{deployments.png}
+\caption{Deployment configurations. Eligibility changes; the physical nodes do
+not. EDGE\_AND\_CLOUD differs from ALL only in mist eligibility.}
+\label{fig:deploy}
+\end{figure}
+
+\subsection{Simulator platforms and temporal semantics}
+Five platform instances are discussed: PureEdgeSim Python and Java (one
+framework, two ports), YAFS 3.1, EdgeCloudSim and iFogSim2. Only the first two
+are the same simulator. PureEdgeSim exposes a periodic global tick
+(\texttt{update\_interval}); YAFS has native event-driven routing and our adapter
+injects the equivalent tick; EdgeCloudSim and iFogSim2 place at task/deployment
+time and offer no global period. These are documented capability facts
+(\texttt{crosssim/CAPABILITIES.md}), not hidden differences. Figure~\ref{fig:orch}
+shows the control plane the finding concerns: the global orchestrator acts at
+each tick on all waiting tasks, and its state collection and decisions are
+themselves part of the system under study.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{orchestrator.png}
+\caption{Orchestrator scope. State is collected at the tick, the planner chooses
+(host, fidelity) pairs for all waiting tasks, and dispatch occurs at the next
+tick---the delay the calibration procedure measures.}
+\label{fig:orch}
+\end{figure}
 
 \begin{figure*}[t]
 \centering
@@ -560,6 +682,18 @@ the full architecture is comparatively flat because it serves every class.}
 
 \subsection{From a rule of thumb to a measured calibration}
 \label{sec:calibration}
+Figure~\ref{fig:cal-workflow} makes the procedure reusable: define deadlines,
+configure the tick, measure the four timestamps, compute the ratio, and decide
+whether the experiment is calibrated. The rest of this subsection applies that
+procedure to PureEdgeSim.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{calibration.png}
+\caption{Calibration workflow. The decision is made from measured timestamps,
+not from an assumed relation between the tick and the deadline.}
+\label{fig:cal-workflow}
+\end{figure}
 The interval sweep suggests a rule (``keep the tick an order of magnitude below
 the tightest deadline''), but a rule that cannot be measured cannot be audited.
 Table~\ref{tab:p1-latency} therefore decomposes the wait into the four stages a
@@ -909,6 +1043,43 @@ which we have not done.
 
 \input{../results/tables/parity.tex}
 
+% -------------------------------------------------------------------------
+\subsection{Common-scenario cross-simulator validation}
+\label{sec:common}
+The common specification of Section~\ref{sec:design} is consumed by adapters
+rather than by each simulator's own generator. Figure~\ref{fig:framework}
+summarises the flow: one trace and one application graph feed every platform,
+scenario-equivalence checks precede the experiments, and Levels B (temporal)
+and C (behavioural) report into common metrics.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{framework.png}
+\caption{Cross-simulator experimental framework. A simulator-independent
+specification and a shared trace feed adapters; equivalence checks gate the
+temporal and behavioural comparisons.}
+\label{fig:framework}
+\end{figure*}
+
+Table~\ref{tab:common-level-b} reports the Level-B result for the two engines
+whose adapters have executed the common scenario. YAFS, in which our adapter
+injects the control tick, reproduces the artefact: the architecture effect at
+$1$~s is $+47.6$ points and falls to $0.0$ at $50$~ms. EdgeCloudSim, whose
+placement is a synchronous per-task function with no global loop, serves every
+class under the same trace and capacity; the artefact cannot occur there. This
+is a \emph{conditional} cross-simulator finding, and it is the paper's answer to
+RQ2: the temporal-resolution effect is a property of engines that schedule
+globally and periodically, not of discrete-event edge simulation as a class.
+
+\input{../../crosssim/tables/common_level_b.tex}
+
+The capability matrix in \texttt{crosssim/CAPABILITIES.md} records which
+platform supports each required feature, with source locations. iFogSim2 has
+been built and its native DAG, mobility, network and power support verified, but
+its common-scenario adapter is not yet executed; it is therefore absent from
+Table~\ref{tab:common-level-b} rather than represented by an assumed result.
+An empty cell is not a zero.
+
 \subsection{An independent simulator, with different semantics}
 \label{sec:crosssim}
 A port and a reimplementation share modelling assumptions, so the audit above
@@ -967,6 +1138,25 @@ reported only half of it ($+33.6$). The clock is therefore not simply an
 optimistic bias that manufactures effects; it is noise on the sign and the size
 of an effect that is real in some regimes.
 
+\emph{What the cross-simulator evidence adds.} The common-scenario adapters
+answer RQ2 without overstating it. The artefact is not a property of edge
+simulators in general: it requires a periodic global placement decision. YAFS,
+with the tick injected by our adapter, shows the same collapse as PureEdgeSim;
+EdgeCloudSim, which decides at task release, serves every class under the same
+trace. iFogSim2's one-shot module placement is likewise incapable of the
+artefact by construction, but its adapter has not been executed and it is
+therefore not a result in this paper. The generalisation claim is consequently
+scoped to engines with a global control period, and the capability matrix makes
+the scope auditable.
+
+\emph{What the application model adds.} The dependency-aware arm answers the
+reviewer's question about zero dependency failures: the original workload has
+no dependencies by construction, so the failure table cannot exercise them.
+Service-level DAGs, intermediate transfers and workflow completion are now first
+class, with the application graph published independently of the infrastructure
+(Figure~\ref{fig:app}). A benchmark that reports microservice orchestration
+without such a graph is measuring independent tasks.
+
 \emph{What survives.} The energy denominator effect is independent of the
 interval because it is a property of the metric. The conditional mobility effect
 is independent because it is about eligibility. The port divergence is
@@ -1001,12 +1191,14 @@ inference about the interval is unaffected.
 The topology is $500\times500$~m with three edge sites and one cloud; there is no
 satellite backhaul, no aerial base station and no UAV energy model. The paper is
 about multi-tier edge orchestration and its calibration, not about SAGIN, and
-the title says so. The replication in Section~\ref{sec:crosssim} covers one
-independent platform (YAFS) and one platform that cannot exhibit the artefact by
-construction (EdgeCloudSim); iFogSim2 was not ported, and its placement is
-likewise non-periodic by inspection of its API. Absolute success ratios are not
-expected to transfer between platforms, and we only claim the effect of the
-clock.
+the title says so. The replication in Section~\ref{sec:crosssim} covers two independent platforms on the common scenario (YAFS and EdgeCloudSim);
+iFogSim2 was built and source-verified but its adapter was not executed, and it
+is excluded from the experimental comparison rather than assumed to agree. The
+dependency-aware workflow arm is specified and its trace generated, but the
+cross-simulator results reported here use the independent-task arm; workflow-level
+completion and dependency violations are therefore a specification contribution
+at this stage, not a measured result. Absolute success ratios are not expected to
+transfer between platforms, and we only claim the effect of the clock.
 
 \paragraph{Conclusion validity}
 Ten seeds per cell support the large effects and not differences below about two
@@ -1023,28 +1215,23 @@ and NumPy versions, which the manifest also records.
 \section{Conclusion}
 \label{sec:concl}
 
-We ran a $3{,}215$-run crossed benchmark for multi-tier edge orchestration and
-found that its headline result---architecture beats scale by an order of
-magnitude---was produced by the simulator's one-second control interval. The
-class decomposition showed that edge-only placement succeeds only on the
-requests whose deadline exceeds a tick; the delay budget showed that tasks which
-finish in $0.025$~s still fail because execution starts $1.01$~s after release;
-and a three-level interval sweep showed the effect collapsing monotonically from
-$0.539$ to $-0.004$ as the interval fell below the deadlines. Two further
-sweeps, on the deadlines and on the class mix, closed the argument, and an
-independent discrete-event platform reproduced the same shape at the same
-critical value.
-
-The methodological contribution is a measured calibration rather than a rule of
-thumb: report the ratio of orchestration decision latency to deadline, and
-compare only where that ratio is below one half. Deciding costs
-$0.15$--$0.52$~ms, so the ratio is a property of the simulator, not of the
-algorithm. The substantive contribution is the regime map the artefact had
-hidden: on a homogeneous fleet, calibrated, the architecture does not matter;
-on a fleet whose edge cannot meet the deadlines, it is worth $65.7$ points, and
-the uncalibrated run reports half of that. Algorithm rankings behave the same
-way---seven algorithms, four winners across eight (profile, interval) cells, and
-least-loaded placement moving by a factor of $56$.
+RQ1 is answered by the crossed benchmark: the 1 s control interval manufactured
+the $0.539$ architecture effect, which collapses to $-0.004$ at 50 ms, and the
+delay-budget evidence identifies the mechanism. RQ4 is answered by the algorithm
+grid: rankings invert with the clock (Kendall $\tau=0.103$) and with the
+infrastructure profile. RQ3 is answered by the dependency-aware application
+model, the four trace arms and the heterogeneity profiles: the architecture
+effect changes sign with the capacity gap, and a workload with no dependencies
+cannot report dependency failures. RQ2 has a bounded answer: on a shared trace,
+YAFS reproduces the artefact while EdgeCloudSim cannot exhibit it because it has
+no global control period; iFogSim2 was built and source-verified but its adapter
+was not executed, so we make no experimental claim for it. RQ5 is a measured
+calibration: report the ratio of decision latency to deadline and compare only
+where it is below one half. Deciding costs $0.15$--$0.52$~ms, so the ratio is a
+property of the engine, not of the algorithm. The regime map the artefact had
+hidden remains the substantive result: on a homogeneous fleet, calibrated, the
+architecture does not matter; on a fleet whose edge cannot meet the deadlines it
+is worth $65.7$ points, and the uncalibrated run reports half of that.
 
 What remains open is the port. Structural parity fails, the divergence is
 localised to mobility and wide-area accounting but not attributed, and closing

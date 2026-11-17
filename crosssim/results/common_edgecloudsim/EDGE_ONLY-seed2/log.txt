@@ -1,0 +1,21 @@
+[cbs] EdgeCloudSim common scenario started 17/11/2026 18:51:57
+Creating tasks...Done, 
+Creating device locations...Done.
+SimManager is starting...Done.
+.........10.........20.........30.........40.........50.........60.........70.........80.........90.........100
+# of tasks (Edge/Cloud/Mobile): 2036(2036/0/0)
+# of failed tasks (Edge/Cloud/Mobile): 0(0/0/0)
+# of completed tasks (Edge/Cloud/Mobile): 2036(2036/0/0)
+# of uncompleted tasks (Edge/Cloud/Mobile): 0(0/0/0)
+# of failed tasks due to vm capacity (Edge/Cloud/Mobile): 0(0/0/0)
+# of failed tasks due to Mobility/WLAN Range/Network(WLAN/MAN/WAN/GSM): 0/0/0(0/0/0/0)
+percentage of failed tasks: 0,000000%
+average service time: 0,148974 seconds. (on Edge: 0,148974, on Cloud: 0,000000, on Mobile: 0,000000)
+average processing time: 0,116081 seconds. (on Edge: 0,116081, on Cloud: 0,000000, on Mobile: 0,000000)
+average network delay: 0,032893 seconds. (LAN delay: 0,020663, MAN delay: 0,020000, WAN delay: 0,000000, GSM delay: 0,000000)
+average server utilization Edge/Cloud/Mobile: 0,025240/0,000000/0,000000
+average cost: 0.0$
+average overhead: 452.65225933202356 ns
+average QoE (for all): 0.0%
+average QoE (for executed): 0.0%
+[cbs] EdgeCloudSim common scenario finished

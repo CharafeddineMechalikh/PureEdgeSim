@@ -1,0 +1,8 @@
+java : Error: Could not find or load main class crosssim.CommonMainApp
+Au caract?re D:\Charef\doctorat\Work folder\PureEdgeSim\crosssim\adapters\edgecloudsim\run_one.ps1:16 : 1
++ java -cp $cp `
++ ~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Error: Could no...m.CommonMainApp:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Caused by: java.lang.ClassNotFoundException: crosssim.CommonMainApp

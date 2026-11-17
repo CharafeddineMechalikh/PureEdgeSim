@@ -30,8 +30,8 @@ what is now available for that agreement and what remains.
 | PureEdgeSim Python | 6.1.0 port | reference implementation | exists; must be switched to the common trace and workflow arm |
 | PureEdgeSim Java | 6.1 | cross-port parity | exists; same adaptation needed |
 | YAFS 3.1 | `98425c1` | `adapters/yafs/run_common.py` | **done**: consumes the shared trace; 3 architectures × 4 temporal settings × 5 seeds = 60 runs complete |
-| EdgeCloudSim | `83969dd` | `ecs/` (tutorial smoke only) | **must be implemented**; no common-scenario run yet |
-| iFogSim2 | `5f68d39` | none yet | **build verified** (`javac` against `build/` + `jars/`); adapter not written |
+| EdgeCloudSim | `83969dd` | `adapters/edgecloudsim/` | **done**: custom trace-driven load generator, reference orchestrator, generated configs; 2 architectures × 3 seeds = 6 runs; no global tick (Level B unavailable by capability) |
+| iFogSim2 | `5f68d39` | none yet | **build verified**; adapter not written |
 
 ### YAFS Level-B result (common trace, 5 seeds)
 
