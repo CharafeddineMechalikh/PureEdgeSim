@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<edge_devices>
+	<!-- battery scenario: phones and gateways run on small batteries and die when they empty -->
+	<device arch="x86" os="linux" vmm="xen">
+		<!-- phone: generates requests and can compute -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>40</percentage>
+		<batteryCapacity>1.0</batteryCapacity>
+		<initialBatteryLevel distribution="uniform" min="20" max="100"/>
+		<idleConsumption>0.2</idleConsumption>
+		<maxConsumption>5</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>4</cores>
+		<mips>8000</mips>
+		<ram>4000</ram>
+		<storage>8000</storage>
+	</device>
+	<device arch="x86" os="linux" vmm="xen">
+		<!-- gateway: computes for its neighbours, faster than an edge data center -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>true</battery>
+		<percentage>30</percentage>
+		<batteryCapacity>0.6</batteryCapacity>
+		<initialBatteryLevel distribution="uniform" min="20" max="100"/>
+		<idleConsumption>1.0</idleConsumption>
+		<maxConsumption>10</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>false</generateTasks>
+		<cores>8</cores>
+		<mips>15000</mips>
+		<ram>8000</ram>
+		<storage>16000</storage>
+	</device>
+	<device arch="x86" os="linux" vmm="xen">
+		<!-- sensor: generates requests and cannot compute -->
+		<connectivity>wifi</connectivity>
+		<mobility>false</mobility>
+		<speed>0</speed>
+		<minPauseDuration>0</minPauseDuration>
+		<maxPauseDuration>0</maxPauseDuration>
+		<minMobilityDuration>0</minMobilityDuration>
+		<maxMobilityDuration>0</maxMobilityDuration>
+		<battery>false</battery>
+		<percentage>30</percentage>
+		<batteryCapacity>0</batteryCapacity>
+		<initialBatteryLevel>0</initialBatteryLevel>
+		<idleConsumption>0.01</idleConsumption>
+		<maxConsumption>0.02</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<generateTasks>true</generateTasks>
+		<cores>0</cores>
+		<mips>0</mips>
+		<ram>0</ram>
+		<storage>0</storage>
+	</device>
+</edge_devices>

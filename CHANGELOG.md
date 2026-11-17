@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+*   New `Example30` shows what device failures do to service graphs, and when it
+    pays to keep work off the devices. `Example30RiskAwareOrchestrator` gives each
+    node a risk (0 for the cloud and edge data centers, up to 1 for a moving device
+    on a low battery); its `RELIABLE_INNER` algorithm sends a subtask that other
+    subtasks wait for only to a node without risk, and `LATENCY_GREEDY` ignores
+    risk. `Example30FailureSimulationManager` crashes helper devices in random
+    disks, takes one edge data center down for a minute, and fails a result whose
+    moving helper is out of range when it returns. Over 10 seeds and 100 to 1,000
+    devices, `RELIABLE_INNER` failed 0.07% of requests when devices die of empty
+    batteries against 0.22% for `LATENCY_GREEDY`, but 2.54% against 1.13% in the
+    crash scenario, where an edge data center also goes down, because it moves the
+    work onto the data centers.
+
 ## Version 6.1 Changelog (November 1st 2026)
 
 *   Two engine bases that a dependent simulator can now extend. `AbstractQueueElement`
