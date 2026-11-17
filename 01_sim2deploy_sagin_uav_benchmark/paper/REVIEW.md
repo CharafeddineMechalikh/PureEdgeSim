@@ -278,7 +278,7 @@ references or citations. Acceptance: 17/17.
 | Application graph with dependencies | `application_graph.json`, 6 diagrams, `common_trace.py` | done (specified + trace generated) |
 | Dependency experiment executed | workflow arm | **specified, not yet run** |
 | Topology + deployment figures | `diagrams/infrastructure.png`, `deployments.png` | done |
-| Four simulators experimentally evaluated | `adapters/yafs`, `adapters/edgecloudsim` | **3 platforms done; iFogSim2 adapter pending** |
+| Four simulators experimentally evaluated | `adapters/yafs`, `adapters/edgecloudsim`, `adapters/ifogsim2` | **3 done; iFogSim2 blocked by a documented defect** (vendored commit `5f68d3947e450d8d2b4af42670be819206be68c9`, see `adapters/ifogsim2/BUG_REPORT.md`) |
 | Level B temporal calibration on all four | `tables/common_level_b.tex` | YAFS + EdgeCloudSim done |
 | Simulator × factor interactions | `results/common_summary.csv` | partial (2 platforms) |
 | Manuscript restructured around RQs, ~9 figures / 10–12 tables | `paper/main.tex` | figure set added; table rationalisation pending |

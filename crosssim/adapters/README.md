@@ -71,6 +71,10 @@ delay and success cannot yet be collected. This is a placement/mapping issue in
 iFogSim2's `ModulePlacementEdgewards` with a hand-built topology. No iFogSim2
 result is reported until it is resolved.
 
+Full defect report, including the exact vendored commit
+(`5f68d3947e450d8d2b4af42670be819206be68c9`), observed symptoms, source
+locations and reproduction command: `BUG_REPORT.md` in this directory.
+
 ```powershell
 $cp = "build;jars\commons-math3-3.5\commons-math3-3.5.jar;" +
       ((Get-ChildItem jars -Filter *.jar | ForEach-Object { "jars\$($_.Name)" }) -join ";")

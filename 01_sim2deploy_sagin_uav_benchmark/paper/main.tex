@@ -1192,8 +1192,12 @@ The topology is $500\times500$~m with three edge sites and one cloud; there is n
 satellite backhaul, no aerial base station and no UAV energy model. The paper is
 about multi-tier edge orchestration and its calibration, not about SAGIN, and
 the title says so. The replication in Section~\ref{sec:crosssim} covers two independent platforms on the common scenario (YAFS and EdgeCloudSim);
-iFogSim2 was built and source-verified but its adapter was not executed, and it
-is excluded from the experimental comparison rather than assumed to agree. The
+iFogSim2 was built at vendored commit
+\texttt{5f68d3947e450d8d2b4af42670be819206be68c9} and source-verified but its
+adapter's tuple-to-actuator path failed on that version; the defect is reported
+with a reproduction in \texttt{crosssim/adapters/ifogsim2/BUG\_REPORT.md}, and
+iFogSim2 is excluded from the experimental comparison rather than assumed to
+agree. The
 dependency-aware workflow arm is specified and its trace generated, but the
 cross-simulator results reported here use the independent-task arm; workflow-level
 completion and dependency violations are therefore a specification contribution
