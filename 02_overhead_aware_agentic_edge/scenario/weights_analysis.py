@@ -18,7 +18,7 @@ container = frame[frame["energy_weight"] == 0.02].copy()
 
 energy_rows = []
 for value, block in energy.groupby("energy_weight"):
-    energy_rows.append({"Swept parameter": "energy weight $\\lambda$",
+    energy_rows.append({"Parameter": "energy $\\lambda$",
                         "Value": f"{value:g}",
                         "Success": block["success_ratio"].mean(),
                         "Fidelity-wtd.": block["fid_weighted"].mean()
@@ -26,7 +26,7 @@ for value, block in energy.groupby("energy_weight"):
                         "Mean decisions": block["overhead_decisions"].mean()})
 container_rows = []
 for value, block in container.groupby("container_penalty_s"):
-    container_rows.append({"Swept parameter": "container penalty $\\beta$ (s)",
+    container_rows.append({"Parameter": "container $\\beta$ (s)",
                            "Value": f"{value:g}",
                            "Success": block["success_ratio"].mean(),
                            "Fidelity-wtd.": block["fid_weighted"].mean()
@@ -35,7 +35,8 @@ for value, block in container.groupby("container_penalty_s"):
 
 out = pd.DataFrame(energy_rows + container_rows)
 for column in ("Success", "Fidelity-wtd.", "Mean decisions"):
-    out[column] = out[column].map(lambda v: f"{v:.4f}")
+    out[column] = out[column].map(
+        lambda v: "--" if pd.isna(v) else f"{v:.4f}")
 tables.write(out, RESULTS / "tables" / "weights.tex",
              "Sensitivity to the two scalar objective weights (aware policy, "
              "2x overhead, 10 seeds). Each block varies one parameter.",
