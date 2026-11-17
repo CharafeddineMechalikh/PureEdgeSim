@@ -51,3 +51,8 @@ __pycache__/
 **/paper/main.blg
 **/paper/main.log
 **/paper/main.out
+**/paper/supplementary.aux
+**/paper/supplementary.bbl
+**/paper/supplementary.blg
+**/paper/supplementary.log
+**/paper/supplementary.out
