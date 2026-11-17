@@ -29,12 +29,30 @@ The adapter compiles and replays the shared trace exactly:
 * The application graph is built from `application_graph.json`: three sensor
   tuple types, one `svc` module, three actuators, one loop per class.
 
-## Defect
+## Defect analysis and fixes applied
 
-**Result tuples never reach the actuators; end-to-end delays and success cannot
-be collected.**
+Two genuine bugs were found and fixed in the adapter:
 
-Observed symptoms:
+1. **Actuator edges declared as `AppEdge.MODULE`.** iFogSim2's `Controller`
+   (line 206) subscribes actuators only for edges whose type is
+   `AppEdge.ACTUATOR`. With `MODULE`, `AppModule.getActuatorSubscriptions()` was
+   empty and no result tuple could be addressed to an actuator. Fixed by
+   declaring the `svc → <class>_ACT` edges as `AppEdge.ACTUATOR`.
+2. **`TraceDistribution.getMeanInterTransmitTime()` returned 0.**
+   `ModulePlacementEdgewards` computes an edge rate as `1 / mean interarrival`
+   (line 135), so a zero mean gave an infinite rate, `totalCpuLoad > host MIPS`,
+   and the fatal log `Placement of operator svc NOT POSSIBLE on device
+   edge-0/cloud`. Fixed by returning the measured mean gap from the trace
+   (horizon / (n-1)).
+
+After these fixes the module places successfully (`AppModule svc can be created
+on device edge-0`), tuples execute on the deployed module, and the exact shared
+arrivals are preserved.
+
+## Remaining defect
+
+**Result tuples still do not reach the actuators; end-to-end delays and success
+cannot be collected.** Observed symptoms:
 
 1. `LoggingSensor.transmit()` is called at every trace arrival (verified with a
    counter printed at the first three emissions per class).
@@ -70,12 +88,15 @@ explicit `ModuleMapping.addModuleToDevice("svc", <gateway name>)`. None of these
 made the `svc` module visible on the receiving device, so upstream tuples are
 dropped and no result tuple is produced.
 
-This is a **placement/topology integration defect in the adapter's use of the
-platform at this commit**, not a claim that iFogSim2 itself is broken for its
-shipped examples (the shipped `MicroservicesAppSample1` example runs to
-completion). It is recorded as a defect because the common-benchmark adapter
-cannot be completed at this version without deeper changes to iFogSim2's
-module-placement internals.
+src/org/fog/application/Application.java:227` — the setting of
+`tuple.setActuatorId(actuatorId)` on result tuples is commented out in this
+commit). `FogDevice.sendTupleToActuator()` (lines 646–669) matches by
+`tuple.getDestModuleName().equals(actuatorType)`, so the missing actuator id
+alone should not be fatal, but no `TUPLE_ARRIVAL` reaches `LoggingActuator` in a
+full run: iFogSim2's loop-delay summary remains `null` and the results CSV is
+not written. Actuator subscriptions are confirmed present
+(`{C2_RES=[11], C1_RES=[10], C3_RES=[12]}`), so the break is after tuple
+generation, in the forwarding path.
 
 ## Reproduction
 

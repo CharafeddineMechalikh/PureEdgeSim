@@ -54,7 +54,7 @@ public class CommonMainApp {
                 app.addAppEdge(cls, "svc", lengths[i], sizes[i], cls + "_REQ",
                         Tuple.UP, AppEdge.SENSOR);
                 app.addAppEdge("svc", cls + "_ACT", lengths[i] / 10, sizes[i] / 10,
-                        cls + "_RES", Tuple.DOWN, AppEdge.MODULE);
+                        cls + "_RES", Tuple.DOWN, AppEdge.ACTUATOR);
                 app.addTupleMapping("svc", cls + "_REQ", cls + "_RES",
                         new FractionalSelectivity(1.0));
                 loops.add(new AppLoop(Arrays.asList(cls, "svc", cls + "_ACT")));
@@ -81,18 +81,29 @@ public class CommonMainApp {
             }
             physical.setSensors(loggingSensors);
             List<Actuator> actuators = new ArrayList<>();
+            int cloudGateway = -1;
+            for (FogDevice device : physical.getFogDevices()) {
+                if (device.getLevel() == 0) { cloudGateway = device.getId(); break; }
+            }
+            if (cloudGateway < 0) cloudGateway = gateway;
             for (String cls : classes) {
                 actuators.add(new LoggingActuator("actuator-" + cls, broker.getId(), appId,
-                        gateway, 0.01, new GeoLocation(0, 0),
+                        cloudGateway, 0.01, new GeoLocation(0, 0),
                         cls + "_ACT", "svc"));
             }
 
             physical.setActuators(actuators);
             Controller controller = new Controller("controller", physical.getFogDevices(),
                     physical.getSensors(), actuators);
+            ModuleMapping mapping = ModuleMapping.createModuleMapping();
+            for (FogDevice device : physical.getFogDevices()) {
+                if (device.getId() == gateway) {
+                    mapping.addModuleToDevice("svc", device.getName());
+                }
+            }
             controller.submitApplication(app, 0,
-                    new ModulePlacementOnlyCloud(physical.getFogDevices(),
-                            loggingSensors, actuators, app));
+                    new ModulePlacementEdgewards(physical.getFogDevices(),
+                            loggingSensors, actuators, app, mapping));
             CloudSim.startSimulation();
             CloudSim.stopSimulation();
             System.out.printf("[cbs-ifog] seed=%d duration=%.0f results=%s%n",

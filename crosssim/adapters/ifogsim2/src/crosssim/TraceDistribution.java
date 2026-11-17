@@ -15,6 +15,8 @@ public class TraceDistribution extends Distribution {
     private int index = 0;
     private double previous = 0.0;
 
+    private double meanInterTransmit = 1.0;
+
     /** @param path CSV with an arrival_s column (header present). */
     public TraceDistribution(String path, String classId) {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(path))) {
@@ -39,6 +41,11 @@ public class TraceDistribution extends Distribution {
             throw new UncheckedIOException(e);
         }
         Collections.sort(arrivals);
+        if (arrivals.size() > 1) {
+            double horizon = Math.max(1.0, arrivals.get(arrivals.size() - 1)
+                    - arrivals.get(0));
+            meanInterTransmit = horizon / (arrivals.size() - 1);
+        }
     }
 
     @Override
@@ -51,7 +58,7 @@ public class TraceDistribution extends Distribution {
     }
 
     @Override public int getDistributionType() { return Distribution.DETERMINISTIC; }
-    @Override public double getMeanInterTransmitTime() { return 0.0; }
+    @Override public double getMeanInterTransmitTime() { return meanInterTransmit; }
     public int size() { return arrivals.size(); }
 }
 

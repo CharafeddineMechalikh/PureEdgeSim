@@ -27,9 +27,6 @@ public class LoggingActuator extends Actuator {
 
     @Override
     public void processEvent(SimEvent ev) {
-        if (ev.getTag() == FogEvents.TUPLE_ARRIVAL) {
-            System.out.printf("[cbs-act] %s got tuple%n", getName());
-        }
         if (ev.getTag() == FogEvents.TUPLE_ARRIVAL && ev.getData() instanceof Tuple tuple) {
             Double emit = TimeKeeper.getInstance().getEmitTimes().get(tuple.getActualTupleId());
             if (emit != null) {
