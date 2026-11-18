@@ -574,6 +574,32 @@ The machine-generated audit \texttt{scenario/consistency\_check.py} verifies
 these values against \texttt{results/runs/factorial/raw\_runs.csv}; it is part of
 the released artifact.
 
+\subsection{Dependency-aware workflow arm}
+The independent-task factorial cannot exercise dependencies by construction. To
+test the application model of Section~\ref{sec:app-model}, we replaced each class
+with a three-service DAG (retrieval $\to$ reasoning $\to$ verification for RAG,
+sensing $\to$ decision $\to$ actuation for control) and re-ran the three
+ladder-enabled policies at $2\times$ and $3\times$ ($60$ runs).
+Table~\ref{tab:p2-workflow} reports task success, request-level DAG success,
+cancelled descendants and per-service success. Dependency failures are now
+exercised: $951$--$2{,}951$ subtasks are cancelled per run depending on policy
+and overhead, and the final service is the binding one (its success rate is
+$0$ at $2\times$). The ordering of policies is unchanged from the independent
+arm, so the principal conclusion carries over, but the workflow arm additionally
+shows \emph{where} a deadline failure propagates: a service that misses its own
+bound invalidates its whole request.
+
+\input{../results/tables/workflow.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f_workflow.pdf}
+\caption{Dependency-aware arm: task-level and request-level (DAG) success by
+policy and overhead. Request success is zero because the final service of each
+DAG never meets its bound in this configuration.}
+\label{fig:workflow}
+\end{figure}
+
 \subsection{Nominal overhead: everything works}
 \input{../results/tables/main.tex}
 
