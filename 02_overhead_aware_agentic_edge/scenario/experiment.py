@@ -69,6 +69,8 @@ APPS = {
     "edge": SETTINGS / "applications_agentic.xml",
     "agentic": SETTINGS / "applications_agentic.xml",
     "workflow": SETTINGS / "applications_agentic_workflow.xml",
+    "workflow_mixed": SETTINGS / "applications_agentic_workflow_mixed.xml",
+    "contention": SETTINGS / "applications_agentic_contention.xml",
 }
 
 # Arm -> (orchestrator class, ladder forced off?, energy weight, container penalty,
@@ -91,6 +93,8 @@ def _config(job: dict) -> AgenticConfig:
         deadline_margin=float(job.get("deadline_margin", 0.15)),
         container_penalty_s=float(job.get("container_penalty_s", 0.02)),
         cache_aware=bool(job.get("cache_aware", True)),
+        fidelity_levels=tuple(float(level) for level in job.get(
+            "fidelity_levels", (1.0, 0.5, 0.25, 0.1))),
     )
 
 
@@ -279,6 +283,18 @@ def grids() -> dict[str, list[dict]]:
         job["payload_multiplier"] = job["compute_multiplier"]
         workflow.append(job)
 
+    # Heterogeneous chain lengths: four classes with 2, 3, 3 and 5 services, so
+    # the per-run distribution of stage counts is exercised instead of one fixed
+    # graph.  Same policies and overhead levels as the single-DAG arm.
+    workflow_mixed = []
+    for job in expand_grid(
+            {**base, "experiment": "workflow_mixed", "profile": "workflow_mixed"},
+            {"policy": ("naive_fid", "edge", "aware"),
+             "compute_multiplier": (2.0, 3.0), "seed": seeds}):
+        job["fidelity"] = True
+        job["payload_multiplier"] = job["compute_multiplier"]
+        workflow_mixed.append(job)
+
     network = []
     for job in expand_grid(
             {**base, "experiment": "network", "realistic_network_model": True},
@@ -390,12 +406,42 @@ def grids() -> dict[str, list[dict]]:
         job["warmup_s"] = 60.0
         horizon.append(job)
 
+    # Fidelity-ladder granularity (reviewer request): does the number of rungs
+    # change the decision?  Every ladder keeps 1.0 and the 0.1 floor; only the
+    # intermediate rungs differ, so the comparison isolates granularity.
+    fidelity_ladder = []
+    for label, levels in {
+            "two": (1.0, 0.5),
+            "three": (1.0, 0.5, 0.25),
+            "four": (1.0, 0.5, 0.25, 0.1),
+            "six": (1.0, 0.8, 0.6, 0.4, 0.2, 0.1)}.items():
+        for job in _with_payload(expand_grid(
+                {**base, "experiment": "fidelity_ladder", "ladder": label},
+                {"policy": ("naive_fid", "aware"),
+                 "compute_multiplier": (1.5, 2.0, 3.0), "seed": seeds20})):
+            job["fidelity"] = True
+            job["fidelity_levels"] = levels
+            fidelity_ladder.append(job)
+
+    # Resource contention (reviewer request): a non-agentic background service
+    # shares the same fleet, so the edge tier is genuinely occupied rather than
+    # merely loaded with more agentic requests.
+    contention = []
+    for job in _with_payload(expand_grid(
+            {**base, "experiment": "contention", "profile": "contention"},
+            {"policy": ("naive", "edge", "aware"),
+             "compute_multiplier": (1.0, 2.0, 3.0), "seed": seeds})):
+        job["fidelity"] = job["policy"] != "naive"
+        contention.append(job)
+
     return {"main": main, "multiplier": multiplier, "rate": rate, "cache": cache,
             "fidelity": fidelity, "energy": energy, "ablation": ablation,
             "factorial": factorial, "cp_split": cp_split, "fidelity_gamma": fidelity_gamma,
             "ablation2": ablation2, "tiers": tiers, "horizon": horizon,
             "cp_fine": cp_fine, "capacity": capacity, "weights": weights,
-            "workflow": workflow, "network": network}
+            "workflow": workflow, "network": network,
+            "fidelity_ladder": fidelity_ladder, "contention": contention,
+            "workflow_mixed": workflow_mixed}
 
 
 # The published grids keep their original folder naming (job ids and resume keys
@@ -416,6 +462,9 @@ NAME_KEYS = {
     "weights": COMPACT_KEYS + ("energy_weight", "container_penalty_s"),
     "workflow": COMPACT_KEYS + ("profile",),
     "network": COMPACT_KEYS + ("realistic_network_model", "wan_bandwidth"),
+    "fidelity_ladder": COMPACT_KEYS + ("ladder",),
+    "contention": COMPACT_KEYS + ("profile",),
+    "workflow_mixed": COMPACT_KEYS + ("profile",),
     "fidelity_gamma": COMPACT_KEYS,
     "ablation2": COMPACT_KEYS,
     "tiers": COMPACT_KEYS,

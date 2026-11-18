@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- Agentic workload sharing the fleet with a non-agentic background service.
+
+	     The two agentic classes are identical to applications_agentic.xml so that
+	     the comparison with the uncontended grid isolates the presence of the third
+	     class. Background_Telemetry is deliberately *not* scaled by the agentic
+	     overhead model: it keeps its nominal size and only competes for edge CPU,
+	     memory and link capacity. -->
+	<application name="Agentic_Inference_RAG">
+		<type>Soft Real-time</type>
+		<rate>20</rate>
+		<usage_percentage>50</usage_percentage>
+		<latency>0.8</latency>
+		<container_size>2500</container_size>
+		<request_size>1200</request_size>
+		<results_size>150</results_size>
+		<task_length>18000</task_length>
+	</application>
+	<application name="Agentic_Control_Reasoning">
+		<type>Hard Real-time</type>
+		<rate>15</rate>
+		<usage_percentage>50</usage_percentage>
+		<latency>0.25</latency>
+		<container_size>900</container_size>
+		<request_size>400</request_size>
+		<results_size>40</results_size>
+		<task_length>6000</task_length>
+	</application>
+	<application name="Background_Telemetry">
+		<type>Soft Real-time</type>
+		<rate>60</rate>
+		<usage_percentage>100</usage_percentage>
+		<latency>2.0</latency>
+		<container_size>400</container_size>
+		<request_size>200</request_size>
+		<results_size>20</results_size>
+		<task_length>15000</task_length>
+	</application>
+</applications>

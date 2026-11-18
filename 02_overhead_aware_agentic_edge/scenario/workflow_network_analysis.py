@@ -86,3 +86,23 @@ plt.close(fig)
 
 print("WORKFLOW\n", summary.round(3).to_string(index=False))
 print("\nNETWORK\n", net_summary.round(3).to_string(index=False))
+
+# ---- heterogeneous-chain workflow arm ----------------------------------------
+mixed = pd.read_csv(RESULTS / "runs" / "workflow_mixed" / "raw_runs.csv")
+mixed_summary = mixed.groupby(group)[["success_ratio", "request_success_ratio",
+                                      "fail_dependency", "Number of generated tasks"]].mean().reset_index()
+mixed_display = mixed_summary[["compute_multiplier", "policy", "success_ratio",
+                               "request_success_ratio", "fail_dependency"]].copy()
+mixed_display.columns = ["Overhead", "Policy", "Task success", "DAG success",
+                         "Cancelled subtasks"]
+mixed_display["Cancelled subtasks"] = mixed_display["Cancelled subtasks"].map(lambda v: f"{v:.0f}")
+for column in ("Task success", "DAG success"):
+    mixed_display[column] = mixed_display[column].map(lambda v: f"{v:.3f}")
+tables.write(mixed_display, RESULTS / "tables" / "workflow_mixed.tex",
+             "Heterogeneous workflow arm: four classes with 2, 3, 3 and 5 services, "
+             "so chain length varies across requests within one run.",
+             "tab:p2-workflow-mixed", wide=True, size=r"\footnotesize",
+             notes="Unlike the single-DAG arm, request-level success is non-zero: "
+                   "the short chains complete, the long ones are where deadlines "
+                   "and cancellations concentrate.")
+print("\nWORKFLOW MIXED\n", mixed_display.to_string(index=False))

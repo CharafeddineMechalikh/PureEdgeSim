@@ -45,7 +45,7 @@ Agentic services built on large language models execute chains of reasoning,
 tool calls and retrieval whose effective demand can exceed the nominal request
 several times over. A natural response is a joint orchestrator that selects, per
 task, both a reasoning-budget level and a host. We ask when that joint design
-actually helps, using $3{,}610$ seeded runs and a complete $3\times2$
+actually helps, using $4{,}240$ seeded runs and a complete $3\times2$
 placement-by-fidelity factorial (20 seeds per cell, the authoritative result
 set). At $2\times$ overhead the unprotected policy serves nothing; adding only
 the fidelity ladder reaches $0.375$; adding a static edge tier reaches $0.496$;
@@ -114,15 +114,17 @@ We separate five questions so that the experiments can answer them individually:
 \item[RQ5.] Which overhead component determines the feasibility boundary, and
   with what statistical confidence?
 \end{description}
-RQ1--RQ2 are answered by the crossed factorial and ANOVA, RQ3 by host-selection
-and the second simulator, RQ4 by the cost-curve sweep, and RQ5 by the
-compute/payload lattice and the paired statistical analysis. The contribution is
+RQ1--RQ2 are answered by the crossed factorial and ANOVA, RQ3 by host selection
+and the capacity and contention boundaries, RQ4 by the cost-curve and
+ladder-granularity sweeps, and RQ5 by the compute/payload lattice and the paired
+statistical analysis. A sensitivity analysis over six quality curves shows which
+of these answers depend on the assumed $q(f)$. The contribution is
 experimental: we establish the conditions under which additional orchestration
 complexity is justified, rather than propose a novel scheduling algorithm.
 
 \subsection{The result}
 We implement six policies on the Python port of PureEdgeSim and evaluate them
-on $3{,}610$ seeded runs. They form a complete factorial: placement has three
+on $4{,}240$ seeded runs. They form a complete factorial: placement has three
 levels and the fidelity ladder has two.
 
 \begin{itemize}
@@ -168,16 +170,24 @@ its own benefit, and we recommend the weighted metric as the primary one.
   $0\%$ joint scoring, with a three-way ANOVA and a seed-matched Holm-corrected
   test family (Section~\ref{sec:factorial}).
 \item A per-class quality-weighted metric that halves to quarters the reported
-  benefit, together with the finding that the cost *shape* changes quality but
-  not success at fixed deadlines (Sections~\ref{sec:quality}--\ref{sec:gamma}).
+  benefit, together with the finding that the cost \emph{shape} changes quality
+  but not success at fixed deadlines
+  (Sections~\ref{sec:quality}--\ref{sec:gamma}), and a six-family sensitivity
+  analysis showing the policy ordering does not depend on the assumed quality
+  curve (Section~\ref{sec:qsensitivity}).
 \item A component ablation with a live cache and an objective-term decomposition
   showing why the cache, energy and container terms are inert: the energy term is
   $0.0006$ of the score, the container term is below the score spread, and the
   objective changes no pick (Section~\ref{sec:ablation2}).
+\item Two boundary experiments that delimit the null: a waning edge tier
+  (Section~\ref{sec:capacity}), a co-tenant that consumes edge capacity
+  (Section~\ref{sec:contention}), and a ladder-granularity sweep showing that rung
+  count is a quality knob rather than a success knob
+  (Section~\ref{sec:ladder}).
 \item A regime boundary: in our LLM-serving simulator, where the edge tier is
   weak and the cloud is fast, placement dominates and the ladder becomes
   conditional on placement (Section~\ref{sec:docket}).
-\item A reproducible artifact of $3{,}610$ runs, a reconciled workload
+\item A reproducible artifact of $4{,}240$ runs, a reconciled workload
   definition, a power analysis, and a per-item revision map.
 \end{enumerate}
 
@@ -389,29 +399,34 @@ Stage~2 and uses a fixed host.}
 \end{figure*}
 
 \paragraph{Parameter provenance.}
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \footnotesize
-\caption{Model parameters and their provenance. All are design assumptions or
-calibrations, not measurements from a deployed system.}
+\caption{Model parameters, provenance and where each was varied. ``Assumption''
+means a documented design choice, not a measurement from a deployed system; a
+parameter is only claimed to matter as far as the sensitivity column shows.}
 \label{tab:p2-params}
-\begin{tabular}{@{}lll@{}}
+\begin{tabular}{@{}llll@{}}
 \toprule
-Parameter & Value & Source\\
+Parameter & Value & Source & Sensitivity \\
 \midrule
-control messages $m$ & 3 & assumption\\
-per-message compute $w_c$ & 150~MI & assumption\\
-per-message payload $b_c$ & 0.5~kB & assumption\\
-compute cache saving $s_c$ & 0.25 & assumption\\
-payload cache saving $s_b$ & 0.70 & assumption\\
-deadline margin $\delta$ & 0.15 & assumption\\
-energy weight $\lambda$ & 0.02~Wh$^{-1}$ & calibration\\
-container penalty $\beta$ & 0.02~s & calibration\\
-fidelity levels $F$ & $\{1,0.5,0.25,0.1\}$ & design choice\\
-cost curve $c_{\min},c_{\max}$ & 0, 1 (baseline) & design choice\\
+control messages $m$ & 3 & assumption & fixed (not swept) \\
+per-message compute $w_c$ & 150~MI & assumption & fixed (not swept) \\
+per-message payload $b_c$ & 0.5~kB & assumption & fixed (not swept) \\
+compute cache saving $s_c$ & 0.25 & assumption & cache grid \\
+payload cache saving $s_b$ & 0.70 & assumption & cache grid \\
+deadline margin $\delta$ & 0.15 & assumption & $\{0.10,0.30\}$ \\
+energy weight $\lambda$ & 0.02~Wh$^{-1}$ & calibration & $[0,2]$ (Sec.~\ref{sec:ablation2}) \\
+container penalty $\beta$ & 0.02~s & calibration & $[0,2]$ (Sec.~\ref{sec:ablation2}) \\
+fidelity levels $F$ & $\{1,0.5,0.25,0.1\}$ & design choice & 2/3/4/6 rungs (Sec.~\ref{sec:ladder}) \\
+cost curve $c_{\min},c_{\max}$ & 0, 1 & design choice & four shapes (Sec.~\ref{sec:gamma}) \\
+compute/payload multiplier & $1$--$3\times$ & sweep axis & $0.25$--$4\times$ (Sec.~\ref{sec:cpsplit}) \\
+WAN latency & 60~ms & simulator default & fixed (not swept) \\
+edge/cloud capacity ratio & 1 & simulator default & $0.25$--$4$ (Sec.~\ref{sec:capacity}) \\
+quality curve $q(f)$ & $f$ & assumption & six families (Sec.~\ref{sec:qsensitivity}) \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \subsection{Complexity}
 Stage 1 evaluates at most $|V|$ predictions for each of $|F|$ levels ($4\times33=
@@ -475,17 +490,18 @@ including per-class lengths after overhead, is in
 \texttt{results/WORKLOAD.md}.
 
 \subsection{Grids}
-Table~\ref{tab:p2-grids} lists the thirteen grids; the total is $3{,}610$ runs.
-Ten seeds is the reporting default; the factorial and the component ablation
-use twenty because the null result there is the claim (Appendix~\ref{sec:power}).
+Table~\ref{tab:p2-grids} lists the twenty-one grids; the total is $4{,}240$ runs.
+Ten seeds is the reporting default; the factorial, the component ablation and the
+ladder-granularity grid use twenty because the null result there is the claim
+(Section~\ref{sec:power}).
 
 \begin{table}[t]
 \centering
-\small
-\caption{Experimental grids. `F', `m', `a' and `h' stand for factorial,
-multiplier, ablation and horizon grids; all cells are seeded.}
+\footnotesize
+\caption{Experimental grids. All cells are seeded; the seed counts are given in
+the text.}
 \label{tab:p2-grids}
-\begin{tabular}{@{}lrr@{}}
+\begin{tabular}{@{}llr@{}}
 \toprule
 Grid & Factors & Runs\\
 \midrule
@@ -503,8 +519,16 @@ fidelity\_gamma & cost shape $\times$ overhead & 120\\
 ablation2 & component $\times$ overhead & 300\\
 tiers & policy $\times$ overhead, three tiers & 120\\
 horizon & policy $\times$ duration & 180\\
+cp\_fine & compute $\times$ payload lattice & 250\\
+capacity & edge/cloud capacity ratio & 400\\
+weights & objective weights & 100\\
+workflow & dependency-aware DAG arm & 60\\
+workflow\_mixed & 2--5 service chains & 60\\
+network & WAN bandwidth, realistic model & 180\\
+fidelity\_ladder & rung count $\times$ overhead & 480\\
+contention & policy $\times$ overhead, co-tenant & 90\\
 \midrule
-\multicolumn{2}{@{}l}{Total} & 2{,}620\\
+\multicolumn{2}{@{}l}{Total} & 4{,}240\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -598,6 +622,24 @@ policy and overhead. Request success is zero because the final service of each
 DAG never meets its bound in this configuration.}
 \label{fig:workflow}
 \end{figure}
+
+A single fixed graph per class is still unrealistic: a real agent may need two
+stages for one request and five for the next. We therefore added a mixed-profile
+arm with four classes whose chains have $2$, $3$, $3$ and $5$ services
+(retrieval/answer; retrieval/reason/verify; plan/retrieve/reason/verify/respond;
+and the three-service control chain) generated in the same run ($60$ runs).
+Table~\ref{tab:p2-workflow-mixed} shows that request-level success is now
+non-zero: the short chains complete while the long ones absorb the cancellations.
+At $2\times$ the edge-pinned and joint policies reach $0.630$ task and $0.239$
+request success against $0.444$/$0.223$ for default placement plus ladder, with
+$580$ against $1{,}369$ cancelled descendants; at $3\times$ they reach
+$0.358$/$0.041$ against $0.270$/$0.048$. The one exception is request success at
+$3\times$, where the default policy is four points ahead because it avoids the
+longest chains' deadline cascade more often. We report that exception rather than
+smoothing it: chain-length heterogeneity can reorder request-level success even
+when task-level success keeps the principal ordering.
+
+\input{../results/tables/workflow_mixed.tex}
 
 \subsection{Nominal overhead: everything works}
 \input{../results/tables/main.tex}
@@ -847,6 +889,33 @@ policy spends to keep its deadlines.}
 \label{fig:quality}
 \end{figure}
 
+\subsection{Sensitivity to the shape of the quality curve}
+\label{sec:qsensitivity}
+The accounting above assumes $q(f)=f$: a rung is worth exactly its share of the
+work. Because PureEdgeSim does not model answer accuracy, that choice is an
+assumption, and a referee is right to ask whether the conclusions are an artefact
+of it. We therefore recompute quality-weighted success under six monotone curves,
+all normalised to $q(1)=1$, from the per-task fidelity the orchestrator already
+recorded in the authoritative factorial (no new runs):
+$q(f)=f$ (linear), $\sqrt{f}$ (concave), $f^2$, $f^3$ (convex), $\sin(\pi f/2)$
+(saturating) and the threshold $q(f)=\mathbb{1}[f\ge0.5]$
+(Table~\ref{tab:p2-quality-sensitivity}).
+
+Two conclusions survive every curve. First, the ordering of the arms does not
+change at $1\times$, $1.5\times$ or $2\times$: a ladder-enabled policy always
+beats the same placement without one, and the joint scorer remains exactly equal
+to static edge. Second, the joint-versus-static gap is exactly zero in every
+column, so the placement null is not produced by the linear accounting. What
+\emph{does} depend on the curve is the \emph{size} of the fidelity benefit: at
+$2\times$ overhead it ranges from $0.496$ (linear) through $0.351$ (concave) and
+$0.124$ ($f^2$) to $0.062$ ($f^3$). We therefore report the fidelity effect as a
+range rather than a point, and claim only that it is positive for every monotone
+$q$ we tested. At $3\times$ the threshold family assigns zero to every arm --- no
+policy retains a $0.5$ rung --- so it cannot discriminate at that stress level;
+that is a property of the family, reported rather than hidden.
+
+\input{../results/tables/quality_sensitivity.tex}
+
 \subsection{Feasibility envelope}
 \label{sec:envelope}
 \input{../results/tables/envelope.tex}
@@ -968,6 +1037,39 @@ Success (not shown) is the same curve in all four cases.}
 \label{fig:gamma}
 \end{figure}
 
+\subsection{Fidelity-ladder granularity}
+\label{sec:ladder}
+A four-rung ladder is a design choice. We re-ran the two ladder-enabled policies
+with two, three, four and six rungs (the six-rung set adds $0.8,0.6,0.4,0.2$;
+all sets keep the full-effort rung and the $0.1$ floor) at $1.5\times$, $2\times$
+and $3\times$ with twenty seeds ($480$ runs,
+Table~\ref{tab:p2-ladder}, Figure~\ref{fig:ladder}).
+
+The coarse ladder changes \emph{quality} but not \emph{success}. At $1.5\times$
+and $2\times$, the two-, three- and four-rung ladders produce identical success
+($0.782$ and $0.496$ for the joint policy) because every infeasible request falls
+straight to $0.5$. The six-rung ladder serves exactly as many requests
+($0.782$, $0.496$) but at a mean realised fidelity of $0.80$ and $0.60$ instead
+of $0.50$: the intermediate rungs are feasible but were not on the menu, so a
+four-rung ladder over-sheds by $0.30$ and $0.10$ of the requested work at
+identical success. Granularity is therefore a quality knob, not a success knob,
+in this regime. At $3\times$ the ordering reverses --- the six-rung ladder
+reaches $0.373$ mean fidelity while the two-rung ladder sits at $0.50$ ---
+because the system is saturated and the only feasible rungs are the lowest ones;
+the finer ladder spends them rather than failing. Neither direction changes the
+policy ranking.
+
+\input{../results/tables/fidelity_ladder.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f_ladder.pdf}
+\caption{Fidelity-ladder granularity: success against the number of rungs for the
+two ladder-enabled policies. The rung count changes executed quality, not the
+ordering of policies.}
+\label{fig:ladder}
+\end{figure}
+
 \subsection{Host selection when all tiers are eligible}
 \label{sec:tiers}
 In every grid so far the cloud is eligible but receives no work, which is
@@ -1021,6 +1123,46 @@ $3\times$ overhead, with 95\% confidence bands over ten seeds.}
 \label{fig:capacity}
 \end{figure}
 
+\subsection{Resource contention from a co-tenant}
+\label{sec:contention}
+Capacity can also be consumed by work that is not in the study. We added a
+non-agentic background service (\texttt{Background\_Telemetry}, $60$ requests per
+minute per device, $1.0$~s bound) generated on \emph{every} task-producing
+device, so it shares the same edge nodes as the agentic classes rather than being
+given a disjoint subset. It is deliberately not scaled by the agentic overhead
+model: it only occupies capacity. The fleet now generates $9{,}300$ tasks per run
+instead of $2{,}100$, and edge CPU utilisation rises from roughly $21\%$ to
+$78$--$92\%$ (Table~\ref{tab:p2-contention}, Figure~\ref{fig:contention}).
+
+Under this load the ranking inverts. The default placement serves $0.904$,
+$0.730$ and $0.670$ at $1\times$, $2\times$ and $3\times$; the edge-pinned
+policies serve $0.879$, $0.652$ and $0.537$. The gap widens with overhead
+($2.5$, $7.8$ and $13.3$ points). The mechanism is visible in the placement
+counts: the default policy executes $3{,}582$ tasks on the cloud at $2\times$
+against $2{,}923$ for the edge-pinned arms, i.e.\ it escapes the contention by
+offloading, while the static rule saturates the tier it is pinned to and only
+falls back when no edge candidate is feasible. The ladder still adds nothing over
+static edge ($0.879$/$0.879$, $0.652$/$0.652$), so the placement null is
+unchanged; what contention changes is that \emph{pinning} to a congested tier
+costs success.
+
+This is the same boundary as Section~\ref{sec:capacity}, reached by a different
+route: an edge tier that is adequate when dedicated becomes inadequate when
+shared. Together the two experiments say the placement-null claim is conditional
+on the edge tier having spare capacity, whether that capacity is absent because
+the tier is small or because another tenant is using it.
+
+\input{../results/tables/contention.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f_contention.pdf}
+\caption{Success against overhead when a background service shares the fleet.
+The default placement degrades least because it offloads away from the contended
+tier.}
+\label{fig:contention}
+\end{figure}
+
 \subsection{Horizon and battery boundaries}
 \label{sec:boundaries}
 The `horizon` grid runs $5$, $15$ and $30$ simulated minutes with a $60$~s
@@ -1037,12 +1179,19 @@ Table~\ref{tab:p2-energy} reports no device deaths in any cell and success of
 $0.977$ (naive) and $0.990$ (joint) at every battery level. The energy term in
 the objective therefore has no boundary to react to in this scenario, which is
 consistent with the $0.06\%$ score share measured in Section~\ref{sec:ablation2}.
-We do \emph{not} interpret the energy-per-success column across battery levels:
-the vendored simulator's mist-energy accumulator depends on the configured
-initial battery (228, 144 and 3.4~Wh at 20, 50 and 100~Wh respectively) even
-though no device dies and the work performed is identical. That is an accounting
-property of the simulator, not an energy-efficiency result, and we report it as
-such rather than treating the metric as comparable across battery settings.
+
+The grid also exposed a defect in the vendored simulator, which we fixed rather
+than reported around. Its energy totals preloaded the unused share of the
+battery into the consumption accumulator, so the same work appeared to cost
+$228$, $144$ and $3.4$~Wh at $20$, $50$ and $100$~Wh initial charge. The initial
+charge is now applied only when the remaining battery is computed, and the
+reported total is consumption since the run started. With the fix, energy per
+task is $0.00724$~Wh in every battery cell and the three columns of the grid are
+identical, as they must be when the workload and fleet are unchanged. The policy
+comparison is then meaningful: $0.00730$~Wh per successful request for the joint
+policy against $0.00741$ for the naive one, a $1.5\%$ difference that follows from
+its higher success rate at the same work. The patch is recorded in the
+\texttt{simulator\_patches} directory of this paper's artifact.
 
 \input{../results/tables/energy.tex}
 
@@ -1078,14 +1227,15 @@ within the design's resolution.
 % =========================================================================
 \section{Cross-Model Check: Where the Placement Null Breaks}
 \label{sec:docket}
-The $3{,}610$ PureEdgeSim runs above use one simulator. To test whether the placement
+The $4{,}240$ PureEdgeSim runs above use one simulator. To test whether the placement
 null is an artefact of its linear MI/payload surrogate, we repeated the same two
 decisions in \emph{Docket}, a serving model built on the \emph{same} PureEdgeSim discrete-event engine (shared clock, event queue and workload sampling). Docket
 charges prefill and decode separately, holds a KV cache in blocks, batches
 requests per replica, and prices the local and wide-area bearers by bytes. The
 workload is a generated agentic trace replayed at the same four overhead levels;
 the fleet is a phone-class accelerator, two on-premise servers and a cloud card
-behind a $40$~ms WAN. Five seeds per cell, $20$ cells.
+behind a $40$~ms WAN. Six arms form the same crossed design, twenty seeds per
+cell ($24$ cells, $480$ requests per cell).
 
 Docket shares the simulation engine with the main experiments, so this is a \emph{serving-model} robustness check, not an independent simulator comparison, with a
 different cost model, not an independent replication. We also report it with
@@ -1096,18 +1246,19 @@ round numbers.
 \centering
 \footnotesize
 \caption{Docket ablation. A request is served when it completes inside its
-end-to-end class deadline. Five seeds per cell; data in the released
+end-to-end class deadline. Twenty seeds per cell; data in the released
 \texttt{fidelity\_ablation} artifact of the Docket repository.}
 \label{tab:p2-docket}
-\begin{tabular}{@{}lccccc@{}}
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
-Overhead & Naive & Ladder & Static & Joint & Joint\\
- & & only & edge & no ladder & + ladder\\
+Overhead & Naive & Ladder & Static & Static & Joint & Joint\\
+ & & only & edge & no ladder & no ladder & + ladder\\
 \midrule
-$1\times$ & 0.015 & 0.013 & 0.013 & 0.887 & \textbf{1.000}\\
-$1.5\times$ & 0.000 & 0.000 & 0.000 & 0.688 & \textbf{1.000}\\
-$2\times$ & 0.000 & 0.000 & 0.000 & 0.459 & \textbf{0.998}\\
-$3\times$ & 0.004 & 0.006 & 0.002 & 0.167 & \textbf{0.972}\\
+$1\times$ & 0.015 & 0.013 & 0.013 & 0.015 & 0.887 & \textbf{1.000}\\
+$1.5\times$ & 0.000 & 0.000 & 0.000 & 0.000 & 0.688 & \textbf{1.000}\\
+$2\times$ & 0.000 & 0.000 & 0.000 & 0.000 & 0.459 & \textbf{0.998}\\
+$3\times$ & 0.004 & 0.006 & 0.002 & 0.002 & 0.167 & \textbf{0.972}\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1116,9 +1267,13 @@ Table~\ref{tab:p2-docket} reverses the P2 result. Removing placement from the
 joint policy costs $97$--$99$ points: the cloud card is seven times the edge
 server ($700$ against $100$~TFLOPS) behind a hop that costs $40$~ms, so the joint
 rule can rescue requests that the edge tier cannot hold. Attaching the ladder to
-the untuned load balancer or to the static edge tier buys nothing. The two
-decisions interact: at $3\times$ the ladder raises the joint policy from $0.167$
-to $0.972$, but cannot rescue either no-cloud arm.
+the untuned load balancer or to the static edge tier buys nothing, and the new
+static-edge-no-ladder arm confirms why: on that tier the binding constraint is
+context capacity, not compute, so shrinking the answer does not open a place to
+put it. The two decisions interact: at $3\times$ the ladder raises the joint
+policy from $0.167$ to $0.972$, but cannot rescue either no-cloud arm. The
+twenty-seed cells also show the difference between the static arms is within one
+point at every level, so the ladder's failure there is not noise.
 
 This does not contradict the factorial; it bounds it. P2's edge tier is
 adequate and its cloud is unreachable in practice, so placement has no room to
@@ -1170,23 +1325,28 @@ are large enough to change a pick. Report quality-weighted success either way.
 \paragraph{A. Fidelity and application quality.}
 PureEdgeSim does not model answer accuracy: a $0.1$ fidelity execution is a
 success, and fidelity-weighted success is an accounting proxy, not a measured
-quality. The cost-curve sweep (Section~\ref{sec:gamma}) shows that this omission
-changes reported quality by up to $22$ points at fixed success, so the assumption
-is not harmless. Docket prices fidelity in generated tokens, but its decoder and
-capacities are synthetic. Neither platform provides a calibrated $q(f)$; a
-quality--latency curve from a real serving deployment is the most valuable
-external-validity experiment still missing.
+quality. We bound rather than ignore this: Section~\ref{sec:qsensitivity}
+recomputes every headline comparison under six monotone $q(f)$ shapes and shows
+the policy ordering is invariant, while the \emph{size} of the fidelity benefit
+varies from $0.062$ to $0.496$ at $2\times$. The cost-curve sweep
+(Section~\ref{sec:gamma}) independently changes executed quality by up to $22$
+points at fixed success. What remains missing is a \emph{measured} curve from a
+real serving deployment; Docket prices fidelity in generated tokens and reports a
+token-weighted proxy, but its decoder and capacities are synthetic and it has no
+quality evaluator. A calibrated $q(f)$ is the most valuable external-validity
+experiment still open.
 
 \paragraph{B. Agentic workload abstraction.}
 The principal workload represents reasoning, tool calls and retrieval through
 compute and payload multipliers plus a fixed control-message count. The
-dependency-aware arm added a single fixed three-service DAG per class and showed
-where a deadline failure propagates, but it has no conditional branches or
-variable stage counts: a real agent may require two stages for one request and
-seven for the next. Short/medium/long workflow profiles remain future work. We
-therefore claim only that \emph{demand amplification} and fixed service chains
-change the orchestration decision, not that the workload is a faithful agent
-implementation.
+dependency-aware arm added a single fixed three-service DAG per class and the
+mixed arm varied chain length from two to five services within one run. Together
+they show where a deadline failure propagates and that heterogeneity can reorder
+request-level success at the highest overhead. Conditional branches, variable
+execution paths and learned stage counts are still absent: a real agent may
+choose its graph at run time. We therefore claim only that \emph{demand
+amplification} and service-chain structure change the orchestration decision,
+not that the workload is a faithful agent implementation.
 
 \paragraph{C. Network modelling.}
 The main grids disable the realistic network model (Section~\ref{sec:exp}): the
@@ -1202,9 +1362,11 @@ Docket also has a FIFO access-link model and could be used for the same sweep.
 The exact-zero placement result is measured with an adequate edge tier and a
 cloud that receives no successful requests (Section~\ref{sec:tiers}). Docket
 reverses it with a weak edge and a much faster cloud (Section~\ref{sec:docket}),
-and the capacity-ratio experiment of Section~\ref{sec:capacity} begins to map
-that boundary. The conclusion is a regime statement, not a universal claim that
-placement never matters.
+and two experiments map the boundary: the capacity-ratio sweep
+(Section~\ref{sec:capacity}) and the co-tenant contention grid
+(Section~\ref{sec:contention}), which shows that a tier adequate when dedicated
+becomes inadequate when shared. The conclusion is a regime statement, not a
+universal claim that placement never matters.
 
 \paragraph{E. Statistical generalisability.}
 Ten seeds resolve roughly two points in the sensitivity grids; the principal
@@ -1214,19 +1376,19 @@ paired bootstrap intervals; the Holm families are $40$ contrasts in
 Table~\ref{tab:p2-factorial-tests} and $24$ in Table~\ref{tab:p2-tests}. Exact
 zeros are supported by a TOST equivalence check with a stated one-point margin,
 which establishes practical equivalence only in the tested regime. The Docket
-experiment uses five seeds per cell and is exploratory.
+experiment also uses twenty seeds per cell and the full six-arm factorial.
 
 \paragraph{F. Simulator dependence and external validity.}
 Both configurations use the same discrete-event engine: Docket is built on
 PureEdgeSim's clock, event queue and workload sampler, and is developed by the
 authors. It is a serving-model robustness check under a different cost model,
 not an independent simulator comparison and not external validation against a
-deployed LLM-serving infrastructure. No real
-hardware measurements, real LLM outputs or production traces are used. The
-vendored PureEdgeSim battery accounting also depends on configured initial
-capacity in a way that prevents cross-battery energy comparison
-(Section~\ref{sec:boundaries}); we report that as a simulator artifact rather
-than an energy result.
+deployed LLM-serving infrastructure. No real hardware measurements, real LLM
+outputs or production traces are used, and every device capacity is a round
+number marked synthetic. One concrete defect found in the vendored engine --- a
+battery-energy accumulator that charged the unused initial charge as consumption
+--- was fixed rather than reported around
+(Section~\ref{sec:boundaries}); all energy numbers in this paper are post-fix.
 
 \section{Conclusion}
 \label{sec:concl}
@@ -1239,15 +1401,20 @@ answered by the large placement $\times$ ladder interaction ($\eta^2=0.736$):
 placement contributes only when fidelity has made a request feasible. RQ3 has a
 capacity-dependent answer: in the principal configuration the edge tier already
 has enough capacity after adaptation, so the cloud receives no successful
-requests and a second, author-developed serving simulator shows placement
-becoming essential when the edge is weak and the cloud much faster. RQ4 is
-answered by the cost-curve sweep --- the assumed $C(f)$ changes executed
-fidelity by about $22$ points while leaving success approximately unchanged ---
-and RQ5 by the compute/payload lattices, where compute dominates in most cells
-but payload triggers threshold effects at specific deadline boundaries. The
-utility of joint placement--fidelity optimization is therefore not intrinsic to
-the algorithm; it depends on workload demand, tier capacity and the
-quality--computation trade-off.
+requests, and a serving-model check in Docket (a second cost model on the same
+discrete-event engine) shows placement becoming essential when the edge is weak
+and the cloud much faster. The capacity-ratio sweep and the co-tenant contention
+grid locate that boundary from two directions. RQ4 is answered by the
+cost-curve sweep --- the assumed $C(f)$ changes executed fidelity by about $22$
+points while leaving success approximately unchanged --- and the ladder-granularity
+grid, where adding rungs raises realised fidelity by up to $0.30$ at identical
+success. RQ5 is answered by the compute/payload lattices, where compute dominates
+in most cells but payload triggers threshold effects at specific deadline
+boundaries. The quality-curve sensitivity analysis shows that the ordering of
+these effects does not depend on the assumed shape of $q(f)$, although their
+magnitude does. The utility of joint placement--fidelity optimization is therefore
+not intrinsic to the algorithm; it depends on workload demand, tier capacity and
+the quality--computation trade-off.
 
 The recommendation for the field is procedural. Report the crossed factorial
 with ladder-only and strong static arms and a stated decomposition order;

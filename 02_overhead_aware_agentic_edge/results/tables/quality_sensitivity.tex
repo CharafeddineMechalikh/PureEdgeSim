@@ -1,0 +1,37 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Quality-weighted success under six shapes of the quality curve $q(f)$, recomputed post hoc from the per-task fidelity of the authoritative factorial. $q(1)=1$ in every column.}
+\label{tab:p2-quality-sensitivity}
+\begin{tabular}{lcccccccc}
+\toprule
+Overhead & Policy & Success & linear & concave & quadratic & cubic & saturating & threshold \\
+\midrule
+1$\times$ & aware & 0.986 & 0.986 & 0.986 & 0.986 & 0.986 & 0.986 & 0.986 \\
+1$\times$ & aware\_nofid & 0.986 & 0.986 & 0.986 & 0.986 & 0.986 & 0.986 & 0.986 \\
+1$\times$ & edge & 0.986 & 0.986 & 0.986 & 0.986 & 0.986 & 0.986 & 0.986 \\
+1$\times$ & edge\_nofid & 0.986 & 0.986 & 0.986 & 0.986 & 0.986 & 0.986 & 0.986 \\
+1$\times$ & naive & 0.972 & 0.972 & 0.972 & 0.972 & 0.972 & 0.972 & 0.972 \\
+1$\times$ & naive\_fid & 0.972 & 0.972 & 0.972 & 0.972 & 0.972 & 0.972 & 0.972 \\
+1.5$\times$ & aware & 0.782 & 0.674 & 0.719 & 0.620 & 0.593 & 0.719 & 0.782 \\
+1.5$\times$ & aware\_nofid & 0.571 & 0.571 & 0.571 & 0.571 & 0.571 & 0.571 & 0.571 \\
+1.5$\times$ & edge & 0.782 & 0.674 & 0.719 & 0.620 & 0.593 & 0.719 & 0.782 \\
+1.5$\times$ & edge\_nofid & 0.571 & 0.571 & 0.571 & 0.571 & 0.571 & 0.571 & 0.571 \\
+1.5$\times$ & naive & 0.569 & 0.569 & 0.569 & 0.569 & 0.569 & 0.569 & 0.569 \\
+1.5$\times$ & naive\_fid & 0.728 & 0.646 & 0.680 & 0.604 & 0.584 & 0.680 & 0.728 \\
+2$\times$ & aware & 0.496 & 0.248 & 0.351 & 0.124 & 0.062 & 0.351 & 0.496 \\
+2$\times$ & aware\_nofid & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 \\
+2$\times$ & edge & 0.496 & 0.248 & 0.351 & 0.124 & 0.062 & 0.351 & 0.496 \\
+2$\times$ & edge\_nofid & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 \\
+2$\times$ & naive & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 \\
+2$\times$ & naive\_fid & 0.375 & 0.187 & 0.265 & 0.094 & 0.047 & 0.265 & 0.375 \\
+3$\times$ & aware & 0.401 & 0.100 & 0.201 & 0.025 & 0.006 & 0.154 & 0.000 \\
+3$\times$ & aware\_nofid & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 \\
+3$\times$ & edge & 0.401 & 0.100 & 0.201 & 0.025 & 0.006 & 0.154 & 0.000 \\
+3$\times$ & edge\_nofid & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 \\
+3$\times$ & naive & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 \\
+3$\times$ & naive\_fid & 0.373 & 0.071 & 0.160 & 0.016 & 0.004 & 0.110 & 0.000 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright The family is monotone and normalised; only its curvature changes. The policy ordering is read down the columns, not across them.\par}
+\end{table*}

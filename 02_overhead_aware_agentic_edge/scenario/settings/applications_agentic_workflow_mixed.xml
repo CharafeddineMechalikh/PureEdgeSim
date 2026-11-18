@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- Heterogeneous agentic DAGs: stage count varies across requests.
+
+	     The single-DAG workflow arm gives every request of a class the same
+	     graph. A real agent does not: one request needs retrieval and an
+	     answer, the next needs a plan, three tool calls and a verification
+	     pass. This profile mixes four classes so that the *distribution* of
+	     chain length is exercised in one run:
+
+	       RAG_Short   2 services   retrieve -> answer
+	       RAG_Medium  3 services   retrieve -> reason -> verify
+	       RAG_Long    5 services   plan -> retrieve -> reason -> verify -> respond
+	       Control     3 services   sense -> decide -> act
+
+	     Each class keeps its own deadline; descendants are cancelled when a
+	     parent misses its bound. -->
+	<application name="Agentic_RAG_Short">
+		<type>Soft Real-time</type>
+		<rate>10</rate>
+		<usage_percentage>25</usage_percentage>
+		<latency>0.60</latency>
+		<container_size>2500</container_size>
+		<request_size>1200</request_size>
+		<results_size>150</results_size>
+		<task_length>12000</task_length>
+		<subtask name="retrieve" task_length="5000" results_size="600" latency="0.30"/>
+		<subtask name="answer" depends_on="retrieve" task_length="6000" results_size="150" latency="0.60"/>
+	</application>
+	<application name="Agentic_RAG_Medium">
+		<type>Soft Real-time</type>
+		<rate>10</rate>
+		<usage_percentage>25</usage_percentage>
+		<latency>0.80</latency>
+		<container_size>2500</container_size>
+		<request_size>1200</request_size>
+		<results_size>150</results_size>
+		<task_length>18000</task_length>
+		<subtask name="retrieve" task_length="5000" results_size="600" latency="0.30"/>
+		<subtask name="reason" depends_on="retrieve" task_length="9000" results_size="400" latency="0.55"/>
+		<subtask name="verify" depends_on="reason" task_length="4000" results_size="150" latency="0.80"/>
+	</application>
+	<application name="Agentic_RAG_Long">
+		<type>Soft Real-time</type>
+		<rate>10</rate>
+		<usage_percentage>25</usage_percentage>
+		<latency>1.60</latency>
+		<container_size>2500</container_size>
+		<request_size>1600</request_size>
+		<results_size>180</results_size>
+		<task_length>30000</task_length>
+		<subtask name="plan" task_length="3000" results_size="200" latency="0.25"/>
+		<subtask name="retrieve" depends_on="plan" task_length="5000" results_size="600" latency="0.55"/>
+		<subtask name="reason" depends_on="retrieve" task_length="9000" results_size="400" latency="1.05"/>
+		<subtask name="verify" depends_on="reason" task_length="8000" results_size="300" latency="1.35"/>
+		<subtask name="respond" depends_on="verify" task_length="5000" results_size="180" latency="1.60"/>
+	</application>
+	<application name="Agentic_Control_Reasoning">
+		<type>Hard Real-time</type>
+		<rate>15</rate>
+		<usage_percentage>25</usage_percentage>
+		<latency>0.25</latency>
+		<container_size>900</container_size>
+		<request_size>400</request_size>
+		<results_size>40</results_size>
+		<task_length>6000</task_length>
+		<subtask name="sense" task_length="1500" results_size="200" latency="0.10"/>
+		<subtask name="decide" depends_on="sense" task_length="3500" results_size="100" latency="0.20"/>
+		<subtask name="act" depends_on="decide" task_length="1000" results_size="40" latency="0.25"/>
+	</application>
+</applications>

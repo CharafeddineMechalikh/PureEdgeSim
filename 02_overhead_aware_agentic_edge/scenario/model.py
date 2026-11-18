@@ -95,8 +95,38 @@ class AgenticTaskGenerator(DefaultTaskGenerator):
     def generate(self):
         tasks = super().generate()
         config = self.config
+        # A background tenant is generated on every task-producing device, not on
+        # the disjoint device subset the per-application usage split assigns: the
+        # point of the contention grid is that both workloads share the same edge
+        # nodes.  The default generator gives the last application the leftover
+        # devices, which is zero when the agentic classes already claim 100 %.
+        background = [app for app in self.manager.applications
+                      if app.name.startswith("Background")]
+        if background:
+            devices = [node for node in self.manager.edge_devices
+                       if node.generates_tasks and node.is_alive()]
+            identifier = max((task.id for task in tasks), default=0) + 1
+            for device in devices:
+                identifier = self._generate_for_device(device, background[0], tasks, identifier)
+            tasks.sort(key=lambda task: task.time)
         hits = 0
         for task in tasks:
+            # A contention workload shares the same fleet but is not an agentic
+            # request: it keeps its nominal size so that the agentic classes face a
+            # genuinely occupied edge tier rather than a larger version of
+            # themselves.
+            app_name = self.manager.applications[task.application_id].name
+            if app_name.startswith("Background"):
+                task.research_overhead_mi = 0.0
+                task.research_overhead_kb = 0.0
+                task.research_cache_hit = 0
+                task.research_cache_saved_kb = 0.0
+                task.research_fidelity = 1.0
+                task.research_feasible = 1
+                task.research_fallback = 0
+                task.research_f1_feasible = 1
+                task.research_security_level = 0
+                continue
             hit = self.random.random() < config.cache_hit_ratio
             hits += int(hit)
             payload = config.payload_multiplier * (1.0 - config.cache_payload_saving if hit else 1.0)

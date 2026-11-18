@@ -1,0 +1,37 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Fidelity-ladder granularity: success, realised mean fidelity, low-fidelity rate, p95 delay and energy by rung count, policy and overhead.}
+\label{tab:p2-ladder}
+\begin{tabular}{lccccccc}
+\toprule
+Overhead & Rungs & Policy & Success & Mean $f$ & Low-$f$ rate & p95 (s) & Wh/success \\
+\midrule
+1.5$\times$ & two & Joint + ladder & 0.782 & 0.500 & 1.000 & 0.708 & 0.010 \\
+1.5$\times$ & two & Default + ladder & 0.728 & 0.500 & 1.000 & 0.871 & 0.011 \\
+1.5$\times$ & three & Joint + ladder & 0.782 & 0.500 & 1.000 & 0.708 & 0.010 \\
+1.5$\times$ & three & Default + ladder & 0.728 & 0.500 & 1.000 & 0.871 & 0.011 \\
+1.5$\times$ & four & Joint + ladder & 0.782 & 0.500 & 1.000 & 0.708 & 0.010 \\
+1.5$\times$ & four & Default + ladder & 0.728 & 0.500 & 1.000 & 0.871 & 0.011 \\
+1.5$\times$ & six & Joint + ladder & 0.782 & 0.800 & 1.000 & 0.708 & 0.010 \\
+1.5$\times$ & six & Default + ladder & 0.728 & 0.800 & 1.000 & 0.954 & 0.011 \\
+2$\times$ & two & Joint + ladder & 0.496 & 0.500 & 1.000 & 0.937 & 0.017 \\
+2$\times$ & two & Default + ladder & 0.375 & 0.500 & 1.000 & 3.847 & 0.023 \\
+2$\times$ & three & Joint + ladder & 0.496 & 0.500 & 1.000 & 0.937 & 0.017 \\
+2$\times$ & three & Default + ladder & 0.375 & 0.500 & 1.000 & 3.847 & 0.023 \\
+2$\times$ & four & Joint + ladder & 0.496 & 0.500 & 1.000 & 0.937 & 0.017 \\
+2$\times$ & four & Default + ladder & 0.375 & 0.500 & 1.000 & 3.847 & 0.023 \\
+2$\times$ & six & Joint + ladder & 0.496 & 0.600 & 1.000 & 0.937 & 0.017 \\
+2$\times$ & six & Default + ladder & 0.375 & 0.600 & 1.000 & 3.939 & 0.024 \\
+3$\times$ & two & Joint + ladder & 0.397 & 0.500 & 1.000 & 10.783 & 0.026 \\
+3$\times$ & two & Default + ladder & 0.371 & 0.500 & 1.000 & 5.557 & 0.028 \\
+3$\times$ & three & Joint + ladder & 0.401 & 0.250 & 1.000 & 10.373 & 0.023 \\
+3$\times$ & three & Default + ladder & 0.373 & 0.250 & 1.000 & 5.082 & 0.025 \\
+3$\times$ & four & Joint + ladder & 0.401 & 0.230 & 1.000 & 10.373 & 0.023 \\
+3$\times$ & four & Default + ladder & 0.373 & 0.194 & 1.000 & 5.151 & 0.025 \\
+3$\times$ & six & Joint + ladder & 0.398 & 0.373 & 1.000 & 10.647 & 0.025 \\
+3$\times$ & six & Default + ladder & 0.373 & 0.324 & 1.000 & 5.355 & 0.026 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Every ladder keeps the full-effort rung and the 0.1 floor. ``two'' is a single fallback rung above the floor.\par}
+\end{table*}

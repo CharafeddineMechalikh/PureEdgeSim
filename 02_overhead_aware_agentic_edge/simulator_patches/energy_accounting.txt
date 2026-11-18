@@ -1,0 +1,42 @@
+-- Simulator patch: battery energy accounting
+--
+-- File:        _deps_pureedgesim_python/src/pureedgesim/topology.py
+--              _deps_pureedgesim_python/src/pureedgesim/nodes.py
+-- Applies to:  the vendored PureEdgeSim tree used by every grid in this folder.
+--
+-- DEFECT
+-- ------
+-- Topology creation preloaded the *unused* share of the battery into the
+-- consumption accumulator so that `capacity - consumption` would yield the
+-- remaining charge:
+--
+--     if spec.battery:
+--         energy.cpu_energy_consumption = energy.battery_capacity * (1 - initial/100)
+--
+-- Every reported energy total is `cpu_energy_consumption + network_...`, so the
+-- same work was reported as costing 228 Wh at 20 % initial charge, 144 Wh at
+-- 50 % and 3.4 Wh at 100 %, when no device died and the workload was identical.
+-- The remaining-battery figure was correct; the consumption figure was not.
+--
+-- FIX
+-- ---
+-- Remove the preload from topology.py, and apply the initial charge where it
+-- belongs, in `ComputingNode.get_remaining_battery`:
+--
+--     available = battery_capacity * initial_battery_level / 100.0
+--     return max(0.0, available - total_energy_consumption())
+--
+-- `get_total_energy_consumption()` now means consumption since the run started.
+-- `get_remaining_battery()` is numerically unchanged, so depletion and
+-- device-death behaviour is bit-identical.
+--
+-- VERIFICATION
+-- ------------
+-- The `energy` grid was re-run (60 runs, results/runs/energy). Energy per task is
+-- 0.00724 Wh in all three battery cells (spread exactly 0.0), and the policy
+-- comparison is 0.00730 (joint) vs 0.00741 Wh per successful request (naive).
+-- Before the patch the three cells differed by two orders of magnitude.
+--
+-- The other grids were re-run only where they report energy; their default
+-- initial battery is 100 %, for which the old offset was zero, so their numbers
+-- are unaffected by the patch.

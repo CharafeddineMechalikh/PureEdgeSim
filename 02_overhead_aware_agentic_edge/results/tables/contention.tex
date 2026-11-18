@@ -1,0 +1,22 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Resource contention: a non-agentic background service shares the fleet with the agentic classes. Success, p95 delay, edge CPU utilisation and the generated task count.}
+\label{tab:p2-contention}
+\begin{tabular}{lccccc}
+\toprule
+Overhead & Policy & Success & p95 (s) & Edge CPU (\%) & Tasks \\
+\midrule
+1$\times$ & Default, no ladder & 0.904 & 1.476 & 87.438 & 9300 \\
+1$\times$ & Joint + ladder & 0.879 & 2.065 & 83.645 & 9300 \\
+1$\times$ & Static edge + ladder & 0.879 & 2.065 & 83.645 & 9300 \\
+2$\times$ & Default, no ladder & 0.730 & 6.577 & 78.467 & 9300 \\
+2$\times$ & Joint + ladder & 0.652 & 9.054 & 82.913 & 9300 \\
+2$\times$ & Static edge + ladder & 0.652 & 9.007 & 82.913 & 9300 \\
+3$\times$ & Default, no ladder & 0.670 & 12.597 & 92.300 & 9300 \\
+3$\times$ & Joint + ladder & 0.537 & 16.407 & 85.412 & 9300 \\
+3$\times$ & Static edge + ladder & 0.543 & 15.881 & 85.234 & 9300 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright The background class is not scaled by the agentic overhead model; it only occupies edge capacity.\par}
+\end{table*}

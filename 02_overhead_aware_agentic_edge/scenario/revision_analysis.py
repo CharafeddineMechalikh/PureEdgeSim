@@ -768,7 +768,9 @@ def build() -> dict[str, Path]:
             wide=True, size=r"\footnotesize",
             notes="No device dies at any level, so the battery is not a binding "
                   "constraint in this scenario and the energy term of the "
-                  "objective cannot earn its keep.")
+                  "objective cannot earn its keep. The three rows are identical "
+                  "because initial charge changes depletion time, not the energy "
+                  "the same work costs.")
 
     return {key: Path(value) for key, value in outputs.items()}
 

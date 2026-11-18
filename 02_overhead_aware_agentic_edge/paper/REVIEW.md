@@ -206,13 +206,26 @@ no undefined references. Acceptance: 24/24.
    payload effects near boundaries" and a 250-run refined $5\times5$ lattice
    (`cp_fine`) was executed; it shows threshold effects at $c=1.5$ and $c=1.7$.
 5. **Energy/payload calculations.** The battery-dependent mist-energy
-   accumulator in the vendored simulator is documented as an accounting
-   artifact; cross-battery energy-per-success is no longer interpreted.
+   accumulator in the vendored simulator was a real defect; it was fixed
+   (`simulator_patches/energy_accounting.txt`), the 60-run `energy` grid was
+   re-run, and energy is now identical across initial-charge settings.
 6. **Network model.** The communication term is defined as propagation-only in
-   the orchestrator's prediction, with the bandwidth-contention boundary stated.
+   the orchestrator's prediction. A 180-run bandwidth-sharing grid maps the
+   boundary (all policies fail at the tested overheads), and a 90-run co-tenant
+   grid shows that contention reverses the placement ranking.
 7. **RQs, title, terminology and overclaims** revised per the reviewer; RQ1--RQ5
    are now answered explicitly in the conclusion.
 
-Still open (Phase 2/3 of the review): capacity-ratio sweep, realistic agentic
-workflow profiles, network-constrained experiments, real serving measurements,
-and full quality--computation calibration.
+Phase 2 and 3 of the review, all executed: capacity-ratio sweep (400 runs),
+workflow DAGs including a 2--5 service mixed-chain arm (120 runs), refined
+compute/payload lattice (250 runs), objective-weight sensitivity (100 runs),
+fidelity-ladder granularity (480 runs), quality-curve sensitivity over six
+monotone families (post hoc), and a full six-arm, twenty-seed Docket check
+(480 requests). Total artifact: 4,240 PureEdgeSim runs plus the Docket grid.
+
+Still genuinely external: a *measured* LLM quality--computation curve (no
+quality evaluator or model deployment exists in either artifact; we bound the
+conclusion over a family instead) and validation on real edge/cloud hardware
+with a production trace. Docket is the authors' simulator on the same engine,
+so it is reported as a serving-model robustness check, not an independent
+replication.

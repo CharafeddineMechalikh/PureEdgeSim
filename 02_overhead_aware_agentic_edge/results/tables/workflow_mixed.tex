@@ -1,0 +1,19 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Heterogeneous workflow arm: four classes with 2, 3, 3 and 5 services, so chain length varies across requests within one run.}
+\label{tab:p2-workflow-mixed}
+\begin{tabular}{lcccc}
+\toprule
+Overhead & Policy & Task success & DAG success & Cancelled subtasks \\
+\midrule
+2.000 & aware & 0.630 & 0.239 & 580 \\
+2.000 & edge & 0.630 & 0.239 & 580 \\
+2.000 & naive\_fid & 0.444 & 0.223 & 1369 \\
+3.000 & aware & 0.358 & 0.041 & 1498 \\
+3.000 & edge & 0.358 & 0.041 & 1498 \\
+3.000 & naive\_fid & 0.270 & 0.048 & 1890 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Unlike the single-DAG arm, request-level success is non-zero: the short chains complete, the long ones are where deadlines and cancellations concentrate.\par}
+\end{table*}
