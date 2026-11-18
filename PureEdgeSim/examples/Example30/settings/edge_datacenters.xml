@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<edge_datacenters>
+	<!-- Four small edge data centers, one per quarter of the map. They are
+		mains powered and fixed, so the orchestrator treats them as safe, but each
+		one is slower than a gateway device. -->
+	<datacenter name="dc1">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>150</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>250</x_pos>
+			<y_pos>250</y_pos>
+		</location>
+		<cores>4</cores>
+		<mips>20000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<datacenter name="dc2">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>150</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>250</x_pos>
+			<y_pos>750</y_pos>
+		</location>
+		<cores>4</cores>
+		<mips>20000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<datacenter name="dc3">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>150</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>750</x_pos>
+			<y_pos>250</y_pos>
+		</location>
+		<cores>4</cores>
+		<mips>20000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<datacenter name="dc4">
+		<periphery>true</periphery>
+		<idleConsumption>100</idleConsumption>
+		<maxConsumption>150</maxConsumption>
+		<isOrchestrator>false</isOrchestrator>
+		<location>
+			<x_pos>750</x_pos>
+			<y_pos>750</y_pos>
+		</location>
+		<cores>4</cores>
+		<mips>20000</mips>
+		<ram>16000</ram>
+		<storage>200000</storage>
+	</datacenter>
+	<network_links>
+	</network_links>
+</edge_datacenters>

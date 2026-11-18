@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- Three service graphs with different shapes. A subtask fails its whole
+		request when it fails, because every subtask after it waits for its
+		output. -->
+	<!-- A chain with a fork and a join, from Example 9. -->
+	<application name="Video analytics">
+		<type>Soft Real-time</type>
+		<rate>2</rate>
+		<usage_percentage>40</usage_percentage>
+		<latency>20</latency>
+		<container_size>20</container_size>
+		<request_size>5</request_size>
+		<results_size>100</results_size>
+		<task_length>1000</task_length>
+		<subtask name="capture" task_length="200" results_size="5" latency="2"/>
+		<subtask name="preprocess" depends_on="capture" task_length="600" results_size="20" latency="5"/>
+		<subtask name="detect" depends_on="preprocess" task_length="4000" results_size="10" latency="10"/>
+		<subtask name="classify" depends_on="detect" task_length="2500" results_size="50" latency="10"/>
+		<subtask name="track" depends_on="detect" task_length="800" results_size="100" latency="10"/>
+		<subtask name="aggregate" depends_on="classify,track" task_length="300" results_size="20" latency="15"/>
+		<subtask name="notify" depends_on="aggregate" task_length="50" results_size="1" latency="20"/>
+	</application>
+	<!-- A fan-out and fan-in: one ingest feeds three analyses that a fusion step joins. -->
+	<application name="Health monitoring">
+		<type>Hard Real-time</type>
+		<rate>4</rate>
+		<usage_percentage>30</usage_percentage>
+		<latency>3</latency>
+		<container_size>20</container_size>
+		<request_size>10</request_size>
+		<results_size>10</results_size>
+		<task_length>500</task_length>
+		<subtask name="ingest" task_length="200" results_size="20" latency="1"/>
+		<subtask name="ecg" depends_on="ingest" task_length="800" results_size="5" latency="2"/>
+		<subtask name="spo2" depends_on="ingest" task_length="300" results_size="5" latency="2"/>
+		<subtask name="motion" depends_on="ingest" task_length="500" results_size="5" latency="2"/>
+		<subtask name="fuse" depends_on="ecg,spo2,motion" task_length="600" results_size="5" latency="3"/>
+		<subtask name="alert" depends_on="fuse" task_length="50" results_size="1" latency="3"/>
+	</application>
+	<!-- A tree: one cleaned stream is both stored and modeled, and the model is reported. -->
+	<application name="Telemetry">
+		<type>Non Real-time</type>
+		<rate>1</rate>
+		<usage_percentage>30</usage_percentage>
+		<latency>120</latency>
+		<container_size>20</container_size>
+		<request_size>50</request_size>
+		<results_size>20</results_size>
+		<task_length>1000</task_length>
+		<subtask name="collect" task_length="300" results_size="200" latency="30"/>
+		<subtask name="clean" depends_on="collect" task_length="1500" results_size="100" latency="60"/>
+		<subtask name="store" depends_on="clean" task_length="400" results_size="5" latency="120"/>
+		<subtask name="model" depends_on="clean" task_length="6000" results_size="20" latency="120"/>
+		<subtask name="report" depends_on="model" task_length="200" results_size="5" latency="120"/>
+	</application>
+</applications>

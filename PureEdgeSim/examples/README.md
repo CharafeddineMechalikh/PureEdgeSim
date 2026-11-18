@@ -36,6 +36,7 @@ class from another folder (for instance the Q-learning orchestrator of
 | [Example 26](Example26/README.md) | Learning an orchestration that survives the crash of the orchestrating device | `Example26/settings/` | default |
 | [Example 27](Example27/README.md) | A shared uplink offered more than it can carry, seen through both network models | `Example27/settings/` | default |
 | [Example 28](Example28/README.md) | Placing work by the autonomy it leaves a battery, on a fleet that can die of it | `Example28/settings/` | default |
+| [Example 30](Example30/README.md) | Keeping the subtasks other subtasks wait for off devices that can fail | `Example30/settings/` | default |
 
 The Java classes of each example are in its own folder. Run one from the
 repository root after `mvn clean install -DskipTests`:
