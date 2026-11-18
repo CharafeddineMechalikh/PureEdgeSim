@@ -870,7 +870,31 @@ Table~\ref{tab:p2-cp-fine} and Figure~\ref{fig:cpfine} show discrete jumps at
 specific boundary crossings --- between $p=1.25$ and $1.5$ at $c=1.5$, and
 between $p=1.75$ and $2.0$ at $c=1.7$ --- while payload has no effect elsewhere.
 The interaction is threshold-like: once the feasible region is exhausted, a
-small additional payload crosses the deadline. A bandwidth-constrained network,
+small additional payload crosses the deadline.
+
+To test whether that conclusion survives contention, we repeated the sweep with
+the simulator's realistic network model enabled and WAN bandwidth set to
+$5/20/100$~Mb/s ($180$ runs, Table~\ref{tab:p2-network}). Under this model
+\emph{all} policies fail every deadline at both $1.5\times$ and $2\times$
+overhead; the fidelity-enabled policies at least keep p95 delay around
+$0.37$--$0.48$~s while the naive policy's tail grows to hundreds or thousands of
+seconds. This is a negative result about the current configuration, not a
+general claim that contention always eliminates success: the link model adds
+transfer and queueing on top of already-tight budgets, and a less aggressive
+overhead or a relaxed deadline would be needed to locate a usable boundary. We
+therefore keep the main compute/payload conclusion scoped to the uncongested
+configuration and report the contention grid as a boundary we have measured but
+not yet characterised.
+
+\input{../results/tables/network.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{f_network.pdf}
+\caption{Network-contention sweep: success and p95 delay against WAN bandwidth
+under the realistic network model.}
+\label{fig:network}
+\end{figure} A bandwidth-constrained network,
 which we did not model, could make payload matter throughout.
 
 \input{../results/tables/cp_fine.tex}
@@ -1139,12 +1163,14 @@ execution changes the orchestration decision, not that the workload is a faithfu
 agent implementation. Short/medium/long workflow profiles remain future work.
 
 \paragraph{C. Network modelling.}
-The realistic network model is disabled (Section~\ref{sec:exp}): the
+The main grids disable the realistic network model (Section~\ref{sec:exp}): the
 orchestrator's predicted network term is propagation-only, with no bandwidth
-sharing, and the simulator's execution engine charges sizes to links without an
-explicit contention model. The payload threshold effects of
-Section~\ref{sec:cpsplit} are therefore conditional on an uncongested network;
-we do not claim they persist under WAN contention or a shared uplink.
+sharing. The payload threshold effects of Section~\ref{sec:cpsplit} are therefore
+conditional on an uncongested network. A contention grid with the realistic model
+enabled was executed (Section~\ref{sec:cpsplit}), but its all-zero success across
+WAN bandwidths means it establishes the existence of a boundary rather than its
+location; a less severe overhead or looser deadlines would be required to map it.
+Docket also has a FIFO access-link model and could be used for the same sweep.
 
 \paragraph{D. Capacity configuration.}
 The exact-zero placement result is measured with an adequate edge tier and a
