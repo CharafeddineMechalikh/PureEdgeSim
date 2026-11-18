@@ -1179,13 +1179,14 @@ external-validity experiment still missing.
 
 \paragraph{B. Agentic workload abstraction.}
 The principal workload represents reasoning, tool calls and retrieval through
-compute and payload multipliers plus a fixed control-message count. It does not
-generate a DAG of reasoning/retrieval/verification stages, conditional branches
-or variable execution paths. A real agent may require two stages for one request
-and seven for the next; a scalar multiplier cannot express that variance. We
-therefore claim only that the \emph{demand amplification} induced by agentic
-execution changes the orchestration decision, not that the workload is a faithful
-agent implementation. Short/medium/long workflow profiles remain future work.
+compute and payload multipliers plus a fixed control-message count. The
+dependency-aware arm added a single fixed three-service DAG per class and showed
+where a deadline failure propagates, but it has no conditional branches or
+variable stage counts: a real agent may require two stages for one request and
+seven for the next. Short/medium/long workflow profiles remain future work. We
+therefore claim only that \emph{demand amplification} and fixed service chains
+change the orchestration decision, not that the workload is a faithful agent
+implementation.
 
 \paragraph{C. Network modelling.}
 The main grids disable the realistic network model (Section~\ref{sec:exp}): the
