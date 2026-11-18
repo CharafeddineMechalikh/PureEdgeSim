@@ -1,0 +1,19 @@
+\begin{table*}
+\centering
+\scriptsize
+\caption{Dependency-aware workflow arm: end-to-end success, request success, dependency-failure count and per-service success by policy and overhead.}
+\label{tab:p2-workflow}
+\begin{tabular}{lcccccccccc}
+\toprule
+compute\_multiplier & policy & success\_ratio & request\_success\_ratio & fail\_dependency & stage\_retrieve\_success\_rate & stage\_reason\_success\_rate & stage\_verify\_success\_rate & stage\_sense\_success\_rate & stage\_decide\_success\_rate & stage\_act\_success\_rate \\
+\midrule
+2.000 & aware & 0.516 & 0.000 & 950.900 & 0.990 & 0.990 & 0.000 & 0.969 & 0.000 & 0.000 \\
+2.000 & edge & 0.516 & 0.000 & 950.900 & 0.990 & 0.990 & 0.000 & 0.969 & 0.000 & 0.000 \\
+2.000 & naive\_fid & 0.310 & 0.000 & 2244.500 & 0.589 & 0.589 & 0.000 & 0.603 & 0.000 & 0.000 \\
+3.000 & aware & 0.327 & 0.000 & 2139.400 & 0.990 & 0.000 & 0.000 & 0.969 & 0.000 & 0.000 \\
+3.000 & edge & 0.327 & 0.000 & 2139.400 & 0.990 & 0.000 & 0.000 & 0.969 & 0.000 & 0.000 \\
+3.000 & naive\_fid & 0.198 & 0.000 & 2950.700 & 0.600 & 0.000 & 0.000 & 0.588 & 0.000 & 0.000 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Each request is a three-service DAG. Unlike the independent-task arm, dependency failures are exercised: cancelled descendants are counted in `fail_dependency'.\par}
+\end{table*}

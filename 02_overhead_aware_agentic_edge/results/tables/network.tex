@@ -1,0 +1,31 @@
+\begin{table*}
+\centering
+\footnotesize
+\caption{Network-contention arm: realistic bandwidth-sharing model enabled, WAN bandwidth varied at two overhead levels.}
+\label{tab:p2-network}
+\begin{tabular}{lcccccc}
+\toprule
+wan\_bandwidth & compute\_multiplier & policy & success\_ratio & task\_delay\_p95\_s & wan\_usage\_s & failure\_ratio \\
+\midrule
+5.000 & 1.500 & aware & 0.000 & 0.365 & 0.000 & 1.000 \\
+5.000 & 1.500 & edge & 0.000 & 0.365 & 0.000 & 1.000 \\
+5.000 & 1.500 & naive & 0.000 & 1866.030 & 11,466 & 1.000 \\
+5.000 & 2.000 & aware & 0.000 & 0.481 & 0.000 & 1.000 \\
+5.000 & 2.000 & edge & 0.000 & 0.481 & 0.000 & 1.000 \\
+5.000 & 2.000 & naive & 0.000 & 2457.622 & 107,082 & 1.000 \\
+20 & 1.500 & aware & 0.000 & 0.365 & 0.000 & 1.000 \\
+20 & 1.500 & edge & 0.000 & 0.365 & 0.000 & 1.000 \\
+20 & 1.500 & naive & 0.000 & 778.935 & 1113.773 & 1.000 \\
+20 & 2.000 & aware & 0.000 & 0.481 & 0.000 & 1.000 \\
+20 & 2.000 & edge & 0.000 & 0.481 & 0.000 & 1.000 \\
+20 & 2.000 & naive & 0.000 & 1168.071 & 1520.860 & 1.000 \\
+100 & 1.500 & aware & 0.000 & 0.365 & 0.000 & 1.000 \\
+100 & 1.500 & edge & 0.000 & 0.365 & 0.000 & 1.000 \\
+100 & 1.500 & naive & 0.000 & 1.859 & 117.739 & 1.000 \\
+100 & 2.000 & aware & 0.000 & 0.481 & 0.000 & 1.000 \\
+100 & 2.000 & edge & 0.000 & 0.481 & 0.000 & 1.000 \\
+100 & 2.000 & naive & 0.000 & 2.445 & 159.043 & 1.000 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize\raggedright Unlike the main grids, the simulator's realistic network model is enabled here, so transfers share link bandwidth.\par}
+\end{table*}

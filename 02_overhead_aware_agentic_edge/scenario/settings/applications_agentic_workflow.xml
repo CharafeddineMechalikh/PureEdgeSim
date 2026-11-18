@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<applications>
+	<!-- Dependency-aware agentic workload. Each request is a small DAG:
+	     retrieval -> reasoning -> verification for RAG, and sensing -> reasoning
+	     -> decision for control. Subtasks execute in dependency order and a
+	     failed parent cancels its descendants. -->
+	<application name="Agentic_Inference_RAG">
+		<type>Soft Real-time</type>
+		<rate>20</rate>
+		<usage_percentage>50</usage_percentage>
+		<latency>0.8</latency>
+		<container_size>2500</container_size>
+		<request_size>1200</request_size>
+		<results_size>150</results_size>
+		<task_length>18000</task_length>
+		<subtask name="retrieve" task_length="5000" results_size="600" latency="0.30"/>
+		<subtask name="reason" depends_on="retrieve" task_length="9000" results_size="400" latency="0.55"/>
+		<subtask name="verify" depends_on="reason" task_length="4000" results_size="150" latency="0.80"/>
+	</application>
+	<application name="Agentic_Control_Reasoning">
+		<type>Hard Real-time</type>
+		<rate>15</rate>
+		<usage_percentage>50</usage_percentage>
+		<latency>0.25</latency>
+		<container_size>900</container_size>
+		<request_size>400</request_size>
+		<results_size>40</results_size>
+		<task_length>6000</task_length>
+		<subtask name="sense" task_length="1500" results_size="200" latency="0.10"/>
+		<subtask name="decide" depends_on="sense" task_length="3500" results_size="100" latency="0.20"/>
+		<subtask name="act" depends_on="decide" task_length="1000" results_size="40" latency="0.25"/>
+	</application>
+</applications>

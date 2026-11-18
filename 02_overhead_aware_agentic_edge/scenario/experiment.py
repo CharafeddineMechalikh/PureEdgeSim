@@ -68,6 +68,7 @@ RESULTS = ROOT / PROJECT / "results"
 APPS = {
     "edge": SETTINGS / "applications_agentic.xml",
     "agentic": SETTINGS / "applications_agentic.xml",
+    "workflow": SETTINGS / "applications_agentic_workflow.xml",
 }
 
 # Arm -> (orchestrator class, ladder forced off?, energy weight, container penalty,
@@ -114,12 +115,12 @@ def _properties(job: dict) -> dict:
     duration_min = float(job.get("duration_min", 5))
     return {
         "simulation_time": duration_min,
-        "realistic_network_model": "false",
+        "realistic_network_model": str(job.get("realistic_network_model", False)).lower(),
         "save_log_file": "false",
         "save_charts": "false",
-        "wan_bandwidth": 20,
+        "wan_bandwidth": job.get("wan_bandwidth", 20),
         "wan_latency": 0.06,
-        "wifi_bandwidth": 1300,
+        "wifi_bandwidth": job.get("wifi_bandwidth", 1300),
     }
 
 
@@ -136,7 +137,7 @@ def _bound(cls, config: AgenticConfig):
 def run_job(job: dict, out_dir: Path) -> dict:
     ensure_pureedgesim()
     policy = job["policy"]
-    profile = "agentic"
+    profile = job.get("profile", "agentic")
     config_values = _config(job).__dict__
     config_values.update(_overrides(policy))
     config = AgenticConfig(**config_values)
@@ -268,6 +269,26 @@ def grids() -> dict[str, list[dict]]:
         job["fidelity"] = job["policy"] != "naive"
         cp_split.append(job)
 
+    # Dependency-aware workflow arm and network-contention arm (reviewer request).
+    workflow = []
+    for job in expand_grid(
+            {**base, "experiment": "workflow", "profile": "workflow"},
+            {"policy": ("naive_fid", "edge", "aware"),
+             "compute_multiplier": (2.0, 3.0), "seed": seeds}):
+        job["fidelity"] = True
+        job["payload_multiplier"] = job["compute_multiplier"]
+        workflow.append(job)
+
+    network = []
+    for job in expand_grid(
+            {**base, "experiment": "network", "realistic_network_model": True},
+            {"policy": ("naive", "edge", "aware"),
+             "wan_bandwidth": (5, 20, 100),
+             "compute_multiplier": (1.5, 2.0), "seed": seeds}):
+        job["fidelity"] = job["policy"] != "naive"
+        job["payload_multiplier"] = job["compute_multiplier"]
+        network.append(job)
+
     # Objective-weight sensitivity (reviewer request): vary the energy weight,
     # container penalty and cache-awareness switch one at a time.
     weights = []
@@ -373,7 +394,8 @@ def grids() -> dict[str, list[dict]]:
             "fidelity": fidelity, "energy": energy, "ablation": ablation,
             "factorial": factorial, "cp_split": cp_split, "fidelity_gamma": fidelity_gamma,
             "ablation2": ablation2, "tiers": tiers, "horizon": horizon,
-            "cp_fine": cp_fine, "capacity": capacity, "weights": weights}
+            "cp_fine": cp_fine, "capacity": capacity, "weights": weights,
+            "workflow": workflow, "network": network}
 
 
 # The published grids keep their original folder naming (job ids and resume keys
@@ -392,6 +414,8 @@ NAME_KEYS = {
     "cp_fine": COMPACT_KEYS,
     "capacity": COMPACT_KEYS + ("edge_capacity_factor", "cloud_capacity_factor"),
     "weights": COMPACT_KEYS + ("energy_weight", "container_penalty_s"),
+    "workflow": COMPACT_KEYS + ("profile",),
+    "network": COMPACT_KEYS + ("realistic_network_model", "wan_bandwidth"),
     "fidelity_gamma": COMPACT_KEYS,
     "ablation2": COMPACT_KEYS,
     "tiers": COMPACT_KEYS,

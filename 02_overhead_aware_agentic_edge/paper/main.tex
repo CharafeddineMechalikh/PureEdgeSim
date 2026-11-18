@@ -45,7 +45,7 @@ Agentic services built on large language models execute chains of reasoning,
 tool calls and retrieval whose effective demand can exceed the nominal request
 several times over. A natural response is a joint orchestrator that selects, per
 task, both a reasoning-budget level and a host. We ask when that joint design
-actually helps, using $2{,}620$ seeded runs and a complete $3\times2$
+actually helps, using $3{,}610$ seeded runs and a complete $3\times2$
 placement-by-fidelity factorial (20 seeds per cell, the authoritative result
 set). At $2\times$ overhead the unprotected policy serves nothing; adding only
 the fidelity ladder reaches $0.375$; adding a static edge tier reaches $0.496$;
@@ -122,7 +122,7 @@ complexity is justified, rather than propose a novel scheduling algorithm.
 
 \subsection{The result}
 We implement six policies on the Python port of PureEdgeSim and evaluate them
-on $2{,}620$ seeded runs. They form a complete factorial: placement has three
+on $3{,}610$ seeded runs. They form a complete factorial: placement has three
 levels and the fidelity ladder has two.
 
 \begin{itemize}
@@ -177,7 +177,7 @@ its own benefit, and we recommend the weighted metric as the primary one.
 \item A regime boundary: in our LLM-serving simulator, where the edge tier is
   weak and the cloud is fast, placement dominates and the ladder becomes
   conditional on placement (Section~\ref{sec:docket}).
-\item A reproducible artifact of $2{,}620$ runs, a reconciled workload
+\item A reproducible artifact of $3{,}610$ runs, a reconciled workload
   definition, a power analysis, and a per-item revision map.
 \end{enumerate}
 
@@ -475,7 +475,7 @@ including per-class lengths after overhead, is in
 \texttt{results/WORKLOAD.md}.
 
 \subsection{Grids}
-Table~\ref{tab:p2-grids} lists the thirteen grids; the total is $2{,}620$ runs.
+Table~\ref{tab:p2-grids} lists the thirteen grids; the total is $3{,}610$ runs.
 Ten seeds is the reporting default; the factorial and the component ablation
 use twenty because the null result there is the claim (Appendix~\ref{sec:power}).
 
@@ -1029,7 +1029,7 @@ within the design's resolution.
 % =========================================================================
 \section{Cross-Model Check: Where the Placement Null Breaks}
 \label{sec:docket}
-The $2{,}620$ runs above all use one simulator. To test whether the placement
+The $3{,}610$ PureEdgeSim runs above use one simulator. To test whether the placement
 null is an artefact of its linear MI/payload surrogate, we repeated the same two
 decisions in \emph{Docket}, our own discrete-event LLM-serving simulator. Docket
 charges prefill and decode separately, holds a KV cache in blocks, batches
@@ -1048,7 +1048,7 @@ round numbers.
 \footnotesize
 \caption{Docket ablation. A request is served when it completes inside its
 end-to-end class deadline. Five seeds per cell; full data in
-\texttt{results/fidelity\_ablation/summary.csv}.}
+\texttt{GenAIInferenceSim/results/fidelity\_ablation/summary.csv}.}
 \label{tab:p2-docket}
 \begin{tabular}{@{}lccccc@{}}
 \toprule
