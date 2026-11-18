@@ -169,7 +169,9 @@ instantiation (separate model).
 - **M9 / horizon.** 5/15/30 min, spread 0.3 points.
 - **M10 / seeds.** 20 seeds in the null-bearing grids, justified by power.
 - **M11 / energy.** No deaths at 20/50/100 Wh; battery null.
-- **M12 / Docket LLM realism.** Example 14 in the authors' serving simulator,
+- **M12 / Docket LLM realism.** Example 14 in the authors' serving model, which
+  shares PureEdgeSim's event engine (so it is a cost-model check, not a second
+  simulator),
   20 cells × 5 seeds; it reverses the placement null in the weak-edge regime and
   therefore bounds the claim instead of pretending to replicate it.
 

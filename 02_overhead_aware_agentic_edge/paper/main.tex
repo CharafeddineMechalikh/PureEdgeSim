@@ -67,7 +67,7 @@ quantities, not measured answer accuracy. Under the simulated cache-hit model th
 cache, energy and container terms do not change decisions, and the cloud
 receives no successful requests in the principal configuration. Fidelity-weighted
 success is $0.248$ at $2\times$ against a raw $0.496$. A second, author-developed
-serving simulator (Docket) shows that placement becomes essential when the edge
+serving model (Docket, built on the same event engine) shows that placement becomes essential when the edge
 tier is weak and the cloud much faster. The contribution is a capacity-dependent
 interpretation --- the value of joint orchestration depends on the available
 capacity gap --- together with a measurement protocol: report the crossed
@@ -1031,14 +1031,14 @@ within the design's resolution.
 \label{sec:docket}
 The $3{,}610$ PureEdgeSim runs above use one simulator. To test whether the placement
 null is an artefact of its linear MI/payload surrogate, we repeated the same two
-decisions in \emph{Docket}, our own discrete-event LLM-serving simulator. Docket
+decisions in \emph{Docket}, a serving model built on the \emph{same} PureEdgeSim discrete-event engine (shared clock, event queue and workload sampling). Docket
 charges prefill and decode separately, holds a KV cache in blocks, batches
 requests per replica, and prices the local and wide-area bearers by bytes. The
 workload is a generated agentic trace replayed at the same four overhead levels;
 the fleet is a phone-class accelerator, two on-premise servers and a cloud card
 behind a $40$~ms WAN. Five seeds per cell, $20$ cells.
 
-Docket is our simulator, so this is an internal robustness check with a
+Docket shares the simulation engine with the main experiments, so this is a \emph{serving-model} robustness check, not an independent simulator comparison, with a
 different cost model, not an independent replication. We also report it with
 its synthetic provenance: the decoder and all device capacities are invented
 round numbers.
@@ -1165,9 +1165,11 @@ which establishes practical equivalence only in the tested regime. The Docket
 experiment uses five seeds per cell and is exploratory.
 
 \paragraph{F. Simulator dependence and external validity.}
-Both platforms used here are simulators, and Docket is developed by the authors;
-it is a cross-simulator robustness check under a different serving model, not
-external validation against a deployed LLM-serving infrastructure. No real
+Both configurations use the same discrete-event engine: Docket is built on
+PureEdgeSim's clock, event queue and workload sampler, and is developed by the
+authors. It is a serving-model robustness check under a different cost model,
+not an independent simulator comparison and not external validation against a
+deployed LLM-serving infrastructure. No real
 hardware measurements, real LLM outputs or production traces are used. The
 vendored PureEdgeSim battery accounting also depends on configured initial
 capacity in a way that prevents cross-battery energy comparison
