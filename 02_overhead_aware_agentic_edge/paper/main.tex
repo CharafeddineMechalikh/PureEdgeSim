@@ -1330,11 +1330,11 @@ recomputes every headline comparison under six monotone $q(f)$ shapes and shows
 the policy ordering is invariant, while the \emph{size} of the fidelity benefit
 varies from $0.062$ to $0.496$ at $2\times$. The cost-curve sweep
 (Section~\ref{sec:gamma}) independently changes executed quality by up to $22$
-points at fixed success. What remains missing is a \emph{measured} curve from a
-real serving deployment; Docket prices fidelity in generated tokens and reports a
-token-weighted proxy, but its decoder and capacities are synthetic and it has no
-quality evaluator. A calibrated $q(f)$ is the most valuable external-validity
-experiment still open.
+points at fixed success. Docket now has a native quality model with the same six
+curves, a delivered-token blend and a loader for measured $q(f)$ points, but the
+Example~14 grid uses its analytic synthetic setting: Docket prices fidelity in
+generated tokens and has no answer scorer or benchmark dataset. A calibrated
+$q(f)$ from a real serving deployment is still the most valuable experiment open.
 
 \paragraph{B. Agentic workload abstraction.}
 The principal workload represents reasoning, tool calls and retrieval through
@@ -1382,12 +1382,19 @@ experiment also uses twenty seeds per cell and the full six-arm factorial.
 Both configurations use the same discrete-event engine: Docket is built on
 PureEdgeSim's clock, event queue and workload sampler, and is developed by the
 authors. It is a serving-model robustness check under a different cost model,
-not an independent simulator comparison and not external validation against a
-deployed LLM-serving infrastructure. No real hardware measurements, real LLM
-outputs or production traces are used, and every device capacity is a round
-number marked synthetic. One concrete defect found in the vendored engine --- a
-battery-energy accumulator that charged the unused initial charge as consumption
---- was fixed rather than reported around
+not an independent simulator comparison. That is a provenance property, not a
+missing feature: shipping a second engine would not make this study independent
+of its authors. The Example~14 fleet and decoder remain synthetic and no
+production trace is used. Docket does, however, ship a separate measured
+calibration example (\texttt{examples/calibration}): service times were fitted to
+llama.cpp b12014 on an Intel i7-8550U CPU with Qwen2.5-0.5B, and the simulator
+reproduces the fitted points to within $3.4\%$ inside the benchmark's range.
+That validates the cost arithmetic on one CPU, not the GPU/edge fleet priced in
+Example~14; power was not captured and GPU calibration was unavailable. The
+calibration is therefore evidence about the model's mechanics, not external
+validation of the paper's fleet. One concrete defect found in the vendored
+engine --- a battery-energy accumulator that charged the unused initial charge as
+consumption --- was fixed rather than reported around
 (Section~\ref{sec:boundaries}); all energy numbers in this paper are post-fix.
 
 \section{Conclusion}
