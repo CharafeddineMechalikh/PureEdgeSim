@@ -576,8 +576,7 @@ the released artifact.
 
 \subsection{Dependency-aware workflow arm}
 The independent-task factorial cannot exercise dependencies by construction. To
-test the application model of Section~\ref{sec:app-model}, we replaced each class
-with a three-service DAG (retrieval $\to$ reasoning $\to$ verification for RAG,
+test a service graph, we replaced each class with a three-service DAG (retrieval $\to$ reasoning $\to$ verification for RAG,
 sensing $\to$ decision $\to$ actuation for control) and re-ran the three
 ladder-enabled policies at $2\times$ and $3\times$ ($60$ runs).
 Table~\ref{tab:p2-workflow} reports task success, request-level DAG success,

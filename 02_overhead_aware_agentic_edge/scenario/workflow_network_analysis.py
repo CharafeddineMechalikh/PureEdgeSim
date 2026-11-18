@@ -23,13 +23,21 @@ metrics = ["success_ratio", "request_success_ratio", "fail_dependency",
            "stage_verify_success_rate", "stage_sense_success_rate",
            "stage_decide_success_rate", "stage_act_success_rate"]
 summary = workflow.groupby(group)[metrics].mean().reset_index()
+summary["Final-service success"] = summary[
+    ["stage_verify_success_rate", "stage_act_success_rate"]].max(axis=1)
+summary = summary[["compute_multiplier", "policy", "success_ratio",
+                   "request_success_ratio", "fail_dependency", "Final-service success"]]
+summary.columns = ["Overhead", "Policy", "Task success", "DAG success",
+                   "Cancelled subtasks", "Final service"]
+for column in summary.columns[2:]:
+    summary[column] = summary[column].map(lambda v: f"{v:.3f}")
 tables.write(summary, RESULTS / "tables" / "workflow.tex",
              "Dependency-aware workflow arm: end-to-end success, request success, "
              "dependency-failure count and per-service success by policy and overhead.",
              "tab:p2-workflow", wide=True, size=r"\scriptsize",
              notes="Each request is a three-service DAG. Unlike the independent-task "
                    "arm, dependency failures are exercised: cancelled descendants "
-                   "are counted in `fail_dependency'.")
+                   "are counted in the fail-dependency column.")
 
 plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 9, "figure.dpi": 160})
 fig, axes = plt.subplots(1, 2, figsize=(9.5, 3.4))
