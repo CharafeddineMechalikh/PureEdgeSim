@@ -14,11 +14,11 @@ when it runs on a battery (more as the battery empties), plus 0.5 when it moves,
 capped at 1. The orchestrator does not know about crashes in advance. The
 algorithm name in the parameters file selects the rule:
 
-| Algorithm | Rule |
-| --- | --- |
-| `LATENCY_GREEDY` | lowest estimated delay as a share of the subtask's latency budget, with the estimator of Example 19 |
-| `RELIABLE_INNER` | the same, but a subtask that any other subtask waits for may only go to a node without risk, when one is allowed |
-| `TRADE_OFF`, `ROUND_ROBIN` | the default orchestrator |
+- `LATENCY_GREEDY`: the lowest estimated delay as a share of the subtask's
+  latency budget, with the estimator of Example 19;
+- `RELIABLE_INNER`: the same, but a subtask that any other subtask waits for
+  may only go to a node without risk, when one is allowed;
+- `TRADE_OFF`, `ROUND_ROBIN`: the default orchestrator.
 
 Every algorithm, the default ones included, decides once per subtask: the
 orchestrator clears the cached placement after each decision, as Example 9
@@ -60,7 +60,9 @@ every algorithm.
 From the repository root, after `mvn clean install -DskipTests`:
 
 ```bash
-mvn exec:java -Dexec.mainClass="examples.Example30" -Dexample30.scenario=crash -Dexample30.devices=100 -Dexample30.seed=1 -Dexample30.algorithms=RELIABLE_INNER
+mvn exec:java -Dexec.mainClass="examples.Example30" \
+  -Dexample30.scenario=crash -Dexample30.devices=100 -Dexample30.seed=1 \
+  -Dexample30.algorithms=RELIABLE_INNER
 ```
 
 The other options are `-Dexample30.architecture=EDGE_AND_CLOUD`, which keeps
